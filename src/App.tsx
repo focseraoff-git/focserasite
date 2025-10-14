@@ -11,7 +11,7 @@ import Events from './pages/divisions/Events';
 import Web from './pages/divisions/Web';
 import ProductServices from './pages/divisions/ProductServices';
 import Skill from './pages/divisions/Skill';
-import Journey from './pages/Journey'
+import Journey from './pages/ourney'
 
 function App() {
   return (
@@ -29,6 +29,7 @@ function App() {
           <Route path="/web" element={<Web />} />
           <Route path="/product-services" element={<ProductServices />} />
           <Route path="/skill" element={<Skill />} />
+          <Route path="/journey" element = {<Journey />}
         </Routes>
         <Footer />
       </div>
