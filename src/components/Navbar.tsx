@@ -38,7 +38,7 @@ export default function App() {
   const isHomePage = location.pathname === '/';
 
   const divisions = [
-    { name: 'Studios', path: '#/studios' },
+    { name: 'Studios', path: '/studios' },
     { name: 'Media', path: '#/media' },
     { name: 'Events', path: '#/events' },
     { name: 'Web', path: '#/web' },
