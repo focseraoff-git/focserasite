@@ -39,11 +39,11 @@ export default function App() {
 
   const divisions = [
     { name: 'Studios', path: '/studios' },
-    { name: 'Media', path: '#/media' },
-    { name: 'Events', path: '#/events' },
-    { name: 'Web', path: '#/web' },
-    { name: 'Product Services', path: '#/product-services' },
-    { name: 'Skill', path: '#/skill' }
+    { name: 'Media', path: '/media' },
+    { name: 'Events', path: '/events' },
+    { name: 'Web', path: '/web' },
+    { name: 'Product Services', path: '/product-services' },
+    { name: 'Skill', path: '/skill' }
   ];
   
   const navLinkClasses = (scrolled, isHome) => 
