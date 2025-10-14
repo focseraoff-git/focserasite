@@ -29,7 +29,7 @@ function App() {
           <Route path="/web" element={<Web />} />
           <Route path="/product-services" element={<ProductServices />} />
           <Route path="/skill" element={<Skill />} />
-          <Route path="/journey" element = {<Journey />}
+         <Route path="/journey" element={<Journey />} />
         </Routes>
         <Footer />
       </div>
