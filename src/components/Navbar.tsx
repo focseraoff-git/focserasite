@@ -62,7 +62,7 @@ export default function App() {
             <Link to="/" className={navLinkClasses(scrolled, isHomePage)}>
               Home
             </Link>
-            <Link to="#/about" className={navLinkClasses(scrolled, isHomePage)}>
+            <Link to="/about" className={navLinkClasses(scrolled, isHomePage)}>
               About
             </Link>
 
@@ -92,10 +92,10 @@ export default function App() {
               )}
             </div>
 
-            <Link to="#/mission" className={navLinkClasses(scrolled, isHomePage)}>
+            <Link to="/mission" className={navLinkClasses(scrolled, isHomePage)}>
               Mission
             </Link>
-            <Link to="#/contact" className={navLinkClasses(scrolled, isHomePage)}>
+            <Link to="/contact" className={navLinkClasses(scrolled, isHomePage)}>
               Contact
             </Link>
           </div>
@@ -116,7 +116,7 @@ export default function App() {
         <div className="md:hidden bg-white border-t animate-slide-in-down">
           <div className="px-4 pt-2 pb-4 space-y-2">
             <Link to="/" className="block py-2 text-gray-700 hover:text-[#0052CC]" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-            <Link to="#/about" className="block py-2 text-gray-700 hover:text-[#0052CC]" onClick={() => setMobileMenuOpen(false)}>About</Link>
+            <Link to="/about" className="block py-2 text-gray-700 hover:text-[#0052CC]" onClick={() => setMobileMenuOpen(false)}>About</Link>
 
             {/* Mobile Divisions Dropdown */}
             <div className="py-2">
@@ -146,8 +146,8 @@ export default function App() {
               )}
             </div>
 
-            <Link to="#/mission" className="block py-2 text-gray-700 hover:text-[#0052CC]" onClick={() => setMobileMenuOpen(false)}>Mission</Link>
-            <Link to="#/contact" className="block py-2 text-gray-700 hover:text-[#0052CC]" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+            <Link to="/mission" className="block py-2 text-gray-700 hover:text-[#0052CC]" onClick={() => setMobileMenuOpen(false)}>Mission</Link>
+            <Link to="/contact" className="block py-2 text-gray-700 hover:text-[#0052CC]" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
           </div>
         </div>
       )}
