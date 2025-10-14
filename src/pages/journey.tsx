@@ -1,16 +1,40 @@
-import { Rocket, Flag, Users, Award, Milestone, Lightbulb } from 'lucide-react';
+import { Camera, Lightbulb, ArrowRight } from 'lucide-react';
 
 // Helper component for individual timeline items
-const TimelineItem = ({ year, title, description, icon, isLeft }) => (
-  <div className={`relative w-full md:w-1/2 ${isLeft ? 'md:pr-8 md:text-right' : 'md:pl-8'} mb-12`}>
+const TimelineItem = ({ year, title, description, icon, isLeft, url, galleryUrl }) => (
+  <div className={`relative w-full md:w-1/2 ${isLeft ? 'md:pr-8' : 'md:pl-8'} mb-12`}>
     <div className="absolute top-0 w-px h-full bg-blue-200 left-0 md:left-1/2 md:-translate-x-1/2"></div>
     <div className="absolute top-0 left-0 md:left-1/2 w-8 h-8 bg-[#0052CC] rounded-full flex items-center justify-center -translate-x-1/2">
       <div className="text-white">{icon}</div>
     </div>
-    <div className="p-6 bg-gray-50 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 ml-8 md:ml-0">
+    <div className={`p-6 bg-gray-50 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 ml-8 md:ml-0 ${isLeft ? 'text-right' : 'text-left'}`}>
       <p className="text-lg font-bold text-[#0052CC] mb-2">{year}</p>
       <h3 className="text-2xl font-semibold text-gray-800 mb-3">{title}</h3>
       <p className="text-gray-600 leading-relaxed">{description}</p>
+      <div className={`flex items-center gap-4 mt-4 ${isLeft ? 'justify-end' : 'justify-start'}`}>
+        {url && (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#0052CC] hover:text-[#0047b3] group"
+          >
+            Visit Website
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+          </a>
+        )}
+        {galleryUrl && (
+           <a
+            href={galleryUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#0052CC] hover:text-[#0047b3] group"
+          >
+            View Gallery
+            <Camera size={16} className="transition-transform group-hover:scale-110" />
+          </a>
+        )}
+      </div>
     </div>
   </div>
 );
@@ -21,7 +45,9 @@ export default function Journey() {
       year: '2025',
       title: 'Hosted InnovateX25',
       description: 'Hosted our flagship tech and creativity conference, InnovateX25, bringing together industry leaders and visionaries from around the globe in October.',
-      icon: <Lightbulb size={18} />
+      icon: <Lightbulb size={18} />,
+      url: 'https://innovatex25-1nfy.vercel.app/',
+      galleryUrl: 'https://focsera.com/gallery/innovatex25' // Added URL for the gallery
     }
   ];
 
