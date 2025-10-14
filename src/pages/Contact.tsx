@@ -97,7 +97,7 @@ export default function Contact() {
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Email Us</h3>
                   <p className="text-gray-600">info@focsera.com</p>
-                  <p className="text-gray-600">hello@focsera.com</p>
+                  <p className="text-gray-600">collab@focsera.com</p>
                 </div>
               </div>
 
@@ -118,7 +118,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Visit Us</h3>
-                  <p className="text-gray-600">Global Headquarters</p>
+                  <p className="text-gray-600"></p>
                   <p className="text-gray-600">Coming Soon</p>
                 </div>
               </div>
