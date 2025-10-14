@@ -95,6 +95,9 @@ export default function App() {
             <Link to="/mission" className={navLinkClasses(scrolled, isHomePage)}>
               Mission
             </Link>
+            <Link to="/journey" className={navLinkClasses(scrolled, isHomePage)}>
+              Journey
+            </Link>
             <Link to="/contact" className={navLinkClasses(scrolled, isHomePage)}>
               Contact
             </Link>
@@ -147,6 +150,7 @@ export default function App() {
             </div>
 
             <Link to="/mission" className="block py-2 text-gray-700 hover:text-[#0052CC]" onClick={() => setMobileMenuOpen(false)}>Mission</Link>
+            <Link to="/journey" className="block py-2 text-gray-700 hover:text-[#0052CC]" onClick={() => setMobileMenuOpen(false)}>Journey</Link>
             <Link to="/contact" className="block py-2 text-gray-700 hover:text-[#0052CC]" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
           </div>
         </div>
