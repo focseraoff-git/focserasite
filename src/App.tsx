@@ -11,7 +11,7 @@ import Events from './pages/divisions/Events';
 import Web from './pages/divisions/Web';
 import ProductServices from './pages/divisions/ProductServices';
 import Skill from './pages/divisions/Skill';
-import Journey from './pages/ourney'
+import Journey from './pages/journey'
 
 function App() {
   return (
