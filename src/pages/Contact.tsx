@@ -1,6 +1,78 @@
-import { Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import { Mail, Phone, MapPin, ArrowRight, Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
+
+// --- Supabase Setup ---
+// 1. Replace these with your actual Supabase URL and Anon Key from your project settings.
+//    It's best practice to store these in environment variables (.env.local file).
+const supabaseUrl = 'YOUR_SUPABASE_URL';
+const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+
+// 2. Initialize the Supabase client.
+//    In a real app, you would create this client in a separate utility file (e.g., 'src/lib/supabase.js')
+//    and import it wherever you need it.
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function Contact() {
+  // --- State Management ---
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    division: 'Select a division',
+    message: ''
+  });
+  const [status, setStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
+  const [formError, setFormError] = useState('');
+
+  // --- Handlers ---
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [id]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Basic validation
+    if (!formData.name || !formData.email || !formData.message || formData.division === 'Select a division') {
+      setFormError('Please fill out all required fields.');
+      setStatus('error');
+      return;
+    }
+    setFormError('');
+    setStatus('submitting');
+
+    // 3. Insert the form data into your Supabase table.
+    //    Make sure you have a table named 'contacts' with matching columns.
+    const { error } = await supabase
+      .from('contacts') // Your table name
+      .insert({
+        full_name: formData.name,        // Your column names
+        email: formData.email,
+        interested_division: formData.division,
+        message: formData.message
+      });
+
+    if (error) {
+      console.error('Error submitting to Supabase:', error);
+      setFormError('There was an error sending your message. Please try again.');
+      setStatus('error');
+    } else {
+      setStatus('success');
+      setFormData({ // Reset form on success
+        name: '',
+        email: '',
+        division: 'Select a division',
+        message: ''
+      });
+      // Optionally, revert to idle status after a few seconds
+      setTimeout(() => setStatus('idle'), 5000);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white pt-20">
       <section className="py-24 bg-white">
@@ -16,8 +88,9 @@ export default function Contact() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Contact Info Section (unchanged) */}
             <div className="space-y-8">
-              <div className="flex items-start gap-4 p-6 rounded-xl bg-[#ECECEC]/50 hover:bg-[#ECECEC] transition-colors">
+              <div className="flex items-start gap-4 p-6 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
                 <div className="w-12 h-12 bg-[#0052CC] rounded-xl flex items-center justify-center flex-shrink-0">
                   <Mail className="text-white" size={24} />
                 </div>
@@ -28,7 +101,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 p-6 rounded-xl bg-[#ECECEC]/50 hover:bg-[#ECECEC] transition-colors">
+              <div className="flex items-start gap-4 p-6 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
                 <div className="w-12 h-12 bg-[#0052CC] rounded-xl flex items-center justify-center flex-shrink-0">
                   <Phone className="text-white" size={24} />
                 </div>
@@ -39,7 +112,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 p-6 rounded-xl bg-[#ECECEC]/50 hover:bg-[#ECECEC] transition-colors">
+              <div className="flex items-start gap-4 p-6 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
                 <div className="w-12 h-12 bg-[#0052CC] rounded-xl flex items-center justify-center flex-shrink-0">
                   <MapPin className="text-white" size={24} />
                 </div>
@@ -51,32 +124,32 @@ export default function Contact() {
               </div>
             </div>
 
-            <form className="space-y-6">
+            {/* Form Section (updated) */}
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               <div>
                 <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
                 <input
-                  type="text"
-                  id="name"
+                  type="text" id="name" value={formData.name} onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#0052CC] focus:ring-2 focus:ring-[#0052CC]/20 outline-none transition-all"
-                  placeholder="Your name"
+                  placeholder="Your name" required
                 />
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
                 <input
-                  type="email"
-                  id="email"
+                  type="email" id="email" value={formData.email} onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#0052CC] focus:ring-2 focus:ring-[#0052CC]/20 outline-none transition-all"
-                  placeholder="your@email.com"
+                  placeholder="your@email.com" required
                 />
               </div>
               <div>
                 <label htmlFor="division" className="block text-sm font-semibold text-gray-700 mb-2">Interested Division</label>
                 <select
-                  id="division"
+                  id="division" value={formData.division} onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#0052CC] focus:ring-2 focus:ring-[#0052CC]/20 outline-none transition-all"
+                  required
                 >
-                  <option>Select a division</option>
+                  <option disabled>Select a division</option>
                   <option>Focsera Studios</option>
                   <option>Focsera Media</option>
                   <option>Focsera Events</option>
@@ -88,18 +161,44 @@ export default function Contact() {
               <div>
                 <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">Message</label>
                 <textarea
-                  id="message"
-                  rows={4}
+                  id="message" rows={4} value={formData.message} onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#0052CC] focus:ring-2 focus:ring-[#0052CC]/20 outline-none transition-all resize-none"
-                  placeholder="Tell us about your project..."
+                  placeholder="Tell us about your project..." required
                 ></textarea>
               </div>
+
+              {/* --- Submission Feedback --- */}
+              <div className="h-14">
+                {status === 'success' && (
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-green-50 text-green-700">
+                    <CheckCircle size={20} />
+                    <p className="font-semibold">Message sent successfully! We'll be in touch soon.</p>
+                  </div>
+                )}
+                {status === 'error' && (
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 text-red-700">
+                    <AlertTriangle size={20} />
+                    <p className="font-semibold">{formError}</p>
+                  </div>
+                )}
+              </div>
+
               <button
                 type="submit"
-                className="w-full bg-[#0052CC] text-white px-8 py-4 rounded-xl font-semibold hover:bg-[#0066FF] transition-all duration-300 flex items-center justify-center gap-2 group"
+                disabled={status === 'submitting'}
+                className="w-full bg-[#0052CC] text-white px-8 py-4 rounded-xl font-semibold hover:bg-[#0047b3] transition-all duration-300 flex items-center justify-center gap-2 group disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                Send Message
-                <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                {status === 'submitting' ? (
+                  <>
+                    <Loader2 className="animate-spin" size={20} />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    Send Message
+                    <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                  </>
+                )}
               </button>
             </form>
           </div>
@@ -108,3 +207,4 @@ export default function Contact() {
     </div>
   );
 }
+
