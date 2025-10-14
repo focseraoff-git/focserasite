@@ -5,8 +5,8 @@ import { Mail, Phone, MapPin, ArrowRight, Loader2, CheckCircle, AlertTriangle } 
 // --- Supabase Setup ---
 // 1. Replace these with your actual Supabase URL and Anon Key from your project settings.
 //    It's best practice to store these in environment variables (.env.local file).
-const supabaseUrl = 'YOUR_SUPABASE_URL';
-const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+const supabaseUrl = 'https://cqasskjgsmxsfcwgkwab.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxYXNza2pnc214c2Zjd2drd2FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyOTExMzcsImV4cCI6MjA3NTg2NzEzN30.ebJcxEYrtNAH2M9ddOatCrOXDzaoIOJV6s1FdNsMyv8';
 
 // 2. Initialize the Supabase client.
 //    In a real app, you would create this client in a separate utility file (e.g., 'src/lib/supabase.js')
