@@ -1,4 +1,4 @@
-import { Rocket, Flag, Users, Award, Milestone } from 'lucide-react';
+import { Rocket, Flag, Users, Award, Milestone, Lightbulb } from 'lucide-react';
 
 // Helper component for individual timeline items
 const TimelineItem = ({ year, title, description, icon, isLeft }) => (
@@ -18,34 +18,10 @@ const TimelineItem = ({ year, title, description, icon, isLeft }) => (
 export default function Journey() {
   const journeyData = [
     {
-      year: '2020',
-      title: 'The Spark of an Idea',
-      description: 'Focsera was born from a shared vision to integrate creativity and technology, aiming to provide innovative digital solutions across various media.',
-      icon: <Rocket size={18} />
-    },
-    {
-      year: '2021',
-      title: 'Official Launch & First Division',
-      description: 'We officially launched with our first division, Focsera Studios, focusing on high-quality video production and creative content.',
-      icon: <Flag size={18} />
-    },
-    {
-      year: '2022',
-      title: 'Expanding Our Horizons',
-      description: 'Introduced Focsera Web and Focsera Events, expanding our service offerings to include web development and comprehensive event management.',
-      icon: <Users size={18} />
-    },
-    {
-      year: '2023',
-      title: 'Recognition and Growth',
-      description: 'Received our first industry award for innovation in digital media. Our team grew to over 50 talented professionals dedicated to excellence.',
-      icon: <Award size={18} />
-    },
-    {
-      year: '2024',
-      title: 'Future Forward',
-      description: 'Launched Focsera Skill and Product Services, solidifying our commitment to empowering individuals and businesses with cutting-edge tools and training.',
-      icon: <Milestone size={18} />
+      year: '2025',
+      title: 'Hosted InnovateX25',
+      description: 'Hosted our flagship tech and creativity conference, InnovateX25, bringing together industry leaders and visionaries from around the globe in October.',
+      icon: <Lightbulb size={18} />
     }
   ];
 
@@ -90,3 +66,4 @@ export default function Journey() {
     </div>
   );
 }
+
