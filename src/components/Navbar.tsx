@@ -130,6 +130,9 @@ export default function Navbar() {
             <Link to="/mission" className={linkClasses('/mission')}>
               Mission
             </Link>
+            <Link to="/journey" className={linkClasses('/journey')}>
+              Journey
+            </Link>
             <Link to="/contact" className={linkClasses('/contact')}>
               Contact
             </Link>
@@ -215,6 +218,13 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Mission
+              </Link>
+              <Link
+                to="/journey"
+                className="block py-3 text-gray-700 hover:text-[#0052CC] font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Journey
               </Link>
               <Link
                 to="/contact"
