@@ -387,7 +387,7 @@ const LoginPage = ({ onLogin, onBack }) => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const handleAuth = async (e) => {
+ const handleAuth = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
@@ -400,15 +400,21 @@ const LoginPage = ({ onLogin, onBack }) => {
             ? { email, password }
             : { email, password, options: { data: { full_name: fullName } } };
 
+        // Destructure 'error' from the result
         const { error } = await authMethod(credentials);
+
+        setLoading(false);
 
         if (error) {
             setError(error.message);
         } else if (!isLoginView) {
             alert("Please check your email to verify your account!");
+        } else {
+            // ---- THIS IS THE FIX ----
+            // If there's no error and it was a login, call the onLogin function
+            // to proceed to the next page.
+            onLogin(); 
         }
-        
-        setLoading(false);
     };
 
     const handleGoogleLogin = async () => {
