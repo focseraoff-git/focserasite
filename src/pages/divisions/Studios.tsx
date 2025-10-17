@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 // --- SUPABASE SETUP ---
 // IMPORTANT: Replace with your own Supabase project URL and Anon Key
 const supabaseUrl = 'YOUR_SUPABASE_URL';
 const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
-// Access createClient from the global window.supabase object
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // --- ICONS (using inline SVGs for self-containment) ---
 const Camera = (props) => (
@@ -689,4 +689,3 @@ export default function App() {
         </>
     );
 }
-
