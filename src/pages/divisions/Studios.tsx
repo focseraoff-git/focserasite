@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-// Import createClient directly from the Supabase library
-import { createClient } from '@supabase/supabase-js';
+// Import createClient directly from the Supabase ESM CDN
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // --- SUPABASE SETUP ---
-// IMPORTANT: Replace with your own Supabase project URL and Anon Key
 const supabaseUrl = 'https://gyjedezyhdlpwzeyixwg.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5amVkZXp5aGRscHd6ZXlpeHdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1NDA5NDcsImV4cCI6MjA3NjExNjk0N30.6hsjkGN5ojE0jkLnO9qX5fRAGIQABLzlLoqagcNrm1s';
-// Initialize the client once, outside the component
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 
@@ -112,11 +110,11 @@ const PackageCard = ({ service, onBook, index }) => {
                     <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isTermsVisible ? 'max-h-96' : 'max-h-0'}`}>
                         <div className="text-xs text-gray-500 space-y-3 pt-2">
                              <div>
-                                 <h4 className="font-bold text-gray-700">Client Support</h4>
+                                 <h4 className="font-bold text-gray-700">Client Terms</h4>
                                  <p>{service.terms.clientSupport}</p>
                              </div>
                             <div>
-                                 <h4 className="font-bold text-gray-700">Studio Support</h4>
+                                 <h4 className="font-bold text-gray-700">Studio Terms</h4>
                                  <p>{service.terms.studioSupport}</p>
                              </div>
                         </div>
@@ -138,8 +136,6 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
     const [selectedService, setSelectedService] = useState(null);
     const [selectedAddOns, setSelectedAddOns] = useState({});
     const [totalPrice, setTotalPrice] = useState(0);
-    const customizerRef = useRef(null);
-    const [duration, setDuration] = useState(1);
     const [displayPrice, setDisplayPrice] = useState(0);
 
     const [packagesRef, packagesAreVisible] = useIntersectionObserver({ threshold: 0.1 });
@@ -159,17 +155,14 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
      useEffect(() => {
         if (!selectedService) return;
         let newTotal = selectedService.price_min;
-        if (['Per hour', 'Per day', 'Per reel'].includes(selectedService.pricing_mode)) {
-            newTotal *= Math.max(1, duration);
-        }
         Object.keys(selectedAddOns).forEach(key => {
             if (selectedAddOns[key]) {
                 const addOn = addOns.find(a => a.key === key);
-                if (addOn) newTotal += addOn.price;
+                if (addOn) newTotal += addOn.price_min;
             }
         });
         setTotalPrice(newTotal);
-    }, [selectedService, selectedAddOns, duration, addOns]);
+    }, [selectedService, selectedAddOns, addOns]);
 
     useEffect(() => {
         const animation = requestAnimationFrame(() => {
@@ -242,7 +235,7 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                 </div>
             </section>
             
-             <section ref={customizerRef} className="py-24 bg-gray-50 scroll-mt-20">
+             <section className="py-24 bg-gray-50 scroll-mt-20">
                     <div ref={customizerSectionRef} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${customizerIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                         <div className="text-center mb-16">
                             <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Build Your Own Package</h2>
@@ -264,14 +257,14 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                 <div>
                                     <h3 className="text-xl font-bold mb-4">2. Choose Add-ons</h3>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                        {addOns.map(({key, label, price}) => (
-                                            <div key={key} onClick={() => handleAddOnToggle(key)} className={`p-4 border rounded-xl cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1 ${selectedAddOns[key] ? 'bg-blue-50 border-blue-400 ring-2 ring-blue-200' : 'bg-white hover:bg-gray-50'}`}>
+                                        {addOns.map((addOn) => (
+                                            <div key={addOn.key} onClick={() => handleAddOnToggle(addOn.key)} className={`p-4 border rounded-xl cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1 ${selectedAddOns[addOn.key] ? 'bg-blue-50 border-blue-400 ring-2 ring-blue-200' : 'bg-white hover:bg-gray-50'}`}>
                                                 <div>
-                                                    <span className="font-semibold block text-sm">{label}</span>
-                                                    <span className="text-xs text-gray-500">+ ₹{price.toLocaleString('en-IN')}</span>
+                                                    <span className="font-semibold block text-sm">{addOn.label}</span>
+                                                    <span className="text-xs text-gray-500">+ ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}</span>
                                                 </div>
-                                                <div className={`mt-3 w-6 h-6 rounded-md flex items-center justify-center transition-all duration-300 transform ${selectedAddOns[key] ? 'bg-[#0052CC] scale-110' : 'bg-gray-300'}`}>
-                                                    {selectedAddOns[key] && <Check className="w-4 h-4 text-white"/>}
+                                                <div className={`mt-3 w-6 h-6 rounded-md flex items-center justify-center transition-all duration-300 transform ${selectedAddOns[addOn.key] ? 'bg-[#0052CC] scale-110' : 'bg-gray-300'}`}>
+                                                    {selectedAddOns[addOn.key] && <Check className="w-4 h-4 text-white"/>}
                                                 </div>
                                             </div>
                                         ))}
@@ -286,12 +279,15 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                             <p className="font-semibold text-gray-700">{selectedService.name}</p>
                                             <p className="text-gray-600 font-medium">₹{selectedService.price_min.toLocaleString('en-IN')}</p>
                                         </div>
-                                        {Object.entries(selectedAddOns).filter(([_, value]) => value).map(([key]) => (
-                                            <div key={key} className="flex justify-between items-center text-sm">
-                                                <p className="text-gray-600">{addOns.find(a => a.key === key)?.label}</p>
-                                                <p className="text-gray-500 font-medium">+ ₹{addOns.find(a => a.key === key)?.price.toLocaleString('en-IN')}</p>
-                                            </div>
-                                        ))}
+                                        {Object.entries(selectedAddOns).filter(([_, value]) => value).map(([key]) => {
+                                            const addOn = addOns.find(a => a.key === key);
+                                            return addOn ? (
+                                                <div key={key} className="flex justify-between items-center text-sm">
+                                                    <p className="text-gray-600">{addOn.label}</p>
+                                                    <p className="text-gray-500 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</p>
+                                                </div>
+                                            ) : null;
+                                        })}
                                     </div>
                                     <div className="flex justify-between items-center mb-6">
                                         <p className="text-lg font-bold">Estimated Total</p>
@@ -469,9 +465,12 @@ const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
                      <p className="text-gray-600 mb-6">{bookingPackage.service.description}</p>
                      <div className="space-y-4 border-t border-b border-gray-200 py-6">
                          <div className="flex justify-between font-semibold"><p>Base Package</p><p>₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</p></div>
-                         {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => (
-                             <div key={key} className="flex justify-between text-gray-600"><p>{addOns.find(a => a.key === key)?.label}</p><p>+ ₹{addOns.find(a => a.key === key)?.price.toLocaleString('en-IN')}</p></div>
-                         ))}
+                         {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
+                             const addOn = addOns.find(a => a.key === key);
+                             return addOn ? (
+                                 <div key={key} className="flex justify-between text-gray-600"><p>{addOn.label}</p><p>+ ₹{addOn.price_min.toLocaleString('en-IN')}</p></div>
+                             ) : null;
+                         })}
                      </div>
                      <div className="flex justify-between items-center mt-6">
                         <p className="text-xl font-bold">Total Estimate</p>
@@ -509,7 +508,10 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                 serviceName: bookingPackage.service.name,
                 addOns: Object.entries(bookingPackage.addOns)
                     .filter(([_,v]) => v)
-                    .map(([key]) => addOns.find(a => a.key === key)?.label)
+                    .map(([key]) => {
+                        const addOn = addOns.find(a => a.key === key);
+                        return addOn ? addOn.label : null;
+                    }).filter(Boolean)
             }
         };
 
@@ -547,9 +549,12 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                     <h3 className="font-bold text-lg mb-4">Order Summary</h3>
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-between font-semibold"><p>{bookingPackage.service.name}</p><p>₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</p></div>
-                         {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => (
-                            <div key={key} className="flex justify-between text-gray-600"><p>{addOns.find(a => a.key === key)?.label}</p><p>+ ₹{addOns.find(a => a.key === key)?.price.toLocaleString('en-IN')}</p></div>
-                         ))}
+                         {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
+                             const addOn = addOns.find(a => a.key === key);
+                             return addOn ? (
+                                <div key={key} className="flex justify-between text-gray-600"><p>{addOn.label}</p><p>+ ₹{addOn.price_min.toLocaleString('en-IN')}</p></div>
+                             ) : null;
+                         })}
                     </div>
                     <div className="flex justify-between items-baseline mt-4 pt-4 border-t">
                         <p className="font-bold">Total</p>
@@ -584,12 +589,8 @@ export default function App() {
     
     const [services, setServices] = useState([]);
     const [addOns, setAddOns] = useState([]);
-    // Removed supabaseClient state, using the 'supabase' constant directly.
 
     useEffect(() => {
-        // No longer need to create the client here.
-        // It's created once outside the component.
-        
         const getInitialData = async () => {
             const { data: servicesData, error: servicesError } = await supabase.from('services').select('*').order('id');
             if(servicesError) console.error("Error fetching services", servicesError);
@@ -613,7 +614,7 @@ export default function App() {
         });
 
         return () => subscription.unsubscribe();
-    }, [currentView]); // Removed supabaseClient from dependency array
+    }, [currentView]);
     
     const handleBookNow = (service, addOns, price) => {
         if (!service.is_active) return;
@@ -624,7 +625,7 @@ export default function App() {
             const addOnsTotal = Object.entries(addOnsList || {}).reduce((acc, [key, value]) => {
                 if (value) {
                     const addOn = addOns.find(a => a.key === key);
-                    return acc + (addOn ? addOn.price : 0);
+                    return acc + (addOn ? addOn.price_min : 0);
                 }
                 return acc;
             }, 0);
@@ -647,6 +648,10 @@ export default function App() {
     };
 
     const renderContent = () => {
+        if (!bookingPackage && (currentView === 'cart' || currentView === 'details')) {
+             return <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">Please select a package first.</div>
+        }
+        
         switch (currentView) {
             case 'login':
                 return <LoginPage onLogin={() => setCurrentView('cart')} onBack={resetToLanding} />;
@@ -708,3 +713,4 @@ export default function App() {
         </>
     );
 }
+
