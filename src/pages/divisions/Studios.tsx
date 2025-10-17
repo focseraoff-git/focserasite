@@ -434,38 +434,52 @@ const LoginPage = ({ onLogin, onBack }) => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 pt-40">
+        <div className="min-h-screen bg-gradient-to-br from-[#0052CC] to-[#0066FF] flex flex-col items-center justify-center p-4 pt-40">
             <div className="w-full max-w-md animate-fadeInUp">
-                <div className="bg-white rounded-2xl shadow-2xl p-8 relative">
-                    <button onClick={onBack} className="absolute top-4 left-4 text-gray-400 hover:text-gray-700 font-semibold text-sm flex items-center gap-1">
-                        &larr;
-                        <span>Back</span>
+                <div className="bg-white rounded-3xl shadow-2xl p-10 relative border border-gray-100">
+                    <button onClick={onBack} className="absolute top-6 left-6 text-gray-400 hover:text-gray-700 font-medium text-sm flex items-center gap-2 transition-colors">
+                        &larr; Back
                     </button>
-                    <h2 className="text-center text-3xl font-bold text-gray-800 mb-2 mt-8">{isLoginView ? 'Welcome Back' : 'Create Account'}</h2>
-                    <p className="text-center text-gray-500 mb-8">{isLoginView ? 'Sign in to continue your booking' : 'Join us to start your creative journey'}</p>
-                    {error && <p className="bg-red-100 text-red-700 p-3 rounded-lg text-sm mb-4">{error}</p>}
-                    <form onSubmit={handleAuth}>
-                        <div className="space-y-6">
-                            {!isLoginView && (
-                                <div><label className="text-sm font-medium text-gray-700 block mb-2">Full Name</label><input type="text" value={fullName} onChange={e => setFullName(e.target.value)} className="w-full input-field" placeholder="John Doe" required/></div>
-                            )}
-                            <div><label className="text-sm font-medium text-gray-700 block mb-2">Email Address</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full input-field" placeholder="you@example.com" required/></div>
-                            <div><label className="text-sm font-medium text-gray-700 block mb-2">Password</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full input-field" placeholder="••••••••" required/></div>
+                    <div className="text-center mb-8 mt-8">
+                        <div className="w-20 h-20 bg-gradient-to-br from-[#0052CC] to-[#0066FF] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <Camera className="text-white" size={40} />
                         </div>
-                        <button type="submit" className="button-primary w-full mt-8" disabled={loading}>{loading ? 'Processing...' : (isLoginView ? 'Sign In' : 'Sign Up')}</button>
+                        <h2 className="text-3xl font-bold text-gray-900 mb-2">{isLoginView ? 'Welcome Back' : 'Create Account'}</h2>
+                        <p className="text-gray-600">{isLoginView ? 'Sign in to continue your booking' : 'Join Focsera Studios today'}</p>
+                    </div>
+                    {error && <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-sm mb-6">{error}</div>}
+                    <form onSubmit={handleAuth} className="space-y-5">
+                        {!isLoginView && (
+                            <div>
+                                <label className="text-sm font-semibold text-gray-700 block mb-2">Full Name</label>
+                                <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} className="w-full input-field" placeholder="John Doe" required/>
+                            </div>
+                        )}
+                        <div>
+                            <label className="text-sm font-semibold text-gray-700 block mb-2">Email Address</label>
+                            <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full input-field" placeholder="you@example.com" required/>
+                        </div>
+                        <div>
+                            <label className="text-sm font-semibold text-gray-700 block mb-2">Password</label>
+                            <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full input-field" placeholder="Enter at least 6 characters" required/>
+                        </div>
+                        <button type="submit" className="button-primary w-full mt-6" disabled={loading}>
+                            {loading ? 'Processing...' : (isLoginView ? 'Sign In' : 'Create Account')}
+                        </button>
                     </form>
                     <div className="text-center mt-6">
-                        <button onClick={() => setIsLoginView(!isLoginView)} className="text-sm font-medium text-blue-600 hover:underline">
-                            {isLoginView ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
+                        <button onClick={() => setIsLoginView(!isLoginView)} className="text-sm font-semibold text-[#0052CC] hover:text-[#0066FF] transition-colors">
+                            {isLoginView ? "New here? Create an account" : "Already have an account? Sign in"}
                         </button>
                     </div>
-                    <div className="flex items-center my-6">
-                        <div className="flex-grow border-t border-gray-300"></div><span className="mx-4 text-gray-500 text-sm">OR</span><div className="flex-grow border-t border-gray-300"></div>
+                    <div className="flex items-center my-8">
+                        <div className="flex-grow border-t border-gray-200"></div>
+                        <span className="mx-4 text-gray-400 text-sm font-medium">OR</span>
+                        <div className="flex-grow border-t border-gray-200"></div>
                     </div>
-                    <div className="space-y-4">
-                        <button onClick={onLogin} className="w-full text-center py-3 border border-gray-300 rounded-full font-semibold text-gray-700 hover:bg-gray-100 transition-colors">Continue as Guest</button>
-                    </div>
-                    <p className="text-xs text-center text-gray-500 mt-4">Note: Google sign-in will be available once OAuth is configured in Supabase.</p>
+                    <button onClick={onLogin} className="w-full py-3.5 border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all">
+                        Continue as Guest
+                    </button>
                 </div>
             </div>
         </div>
@@ -473,32 +487,60 @@ const LoginPage = ({ onLogin, onBack }) => {
 };
 
 const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-8 pt-40">
-        <div className="max-w-4xl mx-auto animate-fadeInUp">
-            <h1 className="text-4xl font-bold text-gray-800 mb-8">Review Your Order</h1>
-            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden md:flex">
-                <img src={bookingPackage.service.thumbnail} alt={bookingPackage.service.name} className="md:w-1/3 object-cover"/>
-                <div className="p-8 flex-grow">
-                     <h2 className="text-2xl font-bold text-gray-900 mb-2">{bookingPackage.service.name}</h2>
-                     <p className="text-gray-600 mb-6">{bookingPackage.service.description}</p>
-                     <div className="space-y-4 border-t border-b border-gray-200 py-6">
-                         <div className="flex justify-between font-semibold"><p>Base Package</p><p>₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</p></div>
-                         {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
-                             const addOn = addOns.find(a => a.key === key);
-                             return addOn ? (
-                                 <div key={key} className="flex justify-between text-gray-600"><p>{addOn.label}</p><p>+ ₹{addOn.price_min.toLocaleString('en-IN')}</p></div>
-                             ) : null;
-                         })}
-                     </div>
-                     <div className="flex justify-between items-center mt-6">
-                        <p className="text-xl font-bold">Total Estimate</p>
-                        <p className="text-3xl font-bold text-blue-600">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</p>
-                     </div>
-                </div>
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8 pt-40">
+        <div className="max-w-5xl mx-auto animate-fadeInUp">
+            <div className="mb-8">
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">Review Your Order</h1>
+                <p className="text-gray-600">Please review your package details before proceeding to checkout</p>
             </div>
-             <div className="flex justify-between mt-8">
-                <button onClick={onBack} className="font-semibold text-gray-600 hover:text-gray-900">&larr; Back to Login</button>
-                <button onClick={onProceed} className="button-primary">Proceed to Checkout</button>
+
+            <div className="grid lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2">
+                    <div className="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
+                        <div className="aspect-video w-full overflow-hidden bg-gray-200">
+                            <img src={bookingPackage.service.thumbnail} alt={bookingPackage.service.name} className="w-full h-full object-cover"/>
+                        </div>
+                        <div className="p-8">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-3">{bookingPackage.service.name}</h2>
+                            <p className="text-gray-600 leading-relaxed">{bookingPackage.service.description}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="lg:col-span-1">
+                    <div className="bg-white rounded-3xl shadow-lg p-8 border-2 border-[#0052CC] sticky top-8">
+                        <h3 className="text-xl font-bold mb-6">Order Summary</h3>
+                        <div className="space-y-4 mb-6">
+                            <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                <span className="font-semibold text-gray-700">Base Package</span>
+                                <span className="font-bold text-gray-900">₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</span>
+                            </div>
+                            {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
+                                const addOn = addOns.find(a => a.key === key);
+                                return addOn ? (
+                                    <div key={key} className="flex justify-between items-center">
+                                        <span className="text-gray-600">{addOn.label}</span>
+                                        <span className="text-gray-700 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</span>
+                                    </div>
+                                ) : null;
+                            })}
+                        </div>
+                        <div className="pt-6 border-t-2 border-gray-200 mb-6">
+                            <div className="flex justify-between items-center">
+                                <span className="text-lg font-bold">Total</span>
+                                <span className="text-3xl font-bold text-[#0052CC]">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</span>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-2">*Final price will be confirmed after consultation</p>
+                        </div>
+                        <button onClick={onProceed} className="button-primary w-full mb-3">
+                            Proceed to Checkout
+                            <ArrowRight className="button-primary-icon" />
+                        </button>
+                        <button onClick={onBack} className="w-full py-3 text-center font-semibold text-gray-600 hover:text-gray-900 transition-colors">
+                            &larr; Back
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -542,41 +584,85 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
     };
 
     return (
-     <div className="min-h-screen bg-gray-100 p-4 sm:p-8 pt-40">
-        <div className="max-w-4xl mx-auto animate-fadeInUp grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <div className="lg:col-span-2">
-                 <h1 className="text-4xl font-bold text-gray-800 mb-8">Checkout Details</h1>
-                 <form onSubmit={handleConfirmBooking} className="bg-white p-8 rounded-2xl shadow-2xl space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div><label className="text-sm font-medium text-gray-700 block mb-2">Full Name</label><input name="name" type="text" className="w-full input-field" placeholder="John Doe" defaultValue={session?.user?.user_metadata?.full_name || ''} required /></div>
-                        <div><label className="text-sm font-medium text-gray-700 block mb-2">Email Address</label><input name="email" type="email" className="w-full input-field" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required /></div>
-                        <div><label className="text-sm font-medium text-gray-700 block mb-2">Phone Number</label><input name="phone" type="tel" className="w-full input-field" placeholder="+91 12345 67890" required /></div>
-                        <div><label className="text-sm font-medium text-gray-700 block mb-2">Event Date</label><input name="event_date" type="date" className="w-full input-field" required/></div>
-                    </div>
-                    <div><label className="text-sm font-medium text-gray-700 block mb-2">Event Venue / Address</label><textarea name="event_venue" rows="3" className="w-full input-field" placeholder="e.g., Grand Hyatt, Hyderabad" required></textarea></div>
-                    <div className="pt-4 flex flex-col-reverse sm:flex-row items-center gap-4">
-                        <button type="button" onClick={onBack} className="w-full sm:w-auto font-semibold text-gray-600 hover:text-gray-900 py-3 px-6 rounded-full">
-                            &larr; Back to Review
-                        </button>
-                        <button type="submit" className="button-primary w-full sm:flex-1">Confirm & Book Now</button>
-                    </div>
-                 </form>
+     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 pt-40">
+        <div className="max-w-6xl mx-auto animate-fadeInUp">
+            <div className="mb-8">
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">Complete Your Booking</h1>
+                <p className="text-gray-600">Enter your event details to finalize your booking</p>
             </div>
-            <div className="lg:sticky top-28">
-                <div className="bg-white rounded-2xl shadow-xl p-6">
-                    <h3 className="font-bold text-lg mb-4">Order Summary</h3>
-                    <div className="space-y-2 text-sm">
-                        <div className="flex justify-between font-semibold"><p>{bookingPackage.service.name}</p><p>₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</p></div>
-                         {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
-                             const addOn = addOns.find(a => a.key === key);
-                             return addOn ? (
-                                <div key={key} className="flex justify-between text-gray-600"><p>{addOn.label}</p><p>+ ₹{addOn.price_min.toLocaleString('en-IN')}</p></div>
-                             ) : null;
-                         })}
-                    </div>
-                    <div className="flex justify-between items-baseline mt-4 pt-4 border-t">
-                        <p className="font-bold">Total</p>
-                        <p className="font-bold text-xl text-blue-600">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</p>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div className="lg:col-span-2">
+                    <form onSubmit={handleConfirmBooking} className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 space-y-6">
+                        <div>
+                            <h3 className="text-xl font-bold mb-6">Contact Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Full Name</label>
+                                    <input name="name" type="text" className="w-full input-field" placeholder="John Doe" defaultValue={session?.user?.user_metadata?.full_name || ''} required />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Email Address</label>
+                                    <input name="email" type="email" className="w-full input-field" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Phone Number</label>
+                                    <input name="phone" type="tel" className="w-full input-field" placeholder="+91 98765 43210" required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-gray-200">
+                            <h3 className="text-xl font-bold mb-6">Event Details</h3>
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Event Date</label>
+                                    <input name="event_date" type="date" className="w-full input-field" required/>
+                                </div>
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Event Venue / Location</label>
+                                    <textarea name="event_venue" rows="3" className="w-full input-field" placeholder="Enter the full address of your event venue" required></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 flex flex-col-reverse sm:flex-row items-center gap-4">
+                            <button type="button" onClick={onBack} className="w-full sm:w-auto font-semibold text-gray-600 hover:text-gray-900 py-3 px-8 rounded-xl transition-colors">
+                                &larr; Back
+                            </button>
+                            <button type="submit" className="button-primary w-full sm:flex-1">
+                                Confirm Booking
+                                <ArrowRight className="button-primary-icon" />
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div className="lg:col-span-1">
+                    <div className="bg-white rounded-3xl shadow-lg p-8 border-2 border-[#0052CC] sticky top-8">
+                        <h3 className="text-xl font-bold mb-6">Order Summary</h3>
+                        <div className="space-y-4 mb-6">
+                            <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                <span className="font-semibold text-gray-700">{bookingPackage.service.name}</span>
+                                <span className="font-bold text-gray-900">₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</span>
+                            </div>
+                            {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
+                                const addOn = addOns.find(a => a.key === key);
+                                return addOn ? (
+                                    <div key={key} className="flex justify-between items-center">
+                                        <span className="text-gray-600">{addOn.label}</span>
+                                        <span className="text-gray-700 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</span>
+                                    </div>
+                                ) : null;
+                            })}
+                        </div>
+                        <div className="pt-6 border-t-2 border-gray-200">
+                            <div className="flex justify-between items-center">
+                                <span className="text-lg font-bold">Total</span>
+                                <span className="text-3xl font-bold text-[#0052CC]">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</span>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-2">*Final price confirmed after consultation</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -586,14 +672,14 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
 };
 
 const SuccessModal = ({ onClose }) => (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fadeIn">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-sm mx-auto">
-            <div className="w-20 h-20 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6">
-                <Check className="w-12 h-12"/>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+        <div className="bg-white rounded-3xl shadow-2xl p-10 text-center max-w-md mx-auto border border-gray-100">
+            <div className="w-24 h-24 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Check className="w-14 h-14" strokeWidth={3}/>
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Booking Confirmed!</h2>
-            <p className="text-gray-600 mb-8">Thank you for choosing Focsera Studios. We've received your booking details and will contact you shortly to finalize the arrangements.</p>
-            <button onClick={onClose} className="button-primary w-full">Back to Homepage</button>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Booking Confirmed!</h2>
+            <p className="text-gray-600 mb-8 leading-relaxed">Thank you for choosing Focsera Studios. We've received your booking request and will contact you within 24 hours to confirm the final details and pricing.</p>
+            <button onClick={onClose} className="button-primary w-full">Return to Studios</button>
         </div>
     </div>
 );
