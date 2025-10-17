@@ -146,6 +146,7 @@ const PackageCard = ({ service, onBook, index, customizerScrollRef }) => {
 const LandingPage = ({ onBookNow, services, addOns }) => {
     const [selectedService, setSelectedService] = useState(null);
     const [selectedAddOns, setSelectedAddOns] = useState({});
+    const [addonQuantities, setAddonQuantities] = useState({});
     const [totalPrice, setTotalPrice] = useState(0);
     const [displayPrice, setDisplayPrice] = useState(0);
 
@@ -171,11 +172,14 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
         Object.keys(selectedAddOns).forEach(key => {
             if (selectedAddOns[key]) {
                 const addOn = addOns.find(a => a.key === key);
-                if (addOn) newTotal += addOn.price_min;
+                if (addOn) {
+                    const quantity = addonQuantities[key] || 1;
+                    newTotal += addOn.price_min * quantity;
+                }
             }
         });
         setTotalPrice(newTotal);
-    }, [selectedService, selectedAddOns, addOns]);
+    }, [selectedService, selectedAddOns, addonQuantities, addOns]);
 
     useEffect(() => {
         const animation = requestAnimationFrame(() => {
@@ -186,7 +190,20 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
         return () => cancelAnimationFrame(animation);
     }, [totalPrice, displayPrice]);
 
-    const handleAddOnToggle = (key) => setSelectedAddOns(prev => ({ ...prev, [key]: !prev[key] }));
+    const handleAddOnToggle = (key) => {
+        setSelectedAddOns(prev => ({ ...prev, [key]: !prev[key] }));
+        if (!addonQuantities[key]) {
+            setAddonQuantities(prev => ({ ...prev, [key]: 1 }));
+        }
+    };
+
+    const handleQuantityChange = (key, delta) => {
+        setAddonQuantities(prev => {
+            const current = prev[key] || 1;
+            const newValue = Math.max(1, current + delta);
+            return { ...prev, [key]: newValue };
+        });
+    };
 
     const handleQuoteSubmit = async (e) => {
         e.preventDefault();
@@ -310,13 +327,55 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                 </div>
                                 <div ref={addOnsScrollRef}>
                                     <h3 className="text-xl font-bold mb-4">2. Choose Add-ons</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                        {addOns.map((addOn) => (
-                                            <button key={addOn.key} onClick={() => handleAddOnToggle(addOn.key)} className={`p-4 border rounded-xl text-left transition-all duration-300 transform hover:-translate-y-1 ${selectedAddOns[addOn.key] ? 'bg-[#0052CC] text-white shadow-lg ring-4 ring-blue-300' : 'bg-gray-100 hover:bg-gray-200'}`}>
-                                                <span className="font-semibold block text-sm">{addOn.label}</span>
-                                                <span className={`text-xs ${selectedAddOns[addOn.key] ? 'text-white/80' : 'text-gray-500'}`}>+ ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}</span>
-                                            </button>
-                                        ))}
+                                    <div className="space-y-4">
+                                        {addOns.map((addOn) => {
+                                            const isQuantityBased = ['extra_photographer', 'extra_videographer', 'extended_coverage'].includes(addOn.key);
+                                            const isSelected = selectedAddOns[addOn.key];
+                                            const quantity = addonQuantities[addOn.key] || 1;
+
+                                            return (
+                                                <div key={addOn.key} className={`p-4 border-2 rounded-xl transition-all duration-300 ${isSelected ? 'bg-blue-50 border-[#0052CC] shadow-md' : 'bg-gray-50 border-gray-200'}`}>
+                                                    <div className="flex items-start justify-between gap-4">
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center gap-3 mb-2">
+                                                                <button
+                                                                    onClick={() => handleAddOnToggle(addOn.key)}
+                                                                    className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[#0052CC] border-[#0052CC]' : 'border-gray-300 hover:border-gray-400'}`}
+                                                                >
+                                                                    {isSelected && <Check className="text-white" size={16} />}
+                                                                </button>
+                                                                <span className="font-semibold text-gray-900">{addOn.label}</span>
+                                                            </div>
+                                                            {addOn.description && (
+                                                                <p className="text-xs text-gray-600 ml-9">{addOn.description}</p>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex flex-col items-end gap-2">
+                                                            <span className="text-sm font-bold text-gray-900">
+                                                                ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}
+                                                            </span>
+                                                            {isSelected && isQuantityBased && (
+                                                                <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-300 px-2 py-1">
+                                                                    <button
+                                                                        onClick={() => handleQuantityChange(addOn.key, -1)}
+                                                                        className="w-6 h-6 flex items-center justify-center text-gray-600 hover:text-[#0052CC] hover:bg-blue-50 rounded transition-all"
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                                                    </button>
+                                                                    <span className="text-sm font-semibold w-8 text-center">{quantity}</span>
+                                                                    <button
+                                                                        onClick={() => handleQuantityChange(addOn.key, 1)}
+                                                                        className="w-6 h-6 flex items-center justify-center text-gray-600 hover:text-[#0052CC] hover:bg-blue-50 rounded transition-all"
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
@@ -330,10 +389,11 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                         </div>
                                         {Object.entries(selectedAddOns).filter(([_, value]) => value).map(([key]) => {
                                             const addOn = addOns.find(a => a.key === key);
+                                            const quantity = addonQuantities[key] || 1;
                                             return addOn ? (
                                                 <div key={key} className="flex justify-between items-center text-sm">
-                                                    <p className="text-gray-600">{addOn.label}</p>
-                                                    <p className="text-gray-500 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</p>
+                                                    <p className="text-gray-600">{addOn.label}{quantity > 1 ? ` (x${quantity})` : ''}</p>
+                                                    <p className="text-gray-500 font-medium">+ ₹{(addOn.price_min * quantity).toLocaleString('en-IN')}</p>
                                                 </div>
                                             ) : null;
                                         })}
@@ -364,7 +424,14 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                 <div><label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field" placeholder="John Doe" required /></div>
                                 <div><label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field" placeholder="you@example.com" required /></div>
                                 <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field" placeholder="+91 12345 67890" /></div>
-                                <div><label htmlFor="event_date" className="block text-sm font-medium text-gray-700 mb-2">Event Date</label><input type="date" id="event_date" name="event_date" className="w-full input-field" /></div>
+                                <div>
+                                    <label htmlFor="event_date" className="block text-sm font-medium text-gray-700 mb-2">Event Start Date</label>
+                                    <input type="date" id="event_date" name="event_date" className="w-full input-field" />
+                                </div>
+                            </div>
+                            <div>
+                                <label htmlFor="event_end_date" className="block text-sm font-medium text-gray-700 mb-2">Event End Date (Optional - for multi-day events)</label>
+                                <input type="date" id="event_end_date" name="event_end_date" className="w-full input-field" />
                             </div>
                             <div><label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field" placeholder="Please include as many details as possible: location, number of guests, duration, specific shots you need, etc." required></textarea></div>
                             <button type="submit" className="button-primary w-full">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
@@ -596,6 +663,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                 name: clientDetails.name,
                 email: clientDetails.email,
                 phone: clientDetails.phone,
+                event_end_date: clientDetails.event_end_date || null,
             },
             package_details: {
                 serviceName: bookingPackage.service.name,
@@ -649,8 +717,17 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                             <h3 className="text-xl font-bold mb-6">Event Details</h3>
                             <div className="space-y-6">
                                 <div>
-                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Event Date</label>
-                                    <input name="event_date" type="date" className="w-full input-field" required/>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Event Date(s)</label>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-xs text-gray-600 block mb-1">Start Date</label>
+                                            <input name="event_date" type="date" className="w-full input-field" required/>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs text-gray-600 block mb-1">End Date (Optional - for multi-day events)</label>
+                                            <input name="event_end_date" type="date" className="w-full input-field"/>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="text-sm font-semibold text-gray-700 block mb-2">Event Venue / Location</label>
