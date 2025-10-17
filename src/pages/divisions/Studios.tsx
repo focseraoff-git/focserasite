@@ -239,27 +239,20 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
 
             <section className="py-16 bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="text-center p-6">
-                            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <Camera className="text-[#0052CC]" size={32} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                        <div className="text-center p-8">
+                            <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <Camera className="text-[#0052CC]" size={40} />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Photography Services</h3>
-                            <p className="text-gray-600">Professional photography for weddings, portraits, fashion, and commercial projects</p>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-3">Photography Services</h3>
+                            <p className="text-gray-600 text-lg">Professional photography for weddings, portraits, fashion, and commercial projects</p>
                         </div>
-                        <div className="text-center p-6">
-                            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#0052CC]"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                        <div className="text-center p-8">
+                            <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#0052CC]"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Videography Services</h3>
-                            <p className="text-gray-600">Cinematic video production for events, commercials, and promotional content</p>
-                        </div>
-                        <div className="text-center p-6">
-                            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#0052CC]"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Content Creation</h3>
-                            <p className="text-gray-600">Social media content, reels, and creative visuals for digital marketing</p>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-3">Videography Services</h3>
+                            <p className="text-gray-600 text-lg">Cinematic video production for events, commercials, and promotional content</p>
                         </div>
                     </div>
                     <div className="mt-12 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-8 text-center">
