@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // --- SUPABASE SETUP ---
 // IMPORTANT: Replace with your own Supabase project URL and Anon Key
-const supabaseUrl = 'https://cqasskjgsmxsfcwgkwab.supabase.co';
+const supabaseUrl = 'https://gyjedezyhdlpwzeyixwg.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxYXNza2pnc214c2Zjd2drd2FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyOTExMzcsImV4cCI6MjA3NTg2NzEzN30.ebJcxEYrtNAH2M9ddOatCrOXDzaoIOJV6s1FdNsMyv8';
 // Initialize the client once, outside the component
 const supabase = createClient(supabaseUrl, supabaseKey);
