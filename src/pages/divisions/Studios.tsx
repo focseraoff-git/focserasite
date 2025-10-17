@@ -59,7 +59,7 @@ const useIntersectionObserver = (options) => {
     return [setRef, isVisible];
 };
 
-const PackageCard = ({ service, onBook, index }) => {
+const PackageCard = ({ service, onBook, index, customizerScrollRef }) => {
     const cardRef = useRef(null);
     const [isTermsVisible, setIsTermsVisible] = useState(false);
 
@@ -127,7 +127,10 @@ const PackageCard = ({ service, onBook, index }) => {
                     </div>
                 </div>
 
-                <button onClick={onBook} disabled={!service.is_active} className="relative mt-4 w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed group/btn">
+                <button onClick={() => {
+                    customizerScrollRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setTimeout(() => onBook(), 500);
+                }} disabled={!service.is_active} className="relative mt-4 w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed group/btn">
                     <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 bg-[length:200%_100%] group-hover/btn:bg-right transition-all duration-500"></div>
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000"></div>
                     <span className="relative flex items-center justify-center gap-2">
@@ -239,7 +242,7 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                        {services.map((service, index) => (
-                           <PackageCard key={service.id} service={service} onBook={() => onBookNow(service, service.default_add_ons)} index={index}/>
+                           <PackageCard key={service.id} service={service} onBook={() => onBookNow(service, service.default_add_ons)} index={index} customizerScrollRef={customizerScrollRef} />
                        ))}
                     </div>
                 </div>
