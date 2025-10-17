@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-// Supabase is loaded via a script tag in the environment, so we access it from the window object.
-// We remove the direct import statement to avoid bundling errors.
+// Import createClient directly from the Supabase library
+import { createClient } from '@supabase/supabase-js';
 
 // --- SUPABASE SETUP ---
 // IMPORTANT: Replace with your own Supabase project URL and Anon Key
 const supabaseUrl = 'https://cqasskjgsmxsfcwgkwab.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxYXNza2pnc214c2Zjd2drd2FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyOTExMzcsImV4cCI6MjA3NTg2NzEzN30.ebJcxEYrtNAH2M9ddOatCrOXDzaoIOJV6s1FdNsMyv8';
-// The client will be initialized inside the App component after mount.
+// Initialize the client once, outside the component
+const supabase = createClient(supabaseUrl, supabaseKey);
+
 
 // --- ICONS (using inline SVGs for self-containment) ---
 const Camera = (props) => (
@@ -110,13 +112,13 @@ const PackageCard = ({ service, onBook, index }) => {
                     <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isTermsVisible ? 'max-h-96' : 'max-h-0'}`}>
                         <div className="text-xs text-gray-500 space-y-3 pt-2">
                              <div>
-                                <h4 className="font-bold text-gray-700">Client Support</h4>
-                                <p>{service.terms.clientSupport}</p>
-                            </div>
+                                 <h4 className="font-bold text-gray-700">Client Support</h4>
+                                 <p>{service.terms.clientSupport}</p>
+                             </div>
                             <div>
-                                <h4 className="font-bold text-gray-700">Studio Support</h4>
-                                <p>{service.terms.studioSupport}</p>
-                            </div>
+                                 <h4 className="font-bold text-gray-700">Studio Support</h4>
+                                 <p>{service.terms.studioSupport}</p>
+                             </div>
                         </div>
                     </div>
                 </div>
@@ -132,7 +134,7 @@ const PackageCard = ({ service, onBook, index }) => {
 
 // --- Main Pages/Views ---
 
-const LandingPage = ({ supabase, onBookNow, services, addOns }) => {
+const LandingPage = ({ onBookNow, services, addOns }) => {
     const [selectedService, setSelectedService] = useState(null);
     const [selectedAddOns, setSelectedAddOns] = useState({});
     const [totalPrice, setTotalPrice] = useState(0);
@@ -378,7 +380,7 @@ const CheckoutHeader = ({ currentStep }) => {
     );
 };
 
-const LoginPage = ({ supabase, onLogin, onBack }) => {
+const LoginPage = ({ onLogin, onBack }) => {
     const [isLoginView, setIsLoginView] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -466,10 +468,10 @@ const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
                      <h2 className="text-2xl font-bold text-gray-900 mb-2">{bookingPackage.service.name}</h2>
                      <p className="text-gray-600 mb-6">{bookingPackage.service.description}</p>
                      <div className="space-y-4 border-t border-b border-gray-200 py-6">
-                        <div className="flex justify-between font-semibold"><p>Base Package</p><p>₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</p></div>
-                        {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => (
-                            <div key={key} className="flex justify-between text-gray-600"><p>{addOns.find(a => a.key === key)?.label}</p><p>+ ₹{addOns.find(a => a.key === key)?.price.toLocaleString('en-IN')}</p></div>
-                        ))}
+                         <div className="flex justify-between font-semibold"><p>Base Package</p><p>₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</p></div>
+                         {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => (
+                             <div key={key} className="flex justify-between text-gray-600"><p>{addOns.find(a => a.key === key)?.label}</p><p>+ ₹{addOns.find(a => a.key === key)?.price.toLocaleString('en-IN')}</p></div>
+                         ))}
                      </div>
                      <div className="flex justify-between items-center mt-6">
                         <p className="text-xl font-bold">Total Estimate</p>
@@ -485,7 +487,7 @@ const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
     </div>
 );
 
-const DetailsPage = ({ supabase, bookingPackage, onConfirm, onBack, session, addOns }) => {
+const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => {
     
     const handleConfirmBooking = async (e) => {
         e.preventDefault();
@@ -547,7 +549,7 @@ const DetailsPage = ({ supabase, bookingPackage, onConfirm, onBack, session, add
                         <div className="flex justify-between font-semibold"><p>{bookingPackage.service.name}</p><p>₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</p></div>
                          {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => (
                             <div key={key} className="flex justify-between text-gray-600"><p>{addOns.find(a => a.key === key)?.label}</p><p>+ ₹{addOns.find(a => a.key === key)?.price.toLocaleString('en-IN')}</p></div>
-                        ))}
+                         ))}
                     </div>
                     <div className="flex justify-between items-baseline mt-4 pt-4 border-t">
                         <p className="font-bold">Total</p>
@@ -582,32 +584,28 @@ export default function App() {
     
     const [services, setServices] = useState([]);
     const [addOns, setAddOns] = useState([]);
-    const [supabaseClient, setSupabaseClient] = useState(null);
+    // Removed supabaseClient state, using the 'supabase' constant directly.
 
     useEffect(() => {
-        const client = createClient(supabaseUrl, supabaseKey);
-        setSupabaseClient(client);
-    }, []);
-
-    useEffect(() => {
-        if (!supabaseClient) return;
-
+        // No longer need to create the client here.
+        // It's created once outside the component.
+        
         const getInitialData = async () => {
-            const { data: servicesData, error: servicesError } = await supabaseClient.from('services').select('*').order('id');
+            const { data: servicesData, error: servicesError } = await supabase.from('services').select('*').order('id');
             if(servicesError) console.error("Error fetching services", servicesError);
             else setServices(servicesData);
 
-            const { data: addOnsData, error: addOnsError } = await supabaseClient.from('add_ons').select('*');
+            const { data: addOnsData, error: addOnsError } = await supabase.from('add_ons').select('*');
             if(addOnsError) console.error("Error fetching add-ons", addOnsError);
             else setAddOns(addOnsData);
         };
         getInitialData();
 
-        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
         });
 
-        const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
             if(_event === 'SIGNED_IN' && currentView === 'login') {
                 setCurrentView('cart');
@@ -615,18 +613,23 @@ export default function App() {
         });
 
         return () => subscription.unsubscribe();
-    }, [currentView, supabaseClient]);
+    }, [currentView]); // Removed supabaseClient from dependency array
     
     const handleBookNow = (service, addOns, price) => {
         if (!service.is_active) return;
         const addOnsList = addOns || service.default_add_ons;
-        const finalPrice = price || (service.price_min + Object.entries(addOnsList).reduce((acc, [key, value]) => {
-            if (value) {
-                const addOnPrice = addOns.find(a => a.key === key)?.price || 0;
-                return acc + addOnPrice;
-            }
-            return acc;
-        }, 0));
+        let finalPrice = price;
+
+        if (!finalPrice) {
+            const addOnsTotal = Object.entries(addOnsList || {}).reduce((acc, [key, value]) => {
+                if (value) {
+                    const addOn = addOns.find(a => a.key === key);
+                    return acc + (addOn ? addOn.price : 0);
+                }
+                return acc;
+            }, 0);
+            finalPrice = service.price_min + addOnsTotal;
+        }
 
         setBookingPackage({
             service: service,
@@ -644,20 +647,16 @@ export default function App() {
     };
 
     const renderContent = () => {
-        if (!supabaseClient) {
-             return <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">Initializing Studio...</div>
-        }
         switch (currentView) {
             case 'login':
-                return <LoginPage supabase={supabaseClient} onLogin={() => setCurrentView('cart')} onBack={resetToLanding} />;
+                return <LoginPage onLogin={() => setCurrentView('cart')} onBack={resetToLanding} />;
             case 'cart':
                 return <CartPage bookingPackage={bookingPackage} addOns={addOns} onProceed={() => setCurrentView('details')} onBack={() => setCurrentView('login')} />;
             case 'details':
-                return <DetailsPage supabase={supabaseClient} bookingPackage={bookingPackage} addOns={addOns} session={session} onConfirm={() => setShowSuccess(true)} onBack={() => setCurrentView('cart')} />;
+                return <DetailsPage bookingPackage={bookingPackage} addOns={addOns} session={session} onConfirm={() => setShowSuccess(true)} onBack={() => setCurrentView('cart')} />;
             case 'landing':
             default:
                 return <LandingPage 
-                    supabase={supabaseClient}
                     onBookNow={handleBookNow} 
                     services={services}
                     addOns={addOns}
@@ -709,4 +708,3 @@ export default function App() {
         </>
     );
 }
-
