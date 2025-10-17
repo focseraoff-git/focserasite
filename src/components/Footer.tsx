@@ -1,70 +1,124 @@
+import { FC } from 'react';
 import { Link } from 'react-router-dom';
+import { Linkedin, Instagram, Twitter, Facebook } from 'lucide-react';
 
-export default function Footer() {
+// Data for the footer links, making them easy to manage
+const divisions = [
+  { name: 'Studios', path: '/studios' },
+  { name: 'Media', path: '/media' },
+  { name: 'Events', path: '/events' },
+  { name: 'Web', path: '/web' },
+  { name: 'Product Services', path: '/product-services' },
+  { name: 'Skill', path: '/skill' },
+];
+
+const companyLinks = [
+  { name: 'About', path: '/about' },
+  { name: 'Mission', path: '/mission' },
+  { name: 'Careers', path: '/contact' },
+  { name: 'Contact', path: '/contact' },
+];
+
+const socialLinks = [
+  { name: 'LinkedIn', href: '#', icon: Linkedin },
+  { name: 'Instagram', href: '#', icon: Instagram },
+  { name: 'Twitter', href: '#', icon: Twitter },
+  { name: 'Facebook', href: '#', icon: Facebook },
+];
+
+// A reusable component for footer links to reduce repetition
+interface FooterLinkProps {
+  to: string;
+  children: React.ReactNode;
+}
+const FooterLink: FC<FooterLinkProps> = ({ to, children }) => (
+  <li>
+    <Link 
+      to={to} 
+      className="text-gray-400 hover:text-[#0052CC] transition-all duration-300 font-light hover:-translate-y-px block"
+    >
+      {children}
+    </Link>
+  </li>
+);
+
+// Main Footer Component
+const Footer: FC = () => {
   return (
-    <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-16 overflow-hidden">
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 left-0 w-full h-full" style={{
-          backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
-        }}></div>
+    <footer className="relative bg-gray-900 text-white py-20 overflow-hidden">
+      {/* Aurora background effect */}
+      <div className="absolute inset-0 z-0 opacity-20">
+        <div className="absolute top-1/4 left-0 w-96 h-96 bg-gradient-to-r from-[#0052CC] to-transparent rounded-full filter blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-gradient-to-l from-[#0066FF] to-transparent rounded-full filter blur-3xl animate-pulse delay-700"></div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div>
-            <h3 className="text-3xl font-bold text-gradient bg-gradient-to-r from-[#0052CC] to-[#0066FF] mb-4">FOCSERA</h3>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-12">
+          {/* Focsera Info */}
+          <div className="sm:col-span-2 md:col-span-1">
+            <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#0052CC] to-[#0066FF] mb-4">
+              FOCSERA
+            </h3>
             <p className="text-gray-400 text-sm font-light leading-relaxed">
-              Focus. Create. Celebrate.<br />
+              Focus. Create. Celebrate.
+              <br />
               Your global creative partner.
             </p>
           </div>
 
+          {/* Divisions Links */}
           <div>
             <h4 className="font-semibold text-lg mb-4 text-white">Divisions</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/studios" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Studios</Link></li>
-              <li><Link to="/media" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Media</Link></li>
-              <li><Link to="/events" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Events</Link></li>
-              <li><Link to="/web" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Web</Link></li>
-              <li><Link to="/product-services" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Product Services</Link></li>
-              <li><Link to="/skill" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Skill</Link></li>
+              {divisions.map((link) => (
+                <FooterLink key={link.name} to={link.path}>{link.name}</FooterLink>
+              ))}
             </ul>
           </div>
 
+          {/* Company Links */}
           <div>
             <h4 className="font-semibold text-lg mb-4 text-white">Company</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/about" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">About</Link></li>
-              <li><Link to="/mission" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Mission</Link></li>
-              <li><Link to="/contact" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Careers</Link></li>
-              <li><Link to="/contact" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Contact</Link></li>
+              {companyLinks.map((link) => (
+                <FooterLink key={link.name} to={link.path}>{link.name}</FooterLink>
+              ))}
             </ul>
           </div>
 
+          {/* Social Links */}
           <div>
             <h4 className="font-semibold text-lg mb-4 text-white">Connect</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="#" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">LinkedIn</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Instagram</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Twitter</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Facebook</a></li>
+              {socialLinks.map((social) => (
+                <li key={social.name}>
+                  <a 
+                    href={social.href} 
+                    className="flex items-center gap-2 text-gray-400 hover:text-[#0052CC] transition-all duration-300 font-light hover:-translate-y-px"
+                  >
+                    <social.icon size={16} />
+                    {social.name}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-700/50 pt-8">
+        <div className="border-t border-gray-700/50 pt-8 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-400 font-light">
-              &copy; 2025 Focsera. All rights reserved.
+              &copy; {new Date().getFullYear()} Focsera. All rights reserved.
             </p>
-            <div className="flex gap-6 text-sm text-gray-400">
-              <a href="#" className="hover:text-[#0052CC] transition-colors font-light">Privacy Policy</a>
-              <a href="#" className="hover:text-[#0052CC] transition-colors font-light">Terms of Service</a>
+            <div className="flex gap-6 text-sm">
+              <Link to="/privacy" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Privacy Policy</Link>
+              <Link to="/terms" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Terms of Service</Link>
             </div>
           </div>
         </div>
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;
