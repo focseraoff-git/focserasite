@@ -256,17 +256,20 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-bold mb-4">2. Choose Add-ons</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    <div className="flex flex-col space-y-3">
                                         {addOns.map((addOn) => (
-                                            <div key={addOn.key} onClick={() => handleAddOnToggle(addOn.key)} className={`p-4 border rounded-xl cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1 ${selectedAddOns[addOn.key] ? 'bg-blue-50 border-blue-400 ring-2 ring-blue-200' : 'bg-white hover:bg-gray-50'}`}>
-                                                <div>
-                                                    <span className="font-semibold block text-sm">{addOn.label}</span>
-                                                    <span className="text-xs text-gray-500">+ ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}</span>
+                                            <label key={addOn.key} className={`p-4 border rounded-xl cursor-pointer transition-all duration-300 flex items-center justify-between transform hover:-translate-y-1 ${selectedAddOns[addOn.key] ? 'bg-blue-50 border-blue-400 ring-2 ring-blue-200' : 'bg-white hover:bg-gray-50'}`}>
+                                                <div className="flex items-center">
+                                                    <input 
+                                                        type="checkbox"
+                                                        className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                        checked={!!selectedAddOns[addOn.key]}
+                                                        onChange={() => handleAddOnToggle(addOn.key)}
+                                                    />
+                                                    <span className="font-semibold text-sm ml-3 text-gray-800">{addOn.label}</span>
                                                 </div>
-                                                <div className={`mt-3 w-6 h-6 rounded-md flex items-center justify-center transition-all duration-300 transform ${selectedAddOns[addOn.key] ? 'bg-[#0052CC] scale-110' : 'bg-gray-300'}`}>
-                                                    {selectedAddOns[addOn.key] && <Check className="w-4 h-4 text-white"/>}
-                                                </div>
-                                            </div>
+                                                <span className="text-sm text-gray-600 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}</span>
+                                            </label>
                                         ))}
                                     </div>
                                 </div>
@@ -409,7 +412,12 @@ const LoginPage = ({ onLogin, onBack }) => {
     };
 
     const handleGoogleLogin = async () => {
-        await supabase.auth.signInWithOAuth({ provider: 'google' });
+        await supabase.auth.signInWithOAuth({ 
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin 
+            }
+        });
     };
 
     return (
@@ -713,4 +721,3 @@ export default function App() {
         </>
     );
 }
-
