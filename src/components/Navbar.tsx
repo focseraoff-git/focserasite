@@ -83,24 +83,27 @@ const Navbar: FC = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Restores original color logic for links
+  // --- CHANGE HERE: Swapped active link color logic ---
   const linkClasses = (path: string) => {
     const isActive = location.pathname === path;
     const baseClasses = 'relative font-medium text-sm transition-colors duration-300 px-4 py-2 rounded-full';
     
     if (isTransparent) {
-      return `${baseClasses} ${isActive ? 'text-white' : 'text-white hover:text-[#ECECEC]'}`;
+      // If transparent, active link is BLUE, others are white.
+      return `${baseClasses} ${isActive ? 'text-[#0052CC]' : 'text-white hover:text-[#ECECEC]'}`;
     } else {
-      return `${baseClasses} ${isActive ? 'text-[#0052CC]' : 'text-gray-700 hover:text-[#0052CC]'}`;
+      // If glossy, active link is WHITE, others are gray.
+      return `${baseClasses} ${isActive ? 'text-white' : 'text-gray-700 hover:text-[#0052CC]'}`;
     }
   };
-
+  
+  // --- CHANGE HERE: Swapped active indicator background logic for better contrast ---
   const activeLinkIndicator = (path: string) => {
     if (location.pathname === path) {
       return (
         <motion.div
           layoutId="active-pill"
-          className={`absolute inset-0 rounded-full ${isTransparent ? 'bg-white/20' : 'bg-blue-100/80'}`}
+          className={`absolute inset-0 rounded-full ${isTransparent ? 'bg-white/20' : 'bg-[#0052CC]'}`}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         />
       );
@@ -139,7 +142,6 @@ const Navbar: FC = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    // --- CHANGE HERE: Increased transparency for the dropdown ---
                     className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 rounded-2xl shadow-xl p-2 bg-white/30 backdrop-blur-lg border border-white/10"
                   >
                     {divisions.map((division) => (
