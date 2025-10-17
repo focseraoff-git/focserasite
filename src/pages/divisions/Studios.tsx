@@ -443,12 +443,9 @@ const LoginPage = ({ onLogin, onBack }) => {
                         <div className="flex-grow border-t border-gray-300"></div><span className="mx-4 text-gray-500 text-sm">OR</span><div className="flex-grow border-t border-gray-300"></div>
                     </div>
                     <div className="space-y-4">
-                        <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center gap-3 text-center py-3 border border-gray-300 rounded-full font-semibold text-gray-700 hover:bg-gray-100 transition-colors">
-                            <GoogleIcon className="w-6 h-6"/>
-                            Sign in with Google
-                        </button>
                         <button onClick={onLogin} className="w-full text-center py-3 border border-gray-300 rounded-full font-semibold text-gray-700 hover:bg-gray-100 transition-colors">Continue as Guest</button>
                     </div>
+                    <p className="text-xs text-center text-gray-500 mt-4">Note: Google sign-in will be available once OAuth is configured in Supabase.</p>
                 </div>
             </div>
         </div>
