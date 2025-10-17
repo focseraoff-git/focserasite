@@ -735,7 +735,7 @@ export default function App() {
             `}</style>
 
             <div className="bg-gray-50 text-gray-800 font-sans antialiased">
-                {currentView !== 'landing' && <CheckoutHeader currentStep={currentView} />}
+                {['login', 'cart', 'details'].includes(currentView) && <CheckoutHeader currentStep={currentView} />}
                 {renderContent()}
                 {showSuccess && <SuccessModal onClose={resetToLanding} />}
             </div>
