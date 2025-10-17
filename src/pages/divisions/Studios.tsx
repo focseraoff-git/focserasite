@@ -43,7 +43,7 @@ const GoogleIcon = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48" {...props}><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"></path><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"></path><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.222 0-9.618-3.226-11.283-7.614l-6.522 5.025C9.505 39.556 16.227 44 24 44z"></path><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C41.382 36.661 44 31.023 44 24c0-1.341-.138-2.65-.389-3.917z"></path></svg>
 );
 const XIcon = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
 );
 
 
@@ -66,7 +66,7 @@ const useIntersectionObserver = (options) => {
 
 // --- Stylish Loader Component ---
 const Loader = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-slate-900 bg-opacity-80 flex items-center justify-center z-50">
         <div className="loader"></div>
     </div>
 );
@@ -76,8 +76,8 @@ const AlertModal = ({ message, onClose }) => {
     if (!message) return null;
     return (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-fadeIn">
-            <div className="bg-gray-800 border border-yellow-500/30 rounded-2xl shadow-2xl p-8 text-center max-w-sm mx-auto animate-fadeInUp">
-                <p className="text-gray-200 mb-6">{message}</p>
+            <div className="bg-slate-800 border border-cyan-400/30 rounded-2xl shadow-2xl p-8 text-center max-w-sm mx-auto animate-fadeInUp">
+                <p className="text-slate-200 mb-6">{message}</p>
                 <button onClick={onClose} className="button-primary w-full">OK</button>
             </div>
         </div>
@@ -109,47 +109,47 @@ const PackageCard = ({ service, onBook, index }) => {
             ref={cardRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className={`card-3d relative bg-gray-900 border border-yellow-500/20 rounded-3xl overflow-hidden shadow-lg flex flex-col transition-all duration-300 ease-out ${!service.is_active ? 'grayscale opacity-60' : 'hover:shadow-yellow-500/20'}`}
+            className={`card-3d relative bg-slate-900/50 backdrop-blur-sm border border-cyan-400/20 rounded-3xl overflow-hidden shadow-lg flex flex-col transition-all duration-300 ease-out ${!service.is_active ? 'grayscale opacity-60' : 'hover:shadow-cyan-400/10'}`}
             style={{ transitionDelay: `${index * 100}ms` }}
         >
             {!service.is_active && (
-                <div className="absolute top-4 right-4 bg-gray-900/80 backdrop-blur-sm border border-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-full z-10 shadow-lg">
+                <div className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm border border-slate-600 text-white text-xs font-bold px-3 py-1.5 rounded-full z-10 shadow-lg">
                     Currently Unavailable
                 </div>
             )}
             <div className="relative overflow-hidden">
                 <img src={service.thumbnail} alt={service.name} className="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-110"/>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <p className="absolute bottom-4 left-4 text-sm font-bold text-yellow-400 mb-0">{service.category}</p>
+                <p className="absolute bottom-4 left-4 text-sm font-bold text-cyan-300 mb-0">{service.category}</p>
             </div>
             <div className="p-6 flex flex-col flex-grow">
                 <h3 className="text-2xl font-bold text-white mb-3">{service.name}</h3>
-                <p className="text-gray-400 mb-6 leading-relaxed flex-grow">{service.description}</p>
+                <p className="text-slate-400 mb-6 leading-relaxed flex-grow">{service.description}</p>
                 <div className="mb-6">
                     <span className="text-3xl font-bold text-white">₹{service.price_min.toLocaleString('en-IN')}+</span>
-                    <span className="text-gray-500 font-medium">/{service.pricing_mode.split(' ')[1]}</span>
+                    <span className="text-slate-500 font-medium">/{service.pricing_mode.split(' ')[1]}</span>
                 </div>
                 
-                <div className="border-t border-yellow-500/20 mt-auto pt-4 space-y-4">
-                    <button onClick={() => setIsTermsVisible(!isTermsVisible)} className="flex justify-between items-center w-full text-sm font-semibold text-gray-400 hover:text-white transition-colors">
+                <div className="border-t border-cyan-400/20 mt-auto pt-4 space-y-4">
+                    <button onClick={() => setIsTermsVisible(!isTermsVisible)} className="flex justify-between items-center w-full text-sm font-semibold text-slate-400 hover:text-white transition-colors">
                         <span>Terms & Details</span>
                         <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isTermsVisible ? 'rotate-180' : ''}`} />
                     </button>
                     <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isTermsVisible ? 'max-h-96' : 'max-h-0'}`}>
-                        <div className="text-xs text-gray-500 space-y-3 pt-2">
+                        <div className="text-xs text-slate-500 space-y-3 pt-2">
                              <div>
-                                 <h4 className="font-bold text-gray-300">Client Terms</h4>
+                                 <h4 className="font-bold text-slate-300">Client Terms</h4>
                                  <p>{service.terms.clientSupport}</p>
                              </div>
                             <div>
-                                 <h4 className="font-bold text-gray-300">Studio Terms</h4>
+                                 <h4 className="font-bold text-slate-300">Studio Terms</h4>
                                  <p>{service.terms.studioSupport}</p>
                              </div>
                         </div>
                     </div>
                 </div>
 
-                <button onClick={onBook} disabled={!service.is_active} className="button-primary mt-4 disabled:bg-gray-600 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100">
+                <button onClick={onBook} disabled={!service.is_active} className="button-primary mt-4 disabled:bg-slate-600 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100">
                     {service.is_active ? 'Book This Package' : 'Unavailable'}
                     {service.is_active && <ArrowRight className="button-primary-icon" />}
                 </button>
@@ -234,28 +234,28 @@ const LandingPage = ({ onBookNow, services, addOns, setAlertMessage }) => {
     return (
         <>
             <section className="relative min-h-screen py-32 flex items-center justify-center text-center overflow-hidden hero-section">
-                 <div className="absolute inset-0 bg-black/60 z-10"></div>
+                 <div className="absolute inset-0 bg-slate-900/60 z-10"></div>
                  <div className="absolute inset-0 hero-bg"></div>
 
                 <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/5 rounded-full animate-[float_8s_ease-in-out_infinite]"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-white/5 rounded-2xl animate-[float_12s_ease-in-out_infinite_2s]"></div>
                 
                 <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fadeInUp">
-                    <div className="w-28 h-28 bg-black/30 backdrop-blur-lg rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl border-2 border-yellow-500/30 animate-pulse">
-                        <Camera className="text-yellow-400" size={56} />
+                    <div className="w-28 h-28 bg-black/30 backdrop-blur-lg rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl border-2 border-cyan-400/30 animate-pulse">
+                        <Camera className="text-cyan-300" size={56} />
                     </div>
                     <h1 className="text-5xl sm:text-8xl font-bold text-white mb-6 tracking-tighter" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>Focsera Studios</h1>
-                    <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                    <p className="text-xl text-slate-300 max-w-3xl mx-auto">
                         Crafting visual narratives. Explore our signature packages or build your own bespoke experience.
                     </p>
                 </div>
             </section>
             
-            <section ref={packagesRef} className="py-24 bg-black">
+            <section ref={packagesRef} className="py-24 bg-slate-900">
                 <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${packagesAreVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                     <div className="text-center mb-16">
                         <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4 gradient-text">Signature Packages</h2>
-                        <div className="w-24 h-1.5 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-600 mx-auto rounded-full"></div>
+                        <div className="w-24 h-1.5 bg-gradient-to-r from-cyan-500 via-cyan-400 to-blue-500 mx-auto rounded-full"></div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                        {services.map((service, index) => (
@@ -265,21 +265,21 @@ const LandingPage = ({ onBookNow, services, addOns, setAlertMessage }) => {
                 </div>
             </section>
             
-             <section className="py-24 bg-gray-900/50 scroll-mt-20">
+             <section className="py-24 bg-slate-900/70 scroll-mt-20">
                     <div ref={customizerSectionRef} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${customizerIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                         <div className="text-center mb-16">
                             <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4 gradient-text">Build Your Package</h2>
-                            <div className="w-24 h-1.5 bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-600 mx-auto rounded-full"></div>
+                            <div className="w-24 h-1.5 bg-gradient-to-r from-cyan-500 via-cyan-400 to-blue-500 mx-auto rounded-full"></div>
                         </div>
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                            <div className="lg:col-span-2 bg-gray-900 p-8 rounded-3xl border border-yellow-500/20 shadow-2xl space-y-8">
+                            <div className="lg:col-span-2 bg-slate-900/80 p-8 rounded-3xl border border-cyan-400/20 shadow-2xl space-y-8">
                                 <div>
                                     <h3 className="text-xl font-bold mb-4 text-white">1. Select Your Base Service</h3>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         {services.map(service => (
-                                            <button key={service.id} onClick={() => { if(service.is_active) { setSelectedService(service); setSelectedAddOns(service.default_add_ons || {}) } }} disabled={!service.is_active} className={`p-4 border rounded-xl text-left transition-all duration-300 transform  ${selectedService.id === service.id ? 'bg-yellow-500 text-black shadow-lg ring-4 ring-yellow-400/50' : 'bg-gray-800 text-white border-gray-700'} ${service.is_active ? 'hover:-translate-y-1 hover:bg-gray-700' : 'opacity-50 cursor-not-allowed'}`}>
+                                            <button key={service.id} onClick={() => { if(service.is_active) { setSelectedService(service); setSelectedAddOns(service.default_add_ons || {}) } }} disabled={!service.is_active} className={`p-4 border rounded-xl text-left transition-all duration-300 transform  ${selectedService.id === service.id ? 'bg-cyan-500 text-black shadow-lg ring-4 ring-cyan-400/50' : 'bg-slate-800 text-white border-slate-700'} ${service.is_active ? 'hover:-translate-y-1 hover:bg-slate-700' : 'opacity-50 cursor-not-allowed'}`}>
                                                 <span className="font-semibold block text-sm md:text-base">{service.name}</span>
-                                                <span className={`text-xs md:text-sm ${selectedService.id === service.id ? 'text-black/80' : 'text-gray-400'}`}>Starts at ₹{service.price_min.toLocaleString('en-IN')}</span>
+                                                <span className={`text-xs md:text-sm ${selectedService.id === service.id ? 'text-black/80' : 'text-slate-400'}`}>Starts at ₹{service.price_min.toLocaleString('en-IN')}</span>
                                             </button>
                                         ))}
                                     </div>
@@ -288,7 +288,7 @@ const LandingPage = ({ onBookNow, services, addOns, setAlertMessage }) => {
                                     <h3 className="text-xl font-bold mb-4 text-white">2. Choose Add-ons</h3>
                                     <div className="flex flex-col space-y-3">
                                         {addOns.map((addOn) => (
-                                            <label key={addOn.key} className={`p-4 border rounded-xl cursor-pointer transition-all duration-300 flex items-center justify-between transform hover:-translate-y-1 ${selectedAddOns[addOn.key] ? 'bg-yellow-500/10 border-yellow-500/50 ring-2 ring-yellow-500/30' : 'bg-gray-800 border-gray-700 hover:bg-gray-700'}`}>
+                                            <label key={addOn.key} className={`p-4 border rounded-xl cursor-pointer transition-all duration-300 flex items-center justify-between transform hover:-translate-y-1 ${selectedAddOns[addOn.key] ? 'bg-cyan-500/10 border-cyan-500/50 ring-2 ring-cyan-500/30' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}>
                                                 <div className="flex items-center">
                                                     <input 
                                                         type="checkbox"
@@ -298,75 +298,75 @@ const LandingPage = ({ onBookNow, services, addOns, setAlertMessage }) => {
                                                     />
                                                     <span className="font-semibold text-sm ml-4 text-white">{addOn.label}</span>
                                                 </div>
-                                                <span className="text-sm text-gray-400 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}</span>
+                                                <span className="text-sm text-slate-400 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}</span>
                                             </label>
                                         ))}
                                     </div>
                                 </div>
                             </div>
                             <div className="lg:col-span-1 sticky top-8">
-                                 <div className="bg-gray-900/80 backdrop-blur-lg p-8 rounded-3xl border-2 border-yellow-500/30 shadow-2xl">
+                                 <div className="bg-slate-900/80 backdrop-blur-lg p-8 rounded-3xl border-2 border-cyan-400/30 shadow-2xl">
                                     <h3 className="text-2xl font-bold mb-6 text-center text-white">Your Custom Package</h3>
-                                    <div className="space-y-3 mb-6 border-b border-yellow-500/20 pb-4">
+                                    <div className="space-y-3 mb-6 border-b border-cyan-400/20 pb-4">
                                         <div className="flex justify-between items-center">
                                             <p className="font-semibold text-white">{selectedService.name}</p>
-                                            <p className="text-gray-300 font-medium">₹{selectedService.price_min.toLocaleString('en-IN')}</p>
+                                            <p className="text-slate-300 font-medium">₹{selectedService.price_min.toLocaleString('en-IN')}</p>
                                         </div>
                                         {Object.entries(selectedAddOns).filter(([_, value]) => value).map(([key]) => {
                                             const addOn = addOns.find(a => a.key === key);
                                             return addOn ? (
                                                 <div key={key} className="flex justify-between items-center text-sm">
-                                                    <p className="text-gray-400">{addOn.label}</p>
-                                                    <p className="text-gray-400 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</p>
+                                                    <p className="text-slate-400">{addOn.label}</p>
+                                                    <p className="text-slate-400 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</p>
                                                 </div>
                                             ) : null;
                                         })}
                                     </div>
                                     <div className="flex justify-between items-center mb-6">
                                         <p className="text-lg font-bold text-white">Estimated Total</p>
-                                        <p className="text-3xl font-bold text-yellow-400">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
+                                        <p className="text-3xl font-bold text-cyan-300">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
                                     </div>
                                     <button onClick={handleCustomBooking} className="button-primary w-full">
                                         Book This Package
                                         <ArrowRight className="button-primary-icon" />
                                     </button>
-                                    <p className="text-xs text-gray-500 mt-4 text-center">Final price will be confirmed after consultation.</p>
+                                    <p className="text-xs text-slate-500 mt-4 text-center">Final price will be confirmed after consultation.</p>
                                  </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <section ref={quoteSectionRef} className="py-24 bg-black">
+                <section ref={quoteSectionRef} className="py-24 bg-slate-900">
                     <div className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ${quoteIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                         <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4 gradient-text">Have a Unique Project?</h2>
-                        <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto">
+                        <p className="text-lg text-slate-400 mb-12 max-w-2xl mx-auto">
                             If our packages don't fit, tell us about your event. We'll create a custom quote just for you.
                         </p>
-                        <form onSubmit={handleQuoteSubmit} className="bg-gray-900 p-8 rounded-3xl border border-yellow-500/20 shadow-2xl text-left max-w-3xl mx-auto space-y-6">
+                        <form onSubmit={handleQuoteSubmit} className="bg-slate-900/80 p-8 rounded-3xl border border-cyan-400/20 shadow-2xl text-left max-w-3xl mx-auto space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div><label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field" placeholder="John Doe" required /></div>
-                                <div><label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field" placeholder="you@example.com" required /></div>
-                                <div><label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field" placeholder="+91 12345 67890" /></div>
-                                <div><label htmlFor="event_date" className="block text-sm font-medium text-gray-400 mb-2">Event Date</label><input type="date" id="event_date" name="event_date" className="w-full input-field" /></div>
+                                <div><label htmlFor="name" className="block text-sm font-medium text-slate-400 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field" placeholder="John Doe" required /></div>
+                                <div><label htmlFor="email" className="block text-sm font-medium text-slate-400 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field" placeholder="you@example.com" required /></div>
+                                <div><label htmlFor="phone" className="block text-sm font-medium text-slate-400 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field" placeholder="+91 12345 67890" /></div>
+                                <div><label htmlFor="event_date" className="block text-sm font-medium text-slate-400 mb-2">Event Date</label><input type="date" id="event_date" name="event_date" className="w-full input-field" /></div>
                             </div>
-                            <div><label htmlFor="details" className="block text-sm font-medium text-gray-400 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field" placeholder="Please include as many details as possible: location, number of guests, duration, specific shots you need, etc." required></textarea></div>
+                            <div><label htmlFor="details" className="block text-sm font-medium text-slate-400 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field" placeholder="Please include as many details as possible: location, number of guests, duration, specific shots you need, etc." required></textarea></div>
                             <button type="submit" className="button-primary w-full">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
                         </form>
                     </div>
                 </section>
                 
-                <footer className="bg-gray-900 text-white py-16">
+                <footer className="bg-slate-900/50 text-white py-16">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <div className="w-16 h-16 bg-black/30 backdrop-blur-lg rounded-2xl flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300 border border-yellow-500/20"><Camera className="text-yellow-400" size={32} /></div>
+                        <div className="w-16 h-16 bg-black/30 backdrop-blur-lg rounded-2xl flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300 border border-cyan-400/20"><Camera className="text-cyan-400" size={32} /></div>
                         <p className="font-bold text-2xl mb-2 text-white">Focsera Studios</p>
-                        <p className="text-gray-400">Capturing Moments, Creating Memories.</p>
+                        <p className="text-slate-400">Capturing Moments, Creating Memories.</p>
                         <div className="flex justify-center gap-6 my-8">
-                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Twitter /></a>
-                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Instagram /></a>
-                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Facebook /></a>
+                            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Twitter /></a>
+                            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Instagram /></a>
+                            <a href="#" className="text-slate-400 hover:text-white transition-colors"><Facebook /></a>
                         </div>
-                        <p className="text-sm text-gray-500 mt-8">© {new Date().getFullYear()} Focsera Studios. All Rights Reserved.</p>
+                        <p className="text-sm text-slate-500 mt-8">© {new Date().getFullYear()} Focsera Studios. All Rights Reserved.</p>
                     </div>
                 </footer>
         </>
@@ -382,24 +382,24 @@ const CheckoutHeader = ({ currentStep }) => {
     const currentStepIndex = steps.findIndex(step => step.id === currentStep);
 
     return (
-        <header className="bg-gray-900/80 backdrop-blur-lg sticky top-0 z-40 shadow-lg border-b border-yellow-500/20">
+        <header className="bg-slate-900/80 backdrop-blur-lg sticky top-0 z-40 shadow-lg border-b border-cyan-400/20">
             <nav className="max-w-5xl mx-auto px-4 py-4">
                 <div className="flex justify-between items-center mb-4">
                      <a href="#" onClick={(e) => { e.preventDefault(); window.location.reload(); }} className="flex items-center gap-2 font-bold text-xl text-white">
-                        <Camera className="text-yellow-400" />
+                        <Camera className="text-cyan-400" />
                         Focsera Studios
                     </a>
                 </div>
                 <div className="relative">
-                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-700"></div>
-                    <div className="absolute top-1/2 left-0 h-0.5 bg-yellow-500 transition-all duration-500" style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
+                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-700"></div>
+                    <div className="absolute top-1/2 left-0 h-0.5 bg-cyan-500 transition-all duration-500" style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
                     <div className="relative flex justify-between">
                         {steps.map((step, index) => (
                             <div key={step.id} className="flex flex-col items-center">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${index <= currentStepIndex ? 'bg-yellow-500 border-yellow-500 text-black' : 'bg-gray-800 border-gray-600 text-gray-400'}`}>
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${index <= currentStepIndex ? 'bg-cyan-500 border-cyan-500 text-slate-900' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
                                     {index < currentStepIndex ? <Check/> : step.icon}
                                 </div>
-                                <p className={`mt-2 text-xs font-semibold ${index <= currentStepIndex ? 'text-yellow-400' : 'text-gray-500'}`}>{step.name}</p>
+                                <p className={`mt-2 text-xs font-semibold ${index <= currentStepIndex ? 'text-cyan-400' : 'text-slate-500'}`}>{step.name}</p>
                             </div>
                         ))}
                     </div>
@@ -453,40 +453,40 @@ const LoginPage = ({ onLogin, onBack }) => {
     };
 
     return (
-        <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 pt-32">
+        <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 pt-32">
             <div className="w-full max-w-md animate-fadeInUp">
-                <div className="bg-gray-900 border border-yellow-500/20 rounded-2xl shadow-2xl p-8 relative">
-                    <button onClick={onBack} className="absolute top-4 left-4 text-gray-400 hover:text-white font-semibold text-sm flex items-center gap-1">
+                <div className="bg-slate-900/80 backdrop-blur-sm border border-cyan-400/20 rounded-2xl shadow-2xl p-8 relative">
+                    <button onClick={onBack} className="absolute top-4 left-4 text-slate-400 hover:text-white font-semibold text-sm flex items-center gap-1">
                         &larr;
                         <span>Back</span>
                     </button>
                     <h2 className="text-center text-3xl font-bold text-white mb-2 mt-8">{isLoginView ? 'Welcome Back' : 'Create Account'}</h2>
-                    <p className="text-center text-gray-400 mb-8">{isLoginView ? 'Sign in to continue your booking' : 'Join us to start your creative journey'}</p>
+                    <p className="text-center text-slate-400 mb-8">{isLoginView ? 'Sign in to continue your booking' : 'Join us to start your creative journey'}</p>
                     {error && <p className="bg-red-900/50 text-red-300 p-3 rounded-lg text-sm mb-4">{error}</p>}
                     <form onSubmit={handleAuth}>
                         <div className="space-y-6">
                             {!isLoginView && (
-                                <div><label className="text-sm font-medium text-gray-400 block mb-2">Full Name</label><input type="text" value={fullName} onChange={e => setFullName(e.target.value)} className="w-full input-field" placeholder="John Doe" required/></div>
+                                <div><label className="text-sm font-medium text-slate-400 block mb-2">Full Name</label><input type="text" value={fullName} onChange={e => setFullName(e.target.value)} className="w-full input-field" placeholder="John Doe" required/></div>
                             )}
-                            <div><label className="text-sm font-medium text-gray-400 block mb-2">Email Address</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full input-field" placeholder="you@example.com" required/></div>
-                            <div><label className="text-sm font-medium text-gray-400 block mb-2">Password</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full input-field" placeholder="••••••••" required/></div>
+                            <div><label className="text-sm font-medium text-slate-400 block mb-2">Email Address</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full input-field" placeholder="you@example.com" required/></div>
+                            <div><label className="text-sm font-medium text-slate-400 block mb-2">Password</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full input-field" placeholder="••••••••" required/></div>
                         </div>
                         <button type="submit" className="button-primary w-full mt-8" disabled={loading}>{loading ? 'Processing...' : (isLoginView ? 'Sign In' : 'Sign Up')}</button>
                     </form>
                     <div className="text-center mt-6">
-                        <button onClick={() => setIsLoginView(!isLoginView)} className="text-sm font-medium text-yellow-400 hover:underline">
+                        <button onClick={() => setIsLoginView(!isLoginView)} className="text-sm font-medium text-cyan-400 hover:underline">
                             {isLoginView ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
                         </button>
                     </div>
                     <div className="flex items-center my-6">
-                        <div className="flex-grow border-t border-gray-700"></div><span className="mx-4 text-gray-500 text-sm">OR</span><div className="flex-grow border-t border-gray-700"></div>
+                        <div className="flex-grow border-t border-slate-700"></div><span className="mx-4 text-slate-500 text-sm">OR</span><div className="flex-grow border-t border-slate-700"></div>
                     </div>
                     <div className="space-y-4">
-                        <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center gap-3 text-center py-3 border border-gray-600 rounded-full font-semibold text-gray-300 hover:bg-gray-800 transition-colors">
+                        <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center gap-3 text-center py-3 border border-slate-600 rounded-full font-semibold text-slate-300 hover:bg-slate-800 transition-colors">
                             <GoogleIcon className="w-6 h-6"/>
                             Sign in with Google
                         </button>
-                        <button onClick={onLogin} className="w-full text-center py-3 border border-gray-600 rounded-full font-semibold text-gray-300 hover:bg-gray-800 transition-colors">Continue as Guest</button>
+                        <button onClick={onLogin} className="w-full text-center py-3 border border-slate-600 rounded-full font-semibold text-slate-300 hover:bg-slate-800 transition-colors">Continue as Guest</button>
                     </div>
                 </div>
             </div>
@@ -495,31 +495,31 @@ const LoginPage = ({ onLogin, onBack }) => {
 };
 
 const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
-    <div className="min-h-screen bg-black p-4 sm:p-8 pt-32">
+    <div className="min-h-screen bg-slate-900 p-4 sm:p-8 pt-32">
         <div className="max-w-4xl mx-auto animate-fadeInUp">
             <h1 className="text-4xl font-bold text-white mb-8">Review Your Order</h1>
-            <div className="bg-gray-900 border border-yellow-500/20 rounded-2xl shadow-2xl overflow-hidden md:flex">
+            <div className="bg-slate-900/80 backdrop-blur-sm border border-cyan-400/20 rounded-2xl shadow-2xl overflow-hidden md:flex">
                 <img src={bookingPackage.service.thumbnail} alt={bookingPackage.service.name} className="md:w-1/3 object-cover"/>
                 <div className="p-8 flex-grow">
                      <h2 className="text-2xl font-bold text-white mb-2">{bookingPackage.service.name}</h2>
-                     <p className="text-gray-400 mb-6">{bookingPackage.service.description}</p>
-                     <div className="space-y-4 border-t border-b border-gray-700 py-6">
+                     <p className="text-slate-400 mb-6">{bookingPackage.service.description}</p>
+                     <div className="space-y-4 border-t border-b border-slate-700 py-6">
                          <div className="flex justify-between font-semibold text-white"><p>Base Package</p><p>₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</p></div>
                          {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
                              const addOn = addOns.find(a => a.key === key);
                              return addOn ? (
-                                 <div key={key} className="flex justify-between text-gray-400"><p>{addOn.label}</p><p>+ ₹{addOn.price_min.toLocaleString('en-IN')}</p></div>
+                                 <div key={key} className="flex justify-between text-slate-400"><p>{addOn.label}</p><p>+ ₹{addOn.price_min.toLocaleString('en-IN')}</p></div>
                              ) : null;
                          })}
                      </div>
                      <div className="flex justify-between items-center mt-6">
                         <p className="text-xl font-bold text-white">Total Estimate</p>
-                        <p className="text-3xl font-bold text-yellow-400">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</p>
+                        <p className="text-3xl font-bold text-cyan-300">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</p>
                      </div>
                 </div>
             </div>
              <div className="flex justify-between mt-8">
-                <button onClick={onBack} className="font-semibold text-gray-400 hover:text-white">&larr; Back to Login</button>
+                <button onClick={onBack} className="font-semibold text-slate-400 hover:text-white">&larr; Back to Login</button>
                 <button onClick={onProceed} className="button-primary">Proceed to Checkout</button>
             </div>
         </div>
@@ -564,20 +564,20 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
     };
 
     return (
-     <div className="min-h-screen bg-black p-4 sm:p-8 pt-32">
+     <div className="min-h-screen bg-slate-900 p-4 sm:p-8 pt-32">
         <div className="max-w-4xl mx-auto animate-fadeInUp grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2">
                  <h1 className="text-4xl font-bold text-white mb-8">Checkout Details</h1>
-                 <form onSubmit={handleConfirmBooking} className="bg-gray-900 border border-yellow-500/20 p-8 rounded-2xl shadow-2xl space-y-6">
+                 <form onSubmit={handleConfirmBooking} className="bg-slate-900/80 backdrop-blur-sm border border-cyan-400/20 p-8 rounded-2xl shadow-2xl space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div><label className="text-sm font-medium text-gray-400 block mb-2">Full Name</label><input name="name" type="text" className="w-full input-field" placeholder="John Doe" defaultValue={session?.user?.user_metadata?.full_name || ''} required /></div>
-                        <div><label className="text-sm font-medium text-gray-400 block mb-2">Email Address</label><input name="email" type="email" className="w-full input-field" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required /></div>
-                        <div><label className="text-sm font-medium text-gray-400 block mb-2">Phone Number</label><input name="phone" type="tel" className="w-full input-field" placeholder="+91 12345 67890" required /></div>
-                        <div><label className="text-sm font-medium text-gray-400 block mb-2">Event Date</label><input name="event_date" type="date" className="w-full input-field" required/></div>
+                        <div><label className="text-sm font-medium text-slate-400 block mb-2">Full Name</label><input name="name" type="text" className="w-full input-field" placeholder="John Doe" defaultValue={session?.user?.user_metadata?.full_name || ''} required /></div>
+                        <div><label className="text-sm font-medium text-slate-400 block mb-2">Email Address</label><input name="email" type="email" className="w-full input-field" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required /></div>
+                        <div><label className="text-sm font-medium text-slate-400 block mb-2">Phone Number</label><input name="phone" type="tel" className="w-full input-field" placeholder="+91 12345 67890" required /></div>
+                        <div><label className="text-sm font-medium text-slate-400 block mb-2">Event Date</label><input name="event_date" type="date" className="w-full input-field" required/></div>
                     </div>
-                    <div><label className="text-sm font-medium text-gray-400 block mb-2">Event Venue / Address</label><textarea name="event_venue" rows="3" className="w-full input-field" placeholder="e.g., Grand Hyatt, Hyderabad" required></textarea></div>
+                    <div><label className="text-sm font-medium text-slate-400 block mb-2">Event Venue / Address</label><textarea name="event_venue" rows="3" className="w-full input-field" placeholder="e.g., Grand Hyatt, Hyderabad" required></textarea></div>
                     <div className="pt-4 flex flex-col-reverse sm:flex-row items-center gap-4">
-                        <button type="button" onClick={onBack} className="w-full sm:w-auto font-semibold text-gray-400 hover:text-white py-3 px-6 rounded-full">
+                        <button type="button" onClick={onBack} className="w-full sm:w-auto font-semibold text-slate-400 hover:text-white py-3 px-6 rounded-full">
                             &larr; Back to Review
                         </button>
                         <button type="submit" className="button-primary w-full sm:flex-1">Confirm & Book Now</button>
@@ -585,20 +585,20 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                  </form>
             </div>
             <div className="lg:sticky top-32">
-                <div className="bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 border border-yellow-500/20">
+                <div className="bg-slate-900/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 border border-cyan-400/20">
                     <h3 className="font-bold text-lg mb-4 text-white">Order Summary</h3>
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-between font-semibold text-white"><p>{bookingPackage.service.name}</p><p>₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</p></div>
                          {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
                              const addOn = addOns.find(a => a.key === key);
                              return addOn ? (
-                                <div key={key} className="flex justify-between text-gray-400"><p>{addOn.label}</p><p>+ ₹{addOn.price_min.toLocaleString('en-IN')}</p></div>
+                                <div key={key} className="flex justify-between text-slate-400"><p>{addOn.label}</p><p>+ ₹{addOn.price_min.toLocaleString('en-IN')}</p></div>
                              ) : null;
                          })}
                     </div>
-                    <div className="flex justify-between items-baseline mt-4 pt-4 border-t border-gray-700">
+                    <div className="flex justify-between items-baseline mt-4 pt-4 border-t border-slate-700">
                         <p className="font-bold text-white">Total</p>
-                        <p className="font-bold text-xl text-yellow-400">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</p>
+                        <p className="font-bold text-xl text-cyan-300">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</p>
                     </div>
                 </div>
             </div>
@@ -609,12 +609,12 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
 
 const SuccessModal = ({ onClose }) => (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-fadeIn">
-        <div className="bg-gray-900 border border-yellow-500/20 rounded-2xl shadow-2xl p-8 text-center max-w-sm mx-auto animate-fadeInUp">
-            <div className="w-20 h-20 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center mx-auto mb-6 ring-4 ring-green-500/30">
+        <div className="bg-slate-900 border border-cyan-400/20 rounded-2xl shadow-2xl p-8 text-center max-w-sm mx-auto animate-fadeInUp">
+            <div className="w-20 h-20 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center mx-auto mb-6 ring-4 ring-cyan-500/30">
                 <Check className="w-12 h-12"/>
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">Booking Confirmed!</h2>
-            <p className="text-gray-400 mb-8">Thank you for choosing Focsera Studios. We've received your details and will contact you shortly to finalize the arrangements.</p>
+            <p className="text-slate-400 mb-8">Thank you for choosing Focsera Studios. We've received your details and will contact you shortly to finalize the arrangements.</p>
             <button onClick={onClose} className="button-primary w-full">Back to Homepage</button>
         </div>
     </div>
@@ -705,9 +705,9 @@ export default function App() {
     const renderContent = () => {
         if (!bookingPackage && (currentView === 'cart' || currentView === 'details')) {
              return (
-                <div className="min-h-screen bg-black flex flex-col items-center justify-center text-center p-4">
+                <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-center p-4">
                     <h2 className="text-2xl font-bold text-white mb-4">No Package Selected</h2>
-                    <p className="text-gray-400 mb-8">Please go back to the homepage to select a package before proceeding.</p>
+                    <p className="text-slate-400 mb-8">Please go back to the homepage to select a package before proceeding.</p>
                     <button onClick={resetToLanding} className="button-primary">Back to Homepage</button>
                 </div>
             );
@@ -735,12 +735,12 @@ export default function App() {
         <>
             <style>{`
                 :root { 
-                    --brand-yellow: #FBBF24; 
-                    --brand-dark: #111827;
-                    --brand-light: #F3F4F6;
+                    --brand-neon-blue: #22d3ee; 
+                    --brand-dark: #0f172a;
+                    --brand-light: #f1f5f9;
                 }
                 body {
-                    background-color: #000;
+                    background-color: var(--brand-dark);
                     color: var(--brand-light);
                 }
                 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -750,34 +750,34 @@ export default function App() {
                 @keyframes background-pan { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
                 @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
                 
-                .gradient-text { background: linear-gradient(90deg, #FBBF24, #F59E0B, #D97706); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+                .gradient-text { background: linear-gradient(90deg, #22d3ee, #0ea5e9, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
                 
                 .button-primary {
                     position: relative; overflow: hidden;
                     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
                     padding: 0.875rem 1.75rem; 
-                    background-image: linear-gradient(90deg, var(--brand-yellow) 0%, #F59E0B 100%);
+                    background-image: linear-gradient(90deg, var(--brand-neon-blue) 0%, #0ea5e9 100%);
                     color: black; border-radius: 9999px; font-weight: 700;
                     transition: all 0.3s ease; transform: scale(1);
                     border: none;
-                    box-shadow: 0 4px 20px rgba(251, 191, 36, 0.2), 0 0 0 0 rgba(251, 191, 36, 0.7);
+                    box-shadow: 0 4px 20px rgba(34, 211, 238, 0.2), 0 0 0 0 rgba(34, 211, 238, 0.7);
                 }
                 .button-primary:hover:not(:disabled) { 
                     transform: scale(1.05); 
-                    box-shadow: 0 8px 30px rgba(251, 191, 36, 0.3); 
+                    box-shadow: 0 8px 30px rgba(34, 211, 238, 0.3); 
                 }
                 .button-primary:active:not(:disabled) { transform: scale(0.98); }
                 .button-primary-icon { transition: transform 0.3s ease; }
                 .button-primary:hover:not(:disabled) .button-primary-icon { transform: translateX(4px); }
 
                 .input-field {
-                    background-color: #1F2937; border: 1px solid #4B5563; color: var(--brand-light); border-radius: 0.5rem;
+                    background-color: #1e293b; border: 1px solid #475569; color: var(--brand-light); border-radius: 0.5rem;
                     padding: 0.75rem 1rem; transition: all 0.2s ease-in-out;
                 }
-                .input-field::placeholder { color: #6B7280; }
+                .input-field::placeholder { color: #64748b; }
                 .input-field:focus {
-                    outline: none; border-color: var(--brand-yellow);
-                    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
+                    outline: none; border-color: var(--brand-neon-blue);
+                    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
                 }
                 .input-field[type="date"]::-webkit-calendar-picker-indicator {
                    filter: invert(1);
@@ -786,15 +786,15 @@ export default function App() {
                 .card-3d { will-change: transform; transform-style: preserve-3d; }
                 
                 .hero-section {
-                  background-color: #000;
+                  background-color: var(--brand-dark);
                 }
                 .hero-bg {
                   position: absolute;
                   inset: 0;
-                  background-image: url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2264&auto=format&fit=crop');
+                  background-image: url('https://images.unsplash.com/photo-1544391752-1c6ee3832746?q=80&w=1974&auto=format&fit=crop');
                   background-size: cover;
                   background-position: center;
-                  opacity: 0.2;
+                  opacity: 0.1;
                   filter: blur(4px);
                 }
 
@@ -803,7 +803,7 @@ export default function App() {
                   aspect-ratio: 1;
                   border-radius: 50%;
                   border: 8px solid #0000;
-                  border-right-color: #FBBF24;
+                  border-right-color: var(--brand-neon-blue);
                   position: relative;
                   animation: l24 1s infinite linear;
                 }
@@ -827,8 +827,8 @@ export default function App() {
                 .custom-checkbox {
                     -webkit-appearance: none;
                     appearance: none;
-                    background-color: #374151;
-                    border: 1px solid #4B5563;
+                    background-color: #334155;
+                    border: 1px solid #475569;
                     width: 1.25rem;
                     height: 1.25rem;
                     border-radius: 0.25rem;
@@ -842,13 +842,13 @@ export default function App() {
                     height: 0.65em;
                     transform: scale(0);
                     transition: 120ms transform ease-in-out;
-                    box-shadow: inset 1em 1em var(--brand-yellow);
+                    box-shadow: inset 1em 1em var(--brand-neon-blue);
                     transform-origin: center;
                     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
                 }
                 .custom-checkbox:checked {
-                    background-color: var(--brand-yellow);
-                    border-color: var(--brand-yellow);
+                    background-color: var(--brand-neon-blue);
+                    border-color: var(--brand-neon-blue);
                 }
                 .custom-checkbox:checked::before {
                     transform: scale(1.2);
@@ -857,7 +857,7 @@ export default function App() {
 
             `}</style>
 
-            <div className="bg-black text-gray-200 font-sans antialiased">
+            <div className="bg-slate-900 text-slate-200 font-sans antialiased">
                 {currentView !== 'landing' && <CheckoutHeader currentStep={currentView} />}
                 {renderContent()}
                 {showSuccess && <SuccessModal onClose={resetToLanding} />}
