@@ -10,6 +10,9 @@ const ArrowRight = (props) => (
 const Check = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="20 6 9 17 4 12"/></svg>
 );
+const ChevronDown = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="6 9 12 15 18 9"></polyline></svg>
+);
 const Instagram = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
 );
@@ -22,16 +25,21 @@ const Facebook = (props) => (
 
 
 // --- STATIC DATA ---
+const defaultTerms = {
+    clientSupport: "Dedicated point of contact available via email and phone during business hours. A 24-hour response time is guaranteed for all inquiries. Pre-event consultation calls are included to align on the creative vision.",
+    studioSupport: "Full coordination with event planners, venues, and other vendors to ensure a seamless experience. We handle all technical logistics, including lighting and sound checks, to guarantee high-quality results."
+};
+
 const servicesData = [
-    { id: 4, name: 'Destination Wedding', description: 'Comprehensive multi-day coverage for destination weddings.', category: 'Weddings (Full Package, multi-day)', priceMin: 200000, pricingMode: 'Per project', defaultAddOns: { drone: true, reel: true, editing: true, album: true, raw: true }, thumbnail: 'https://images.unsplash.com/photo-1597157639167-2ea07a7e100b?q=80&w=2070&auto=format&fit=crop' },
-    { id: 1, name: 'Standard Wedding', description: 'Full-day photography and videography for city weddings.', category: 'Weddings (Standard/City)', priceMin: 50000, pricingMode: 'Per project', defaultAddOns: { drone: true, reel: true, editing: false, album: true, raw: false }, thumbnail: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop' },
-    { id: 2, name: 'Corporate Conference', description: 'Complete video and photo coverage for multi-day corporate events.', category: 'Corporate Events / Conferences', priceMin: 10000, pricingMode: 'Per day', defaultAddOns: { drone: false, reel: true, editing: true, album: false, raw: true }, thumbnail: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop' },
-    { id: 5, name: 'Birthday Party', description: 'Fun and candid photography for birthday parties and private events.', category: 'Birthday / Private Parties', priceMin: 5000, pricingMode: 'Per hour', defaultAddOns: { drone: false, reel: true, editing: false, album: true, raw: false }, thumbnail: 'https://images.unsplash.com/photo-1599542148816-3335593e7f45?q=80&w=2070&auto=format&fit=crop' },
-    { id: 6, name: 'Express Wedding', description: 'A condensed photography package perfect for intimate one-day weddings.', category: 'Flash Shoots / 1-Day Weddings', priceMin: 12000, pricingMode: 'Per project', defaultAddOns: { drone: false, reel: true, editing: true, album: false, raw: false }, thumbnail: 'https://images.unsplash.com/photo-1606273153523-7489803c5a69?q=80&w=1974&auto=format&fit=crop' },
-    { id: 7, name: 'All-in-One Event', description: 'A combined photo and video package for your single-day event.', category: 'Photo + Video (1-Day)', priceMin: 20000, pricingMode: 'Per project', defaultAddOns: { drone: true, reel: true, editing: true, album: true, raw: false }, thumbnail: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2070&auto=format&fit=crop' },
-    { id: 8, name: 'Social Media Reels', description: 'Trendy and engaging short-form video reels for social media.', category: 'Custom Reels Package', priceMin: 2999, pricingMode: 'Per reel', defaultAddOns: { drone: false, reel: false, editing: true, album: false, raw: true }, thumbnail: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1974&auto=format&fit=crop' },
-    { id: 9, name: 'Family Portrait', description: 'Timeless portrait session for you, your family, kids, or newborn.', category: 'Portrait / Family / Kids / Baby', priceMin: 2000, pricingMode: 'Per hour', defaultAddOns: { drone: false, reel: false, editing: true, album: true, raw: false }, thumbnail: 'https://images.unsplash.com/photo-1545696562-4458a436a5d4?q=80&w=2070&auto=format&fit=crop' },
-    { id: 3, name: 'Fashion Portfolio', description: 'Professional studio and outdoor shots for building a model or brand portfolio.', category: 'Fashion / Product / Portfolio / Commercial', priceMin: 12000, pricingMode: 'Per project', defaultAddOns: { drone: false, reel: false, editing: true, album: false, raw: true }, thumbnail: 'https://images.unsplash.com/photo-1611601322175-28e4abc40ba3?q=80&w=1974&auto=format&fit=crop' }
+    { id: 4, name: 'Destination Wedding', description: 'Comprehensive multi-day coverage for destination weddings.', category: 'Weddings (Full Package, multi-day)', priceMin: 200000, pricingMode: 'Per project', defaultAddOns: { drone: true, reel: true, editing: true, album: true, raw: true }, thumbnail: 'https://images.unsplash.com/photo-1597157639167-2ea07a7e100b?q=80&w=2070&auto=format&fit=crop', isActive: false, terms: defaultTerms },
+    { id: 1, name: 'Standard Wedding', description: 'Full-day photography and videography for city weddings.', category: 'Weddings (Standard/City)', priceMin: 50000, pricingMode: 'Per project', defaultAddOns: { drone: true, reel: true, editing: false, album: true, raw: false }, thumbnail: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop', isActive: false, terms: defaultTerms },
+    { id: 2, name: 'Corporate Conference', description: 'Complete video and photo coverage for multi-day corporate events.', category: 'Corporate Events / Conferences', priceMin: 10000, pricingMode: 'Per day', defaultAddOns: { drone: false, reel: true, editing: true, album: false, raw: true }, thumbnail: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop', isActive: true, terms: defaultTerms },
+    { id: 5, name: 'Birthday Party', description: 'Fun and candid photography for birthday parties and private events.', category: 'Birthday / Private Parties', priceMin: 5000, pricingMode: 'Per hour', defaultAddOns: { drone: false, reel: true, editing: false, album: true, raw: false }, thumbnail: 'https://images.unsplash.com/photo-1599542148816-3335593e7f45?q=80&w=2070&auto=format&fit=crop', isActive: true, terms: defaultTerms },
+    { id: 6, name: 'Express Wedding', description: 'A condensed photography package perfect for intimate one-day weddings.', category: 'Flash Shoots / 1-Day Weddings', priceMin: 12000, pricingMode: 'Per project', defaultAddOns: { drone: false, reel: true, editing: true, album: false, raw: false }, thumbnail: 'https://images.unsplash.com/photo-1606273153523-7489803c5a69?q=80&w=1974&auto=format&fit=crop', isActive: false, terms: defaultTerms },
+    { id: 7, name: 'All-in-One Event', description: 'A combined photo and video package for your single-day event.', category: 'Photo + Video (1-Day)', priceMin: 20000, pricingMode: 'Per project', defaultAddOns: { drone: true, reel: true, editing: true, album: true, raw: false }, thumbnail: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2070&auto=format&fit=crop', isActive: true, terms: defaultTerms },
+    { id: 8, name: 'Social Media Reels', description: 'Trendy and engaging short-form video reels for social media.', category: 'Custom Reels Package', priceMin: 2999, pricingMode: 'Per reel', defaultAddOns: { drone: false, reel: false, editing: true, album: false, raw: true }, thumbnail: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1974&auto=format&fit=crop', isActive: true, terms: defaultTerms },
+    { id: 9, name: 'Family Portrait', description: 'Timeless portrait session for you, your family, kids, or newborn.', category: 'Portrait / Family / Kids / Baby', priceMin: 2000, pricingMode: 'Per hour', defaultAddOns: { drone: false, reel: false, editing: true, album: true, raw: false }, thumbnail: 'https://images.unsplash.com/photo-1545696562-4458a436a5d4?q=80&w=2070&auto=format&fit=crop', isActive: false, terms: defaultTerms },
+    { id: 3, name: 'Fashion Portfolio', description: 'Professional studio and outdoor shots for building a model or brand portfolio.', category: 'Fashion / Product / Portfolio / Commercial', priceMin: 12000, pricingMode: 'Per project', defaultAddOns: { drone: false, reel: false, editing: true, album: false, raw: true }, thumbnail: 'https://images.unsplash.com/photo-1611601322175-28e4abc40ba3?q=80&w=1974&auto=format&fit=crop', isActive: true, terms: defaultTerms }
 ];
 
 const addOnsData = {
@@ -62,8 +70,10 @@ const useIntersectionObserver = (options) => {
 // --- 3D Tilt Card Component ---
 const PackageCard = ({ service, onCustomize, index }) => {
     const cardRef = useRef(null);
+    const [isTermsVisible, setIsTermsVisible] = useState(false);
 
     const handleMouseMove = (e) => {
+        if (!service.isActive) return;
         const { clientX, clientY, currentTarget } = e;
         const { left, top, width, height } = currentTarget.getBoundingClientRect();
         const x = (clientX - left - width / 2) / 25;
@@ -72,6 +82,7 @@ const PackageCard = ({ service, onCustomize, index }) => {
     };
 
     const handleMouseLeave = (e) => {
+        if (!service.isActive) return;
         e.currentTarget.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale3d(1, 1, 1)';
     };
 
@@ -80,9 +91,14 @@ const PackageCard = ({ service, onCustomize, index }) => {
             ref={cardRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="bg-white border border-gray-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl flex flex-col transition-all duration-300 ease-out"
+            className={`relative bg-white border border-gray-200/80 rounded-3xl overflow-hidden shadow-lg flex flex-col transition-all duration-300 ease-out ${!service.isActive ? 'grayscale opacity-70' : 'hover:shadow-2xl'}`}
             style={{ transitionDelay: `${index * 100}ms` }}
         >
+            {!service.isActive && (
+                <div className="absolute top-4 right-4 bg-gray-700 text-white text-xs font-bold px-3 py-1.5 rounded-full z-10 shadow-lg">
+                    Currently Unavailable
+                </div>
+            )}
             <div className="overflow-hidden"><img src={service.thumbnail} alt={service.name} className="h-56 w-full object-cover"/></div>
             <div className="p-6 flex flex-col flex-grow bg-white/50 backdrop-blur-sm">
                 <p className="text-sm font-bold text-[#0052CC] mb-2">{service.category}</p>
@@ -100,9 +116,29 @@ const PackageCard = ({ service, onCustomize, index }) => {
                         </li>
                     ))}
                 </ul>
-                <button onClick={onCustomize} className="button-primary mt-auto">
-                    Customize This Package
-                    <ArrowRight className="button-primary-icon" />
+                
+                <div className="border-t border-gray-200 mt-4 pt-4 space-y-4">
+                    <button onClick={() => setIsTermsVisible(!isTermsVisible)} className="flex justify-between items-center w-full text-sm font-semibold text-gray-600 hover:text-gray-900">
+                        <span>Terms & Details</span>
+                        <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isTermsVisible ? 'rotate-180' : ''}`} />
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isTermsVisible ? 'max-h-96' : 'max-h-0'}`}>
+                        <div className="text-xs text-gray-500 space-y-3 pt-2">
+                            <div>
+                                <h4 className="font-bold text-gray-700">Client Support</h4>
+                                <p>{service.terms.clientSupport}</p>
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-gray-700">Studio Support</h4>
+                                <p>{service.terms.studioSupport}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button onClick={onCustomize} disabled={!service.isActive} className="button-primary mt-4 disabled:bg-gray-400 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100">
+                    {service.isActive ? 'Customize This Package' : 'Unavailable'}
+                    {service.isActive && <ArrowRight className="button-primary-icon" />}
                 </button>
             </div>
         </div>
@@ -111,8 +147,8 @@ const PackageCard = ({ service, onCustomize, index }) => {
 
 // --- MAIN APP COMPONENT ---
 export default function App() {
-    const [selectedService, setSelectedService] = useState(servicesData[1]);
-    const [selectedAddOns, setSelectedAddOns] = useState(servicesData[1].defaultAddOns);
+    const [selectedService, setSelectedService] = useState(servicesData.find(s => s.isActive) || servicesData[0]);
+    const [selectedAddOns, setSelectedAddOns] = useState(selectedService.defaultAddOns);
     const [duration, setDuration] = useState(1);
     const [totalPrice, setTotalPrice] = useState(0);
     const [displayPrice, setDisplayPrice] = useState(0);
@@ -143,6 +179,7 @@ export default function App() {
     }, [totalPrice, displayPrice]);
 
     const handleSelectServiceAndScroll = (service) => {
+        if (!service.isActive) return;
         setSelectedService(service);
         setSelectedAddOns(service.defaultAddOns || {});
         setDuration(1);
@@ -177,10 +214,10 @@ export default function App() {
                     transition: all 0.3s ease; transform: scale(1);
                     box-shadow: 0 4px 15px rgba(0, 82, 204, 0.2);
                 }
-                .button-primary:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 82, 204, 0.3); }
-                .button-primary:active { transform: scale(0.98); }
+                .button-primary:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 82, 204, 0.3); }
+                .button-primary:active:not(:disabled) { transform: scale(0.98); }
                 .button-primary-icon { transition: transform 0.3s ease; }
-                .button-primary:hover .button-primary-icon { transform: translateX(4px); }
+                .button-primary:hover:not(:disabled) .button-primary-icon { transform: translateX(4px); }
 
                 .input-field {
                     background-color: white; border: 1px solid #e2e8f0; border-radius: 0.5rem;
@@ -235,7 +272,7 @@ export default function App() {
                                     <h3 className="text-xl font-bold mb-4">1. Select Your Base Service</h3>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         {servicesData.map(service => (
-                                            <button key={service.id} onClick={() => { setSelectedService(service); setSelectedAddOns(service.defaultAddOns || {}) }} className={`p-4 border rounded-xl text-left transition-all duration-300 transform hover:-translate-y-1 ${selectedService.id === service.id ? 'bg-[#0052CC] text-white shadow-lg ring-4 ring-blue-300' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                                            <button key={service.id} onClick={() => { if(service.isActive) setSelectedService(service); setSelectedAddOns(service.defaultAddOns || {}) }} disabled={!service.isActive} className={`p-4 border rounded-xl text-left transition-all duration-300 transform  ${selectedService.id === service.id ? 'bg-[#0052CC] text-white shadow-lg ring-4 ring-blue-300' : 'bg-gray-100'} ${service.isActive ? 'hover:-translate-y-1 hover:bg-gray-200' : 'opacity-50 cursor-not-allowed'}`}>
                                                 <span className="font-semibold block text-sm md:text-base">{service.name}</span>
                                                 <span className={`text-xs md:text-sm ${selectedService.id === service.id ? 'text-white/80' : 'text-gray-500'}`}>Starts at ₹{service.priceMin.toLocaleString('en-IN')}</span>
                                             </button>
