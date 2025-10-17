@@ -602,6 +602,20 @@ export default function App() {
     const [addOns, setAddOns] = useState([]);
 
     useEffect(() => {
+        // --- NEW: One-time check on initial load for redirect ---
+        const savedPackageJson = sessionStorage.getItem('focseraBookingPackage');
+        if (savedPackageJson) {
+            const savedPackage = JSON.parse(savedPackageJson);
+            // Check if there's an active session from the redirect
+            supabase.auth.getSession().then(({ data: { session } }) => {
+                if (session) {
+                    setBookingPackage(savedPackage);
+                    setCurrentView('cart');
+                    sessionStorage.removeItem('focseraBookingPackage');
+                }
+            });
+        }
+        
         const getInitialData = async () => {
             const { data: servicesData, error: servicesError } = await supabase.from('services').select('*').order('id');
             if(servicesError) console.error("Error fetching services", servicesError);
@@ -619,17 +633,6 @@ export default function App() {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
-            
-            // This logic now specifically handles the redirect from Google Sign-In
-            if (_event === "SIGNED_IN") {
-                const savedPackageJson = sessionStorage.getItem('focseraBookingPackage');
-                if (savedPackageJson) {
-                    const savedPackage = JSON.parse(savedPackageJson);
-                    setBookingPackage(savedPackage);
-                    setCurrentView('cart');
-                    sessionStorage.removeItem('focseraBookingPackage');
-                }
-            }
         });
 
         return () => subscription.unsubscribe();
@@ -739,3 +742,4 @@ export default function App() {
         </>
     );
 }
+
