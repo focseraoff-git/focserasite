@@ -33,9 +33,14 @@ const Navbar: FC = () => {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const isHomePage = location.pathname === '/';
-  const navBgClass = scrolled || !isHomePage || mobileMenuOpen ? 'glossy-pill' : 'bg-transparent';
-  const linkColorClass = scrolled || !isHomePage || mobileMenuOpen ? 'text-gray-800' : 'text-white';
-  const activeLinkColor = scrolled || !isHomePage || mobileMenuOpen ? 'text-[#0052CC]' : 'text-white';
+  
+  // Determines if the navbar should have a transparent background
+  const isTransparent = isHomePage && !scrolled && !mobileMenuOpen;
+
+  // Class variables based on the original color theme
+  const logoClass = isTransparent ? 'text-white' : 'text-[#0052CC]';
+  const mobileToggleClass = isTransparent ? 'text-white' : 'text-gray-700';
+  const navBgClass = isTransparent ? 'bg-transparent' : 'glossy-pill';
 
   const divisions = [
     { name: 'Studios', path: '/studios' },
@@ -78,18 +83,24 @@ const Navbar: FC = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-
-  const linkClasses = (path: string) =>
-    `relative font-medium text-sm transition-colors duration-300 hover:text-[#0052CC] px-4 py-2 rounded-full ${
-      location.pathname === path ? `${activeLinkColor}` : linkColorClass
-    }`;
+  // Restores original color logic for links
+  const linkClasses = (path: string) => {
+    const isActive = location.pathname === path;
+    const baseClasses = 'relative font-medium text-sm transition-colors duration-300 px-4 py-2 rounded-full';
+    
+    if (isTransparent) {
+      return `${baseClasses} ${isActive ? 'text-white' : 'text-white hover:text-[#ECECEC]'}`;
+    } else {
+      return `${baseClasses} ${isActive ? 'text-[#0052CC]' : 'text-gray-700 hover:text-[#0052CC]'}`;
+    }
+  };
 
   const activeLinkIndicator = (path: string) => {
     if (location.pathname === path) {
       return (
         <motion.div
           layoutId="active-pill"
-          className={`absolute inset-0 rounded-full ${scrolled || !isHomePage || mobileMenuOpen ? 'bg-blue-100/80' : 'bg-white/20'}`}
+          className={`absolute inset-0 rounded-full ${isTransparent ? 'bg-white/20' : 'bg-blue-100/80'}`}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         />
       );
@@ -103,7 +114,7 @@ const Navbar: FC = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4">
         <div className={`flex items-center justify-between w-full max-w-fit h-16 px-4 transition-all duration-300 rounded-full ${navBgClass}`}>
           {/* Logo */}
-          <Link to="/" className={`text-2xl font-bold transition-colors duration-300 pl-2 ${linkColorClass}`}>
+          <Link to="/" className={`text-2xl font-bold transition-colors duration-300 pl-2 ${logoClass}`}>
             FOCSERA
           </Link>
 
@@ -153,7 +164,7 @@ const Navbar: FC = () => {
             <button
               ref={mobileToggleRef}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`transition-colors duration-300 ${linkColorClass}`}
+              className={`transition-colors duration-300 ${mobileToggleClass}`}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
