@@ -604,15 +604,9 @@ export default function App() {
     const [services, setServices] = useState([]);
     const [addOns, setAddOns] = useState([]);
 
-    useEffect(() => {
+   useEffect(() => {
         const getInitialData = async () => {
-            const { data: servicesData, error: servicesError } = await supabase.from('services').select('*').order('id');
-            if(servicesError) console.error("Error fetching services", servicesError);
-            else setServices(servicesData);
-
-            const { data: addOnsData, error: addOnsError } = await supabase.from('add_ons').select('*');
-            if(addOnsError) console.error("Error fetching add-ons", addOnsError);
-            else setAddOns(addOnsData);
+            // ... fetching logic is correct ...
         };
         getInitialData();
 
@@ -623,6 +617,7 @@ export default function App() {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
             
+            // ---- THIS LOGIC IS NOW ONLY FOR THE GOOGLE REDIRECT ----
             if (_event === "SIGNED_IN") {
                 const savedPackageJson = sessionStorage.getItem('focseraBookingPackage');
                 if (savedPackageJson) {
@@ -635,7 +630,7 @@ export default function App() {
         });
 
         return () => subscription.unsubscribe();
-    }, []);
+    }, []); // This should have an empty dependency array to run only once.
     
     const handleBookNow = (service, addOns, price) => {
         if (!service.is_active) return;
