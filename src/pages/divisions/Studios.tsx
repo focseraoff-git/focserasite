@@ -616,13 +616,20 @@ export default function App() {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
-            if(_event === 'SIGNED_IN' && currentView === 'login') {
-                setCurrentView('cart');
+            
+            if (_event === "SIGNED_IN") {
+                const savedPackageJson = sessionStorage.getItem('focseraBookingPackage');
+                if (savedPackageJson) {
+                    const savedPackage = JSON.parse(savedPackageJson);
+                    setBookingPackage(savedPackage);
+                    setCurrentView('cart');
+                    sessionStorage.removeItem('focseraBookingPackage');
+                }
             }
         });
 
         return () => subscription.unsubscribe();
-    }, [currentView]);
+    }, []);
     
     const handleBookNow = (service, addOns, price) => {
         if (!service.is_active) return;
@@ -640,11 +647,15 @@ export default function App() {
             finalPrice = service.price_min + addOnsTotal;
         }
 
-        setBookingPackage({
+        const packageToBook = {
             service: service,
             addOns: addOnsList,
             totalPrice: finalPrice,
-        });
+        };
+        
+        sessionStorage.setItem('focseraBookingPackage', JSON.stringify(packageToBook));
+
+        setBookingPackage(packageToBook);
         setCurrentView('login');
         window.scrollTo(0, 0);
     };
@@ -653,6 +664,7 @@ export default function App() {
         setCurrentView('landing');
         setBookingPackage(null);
         setShowSuccess(false);
+        sessionStorage.removeItem('focseraBookingPackage');
     };
 
     const renderContent = () => {
