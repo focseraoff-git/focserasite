@@ -3,8 +3,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 // --- SUPABASE SETUP ---
 // IMPORTANT: Replace with your own Supabase project URL and Anon Key
-const supabaseUrl = 'https://gyjedezyhdlpwzeyixwg.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5amVkZXp5aGRscHd6ZXlpeHdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1NDA5NDcsImV4cCI6MjA3NjExNjk0N30.6hsjkGN5ojE0jkLnO9qX5fRAGIQABLzlLoqagcNrm1s';
+const supabaseUrl = 'https://cqasskjgsmxsfcwgkwab.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxYXNza2pnc214c2Zjd2drd2FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyOTExMzcsImV4cCI6MjA3NTg2NzEzN30.ebJcxEYrtNAH2M9ddOatCrOXDzaoIOJV6s1FdNsMyv8';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // --- ICONS (using inline SVGs for self-containment) ---
@@ -414,7 +414,7 @@ const LoginPage = ({ onLogin, onBack }) => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 pt-24">
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 pt-32">
             <div className="w-full max-w-md animate-fadeInUp">
                 <div className="bg-white rounded-2xl shadow-2xl p-8 relative">
                     <button onClick={onBack} className="absolute top-4 left-4 text-gray-400 hover:text-gray-700 font-semibold text-sm flex items-center gap-1">
@@ -456,7 +456,7 @@ const LoginPage = ({ onLogin, onBack }) => {
 };
 
 const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-8 pt-24">
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-8 pt-32">
         <div className="max-w-4xl mx-auto animate-fadeInUp">
             <h1 className="text-4xl font-bold text-gray-800 mb-8">Review Your Order</h1>
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden md:flex">
@@ -519,7 +519,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
     };
 
     return (
-     <div className="min-h-screen bg-gray-100 p-4 sm:p-8 pt-24">
+     <div className="min-h-screen bg-gray-100 p-4 sm:p-8 pt-32">
         <div className="max-w-4xl mx-auto animate-fadeInUp grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2">
                  <h1 className="text-4xl font-bold text-gray-800 mb-8">Checkout Details</h1>
@@ -689,3 +689,4 @@ export default function App() {
         </>
     );
 }
+
