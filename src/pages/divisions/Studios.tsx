@@ -671,18 +671,101 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
     );
 };
 
-const SuccessModal = ({ onClose }) => (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-        <div className="bg-white rounded-3xl shadow-2xl p-10 text-center max-w-md mx-auto border border-gray-100">
-            <div className="w-24 h-24 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Check className="w-14 h-14" strokeWidth={3}/>
+const SuccessModal = ({ onClose }) => {
+    const [confetti, setConfetti] = React.useState(true);
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => setConfetti(false), 3000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    return (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fadeIn overflow-hidden">
+            {confetti && (
+                <div className="absolute inset-0 pointer-events-none">
+                    {[...Array(50)].map((_, i) => (
+                        <div
+                            key={i}
+                            className="absolute animate-confetti"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `-${Math.random() * 20}%`,
+                                width: `${Math.random() * 10 + 5}px`,
+                                height: `${Math.random() * 10 + 5}px`,
+                                backgroundColor: ['#0052CC', '#0066FF', '#00C7FF', '#FFD700', '#FF6B6B'][Math.floor(Math.random() * 5)],
+                                animationDelay: `${Math.random() * 2}s`,
+                                animationDuration: `${Math.random() * 3 + 2}s`,
+                                borderRadius: Math.random() > 0.5 ? '50%' : '0',
+                                transform: `rotate(${Math.random() * 360}deg)`
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
+
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl p-12 text-center max-w-2xl mx-auto border-2 border-[#0052CC] relative animate-scaleIn">
+                <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
+                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-2xl animate-bounce-slow">
+                        <Check className="w-20 h-20 text-white" strokeWidth={4}/>
+                    </div>
+                </div>
+
+                <div className="mt-20">
+                    <h2 className="text-5xl font-bold text-gray-900 mb-4 animate-slideDown">Booking Confirmed!</h2>
+                    <div className="w-24 h-1 bg-gradient-to-r from-[#0052CC] to-[#0066FF] mx-auto mb-6 rounded-full"></div>
+
+                    <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-8 mb-8">
+                        <p className="text-xl text-gray-700 leading-relaxed mb-6">
+                            Thank you for choosing <span className="font-bold text-[#0052CC]">Focsera Studios</span>!
+                        </p>
+                        <p className="text-gray-600 leading-relaxed mb-6">
+                            Your booking request has been successfully received and our team is already reviewing the details.
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+                            <div className="bg-white rounded-xl p-6 shadow-md">
+                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
+                                    <span className="text-2xl font-bold text-[#0052CC]">1</span>
+                                </div>
+                                <h4 className="font-bold text-gray-900 mb-2">Confirmation Email</h4>
+                                <p className="text-sm text-gray-600">Sent within 5 minutes</p>
+                            </div>
+
+                            <div className="bg-white rounded-xl p-6 shadow-md">
+                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
+                                    <span className="text-2xl font-bold text-[#0052CC]">2</span>
+                                </div>
+                                <h4 className="font-bold text-gray-900 mb-2">Team Contact</h4>
+                                <p className="text-sm text-gray-600">Within 24 hours</p>
+                            </div>
+
+                            <div className="bg-white rounded-xl p-6 shadow-md">
+                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
+                                    <span className="text-2xl font-bold text-[#0052CC]">3</span>
+                                </div>
+                                <h4 className="font-bold text-gray-900 mb-2">Final Details</h4>
+                                <p className="text-sm text-gray-600">Pricing & schedule</p>
+                            </div>
+                        </div>
+
+                        <p className="text-sm text-gray-500 italic">
+                            Our professional team will reach out to discuss the final details, confirm pricing, and schedule your shoot.
+                        </p>
+                    </div>
+
+                    <button onClick={onClose} className="button-primary text-lg px-12 py-4 shadow-xl hover:shadow-2xl transition-all">
+                        Return to Studios
+                        <ArrowRight className="button-primary-icon" size={24} />
+                    </button>
+
+                    <p className="text-sm text-gray-500 mt-6">
+                        Need immediate assistance? Call us at <span className="font-semibold text-[#0052CC]">+91 98765 43210</span>
+                    </p>
+                </div>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Booking Confirmed!</h2>
-            <p className="text-gray-600 mb-8 leading-relaxed">Thank you for choosing Focsera Studios. We've received your booking request and will contact you within 24 hours to confirm the final details and pricing.</p>
-            <button onClick={onClose} className="button-primary w-full">Return to Studios</button>
         </div>
-    </div>
-);
+    );
+};
 
 export default function App() {
     const [session, setSession] = useState(null);
@@ -794,6 +877,30 @@ export default function App() {
                 .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
                 @keyframes background-pan { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
                 @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+
+                @keyframes scaleIn {
+                    from { opacity: 0; transform: scale(0.8); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+                .animate-scaleIn { animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+                @keyframes slideDown {
+                    from { opacity: 0; transform: translateY(-30px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-slideDown { animation: slideDown 0.6s ease-out forwards; animation-delay: 0.2s; opacity: 0; }
+
+                @keyframes bounce-slow {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-10px); }
+                }
+                .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+
+                @keyframes confetti {
+                    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+                    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+                }
+                .animate-confetti { animation: confetti forwards; }
 
                 .gradient-text { background: linear-gradient(90deg, #0052CC, #007BFF, #33A1FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: background-pan 5s linear infinite; }
 
