@@ -139,7 +139,8 @@ const Navbar: FC = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 rounded-2xl shadow-xl p-2 glossy-pill border border-white/10"
+                    // --- CHANGE HERE: Increased transparency for the dropdown ---
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 rounded-2xl shadow-xl p-2 bg-white/30 backdrop-blur-lg border border-white/10"
                   >
                     {divisions.map((division) => (
                       <Link
