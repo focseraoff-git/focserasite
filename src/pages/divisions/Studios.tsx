@@ -391,7 +391,7 @@ const LoginPage = ({ onLogin, onBack }) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-         
+        
         const authMethod = isLoginView 
             ? supabase.auth.signInWithPassword 
             : supabase.auth.signUp;
