@@ -1,16 +1,36 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, FC } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function Navbar() {
+// --- Helper component for CSS styles ---
+const NavbarStyles = () => (
+  <style>{`
+    .glossy-pill {
+      /* Modern browsers with backdrop-filter support */
+      background-color: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px); /* For Safari */
+    }
+
+    /* Fallback for older browsers */
+    @supports not (backdrop-filter: blur(1rem)) {
+      .glossy-pill {
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+    }
+  `}</style>
+);
+
+// --- Main Navbar Component ---
+const Navbar: FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [divisionsOpen, setDivisionsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const divisionsRef = useRef(null);
-  const mobileToggleRef = useRef(null);
-  const mobileMenuRef = useRef(null);
+  const divisionsRef = useRef<HTMLDivElement>(null);
+  const mobileToggleRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const isHomePage = location.pathname === '/';
   const navBgClass = scrolled || !isHomePage || mobileMenuOpen ? 'glossy-pill' : 'bg-transparent';
@@ -26,25 +46,25 @@ export default function Navbar() {
     { name: 'Skill', path: '/skill' },
   ];
 
-  // Scroll handler for navbar background
+  // Scroll handler
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check scroll position on initial load
+    handleScroll(); // Initial check
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Click outside handler
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (divisionsRef.current && !divisionsRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (divisionsRef.current && !divisionsRef.current.contains(event.target as Node)) {
         setDivisionsOpen(false);
       }
       if (
         mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target) &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
         mobileToggleRef.current &&
-        !mobileToggleRef.current.contains(event.target)
+        !mobileToggleRef.current.contains(event.target as Node)
       ) {
         setMobileMenuOpen(false);
       }
@@ -59,12 +79,12 @@ export default function Navbar() {
   }, [location.pathname]);
 
 
-  const linkClasses = (path) =>
+  const linkClasses = (path: string) =>
     `relative font-medium text-sm transition-colors duration-300 hover:text-[#0052CC] px-4 py-2 rounded-full ${
       location.pathname === path ? `${activeLinkColor}` : linkColorClass
     }`;
 
-  const activeLinkIndicator = (path) => {
+  const activeLinkIndicator = (path: string) => {
     if (location.pathname === path) {
       return (
         <motion.div
@@ -79,6 +99,7 @@ export default function Navbar() {
 
   return (
     <>
+      <NavbarStyles />
       <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4">
         <div className={`flex items-center justify-between w-full max-w-fit h-16 px-4 transition-all duration-300 rounded-full ${navBgClass}`}>
           {/* Logo */}
@@ -187,4 +208,6 @@ export default function Navbar() {
       </AnimatePresence>
     </>
   );
-}
+};
+
+export default Navbar;
