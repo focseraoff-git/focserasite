@@ -228,9 +228,46 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                         <Camera className="text-[#0052CC]" size={64} />
                     </div>
                     <h1 className="text-5xl sm:text-7xl font-bold text-white mb-6">Focsera Studios</h1>
-                    <p className="text-xl text-white/90 max-w-3xl mx-auto">
-                        Explore our signature packages or build your own. Professional photography and videography services tailored to your needs.
+                    <p className="text-xl text-white/90 max-w-3xl mx-auto mb-4">
+                        Professional Photography & Videography Services
                     </p>
+                    <p className="text-lg text-white/80 max-w-2xl mx-auto">
+                        We capture your moments through stunning photos and videos. From weddings to corporate content, we provide professional visual storytelling services.
+                    </p>
+                </div>
+            </section>
+
+            <section className="py-16 bg-white border-b border-gray-100">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="text-center p-6">
+                            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <Camera className="text-[#0052CC]" size={32} />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Photography Services</h3>
+                            <p className="text-gray-600">Professional photography for weddings, portraits, fashion, and commercial projects</p>
+                        </div>
+                        <div className="text-center p-6">
+                            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#0052CC]"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Videography Services</h3>
+                            <p className="text-gray-600">Cinematic video production for events, commercials, and promotional content</p>
+                        </div>
+                        <div className="text-center p-6">
+                            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#0052CC]"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Content Creation</h3>
+                            <p className="text-gray-600">Social media content, reels, and creative visuals for digital marketing</p>
+                        </div>
+                    </div>
+                    <div className="mt-12 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-8 text-center">
+                        <p className="text-lg text-gray-700 font-medium max-w-3xl mx-auto">
+                            <span className="font-bold text-[#0052CC]">Note:</span> Focsera Studios specializes in photography and videography services.
+                            For event planning and management services, please visit <span className="font-bold">Focsera Events</span>.
+                        </p>
+                    </div>
                 </div>
             </section>
 
