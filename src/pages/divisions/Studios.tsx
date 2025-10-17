@@ -134,6 +134,8 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
     const [packagesRef, packagesAreVisible] = useIntersectionObserver({ threshold: 0.1 });
     const [customizerSectionRef, customizerIsVisible] = useIntersectionObserver({ threshold: 0.1 });
     const [quoteSectionRef, quoteIsVisible] = useIntersectionObserver({ threshold: 0.1 });
+    const customizerScrollRef = useRef(null);
+    const addOnsScrollRef = useRef(null);
 
     useEffect(() => {
         if (services.length > 0 && !selectedService) {
@@ -222,13 +224,16 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                        {services.map((service, index) => (
-                           <PackageCard key={service.id} service={service} onBook={() => onBookNow(service, service.default_add_ons)} index={index}/>
+                           <PackageCard key={service.id} service={service} onBook={() => {
+                               customizerScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                               setTimeout(() => onBookNow(service, service.default_add_ons), 800);
+                           }} index={index}/>
                        ))}
                     </div>
                 </div>
             </section>
 
-             <section className="py-24 bg-gray-50 scroll-mt-20">
+             <section ref={customizerScrollRef} className="py-24 bg-gray-50 scroll-mt-24">
                     <div ref={customizerSectionRef} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${customizerIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                         <div className="text-center mb-16">
                             <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Build Your Own Package</h2>
@@ -240,14 +245,22 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                     <h3 className="text-xl font-bold mb-4">1. Select Your Base Service</h3>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         {services.map(service => (
-                                            <button key={service.id} onClick={() => { if(service.is_active) { setSelectedService(service); setSelectedAddOns(service.default_add_ons || {}) } }} disabled={!service.is_active} className={`p-4 border rounded-xl text-left transition-all duration-300 transform  ${selectedService.id === service.id ? 'bg-[#0052CC] text-white shadow-lg ring-4 ring-blue-300' : 'bg-gray-100'} ${service.is_active ? 'hover:-translate-y-1 hover:bg-gray-200' : 'opacity-50 cursor-not-allowed'}`}>
+                                            <button key={service.id} onClick={() => {
+                                                if(service.is_active) {
+                                                    setSelectedService(service);
+                                                    setSelectedAddOns(service.default_add_ons || {});
+                                                    setTimeout(() => {
+                                                        addOnsScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                    }, 100);
+                                                }
+                                            }} disabled={!service.is_active} className={`p-4 border rounded-xl text-left transition-all duration-300 transform  ${selectedService.id === service.id ? 'bg-[#0052CC] text-white shadow-lg ring-4 ring-blue-300' : 'bg-gray-100'} ${service.is_active ? 'hover:-translate-y-1 hover:bg-gray-200' : 'opacity-50 cursor-not-allowed'}`}>
                                                 <span className="font-semibold block text-sm md:text-base">{service.name}</span>
                                                 <span className={`text-xs md:text-sm ${selectedService.id === service.id ? 'text-white/80' : 'text-gray-500'}`}>Starts at ₹{service.price_min.toLocaleString('en-IN')}</span>
                                             </button>
                                         ))}
                                     </div>
                                 </div>
-                                <div>
+                                <div ref={addOnsScrollRef}>
                                     <h3 className="text-xl font-bold mb-4">2. Choose Add-ons</h3>
                                     <div className="flex flex-col space-y-3">
                                         {addOns.map((addOn) => (
