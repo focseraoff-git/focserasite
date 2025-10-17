@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 
 // --- SUPABASE SETUP ---
-// Replace with your own Supabase URL and Anon Key
+// IMPORTANT: Replace with your own Supabase project URL and Anon Key
 const supabaseUrl = 'YOUR_SUPABASE_URL';
 const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -100,7 +100,6 @@ const PackageCard = ({ service, onBook, index }) => {
                     <span className="text-3xl font-bold text-gray-800">₹{service.price_min.toLocaleString('en-IN')}+</span>
                     <span className="text-gray-500 font-medium">/{service.pricing_mode.split(' ')[1]}</span>
                 </div>
-                {/* Add-ons display can be enhanced to fetch from add-ons table if needed */}
                 
                 <div className="border-t border-gray-200 mt-auto pt-4 space-y-4">
                     <button onClick={() => setIsTermsVisible(!isTermsVisible)} className="flex justify-between items-center w-full text-sm font-semibold text-gray-600 hover:text-gray-900">
@@ -136,7 +135,6 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
     const [selectedService, setSelectedService] = useState(null);
     const [selectedAddOns, setSelectedAddOns] = useState({});
     const [totalPrice, setTotalPrice] = useState(0);
-
     const customizerRef = useRef(null);
     const [duration, setDuration] = useState(1);
     const [displayPrice, setDisplayPrice] = useState(0);
@@ -148,8 +146,10 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
     useEffect(() => {
         if (services.length > 0 && !selectedService) {
             const firstActive = services.find(s => s.is_active);
-            setSelectedService(firstActive || services[0]);
-            setSelectedAddOns(firstActive.default_add_ons || {});
+            if(firstActive) {
+                setSelectedService(firstActive);
+                setSelectedAddOns(firstActive.default_add_ons || {});
+            }
         }
     }, [services, selectedService]);
 
@@ -204,13 +204,13 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
     };
 
     if (!services || services.length === 0 || !selectedService) {
-        return <div className="min-h-screen flex items-center justify-center">Loading services...</div>
+        return <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">Loading Focsera Studios...</div>
     }
 
     return (
         <>
             <section className="relative py-32 bg-gradient-to-br from-[#0052CC] to-[#0066FF] overflow-hidden">
-                <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSJ0cmFuc3BhcmVudCIvPjxjaXJjbGUgY3g9IjI1IiBjeT0iMjUiIHI9IjEiIGZpbGw9IndoaXRlIi8+PC9zdmc+')]"></div>
+                <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZHRoPSI1MCI+PHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSJ0cmFuc3BhcmVudCIvPjxjaXJjbGUgY3g9IjI1IiBjeT0iMjUiIHI9IjEiIGZpbGw9IndoaXRlIi8+PC9zdmc+')]"></div>
                 <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/10 rounded-full animate-[float_8s_ease-in-out_infinite]"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-white/10 rounded-2xl animate-[float_12s_ease-in-out_infinite]"></div>
                 
