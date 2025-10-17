@@ -79,7 +79,7 @@ const PackageCard = ({ service, onBook, index }) => {
             ref={cardRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className={`relative bg-white border border-gray-200/80 rounded-3xl overflow-hidden shadow-lg flex flex-col transition-all duration-300 ease-out ${!service.is_active ? 'grayscale opacity-70' : 'hover:shadow-2xl'}`}
+            className={`group relative bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl overflow-hidden shadow-xl flex flex-col transition-all duration-500 ease-out ${!service.is_active ? 'grayscale opacity-70' : 'hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)]'}`}
             style={{ transitionDelay: `${index * 100}ms` }}
         >
             {!service.is_active && (
@@ -87,14 +87,22 @@ const PackageCard = ({ service, onBook, index }) => {
                     Currently Unavailable
                 </div>
             )}
-            <div className="overflow-hidden"><img src={service.thumbnail} alt={service.name} className="h-56 w-full object-cover"/></div>
-            <div className="p-6 flex flex-col flex-grow bg-white/50 backdrop-blur-sm">
-                <p className="text-sm font-bold text-[#0052CC] mb-2">{service.category}</p>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">{service.name}</h3>
-                <p className="text-gray-600 mb-6 leading-relaxed flex-grow">{service.description}</p>
-                <div className="mb-6">
-                    <span className="text-3xl font-bold text-gray-800">₹{service.price_min.toLocaleString('en-IN')}+</span>
-                    <span className="text-gray-500 font-medium">/{service.pricing_mode.split(' ')[1]}</span>
+            <div className="relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <img src={service.thumbnail} alt={service.name} className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-110"/>
+                <div className="absolute top-4 left-4 z-20">
+                    <span className="px-4 py-1.5 bg-white/90 backdrop-blur-md text-xs font-bold text-gray-900 rounded-full shadow-lg">{service.category}</span>
+                </div>
+            </div>
+            <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-white/80 to-white backdrop-blur-lg">
+                <h3 className="text-3xl font-black text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-600 group-hover:to-blue-600 transition-all duration-300">{service.name}</h3>
+                <p className="text-gray-600 mb-8 leading-relaxed flex-grow text-sm">{service.description}</p>
+                <div className="mb-6 relative">
+                    <div className="inline-block">
+                        <span className="text-4xl font-black bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">₹{service.price_min.toLocaleString('en-IN')}</span>
+                        <span className="text-lg text-gray-500 font-semibold">+</span>
+                    </div>
+                    <span className="block text-sm text-gray-500 font-medium mt-1">per {service.pricing_mode.split(' ')[1]}</span>
                 </div>
 
                 <div className="border-t border-gray-200 mt-auto pt-4 space-y-4">
@@ -116,9 +124,13 @@ const PackageCard = ({ service, onBook, index }) => {
                     </div>
                 </div>
 
-                <button onClick={onBook} disabled={!service.is_active} className="button-primary mt-4 disabled:bg-gray-400 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100">
-                    {service.is_active ? 'Book This Package' : 'Unavailable'}
-                    {service.is_active && <ArrowRight className="button-primary-icon" />}
+                <button onClick={onBook} disabled={!service.is_active} className="relative mt-4 w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed group/btn">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 bg-[length:200%_100%] group-hover/btn:bg-right transition-all duration-500"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000"></div>
+                    <span className="relative flex items-center justify-center gap-2">
+                        {service.is_active ? 'Book This Package' : 'Unavailable'}
+                        {service.is_active && <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />}
+                    </span>
                 </button>
             </div>
         </div>
@@ -200,27 +212,51 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
 
     return (
         <>
-            <section className="relative py-32 bg-gradient-to-br from-[#0052CC] to-[#0066FF] overflow-hidden">
-                <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZHRoPSI1MCI+PHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSJ0cmFuc3BhcmVudCIvPjxjaXJjbGUgY3g9IjI1IiBjeT0iMjUiIHI9IjEiIGZpbGw9IndoaXRlIi8+PC9zdmc+')]"></div>
-                <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/10 rounded-full animate-[float_8s_ease-in-out_infinite]"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-white/10 rounded-2xl animate-[float_12s_ease-in-out_infinite]"></div>
+            <section className="relative py-32 bg-gradient-to-br from-[#0a0a0a] via-[#1a1a2e] to-[#0f3460] overflow-hidden">
+                <div className="absolute inset-0 opacity-5">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+                </div>
+                <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-[float_15s_ease-in-out_infinite]"></div>
+                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-[float_20s_ease-in-out_infinite_reverse]"></div>
+                <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-purple-500/10 rounded-full blur-2xl animate-pulse"></div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
-                    <div className="w-24 h-24 bg-white/30 backdrop-blur-lg rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
-                        <Camera className="text-white" size={48} />
+                    <div className="relative w-32 h-32 mx-auto mb-8">
+                        <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-[2rem] blur-2xl opacity-60 animate-pulse"></div>
+                        <div className="relative w-32 h-32 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-[2rem] flex items-center justify-center shadow-2xl">
+                            <Camera className="text-white drop-shadow-2xl" size={56} strokeWidth={1.5} />
+                        </div>
                     </div>
-                    <h1 className="text-5xl sm:text-7xl font-bold text-white mb-6">Focsera Studios</h1>
-                    <p className="text-xl text-white/90 max-w-3xl mx-auto">
-                        Explore our signature packages or build your own. Professional photography and videography services tailored to your needs.
+                    <h1 className="text-6xl sm:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-blue-200 mb-6 tracking-tight">
+                        Focsera Studios
+                    </h1>
+                    <p className="text-xl sm:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed font-light">
+                        Elevate your moments into timeless masterpieces. Professional photography and videography crafted to perfection.
                     </p>
+                    <div className="flex gap-4 justify-center mt-12">
+                        <div className="px-6 py-3 bg-white/10 backdrop-blur-lg border border-white/20 rounded-full">
+                            <span className="text-white/90 font-semibold text-sm">📸 Photography</span>
+                        </div>
+                        <div className="px-6 py-3 bg-white/10 backdrop-blur-lg border border-white/20 rounded-full">
+                            <span className="text-white/90 font-semibold text-sm">🎥 Videography</span>
+                        </div>
+                        <div className="px-6 py-3 bg-white/10 backdrop-blur-lg border border-white/20 rounded-full">
+                            <span className="text-white/90 font-semibold text-sm">✨ Premium Quality</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <section ref={packagesRef} className="py-24 bg-white">
-                <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${packagesAreVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Our Signature Packages</h2>
-                        <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-cyan-400 mx-auto rounded-full"></div>
+            <section ref={packagesRef} className="py-24 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZG90cyIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48Y2lyY2xlIGN4PSIyIiBjeT0iMiIgcj0iMSIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIwLjA1Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2RvdHMpIi8+PC9zdmc+')] opacity-50"></div>
+                <div className={`relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${packagesAreVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                    <div className="text-center mb-20">
+                        <span className="inline-block px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-bold rounded-full mb-6 shadow-lg">FEATURED PACKAGES</span>
+                        <h2 className="text-5xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-blue-900 to-cyan-900 mb-6">Our Signature Collections</h2>
+                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">Handcrafted packages designed to capture your special moments with unmatched excellence</p>
+                        <div className="relative w-32 h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 mx-auto rounded-full mt-6 overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent animate-[shimmer_2s_infinite]"></div>
+                        </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                        {services.map((service, index) => (
@@ -233,16 +269,23 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                 </div>
             </section>
 
-             <section ref={customizerScrollRef} className="py-24 bg-gray-50 scroll-mt-24">
-                    <div ref={customizerSectionRef} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${customizerIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                        <div className="text-center mb-16">
-                            <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Build Your Own Package</h2>
-                            <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-cyan-400 mx-auto rounded-full"></div>
+             <section ref={customizerScrollRef} className="relative py-24 bg-gradient-to-b from-white to-gray-50 scroll-mt-24 overflow-hidden">
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-100 to-cyan-100 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-purple-100 to-blue-100 rounded-full blur-3xl opacity-20 translate-y-1/2 -translate-x-1/2"></div>
+                    <div ref={customizerSectionRef} className={`relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${customizerIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                        <div className="text-center mb-20">
+                            <span className="inline-block px-6 py-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white text-sm font-bold rounded-full mb-6 shadow-lg">CUSTOMIZE YOUR EXPERIENCE</span>
+                            <h2 className="text-5xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-purple-900 to-blue-900 mb-6">Craft Your Perfect Package</h2>
+                            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Mix and match services and add-ons to create a package that's uniquely yours</p>
+                            <div className="relative w-32 h-2 bg-gradient-to-r from-purple-400 via-blue-500 to-cyan-400 mx-auto rounded-full mt-6"></div>
                         </div>
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                            <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-gray-200 shadow-2xl space-y-8">
+                            <div className="lg:col-span-2 bg-white/60 backdrop-blur-xl p-10 rounded-[2rem] border border-white/50 shadow-[0_20px_70px_-15px_rgba(0,0,0,0.2)] space-y-10">
                                 <div>
-                                    <h3 className="text-xl font-bold mb-4">1. Select Your Base Service</h3>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-black text-lg shadow-lg">1</div>
+                                        <h3 className="text-2xl font-black text-gray-900">Select Your Base Service</h3>
+                                    </div>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         {services.map(service => (
                                             <button key={service.id} onClick={() => {
@@ -253,96 +296,135 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                                         addOnsScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                                     }, 100);
                                                 }
-                                            }} disabled={!service.is_active} className={`p-4 border rounded-xl text-left transition-all duration-300 transform  ${selectedService.id === service.id ? 'bg-[#0052CC] text-white shadow-lg ring-4 ring-blue-300' : 'bg-gray-100'} ${service.is_active ? 'hover:-translate-y-1 hover:bg-gray-200' : 'opacity-50 cursor-not-allowed'}`}>
-                                                <span className="font-semibold block text-sm md:text-base">{service.name}</span>
-                                                <span className={`text-xs md:text-sm ${selectedService.id === service.id ? 'text-white/80' : 'text-gray-500'}`}>Starts at ₹{service.price_min.toLocaleString('en-IN')}</span>
+                                            }} disabled={!service.is_active} className={`group/service relative p-5 border-2 rounded-2xl text-left transition-all duration-300 transform overflow-hidden ${selectedService.id === service.id ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-xl border-transparent scale-105' : 'bg-white/80 backdrop-blur-sm border-gray-200'} ${service.is_active ? 'hover:-translate-y-1 hover:shadow-lg cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}>
+                                                {selectedService.id === service.id && (
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]"></div>
+                                                )}
+                                                <span className="relative font-bold block text-sm md:text-base">{service.name}</span>
+                                                <span className={`relative text-xs md:text-sm font-medium ${selectedService.id === service.id ? 'text-white/90' : 'text-gray-600'}`}>From ₹{service.price_min.toLocaleString('en-IN')}</span>
                                             </button>
                                         ))}
                                     </div>
                                 </div>
                                 <div ref={addOnsScrollRef}>
-                                    <h3 className="text-xl font-bold mb-4">2. Choose Add-ons</h3>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-black text-lg shadow-lg">2</div>
+                                        <h3 className="text-2xl font-black text-gray-900">Choose Add-ons</h3>
+                                    </div>
                                     <div className="flex flex-col space-y-3">
                                         {addOns.map((addOn) => (
-                                            <label key={addOn.key} className={`p-4 border rounded-xl cursor-pointer transition-all duration-300 flex items-center justify-between transform hover:-translate-y-1 ${selectedAddOns[addOn.key] ? 'bg-blue-50 border-blue-400 ring-2 ring-blue-200' : 'bg-white hover:bg-gray-50'}`}>
-                                                <div className="flex items-center">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                                        checked={!!selectedAddOns[addOn.key]}
-                                                        onChange={() => handleAddOnToggle(addOn.key)}
-                                                    />
-                                                    <span className="font-semibold text-sm ml-3 text-gray-800">{addOn.label}</span>
+                                            <label key={addOn.key} className={`group/addon relative p-5 border-2 rounded-2xl cursor-pointer transition-all duration-300 flex items-center justify-between transform hover:-translate-y-1 overflow-hidden ${selectedAddOns[addOn.key] ? 'bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-400 shadow-lg' : 'bg-white/80 backdrop-blur-sm border-gray-200 hover:border-blue-300 hover:shadow-md'}`}>
+                                                {selectedAddOns[addOn.key] && (
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-100/50 to-transparent animate-[shimmer_3s_infinite]"></div>
+                                                )}
+                                                <div className="flex items-center relative z-10">
+                                                    <div className="relative">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="peer h-6 w-6 rounded-lg border-2 border-gray-300 text-blue-600 focus:ring-4 focus:ring-blue-500/20 transition-all cursor-pointer"
+                                                            checked={!!selectedAddOns[addOn.key]}
+                                                            onChange={() => handleAddOnToggle(addOn.key)}
+                                                        />
+                                                        <Check className="absolute inset-0 m-auto w-4 h-4 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" strokeWidth={4} />
+                                                    </div>
+                                                    <span className="font-bold text-sm ml-4 text-gray-900">{addOn.label}</span>
                                                 </div>
-                                                <span className="text-sm text-gray-600 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}</span>
+                                                <span className="relative z-10 text-sm font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">+ ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}</span>
                                             </label>
                                         ))}
                                     </div>
                                 </div>
                             </div>
                             <div className="lg:col-span-1 sticky top-8">
-                                 <div className="bg-white/70 backdrop-blur-lg p-8 rounded-3xl border-2 border-[#0052CC] shadow-2xl">
-                                    <h3 className="text-2xl font-bold mb-6 text-center">Your Custom Package</h3>
-                                    <div className="space-y-3 mb-6 border-b border-blue-200 pb-4">
-                                        <div className="flex justify-between items-center">
-                                            <p className="font-semibold text-gray-700">{selectedService.name}</p>
-                                            <p className="text-gray-600 font-medium">₹{selectedService.price_min.toLocaleString('en-IN')}</p>
+                                 <div className="relative bg-gradient-to-br from-white/90 to-blue-50/80 backdrop-blur-2xl p-8 rounded-[2rem] border-2 border-white/50 shadow-[0_20px_70px_-15px_rgba(0,0,0,0.3)] overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full blur-3xl opacity-20"></div>
+                                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-purple-400 to-pink-600 rounded-full blur-3xl opacity-20"></div>
+                                    <h3 className="relative text-3xl font-black text-center mb-8 bg-gradient-to-r from-gray-900 via-blue-900 to-cyan-900 bg-clip-text text-transparent">Your Custom Package</h3>
+                                    <div className="relative space-y-3 mb-6 border-b-2 border-gradient-to-r from-transparent via-blue-300 to-transparent pb-6">
+                                        <div className="flex justify-between items-center p-3 bg-white/50 backdrop-blur-sm rounded-xl">
+                                            <p className="font-bold text-gray-900">{selectedService.name}</p>
+                                            <p className="text-gray-700 font-bold">₹{selectedService.price_min.toLocaleString('en-IN')}</p>
                                         </div>
                                         {Object.entries(selectedAddOns).filter(([_, value]) => value).map(([key]) => {
                                             const addOn = addOns.find(a => a.key === key);
                                             return addOn ? (
-                                                <div key={key} className="flex justify-between items-center text-sm">
-                                                    <p className="text-gray-600">{addOn.label}</p>
-                                                    <p className="text-gray-500 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</p>
+                                                <div key={key} className="flex justify-between items-center text-sm p-2 bg-blue-50/50 rounded-lg">
+                                                    <p className="text-gray-700 font-semibold">{addOn.label}</p>
+                                                    <p className="text-blue-600 font-bold">+ ₹{addOn.price_min.toLocaleString('en-IN')}</p>
                                                 </div>
                                             ) : null;
                                         })}
                                     </div>
-                                    <div className="flex justify-between items-center mb-6">
-                                        <p className="text-lg font-bold">Estimated Total</p>
-                                        <p className="text-3xl font-bold text-[#0052CC]">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
+                                    <div className="relative flex justify-between items-center mb-8 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border-2 border-blue-200">
+                                        <p className="text-lg font-black text-gray-900">Estimated Total</p>
+                                        <p className="text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
                                     </div>
-                                    <button onClick={handleCustomBooking} className="button-primary w-full">
-                                        Book This Package
-                                        <ArrowRight className="button-primary-icon" />
+                                    <button onClick={handleCustomBooking} className="relative w-full py-5 rounded-2xl font-black text-white text-lg overflow-hidden transition-all duration-300 group/book shadow-xl hover:shadow-2xl">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 bg-[length:200%_100%] group-hover/book:bg-right transition-all duration-700"></div>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/book:translate-x-[200%] transition-transform duration-1000"></div>
+                                        <span className="relative flex items-center justify-center gap-2">
+                                            Book This Package
+                                            <ArrowRight className="w-6 h-6 group-hover/book:translate-x-2 transition-transform" />
+                                        </span>
                                     </button>
-                                    <p className="text-xs text-gray-500 mt-4 text-center">Final price will be confirmed after consultation.</p>
+                                    <p className="relative text-xs text-gray-600 mt-4 text-center font-medium">Final price confirmed after consultation</p>
                                  </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <section ref={quoteSectionRef} className="py-24 bg-white">
-                    <div className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ${quoteIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                        <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Have a Unique Project?</h2>
-                        <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
-                            If you didn't find the perfect package, tell us about your event, and we'll create a custom quote just for you.
+                <section ref={quoteSectionRef} className="relative py-24 bg-gradient-to-b from-white to-gray-100 overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIwLjUiIG9wYWNpdHk9IjAuMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-40"></div>
+                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full blur-3xl opacity-20 animate-[float_20s_ease-in-out_infinite]"></div>
+                    <div className={`relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ${quoteIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                        <span className="inline-block px-6 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm font-bold rounded-full mb-6 shadow-lg">CUSTOM SOLUTIONS</span>
+                        <h2 className="text-5xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-purple-900 to-pink-900 mb-6">Have Something Unique in Mind?</h2>
+                        <p className="text-lg text-gray-600 mb-16 max-w-2xl mx-auto leading-relaxed">
+                            Every vision is unique. Share your creative ideas with us, and we'll craft a bespoke package tailored exclusively for you.
                         </p>
-                        <form onSubmit={handleQuoteSubmit} className="bg-gray-50 p-8 rounded-3xl border border-gray-200 shadow-2xl text-left max-w-3xl mx-auto space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div><label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field" placeholder="John Doe" required /></div>
-                                <div><label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field" placeholder="you@example.com" required /></div>
-                                <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field" placeholder="+91 12345 67890" /></div>
-                                <div><label htmlFor="event_date" className="block text-sm font-medium text-gray-700 mb-2">Event Date</label><input type="date" id="event_date" name="event_date" className="w-full input-field" /></div>
+                        <form onSubmit={handleQuoteSubmit} className="relative bg-white/80 backdrop-blur-xl p-10 rounded-[2rem] border-2 border-white/50 shadow-[0_20px_70px_-15px_rgba(0,0,0,0.2)] text-left max-w-3xl mx-auto space-y-6 overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full blur-3xl opacity-30"></div>
+                            <div className="relative grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div><label htmlFor="name" className="block text-sm font-bold text-gray-800 mb-3">Full Name</label><input type="text" id="name" name="name" className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 transition-all outline-none bg-white/80 backdrop-blur-sm font-medium" placeholder="John Doe" required /></div>
+                                <div><label htmlFor="email" className="block text-sm font-bold text-gray-800 mb-3">Email Address</label><input type="email" id="email" name="email" className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 transition-all outline-none bg-white/80 backdrop-blur-sm font-medium" placeholder="you@example.com" required /></div>
+                                <div><label htmlFor="phone" className="block text-sm font-bold text-gray-800 mb-3">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 transition-all outline-none bg-white/80 backdrop-blur-sm font-medium" placeholder="+91 12345 67890" /></div>
+                                <div><label htmlFor="event_date" className="block text-sm font-bold text-gray-800 mb-3">Event Date</label><input type="date" id="event_date" name="event_date" className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 transition-all outline-none bg-white/80 backdrop-blur-sm font-medium" /></div>
                             </div>
-                            <div><label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field" placeholder="Please include as many details as possible: location, number of guests, duration, specific shots you need, etc." required></textarea></div>
-                            <button type="submit" className="button-primary w-full">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
+                            <div className="relative"><label htmlFor="details" className="block text-sm font-bold text-gray-800 mb-3">Tell us about your project</label><textarea id="details" name="details" rows="6" className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 transition-all outline-none resize-none bg-white/80 backdrop-blur-sm font-medium" placeholder="Share your vision: event type, location, guest count, duration, special moments you want captured, creative ideas, and any specific requirements..." required></textarea></div>
+                            <button type="submit" className="relative w-full py-5 rounded-2xl font-black text-white text-lg overflow-hidden transition-all duration-300 group/submit shadow-xl hover:shadow-2xl">
+                                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-600 to-purple-500 bg-[length:200%_100%] group-hover/submit:bg-right transition-all duration-700"></div>
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover/submit:translate-x-[200%] transition-transform duration-1000"></div>
+                                <span className="relative flex items-center justify-center gap-2">
+                                    Get Your Custom Quote
+                                    <ArrowRight className="w-6 h-6 group-hover/submit:translate-x-2 transition-transform" />
+                                </span>
+                            </button>
                         </form>
                     </div>
                 </section>
 
-                <footer className="bg-gray-800 text-white py-16">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300"><Camera className="text-white" size={32} /></div>
-                        <p className="font-bold text-2xl mb-2">Focsera Studios</p>
-                        <p className="text-gray-400">Capturing Moments, Creating Memories.</p>
-                        <div className="flex justify-center gap-6 my-8">
-                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Twitter /></a>
-                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Instagram /></a>
-                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Facebook /></a>
+                <footer className="relative bg-gradient-to-b from-gray-900 via-[#0f0f1e] to-black text-white py-20 overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIwLjUiIG9wYWNpdHk9IjAuMDUiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50"></div>
+                    <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
+                    <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+                    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <div className="relative w-20 h-20 mx-auto mb-6 group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                            <div className="relative w-20 h-20 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl flex items-center justify-center transform group-hover:scale-110 transition-all duration-300">
+                                <Camera className="text-white" size={36} strokeWidth={1.5} />
+                            </div>
                         </div>
-                        <p className="text-sm text-gray-500 mt-8">© {new Date().getFullYear()} Focsera Studios. All Rights Reserved.</p>
+                        <p className="font-black text-4xl mb-3 bg-gradient-to-r from-white via-cyan-200 to-blue-200 bg-clip-text text-transparent">Focsera Studios</p>
+                        <p className="text-xl text-gray-400 font-light mb-10">Where moments become timeless masterpieces</p>
+                        <div className="flex justify-center gap-4 my-10">
+                            <a href="#" className="w-12 h-12 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:scale-110 hover:border-cyan-500/50 transition-all duration-300"><Twitter size={20} /></a>
+                            <a href="#" className="w-12 h-12 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:scale-110 hover:border-cyan-500/50 transition-all duration-300"><Instagram size={20} /></a>
+                            <a href="#" className="w-12 h-12 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:scale-110 hover:border-cyan-500/50 transition-all duration-300"><Facebook size={20} /></a>
+                        </div>
+                        <div className="border-t border-white/10 pt-8 mt-8">
+                            <p className="text-sm text-gray-500 font-medium">© {new Date().getFullYear()} Focsera Studios. All Rights Reserved. Crafted with passion.</p>
+                        </div>
                     </div>
                 </footer>
         </>
