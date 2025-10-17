@@ -30,8 +30,8 @@ export default function Skill() {
   ];
 
   return (
-    <div className="min-h-screen bg-white pt-20">
-      <section className="relative py-24 bg-gradient-to-br from-[#0052CC] to-[#0066FF] overflow-hidden">
+    <div className="min-h-screen bg-white">
+      <section className="relative pt-32 pb-24 bg-gradient-to-br from-[#0052CC] to-[#0066FF] overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full" style={{
             backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
