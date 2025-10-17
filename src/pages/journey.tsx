@@ -1,7 +1,8 @@
 import { Camera, Lightbulb, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Helper component for individual timeline items
-const TimelineItem = ({ year, title, description, icon, isLeft, url, galleryUrl }) => (
+const TimelineItem = ({ year, title, description, icon, isLeft, url, gallerySlug }) => (
   <div className={`relative w-full md:w-1/2 ${isLeft ? 'md:pr-8' : 'md:pl-8'} mb-12`}>
     <div className="absolute top-0 w-px h-full bg-blue-200 left-0 md:left-1/2 md:-translate-x-1/2"></div>
     <div className="absolute top-0 left-0 md:left-1/2 w-8 h-8 bg-[#0052CC] rounded-full flex items-center justify-center -translate-x-1/2">
@@ -23,16 +24,14 @@ const TimelineItem = ({ year, title, description, icon, isLeft, url, galleryUrl 
             <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
           </a>
         )}
-        {galleryUrl && (
-           <a
-            href={galleryUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+        {gallerySlug && (
+          <Link
+            to={`/gallery/${gallerySlug}`}
             className="inline-flex items-center gap-2 text-sm font-semibold text-[#0052CC] hover:text-[#0047b3] group"
           >
             View Gallery
             <Camera size={16} className="transition-transform group-hover:scale-110" />
-          </a>
+          </Link>
         )}
       </div>
     </div>
@@ -47,7 +46,7 @@ export default function Journey() {
       description: 'Hosted our flagship tech and creativity conference, InnovateX25, bringing together industry leaders and visionaries from around the globe in October.',
       icon: <Lightbulb size={18} />,
       url: 'https://innovatex25-1nfy.vercel.app/',
-      galleryUrl: 'https://focsera.com/gallery/innovatex25' // Added URL for the gallery
+      gallerySlug: 'innovatex25'
     }
   ];
 

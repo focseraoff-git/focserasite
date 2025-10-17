@@ -12,6 +12,7 @@ import Web from './pages/divisions/Web';
 import ProductServices from './pages/divisions/ProductServices';
 import Skill from './pages/divisions/Skill';
 import Journey from './pages/journey'
+import Gallery from './pages/Gallery'
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/product-services" element={<ProductServices />} />
           <Route path="/skill" element={<Skill />} />
          <Route path="/journey" element={<Journey />} />
+         <Route path="/gallery/:eventSlug" element={<Gallery />} />
         </Routes>
         <Footer />
       </div>
