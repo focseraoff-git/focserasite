@@ -106,8 +106,6 @@ const Navbar: FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const navOpacity = scrolled ? 0.3 : 1;
-
   const textColor = isDarkBackground ? "text-white" : "text-slate-700";
   const hoverTextColor = isDarkBackground ? "hover:text-blue-300" : "hover:text-blue-600";
   const activeTextColor = isDarkBackground ? "text-blue-300" : "text-blue-600";
@@ -127,11 +125,8 @@ const Navbar: FC = () => {
     <motion.nav
       ref={navRef}
       initial={false}
-      animate={{
-        opacity: navOpacity,
-      }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`fixed top-6 left-1/2 -translate-x-1/2 w-[96%] max-w-7xl flex items-center justify-between px-8 py-4 rounded-full transition-all duration-500 z-50 border ${borderColor} backdrop-blur-3xl ${shadowColor} hover:opacity-100`}
+      className={`fixed top-6 left-1/2 -translate-x-1/2 w-[96%] max-w-7xl flex items-center justify-between px-8 py-4 rounded-full transition-all duration-500 z-50 border ${borderColor} backdrop-blur-3xl ${shadowColor}`}
       style={{
         background: navBg,
       }}
