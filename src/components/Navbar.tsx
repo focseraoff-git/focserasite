@@ -72,22 +72,32 @@ const Navbar: FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const navBgClass = scrolled
-    ? "bg-white/95 backdrop-blur-xl border-slate-200 shadow-lg"
-    : "bg-white/80 backdrop-blur-md border-slate-100/50";
+  const navOpacity = scrolled ? 0.3 : 1;
+  const navScale = scrolled ? 0.85 : 1;
 
   return (
     <motion.nav
       initial={false}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl flex items-center justify-between
-        px-6 py-3.5 rounded-2xl transition-all duration-300 z-50 border ${navBgClass}`}
+      animate={{
+        opacity: navOpacity,
+        scale: navScale,
+      }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl flex items-center justify-between px-6 py-4 rounded-full transition-all duration-500 z-50 border border-white/30 bg-white/70 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(59,130,246,0.15),inset_0_1px_0_0_rgba(255,255,255,0.7)] hover:opacity-100 hover:scale-100"
+      style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 100%)',
+      }}
     >
-      <Link to="/" className="relative group flex items-center">
+      <Link to="/" className="relative group flex items-center gap-3">
+        <img
+          src="/images/logos/logog.png"
+          alt="Focsera Logo"
+          className="h-10 w-auto object-contain"
+        />
         <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 bg-clip-text text-transparent">
           FOCSERA
         </span>
-        <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-blue-400 rounded-lg opacity-0 group-hover:opacity-10 blur-sm transition-opacity duration-300"></div>
+        <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-blue-400 rounded-full opacity-0 group-hover:opacity-10 blur-md transition-opacity duration-300"></div>
       </Link>
 
       <div className="hidden lg:flex items-center gap-1">
@@ -100,7 +110,7 @@ const Navbar: FC = () => {
               className="relative"
             >
               <button
-                className="flex items-center gap-1 relative font-semibold text-sm px-4 py-2 rounded-xl transition-all duration-300 text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                className="flex items-center gap-1 relative font-semibold text-sm px-4 py-2 rounded-full transition-all duration-300 text-slate-700 hover:text-blue-600 hover:bg-white/80"
                 aria-expanded={divisionsOpen}
               >
                 <span className="relative z-10">Divisions</span>
@@ -135,10 +145,10 @@ const Navbar: FC = () => {
             <Link
               key={item.label}
               to={item.path!}
-              className={`relative text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-xl ${
+              className={`relative text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-full ${
                 isActive(item.path!)
-                  ? "text-blue-600 bg-blue-50"
-                  : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                  ? "text-blue-600 bg-blue-50/80"
+                  : "text-slate-700 hover:text-blue-600 hover:bg-white/80"
               }`}
             >
               {item.label}
@@ -148,7 +158,7 @@ const Navbar: FC = () => {
 
         <Link
           to={user ? "/account" : "/login"}
-          className="relative ml-2 flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 overflow-hidden group"
+          className="relative ml-2 flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 overflow-hidden group"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500 transition-transform duration-300"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
