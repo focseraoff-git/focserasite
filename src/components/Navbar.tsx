@@ -21,14 +21,12 @@ const Navbar: FC = () => {
     { name: "Skill", path: "/skill" },
   ];
 
-  // Handle scroll to toggle navbar background
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handler);
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
-  // Auto-close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -47,46 +45,32 @@ const Navbar: FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  // Conditional background for navbar
   const navBgClass = scrolled
     ? "bg-white/40 backdrop-blur-2xl border border-white/20 shadow-lg"
     : "bg-transparent";
 
-  // Conditional text color for FOCSERA logo
-  const logoColorClass = scrolled ? "text-blue-700" : "text-white";
-
-  const linkClass = (path: string) =>
-    `relative text-sm font-medium transition-all duration-300 px-4 py-2 rounded-full ${
-      isActive(path)
-        ? "text-blue-700"
-        : scrolled
-        ? "text-gray-700 hover:text-blue-700"
-        : "text-white hover:text-blue-200"
-    }`;
-
   return (
-    <nav
-      className={`fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-5xl flex items-center justify-between 
-        px-6 py-3 rounded-full transition-all duration-500 ${navBgClass} z-50`}
+    <motion.nav
+      initial={false}
+      animate={{ color: scrolled ? "#0052CC" : "#FFFFFF" }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className={`fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-5xl flex items-center justify-between
+        px-6 py-3 rounded-full transition-all duration-500 z-50 ${navBgClass}`}
     >
       {/* Logo */}
-      <motion.div
-        initial={false}
-        animate={{ color: scrolled ? "#0052CC" : "#FFFFFF" }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
-      >
-        <Link
-          to="/"
-          className={`text-2xl font-extrabold tracking-tight ${logoColorClass}`}
-        >
-          FOCSERA
-        </Link>
-      </motion.div>
+      <Link to="/" className="text-2xl font-extrabold tracking-tight" style={{ color: "inherit" }}>
+        FOCSERA
+      </Link>
 
       {/* Desktop Menu */}
       <div className="hidden md:flex items-center gap-x-2">
-        {["/", "/about", "/mission", "/journey", "/contact"].map((path, idx) => (
-          <Link key={idx} to={path} className={linkClass(path)}>
+        {["/", "/about", "/mission", "/journey", "/contact"].map((path) => (
+          <Link
+            key={path}
+            to={path}
+            className="relative text-sm font-medium transition-all duration-300 px-4 py-2 rounded-full"
+            style={{ color: "inherit" }}
+          >
             <AnimatePresence>
               {isActive(path) && (
                 <motion.div
@@ -109,10 +93,11 @@ const Navbar: FC = () => {
           className="relative"
         >
           <button
-            className={`flex items-center gap-1 ${linkClass("/divisions")}`}
+            className="flex items-center gap-1 relative font-medium text-sm px-4 py-2 rounded-full transition-colors duration-300"
+            style={{ color: "inherit" }}
             aria-expanded={divisionsOpen}
           >
-            <span>Divisions</span>
+            <span className="relative z-10">Divisions</span>
             <ChevronDown
               size={16}
               className={`transition-transform ${divisionsOpen ? "rotate-180" : ""}`}
@@ -144,16 +129,16 @@ const Navbar: FC = () => {
 
       {/* Mobile Menu Toggle */}
       <button
-        ref={menuButtonRef}
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className={`md:hidden transition-transform ${logoColorClass}`}
         aria-label="Toggle Menu"
-        aria-expanded={mobileMenuOpen}
+        className="md:hidden"
+        style={{ color: "inherit" }}
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        ref={menuButtonRef}
       >
         {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Mobile Dropdown */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -178,6 +163,7 @@ const Navbar: FC = () => {
               <button
                 onClick={() => setDivisionsOpen(!divisionsOpen)}
                 className="flex justify-between items-center w-full py-2 px-3 text-gray-700 font-medium"
+                style={{ color: "inherit" }}
               >
                 Divisions
                 <ChevronDown
@@ -208,7 +194,7 @@ const Navbar: FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </motion.nav>
   );
 };
 
