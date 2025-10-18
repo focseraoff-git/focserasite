@@ -43,7 +43,7 @@ const Login = () => {
                 if (error) throw error;
 
                 if (data.user) {
-                    alert('Account created successfully! You can now log in.');
+                    alert('Account created successfully! Please check your email to confirm your account before logging in.');
                     setMode('login');
                 }
             } else {

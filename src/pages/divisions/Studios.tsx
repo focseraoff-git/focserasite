@@ -519,7 +519,7 @@ const LoginPage = ({ onLogin, onBack }) => {
         if (error) {
             setError(error.message);
         } else if (!isLoginView) {
-            alert("Account created successfully! You can now log in.");
+            alert("Account created successfully! Please check your email to confirm your account before logging in.");
             setIsLoginView(true);
         }
 
