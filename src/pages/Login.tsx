@@ -1,65 +1,71 @@
-import React, { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import React, { useState, useEffect, FC } from 'react';
+import { supabase } from './lib/supabase';
 import { ArrowRight, Lock, Mail, User, Eye, EyeOff } from 'lucide-react';
+import { Session } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 
-// --- Supabase Client Setup ---
-// IMPORTANT: Replace with your actual Supabase URL and Anon Key
-const supabaseUrl = 'YOUR_SUPABASE_URL';
-const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+// --- Type Definitions ---
+type Mode = 'login' | 'signup';
 
-// A simple check to ensure the user replaces the placeholder credentials.
-if (supabaseUrl === 'YOUR_SUPABASE_URL' || supabaseAnonKey === 'YOUR_SUPABASE_ANON_KEY') {
-    console.warn("Supabase credentials are placeholders. Please replace them in App.jsx.");
+interface InputFieldProps {
+    icon: React.ElementType;
+    type: string;
+    value: string;
+    onChange: (value: string) => void;
+    placeholder: string;
+    label: string;
+    required?: boolean;
 }
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+interface PasswordFieldProps {
+    value: string;
+    onChange: (value: string) => void;
+}
+
+interface AccountProps {
+    session: Session;
+}
+
 
 // --- Main App Component ---
 export default function App() {
-    // This state determines if we show the login page or the account page.
-    const [session, setSession] = useState(null);
-    const [loadingInitial, setLoadingInitial] = useState(true);
+    const [session, setSession] = useState<Session | null>(null);
+    const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
 
     useEffect(() => {
-        // Check for an active session when the component mounts
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
             setLoadingInitial(false);
         });
 
-        // Listen for changes in authentication state (login/logout)
         const { data: { subscription } } = supabase.auth.onAuthStateChanged((_event, session) => {
             setSession(session);
         });
 
-        // Cleanup the subscription when the component unmounts
         return () => subscription.unsubscribe();
     }, []);
 
     if (loadingInitial) {
-        return <div className="min-h-screen bg-gray-100 flex items-center justify-center">Loading...</div>
+        return <div className="min-h-screen bg-gray-100 flex items-center justify-center">Loading...</div>;
     }
 
     if (!session) {
-        // If there's no session, show the Login/Signup page
         return <Login />;
     } else {
-        // If there is a session, show the user's account page
         return <Account key={session.user.id} session={session} />;
     }
 }
 
 // --- Login/Signup Component ---
-const Login = () => {
-    const [mode, setMode] = useState('login');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [fullName, setFullName] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+const Login: FC = () => {
+    const [mode, setMode] = useState<Mode>('login');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [fullName, setFullName] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
+    const [success, setSuccess] = useState<string>('');
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setSuccess('');
@@ -70,29 +76,21 @@ const Login = () => {
                 const { data, error } = await supabase.auth.signUp({
                     email,
                     password,
-                    options: {
-                        data: {
-                            full_name: fullName,
-                        }
-                    }
+                    options: { data: { full_name: fullName } }
                 });
                 if (error) throw error;
                 if (data.user) {
                     setSuccess('Account created! Please check your email for a verification link.');
-                    setMode('login'); // Switch to login view after successful signup
+                    setMode('login');
                     setEmail('');
                     setPassword('');
                     setFullName('');
                 }
             } else {
-                const { error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                });
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-                // The onAuthStateChanged listener in App will handle navigation
             }
-        } catch (err) {
+        } catch (err: any) {
             setError(err.message || 'An error occurred. Please try again.');
         } finally {
             setLoading(false);
@@ -103,22 +101,20 @@ const Login = () => {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center px-4 py-16">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
-                     <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 inline-block mb-2">
+                    <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 inline-block mb-2">
                         FOCSERA
-                     </h1>
-                    <p className="text-gray-600">Welcome back! Please {mode === 'login' ? 'log in' : 'sign up'} to continue</p>
+                    </h1>
+                    <p className="text-gray-600">Welcome! Please {mode === 'login' ? 'log in' : 'sign up'} to continue</p>
                 </div>
 
                 <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200 p-8">
                     <div className="flex gap-2 mb-8 bg-gray-100 p-1 rounded-xl">
-                        {['login', 'signup'].map((m) => (
-                             <button
+                        {(['login', 'signup'] as Mode[]).map((m) => (
+                            <button
                                 key={m}
                                 onClick={() => { setMode(m); setError(''); setSuccess(''); }}
                                 className={`flex-1 py-3 rounded-lg font-semibold transition-all duration-300 ${
-                                    mode === m
-                                        ? 'bg-[#0052CC] text-white shadow-md'
-                                        : 'text-gray-600 hover:text-gray-900'
+                                    mode === m ? 'bg-[#0052CC] text-white shadow-md' : 'text-gray-600 hover:text-gray-900'
                                 }`}
                             >
                                 {m === 'login' ? 'Log In' : 'Sign Up'}
@@ -126,47 +122,30 @@ const Login = () => {
                         ))}
                     </div>
 
-                    {error && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-                            {error}
-                        </div>
-                    )}
-
-                    {success && (
-                         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">
-                            {success}
-                        </div>
-                    )}
+                    {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>}
+                    {success && <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">{success}</div>}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {mode === 'signup' && (
-                            <InputField icon={User} type="text" value={fullName} onChange={setFullName} placeholder="John Doe" label="Full Name" required />
-                        )}
+                        {mode === 'signup' && <InputField icon={User} type="text" value={fullName} onChange={setFullName} placeholder="John Doe" label="Full Name" required />}
                         <InputField icon={Mail} type="email" value={email} onChange={setEmail} placeholder="you@example.com" label="Email Address" required />
                         <PasswordField value={password} onChange={setPassword} />
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 bg-[length:200%_100%] text-white font-bold py-4 rounded-xl hover:bg-right transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                        >
+                        <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 bg-[length:200%_100%] text-white font-bold py-4 rounded-xl hover:bg-right transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                             {loading ? 'Please wait...' : mode === 'login' ? 'Log In' : 'Create Account'}
                             {!loading && <ArrowRight size={20} />}
                         </button>
                     </form>
                 </div>
-                 <div className="text-center mt-6">
-                     <a href="#" className="text-sm text-gray-600 hover:text-gray-900 font-medium">
-                         &larr; Back to Home
-                     </a>
-                 </div>
+                <div className="text-center mt-6">
+                    <a href="#" className="text-sm text-gray-600 hover:text-gray-900 font-medium">&larr; Back to Home</a>
+                </div>
             </div>
         </div>
     );
 };
 
 // --- Helper Input Field Components ---
-const InputField = ({ icon: Icon, type, value, onChange, placeholder, label, required }) => (
+const InputField: FC<InputFieldProps> = ({ icon: Icon, type, value, onChange, placeholder, label, required }) => (
     <div>
         <label className="text-sm font-semibold text-gray-700 block mb-2">{label}</label>
         <div className="relative">
@@ -183,8 +162,8 @@ const InputField = ({ icon: Icon, type, value, onChange, placeholder, label, req
     </div>
 );
 
-const PasswordField = ({ value, onChange }) => {
-    const [showPassword, setShowPassword] = useState(false);
+const PasswordField: FC<PasswordFieldProps> = ({ value, onChange }) => {
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     return (
         <div>
             <label className="text-sm font-semibold text-gray-700 block mb-2">Password</label>
@@ -199,11 +178,7 @@ const PasswordField = ({ value, onChange }) => {
                     required
                     minLength={6}
                 />
-                <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
             </div>
@@ -212,15 +187,15 @@ const PasswordField = ({ value, onChange }) => {
 };
 
 // --- Account Page Component ---
-const Account = ({ session }) => {
+const Account: FC<AccountProps> = ({ session }) => {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 text-center">
-                 <h1 className="text-2xl font-bold text-gray-800 mb-2">Welcome!</h1>
-                 <p className="text-gray-600 mb-6">You are now logged in.</p>
-                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h1 className="text-2xl font-bold text-gray-800 mb-2">Welcome!</h1>
+                <p className="text-gray-600 mb-6">You are now logged in.</p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                     <p className="text-sm text-blue-800 break-all"><strong>Email:</strong> {session.user.email}</p>
-                 </div>
+                </div>
                 <button
                     onClick={() => supabase.auth.signOut()}
                     className="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-colors"
