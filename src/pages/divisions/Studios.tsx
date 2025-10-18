@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-// Import createClient directly from the Supabase ESM CDN
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-// --- SUPABASE SETUP ---
-const supabaseUrl = 'https://gyjedezyhdlpwzeyixwg.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5amVkZXp5aGRscHd6ZXlpeHdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1NDA5NDcsImV4cCI6MjA3NjExNjk0N30.6hsjkGN5ojE0jkLnO9qX5fRAGIQABLzlLoqagcNrm1s';
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '../../lib/supabase';
 
 
 // --- ICONS (using inline SVGs for self-containment) ---
@@ -499,31 +493,57 @@ const LoginPage = ({ onLogin, onBack }) => {
     const [fullName, setFullName] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
+    const [messageType, setMessageType] = useState('error');
     const [loading, setLoading] = useState(false);
 
     const handleAuth = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setSuccessMessage(null);
 
-        const authMethod = isLoginView
-            ? supabase.auth.signInWithPassword
-            : supabase.auth.signUp;
+        try {
+            if (isLoginView) {
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-        const credentials = isLoginView
-            ? { email, password }
-            : { email, password, options: { data: { full_name: fullName } } };
+                if (error) throw error;
 
-        const { error } = await authMethod(credentials);
+                setMessageType('success');
+                setSuccessMessage('Congratulations! You have successfully logged in.');
+                setTimeout(() => {
+                    onLogin();
+                }, 2000);
+            } else {
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: { data: { full_name: fullName } }
+                });
 
-        if (error) {
-            setError(error.message);
-        } else if (!isLoginView) {
-            alert("Account created successfully! Please check your email to confirm your account before logging in.");
-            setIsLoginView(true);
+                if (error) {
+                    if (error.message.includes('already registered')) {
+                        setMessageType('info');
+                        setError('This email is already registered. Please sign in instead.');
+                        setTimeout(() => setIsLoginView(true), 3000);
+                    } else {
+                        throw error;
+                    }
+                } else if (data.user) {
+                    setMessageType('success');
+                    setSuccessMessage('Account created successfully! Please check your email to confirm your account.');
+                    setTimeout(() => {
+                        setIsLoginView(true);
+                        setSuccessMessage(null);
+                    }, 4000);
+                }
+            }
+        } catch (err) {
+            setMessageType('error');
+            setError(err.message || 'An error occurred');
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     };
 
     return (
@@ -572,7 +592,21 @@ const LoginPage = ({ onLogin, onBack }) => {
                         </button>
                     </div>
 
-                    {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>}
+                    {error && (
+                        <div className={`mb-6 p-4 rounded-xl text-sm flex items-start gap-3 ${
+                            messageType === 'error'
+                                ? 'bg-red-50 border border-red-200 text-red-700'
+                                : 'bg-blue-50 border border-blue-200 text-blue-700'
+                        }`}>
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    {successMessage && (
+                        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-start gap-3">
+                            <span>{successMessage}</span>
+                        </div>
+                    )}
 
                     <form onSubmit={handleAuth} className="space-y-5">
                         {!isLoginView && (
@@ -1052,7 +1086,13 @@ export default function App() {
         sessionStorage.setItem('focseraBookingPackage', JSON.stringify(packageToBook));
 
         setBookingPackage(packageToBook);
-        setCurrentView('login');
+
+        // Check if user is already logged in
+        if (session) {
+            setCurrentView('cart');
+        } else {
+            setCurrentView('login');
+        }
         window.scrollTo(0, 0);
     };
 
