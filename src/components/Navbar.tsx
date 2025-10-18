@@ -21,14 +21,14 @@ const Navbar: FC = () => {
     { name: "Skill", path: "/skill" },
   ];
 
-  // Scroll behavior
+  // Handle scroll to toggle navbar background
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handler);
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
-  // Close menus when clicking outside
+  // Auto-close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -47,15 +47,21 @@ const Navbar: FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Conditional background for navbar
   const navBgClass = scrolled
     ? "bg-white/40 backdrop-blur-2xl border border-white/20 shadow-lg"
     : "bg-transparent";
+
+  // Conditional text color for FOCSERA logo
+  const logoColorClass = scrolled ? "text-blue-700" : "text-white";
 
   const linkClass = (path: string) =>
     `relative text-sm font-medium transition-all duration-300 px-4 py-2 rounded-full ${
       isActive(path)
         ? "text-blue-700"
-        : "text-gray-700 hover:text-blue-600 hover:scale-[1.05]"
+        : scrolled
+        ? "text-gray-700 hover:text-blue-700"
+        : "text-white hover:text-blue-200"
     }`;
 
   return (
@@ -64,14 +70,18 @@ const Navbar: FC = () => {
         px-6 py-3 rounded-full transition-all duration-500 ${navBgClass} z-50`}
     >
       {/* Logo */}
-      <Link
-        to="/"
-        className={`text-2xl font-extrabold tracking-tight ${
-          scrolled ? "text-blue-700" : "text-white"
-        }`}
+      <motion.div
+        initial={false}
+        animate={{ color: scrolled ? "#0052CC" : "#FFFFFF" }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
       >
-        FOCSERA
-      </Link>
+        <Link
+          to="/"
+          className={`text-2xl font-extrabold tracking-tight ${logoColorClass}`}
+        >
+          FOCSERA
+        </Link>
+      </motion.div>
 
       {/* Desktop Menu */}
       <div className="hidden md:flex items-center gap-x-2">
@@ -132,18 +142,18 @@ const Navbar: FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Toggle */}
       <button
         ref={menuButtonRef}
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className={`md:hidden transition-transform ${scrolled ? "text-blue-700" : "text-white"}`}
+        className={`md:hidden transition-transform ${logoColorClass}`}
         aria-label="Toggle Menu"
         aria-expanded={mobileMenuOpen}
       >
         {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Mobile Menu */}
+      {/* Mobile Dropdown */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -151,7 +161,7 @@ const Navbar: FC = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute right-0 top-16 w-64 p-4 rounded-2xl z-40 glossy-pill 
+            className="absolute right-0 top-16 w-64 p-4 rounded-2xl z-40 
                  bg-white/40 backdrop-blur-2xl border border-white/20 shadow-lg"
           >
             {["Home", "About", "Mission", "Journey", "Contact"].map((item) => (
@@ -163,6 +173,7 @@ const Navbar: FC = () => {
                 {item}
               </Link>
             ))}
+
             <div className="mt-3">
               <button
                 onClick={() => setDivisionsOpen(!divisionsOpen)}
