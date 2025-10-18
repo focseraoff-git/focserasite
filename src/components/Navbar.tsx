@@ -4,8 +4,6 @@ import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../lib/supabase";
 
-const getNavbarColor = (scrolled: boolean) => (scrolled ? "#0052CC" : "#FFFFFF");
-
 const Navbar: FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [divisionsOpen, setDivisionsOpen] = useState(false);
@@ -25,7 +23,6 @@ const Navbar: FC = () => {
     { name: "Skill", path: "/skill" },
   ];
 
-  // List of menu items in desired order (Divisions at 2nd)
   const mainMenu = [
     { label: "Home", path: "/" },
     { label: "Divisions", type: "dropdown" },
@@ -74,34 +71,28 @@ const Navbar: FC = () => {
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
-  const textColor = getNavbarColor(scrolled);
 
   const navBgClass = scrolled
-    ? "bg-white/90 backdrop-blur-2xl border border-white/30 shadow-2xl shadow-blue-500/10"
-    : "bg-white/20 backdrop-blur-md border border-white/20";
+    ? "bg-white/95 backdrop-blur-xl border-slate-200 shadow-lg"
+    : "bg-white/80 backdrop-blur-md border-slate-100/50";
 
   return (
     <motion.nav
       initial={false}
-      animate={{ color: textColor }}
-      transition={{ duration: 0.4, ease: "easeInOut" }}
-      className={`fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-5xl flex items-center justify-between
-        px-6 py-3 rounded-full transition-all duration-500 z-50 ${navBgClass}`}
-      style={{ color: textColor }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl flex items-center justify-between
+        px-6 py-3.5 rounded-2xl transition-all duration-300 z-50 border ${navBgClass}`}
     >
-      {/* Logo */}
-      <Link to="/" className="relative group">
-        <span className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+      <Link to="/" className="relative group flex items-center">
+        <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 bg-clip-text text-transparent">
           FOCSERA
         </span>
-        <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg opacity-0 group-hover:opacity-20 blur transition-opacity duration-300"></div>
+        <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-blue-400 rounded-lg opacity-0 group-hover:opacity-10 blur-sm transition-opacity duration-300"></div>
       </Link>
 
-      {/* Desktop Menu */}
-      <div className="hidden md:flex items-center gap-x-2">
+      <div className="hidden lg:flex items-center gap-1">
         {mainMenu.map((item) =>
           item.type === "dropdown" ? (
-            // Divisions Dropdown as 2nd item
             <div
               key={item.label}
               onMouseEnter={() => setDivisionsOpen(true)}
@@ -109,15 +100,13 @@ const Navbar: FC = () => {
               className="relative"
             >
               <button
-                className="flex items-center gap-1 relative font-medium text-sm px-4 py-2 rounded-full transition-colors duration-300"
-                style={{ color: textColor }}
+                className="flex items-center gap-1 relative font-semibold text-sm px-4 py-2 rounded-xl transition-all duration-300 text-slate-700 hover:text-blue-600 hover:bg-slate-50"
                 aria-expanded={divisionsOpen}
               >
                 <span className="relative z-10">Divisions</span>
                 <ChevronDown
                   size={16}
-                  style={{ color: textColor }}
-                  className={`transition-transform ${divisionsOpen ? "rotate-180" : ""}`}
+                  className={`transition-transform duration-300 ${divisionsOpen ? "rotate-180" : ""}`}
                 />
               </button>
               <AnimatePresence>
@@ -126,62 +115,49 @@ const Navbar: FC = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3
-                        w-56 rounded-2xl shadow-2xl p-2 bg-white/95 backdrop-blur-2xl border border-white/50"
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 rounded-2xl shadow-xl p-2 bg-white/95 backdrop-blur-xl border border-slate-200"
                   >
                     {divisions.map((d) => (
-                      <motion.div
+                      <Link
                         key={d.path}
-                        whileHover={{ scale: 1.03 }}
-                        className="block px-4 py-2 font-medium text-sm"
-                        style={{ color: textColor }}
+                        to={d.path}
+                        className="block px-4 py-2.5 font-semibold text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
                       >
-                        <Link to={d.path} style={{ color: textColor }}>
-                          Focsera {d.name}
-                        </Link>
-                      </motion.div>
+                        Focsera {d.name}
+                      </Link>
                     ))}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
           ) : (
-            // Regular links
             <Link
               key={item.label}
               to={item.path!}
-              className="relative text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-full hover:scale-105"
-              style={{ color: textColor }}
+              className={`relative text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-xl ${
+                isActive(item.path!)
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+              }`}
             >
-              <AnimatePresence>
-                {isActive(item.path!) && (
-                  <motion.div
-                    layoutId="active-pill"
-                    className={`absolute inset-0 rounded-full ${
-                      scrolled ? "bg-gradient-to-r from-blue-100 to-cyan-100" : "bg-white/30"
-                    } shadow-md`}
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-              </AnimatePresence>
-              <span className="relative z-10">{item.label}</span>
+              {item.label}
             </Link>
           )
         )}
 
-        {/* Auth Button */}
         <Link
           to={user ? "/account" : "/login"}
-          className="relative ml-2 flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 overflow-hidden group"
+          className="relative ml-2 flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 overflow-hidden group"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500 transition-transform duration-300 group-hover:scale-110"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500 transition-transform duration-300"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.4),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.3),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <span className="relative z-10 text-white flex items-center gap-2">
             {user ? (
               <>
                 <User size={18} />
-                <span className="hidden lg:inline">Account</span>
+                <span className="hidden xl:inline">Account</span>
               </>
             ) : (
               <>
@@ -193,81 +169,81 @@ const Navbar: FC = () => {
         </Link>
       </div>
 
-      {/* Mobile Menu Toggle */}
       <button
         aria-label="Toggle Menu"
-        className="md:hidden"
-        style={{ color: textColor }}
+        className="lg:hidden text-slate-700 hover:text-blue-600 transition-colors"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         ref={menuButtonRef}
       >
-        {mobileMenuOpen ? <X size={24} style={{ color: textColor }} /> : <Menu size={24} style={{ color: textColor }} />}
+        {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             ref={mobileMenuRef}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute right-0 top-16 w-64 p-4 rounded-2xl z-40
-                 bg-white/95 backdrop-blur-2xl border border-white/50 shadow-2xl"
-            style={{ color: textColor }}
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="absolute right-4 top-full mt-2 w-72 p-3 rounded-2xl z-40 bg-white/95 backdrop-blur-xl border border-slate-200 shadow-xl"
           >
             {mainMenu.map((item) =>
               item.type === "dropdown" ? (
                 <div key={item.label}>
                   <button
                     onClick={() => setDivisionsOpen(!divisionsOpen)}
-                    className="flex justify-between items-center w-full py-2 px-3 font-medium"
-                    style={{ color: textColor }}
+                    className="flex justify-between items-center w-full py-2.5 px-3 font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-xl transition-all duration-200"
                   >
                     Divisions
                     <ChevronDown
                       size={16}
-                      className={`transition-transform ${divisionsOpen ? "rotate-180" : ""}`}
-                      style={{ color: textColor }}
+                      className={`transition-transform duration-300 ${divisionsOpen ? "rotate-180" : ""}`}
                     />
                   </button>
                   <AnimatePresence>
-                    {divisionsOpen &&
-                      divisions.map((d) => (
-                        <motion.div
-                          key={d.path}
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="pl-4"
-                          style={{ color: textColor }}
-                        >
+                    {divisionsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="pl-3 space-y-1 mt-1"
+                      >
+                        {divisions.map((d) => (
                           <Link
+                            key={d.path}
                             to={d.path}
-                            className="block py-1 px-3 text-sm font-medium"
-                            style={{ color: textColor }}
+                            className="block py-2 px-3 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                            onClick={() => setMobileMenuOpen(false)}
                           >
-                            {d.name}
+                            Focsera {d.name}
                           </Link>
-                        </motion.div>
-                      ))}
+                        ))}
+                      </motion.div>
+                    )}
                   </AnimatePresence>
                 </div>
               ) : (
                 <Link
                   key={item.label}
                   to={item.path!}
-                  className="block py-2 px-3 rounded-lg font-medium"
-                  style={{ color: textColor }}
+                  className={`block py-2.5 px-3 rounded-xl font-semibold transition-all duration-200 ${
+                    isActive(item.path!)
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.label}
                 </Link>
               )
             )}
-            <div className="mt-4 pt-4 border-t border-slate-200">
+            <div className="mt-3 pt-3 border-t border-slate-200">
               <Link
                 to={user ? "/account" : "/login"}
                 className="relative flex items-center gap-2 py-3 px-4 rounded-xl font-bold overflow-hidden group"
+                onClick={() => setMobileMenuOpen(false)}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -277,7 +253,7 @@ const Navbar: FC = () => {
                       <User size={18} />
                       Account
                     </>
-                  ) : ( 
+                  ) : (
                     <>
                       <LogIn size={18} />
                       Log In
