@@ -497,6 +497,7 @@ const LoginPage = ({ onLogin, onBack }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -518,66 +519,161 @@ const LoginPage = ({ onLogin, onBack }) => {
         if (error) {
             setError(error.message);
         } else if (!isLoginView) {
-            alert("Please check your email to verify your account!");
+            alert("Account created successfully! You can now log in.");
+            setIsLoginView(true);
         }
 
         setLoading(false);
     };
 
-    const handleGoogleLogin = async () => {
-        await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin
-            }
-        });
-    };
-
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#0052CC] to-[#0066FF] flex flex-col items-center justify-center p-4 pt-40">
-            <div className="w-full max-w-md animate-fadeInUp">
-                <div className="bg-white rounded-3xl shadow-2xl p-10 relative border border-gray-100">
-                    <button onClick={onBack} className="absolute top-6 left-6 text-gray-400 hover:text-gray-700 font-medium text-sm flex items-center gap-2 transition-colors">
-                        &larr; Back
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex flex-col items-center justify-center p-4 pt-40 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(100,116,139,0.08),transparent_50%)]"></div>
+
+            <div className="absolute inset-0 opacity-20">
+                <div className="absolute top-20 left-10 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+                <div className="absolute top-40 right-10 w-96 h-96 bg-slate-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+                <div className="absolute bottom-20 left-1/2 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+            </div>
+
+            <div className="w-full max-w-md animate-fadeInUp relative z-10">
+                <div className="bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-200 p-8 lg:p-10">
+                    <button onClick={onBack} className="absolute top-6 left-6 text-slate-600 hover:text-slate-800 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <span className="hover:-translate-x-1 transition-transform">&larr;</span> Back
                     </button>
+
                     <div className="text-center mb-8 mt-8">
-                        <div className="w-20 h-20 bg-gradient-to-br from-[#0052CC] to-[#0066FF] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                            <Camera className="text-white" size={40} />
-                        </div>
-                        <h2 className="text-3xl font-bold text-gray-900 mb-2">{isLoginView ? 'Welcome Back' : 'Create Account'}</h2>
-                        <p className="text-gray-600">{isLoginView ? 'Sign in to continue your booking' : 'Join Focsera Studios today'}</p>
+                        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent inline-block mb-2">
+                            FOCSERA
+                        </h2>
+                        <p className="text-slate-600">{isLoginView ? 'Sign in to continue your booking' : 'Join Focsera Studios today'}</p>
                     </div>
-                    {error && <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-sm mb-6">{error}</div>}
+
+                    <div className="flex gap-2 mb-8 bg-slate-100 p-1.5 rounded-2xl">
+                        <button
+                            onClick={() => setIsLoginView(true)}
+                            className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${
+                                isLoginView
+                                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30'
+                                    : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'
+                            }`}
+                        >
+                            Log In
+                        </button>
+                        <button
+                            onClick={() => setIsLoginView(false)}
+                            className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${
+                                !isLoginView
+                                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30'
+                                    : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'
+                            }`}
+                        >
+                            Sign Up
+                        </button>
+                    </div>
+
+                    {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>}
+
                     <form onSubmit={handleAuth} className="space-y-5">
                         {!isLoginView && (
-                            <div>
-                                <label className="text-sm font-semibold text-gray-700 block mb-2">Full Name</label>
-                                <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} className="w-full input-field" placeholder="John Doe" required/>
+                            <div className="group">
+                                <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Full Name</label>
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" size={20} />
+                                    <input
+                                        type="text"
+                                        value={fullName}
+                                        onChange={e => setFullName(e.target.value)}
+                                        className="relative w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                        placeholder="John Doe"
+                                        required
+                                    />
+                                </div>
                             </div>
                         )}
-                        <div>
-                            <label className="text-sm font-semibold text-gray-700 block mb-2">Email Address</label>
-                            <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full input-field" placeholder="you@example.com" required/>
+
+                        <div className="group">
+                            <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Email Address</label>
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    className="relative w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                    placeholder="you@example.com"
+                                    required
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <label className="text-sm font-semibold text-gray-700 block mb-2">Password</label>
-                            <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full input-field" placeholder="Enter at least 6 characters" required/>
+
+                        <div className="group">
+                            <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Password</label>
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    className="relative w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                    placeholder="••••••••"
+                                    required
+                                    minLength={6}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10 transition-colors"
+                                >
+                                    {showPassword ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    )}
+                                </button>
+                            </div>
                         </div>
-                        <button type="submit" className="button-primary w-full mt-6" disabled={loading}>
-                            {loading ? 'Processing...' : (isLoginView ? 'Sign In' : 'Create Account')}
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="relative w-full group overflow-hidden rounded-xl"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.3),transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="relative flex items-center justify-center gap-2 py-4 font-bold text-white shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow">
+                                {loading ? 'Please wait...' : (isLoginView ? 'Log In' : 'Create Account')}
+                                {!loading && <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />}
+                            </div>
                         </button>
                     </form>
-                    <div className="text-center mt-6">
-                        <button onClick={() => setIsLoginView(!isLoginView)} className="text-sm font-semibold text-[#0052CC] hover:text-[#0066FF] transition-colors">
-                            {isLoginView ? "New here? Create an account" : "Already have an account? Sign in"}
-                        </button>
+
+                    <div className="mt-8 text-center">
+                        <p className="text-sm text-slate-600">
+                            {isLoginView ? "Don't have an account? " : "Already have an account? "}
+                            <button
+                                onClick={() => setIsLoginView(!isLoginView)}
+                                className="text-blue-600 font-bold hover:text-blue-700 transition-colors"
+                            >
+                                {isLoginView ? 'Sign Up' : 'Log In'}
+                            </button>
+                        </p>
                     </div>
+
                     <div className="flex items-center my-8">
-                        <div className="flex-grow border-t border-gray-200"></div>
-                        <span className="mx-4 text-gray-400 text-sm font-medium">OR</span>
-                        <div className="flex-grow border-t border-gray-200"></div>
+                        <div className="flex-grow border-t border-slate-200"></div>
+                        <span className="mx-4 text-slate-400 text-sm font-medium">OR</span>
+                        <div className="flex-grow border-t border-slate-200"></div>
                     </div>
-                    <button onClick={onLogin} className="w-full py-3.5 border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all">
+
+                    <button
+                        onClick={onLogin}
+                        className="w-full py-3.5 border-2 border-slate-200 rounded-xl font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                    >
                         Continue as Guest
                     </button>
                 </div>
