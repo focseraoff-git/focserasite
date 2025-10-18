@@ -1,7 +1,19 @@
 import React, { useState, useEffect, FC } from 'react';
-import { supabase } from './lib/supabase';
 import { ArrowRight, Lock, Mail, User, Eye, EyeOff } from 'lucide-react';
-import { Session } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+import { Session, createClient, SupabaseClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+
+// --- Supabase Client Setup ---
+// IMPORTANT: Replace with your actual Supabase URL and Anon Key
+const supabaseUrl: string = 'YOUR_SUPABASE_URL';
+const supabaseAnonKey: string = 'YOUR_SUPABASE_ANON_KEY';
+
+// A simple check to ensure the user replaces the placeholder credentials.
+if (supabaseUrl === 'YOUR_SUPABASE_URL' || supabaseAnonKey === 'YOUR_SUPABASE_ANON_KEY') {
+    console.warn("Supabase credentials are placeholders. Please replace them in Login.tsx.");
+}
+
+const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+
 
 // --- Type Definitions ---
 type Mode = 'login' | 'signup';
@@ -206,3 +218,4 @@ const Account: FC<AccountProps> = ({ session }) => {
         </div>
     );
 };
+
