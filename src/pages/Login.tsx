@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase'; // Import your Supabase client
 import { ArrowRight, Lock, Mail, User, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
@@ -27,7 +27,6 @@ const Login = () => {
         e.preventDefault();
         setError('');
         setLoading(true);
-
         try {
             if (mode === 'signup') {
                 const { data, error } = await supabase.auth.signUp({
@@ -39,9 +38,7 @@ const Login = () => {
                         }
                     }
                 });
-
                 if (error) throw error;
-
                 if (data.user) {
                     alert('Account created successfully! You can now log in.');
                     setMode('login');
@@ -51,7 +48,6 @@ const Login = () => {
                     email,
                     password,
                 });
-
                 if (error) throw error;
                 navigate('/account');
             }
@@ -65,6 +61,7 @@ const Login = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center px-4 py-16">
             <div className="w-full max-w-md">
+                {/* Logo & Header */}
                 <div className="text-center mb-8">
                     <Link to="/" className="text-4xl font-extrabold gradient-text inline-block mb-2">
                         FOCSERA
@@ -72,7 +69,9 @@ const Login = () => {
                     <p className="text-gray-600">Welcome back! Please {mode === 'login' ? 'log in' : 'sign up'} to continue</p>
                 </div>
 
+                {/* Card Container */}
                 <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200 p-8">
+                    {/* Mode Toggle Buttons */}
                     <div className="flex gap-2 mb-8 bg-gray-100 p-1 rounded-xl">
                         <button
                             onClick={() => setMode('login')}
@@ -96,13 +95,16 @@ const Login = () => {
                         </button>
                     </div>
 
+                    {/* Error Message */}
                     {error && (
                         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                             {error}
                         </div>
                     )}
 
+                    {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Signup Full Name */}
                         {mode === 'signup' && (
                             <div>
                                 <label className="text-sm font-semibold text-gray-700 block mb-2">
@@ -122,6 +124,7 @@ const Login = () => {
                             </div>
                         )}
 
+                        {/* Email */}
                         <div>
                             <label className="text-sm font-semibold text-gray-700 block mb-2">
                                 Email Address
@@ -139,6 +142,7 @@ const Login = () => {
                             </div>
                         </div>
 
+                        {/* Password */}
                         <div>
                             <label className="text-sm font-semibold text-gray-700 block mb-2">
                                 Password
@@ -164,6 +168,7 @@ const Login = () => {
                             </div>
                         </div>
 
+                        {/* Submit Button */}
                         <button
                             type="submit"
                             disabled={loading}
@@ -174,6 +179,7 @@ const Login = () => {
                         </button>
                     </form>
 
+                    {/* Mode Toggle Text */}
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
                             {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
@@ -187,6 +193,7 @@ const Login = () => {
                     </div>
                 </div>
 
+                {/* Back to Home Link */}
                 <div className="text-center mt-6">
                     <Link to="/" className="text-sm text-gray-600 hover:text-gray-900 font-medium">
                         &larr; Back to Home
