@@ -6,13 +6,16 @@ import { supabase } from "../lib/supabase";
 
 const getNavbarColor = (scrolled: boolean) => (scrolled ? "#0052CC" : "#FFFFFF");
 
+const blueGradient = "linear-gradient(90deg,#1e3a8a 0%,#1560bd 100%)";
+const lightBlueGradient = "linear-gradient(90deg,#e3ecfa 0%,#c9dbf6 100%)";
+
 const Navbar: FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [divisionsOpen, setDivisionsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const location = useLocation();
 
+  const location = useLocation();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -25,7 +28,6 @@ const Navbar: FC = () => {
     { name: "Skill", path: "/skill" },
   ];
 
-  // List of menu items in desired order (Divisions at 2nd)
   const mainMenu = [
     { label: "Home", path: "/" },
     { label: "Divisions", type: "dropdown" },
@@ -47,11 +49,9 @@ const Navbar: FC = () => {
       setUser(session?.user || null);
     };
     getUser();
-
     const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user || null);
     });
-
     return () => {
       authListener.subscription.unsubscribe();
     };
@@ -77,8 +77,8 @@ const Navbar: FC = () => {
   const textColor = getNavbarColor(scrolled);
 
   const navBgClass = scrolled
-    ? "bg-white/90 backdrop-blur-2xl border border-white/30 shadow-2xl shadow-blue-500/10"
-    : "bg-white/20 backdrop-blur-md border border-white/20";
+    ? "bg-white/95 backdrop-blur-xl border border-blue-100 shadow-xl"
+    : "bg-blue-900/30 backdrop-blur-xl border border-blue-200 shadow-blue-300/20";
 
   return (
     <motion.nav
@@ -89,36 +89,33 @@ const Navbar: FC = () => {
         px-6 py-3 rounded-full transition-all duration-500 z-50 ${navBgClass}`}
       style={{ color: textColor }}
     >
-      {/* Logo */}
-      <Link to="/" className="relative group">
-        <span className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+      {/* Logo Blue/White */}
+      <Link to="/" className="relative group select-none">
+        <span
+          className="text-2xl font-black tracking-tight bg-clip-text text-transparent"
+          style={{
+            background: scrolled ? blueGradient : lightBlueGradient,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
           FOCSERA
         </span>
-        <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg opacity-0 group-hover:opacity-20 blur transition-opacity duration-300"></div>
+        <div className="absolute -inset-2 bg-blue-500 rounded-lg opacity-0 group-hover:opacity-20 blur-sm transition-opacity duration-300"></div>
       </Link>
 
       {/* Desktop Menu */}
       <div className="hidden md:flex items-center gap-x-2">
         {mainMenu.map((item) =>
           item.type === "dropdown" ? (
-            // Divisions Dropdown as 2nd item
-            <div
-              key={item.label}
-              onMouseEnter={() => setDivisionsOpen(true)}
-              onMouseLeave={() => setDivisionsOpen(false)}
-              className="relative"
-            >
+            <div key={item.label} onMouseEnter={() => setDivisionsOpen(true)} onMouseLeave={() => setDivisionsOpen(false)} className="relative">
               <button
-                className="flex items-center gap-1 relative font-medium text-sm px-4 py-2 rounded-full transition-colors duration-300"
+                className="flex items-center gap-1 font-bold text-base px-4 py-2 rounded-full transition-all"
                 style={{ color: textColor }}
                 aria-expanded={divisionsOpen}
               >
-                <span className="relative z-10">Divisions</span>
-                <ChevronDown
-                  size={16}
-                  style={{ color: textColor }}
-                  className={`transition-transform ${divisionsOpen ? "rotate-180" : ""}`}
-                />
+                <span>Divisions</span>
+                <ChevronDown size={17} style={{ color: textColor }} className={`transition-transform ${divisionsOpen ? "rotate-180" : ""}`} />
               </button>
               <AnimatePresence>
                 {divisionsOpen && (
@@ -126,17 +123,16 @@ const Navbar: FC = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3
-                        w-56 rounded-2xl shadow-2xl p-2 bg-white/95 backdrop-blur-2xl border border-white/50"
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 rounded-2xl shadow-2xl p-2 bg-white/98 backdrop-blur-xl border border-blue-100 z-10"
                   >
                     {divisions.map((d) => (
                       <motion.div
                         key={d.path}
-                        whileHover={{ scale: 1.03 }}
-                        className="block px-4 py-2 font-medium text-sm"
-                        style={{ color: textColor }}
+                        whileHover={{ scale: 1.04 }}
+                        className="block px-4 py-2 font-bold text-base rounded-lg"
+                        style={{ color: "#1560bd" }}
                       >
-                        <Link to={d.path} style={{ color: textColor }}>
+                        <Link to={d.path} style={{ color: "#1560bd" }}>
                           Focsera {d.name}
                         </Link>
                       </motion.div>
@@ -146,20 +142,23 @@ const Navbar: FC = () => {
               </AnimatePresence>
             </div>
           ) : (
-            // Regular links
             <Link
               key={item.label}
               to={item.path!}
-              className="relative text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-full hover:scale-105"
+              className="relative text-base font-bold transition-all duration-300 px-4 py-2 rounded-full hover:scale-105"
               style={{ color: textColor }}
             >
               <AnimatePresence>
                 {isActive(item.path!) && (
                   <motion.div
                     layoutId="active-pill"
-                    className={`absolute inset-0 rounded-full ${
-                      scrolled ? "bg-gradient-to-r from-blue-100 to-cyan-100" : "bg-white/30"
-                    } shadow-md`}
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      background: scrolled
+                        ? "linear-gradient(90deg,#dbeafe 0%,#a7c7f9 100%)"
+                        : "linear-gradient(90deg,#1e3a8a33 0%,#1560bd22 100%)",
+                      boxShadow: scrolled ? "0 2px 12px #1e3a8a22" : "0 2px 16px #1560bd44",
+                    }}
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -172,11 +171,10 @@ const Navbar: FC = () => {
         {/* Auth Button */}
         <Link
           to={user ? "/account" : "/login"}
-          className="relative ml-2 flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 overflow-hidden group"
+          className="relative ml-2 flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-base overflow-hidden group transition-all"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 transition-transform duration-300 group-hover:scale-110"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.4),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-700 transition-transform duration-300 group-hover:scale-105"></div>
+          <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
           <span className="relative z-10 text-white flex items-center gap-2">
             {user ? (
               <>
@@ -212,23 +210,22 @@ const Navbar: FC = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute right-0 top-16 w-64 p-4 rounded-2xl z-40
-                 bg-white/95 backdrop-blur-2xl border border-white/50 shadow-2xl"
-            style={{ color: textColor }}
+            className="absolute right-0 top-16 w-64 p-4 rounded-2xl z-40 bg-white/98 backdrop-blur-xl border border-blue-100 shadow-2xl"
+            style={{ color: "#1560bd" }}
           >
             {mainMenu.map((item) =>
               item.type === "dropdown" ? (
                 <div key={item.label}>
                   <button
                     onClick={() => setDivisionsOpen(!divisionsOpen)}
-                    className="flex justify-between items-center w-full py-2 px-3 font-medium"
-                    style={{ color: textColor }}
+                    className="flex justify-between items-center w-full py-2 px-3 font-bold rounded-lg"
+                    style={{ color: "#1560bd" }}
                   >
                     Divisions
                     <ChevronDown
                       size={16}
                       className={`transition-transform ${divisionsOpen ? "rotate-180" : ""}`}
-                      style={{ color: textColor }}
+                      style={{ color: "#1560bd" }}
                     />
                   </button>
                   <AnimatePresence>
@@ -240,13 +237,9 @@ const Navbar: FC = () => {
                           animate={{ opacity: 1, height: "auto" }}
                           exit={{ opacity: 0, height: 0 }}
                           className="pl-4"
-                          style={{ color: textColor }}
+                          style={{ color: "#1560bd" }}
                         >
-                          <Link
-                            to={d.path}
-                            className="block py-1 px-3 text-sm font-medium"
-                            style={{ color: textColor }}
-                          >
+                          <Link to={d.path} className="block py-1 px-3 text-base font-bold" style={{ color: "#1560bd" }}>
                             {d.name}
                           </Link>
                         </motion.div>
@@ -257,20 +250,19 @@ const Navbar: FC = () => {
                 <Link
                   key={item.label}
                   to={item.path!}
-                  className="block py-2 px-3 rounded-lg font-medium"
-                  style={{ color: textColor }}
+                  className="block py-2 px-3 rounded-lg font-bold text-base"
+                  style={{ color: "#1560bd" }}
                 >
                   {item.label}
                 </Link>
               )
             )}
-            <div className="mt-4 pt-4 border-t border-white/20">
+            <div className="mt-4 pt-4 border-t border-blue-200">
               <Link
                 to={user ? "/account" : "/login"}
-                className="relative flex items-center gap-2 py-3 px-4 rounded-xl font-bold overflow-hidden group"
+                className="relative flex items-center gap-2 py-3 px-4 rounded-full font-bold overflow-hidden group transition"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-700"></div>
                 <span className="relative z-10 text-white flex items-center gap-2">
                   {user ? (
                     <>
