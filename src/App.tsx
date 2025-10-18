@@ -13,6 +13,8 @@ import ProductServices from './pages/divisions/ProductServices';
 import Skill from './pages/divisions/Skill';
 import Journey from './pages/journey'
 import Gallery from './pages/Gallery'
+import Login from './pages/Login'
+import Account from './pages/Account'
 
 function App() {
   return (
@@ -32,6 +34,8 @@ function App() {
           <Route path="/skill" element={<Skill />} />
          <Route path="/journey" element={<Journey />} />
          <Route path="/gallery/:eventSlug" element={<Gallery />} />
+         <Route path="/login" element={<Login />} />
+         <Route path="/account" element={<Account />} />
         </Routes>
         <Footer />
       </div>

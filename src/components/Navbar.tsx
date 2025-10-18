@@ -1,7 +1,8 @@
 import { FC, useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "../lib/supabase";
 
 const getNavbarColor = (scrolled: boolean) => (scrolled ? "#0052CC" : "#FFFFFF");
 
@@ -9,6 +10,7 @@ const Navbar: FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [divisionsOpen, setDivisionsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const location = useLocation();
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -37,6 +39,22 @@ const Navbar: FC = () => {
     const handler = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handler);
     return () => window.removeEventListener("scroll", handler);
+  }, []);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    getUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -78,7 +96,7 @@ const Navbar: FC = () => {
 
       {/* Desktop Menu */}
       <div className="hidden md:flex items-center gap-x-2">
-        {mainMenu.map((item, idx) =>
+        {mainMenu.map((item) =>
           item.type === "dropdown" ? (
             // Divisions Dropdown as 2nd item
             <div
@@ -147,6 +165,24 @@ const Navbar: FC = () => {
             </Link>
           )
         )}
+
+        {/* Auth Button */}
+        <Link
+          to={user ? "/account" : "/login"}
+          className="ml-2 flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all duration-300 bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:shadow-lg hover:scale-105"
+        >
+          {user ? (
+            <>
+              <User size={18} />
+              <span className="hidden lg:inline">Account</span>
+            </>
+          ) : (
+            <>
+              <LogIn size={18} />
+              <span>Log In</span>
+            </>
+          )}
+        </Link>
       </div>
 
       {/* Mobile Menu Toggle */}
@@ -220,6 +256,24 @@ const Navbar: FC = () => {
                 </Link>
               )
             )}
+            <div className="mt-4 pt-4 border-t border-white/20">
+              <Link
+                to={user ? "/account" : "/login"}
+                className="flex items-center gap-2 py-2 px-3 rounded-lg font-medium bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
+              >
+                {user ? (
+                  <>
+                    <User size={18} />
+                    Account
+                  </>
+                ) : (
+                  <>
+                    <LogIn size={18} />
+                    Log In
+                  </>
+                )}
+              </Link>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
