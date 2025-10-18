@@ -73,19 +73,17 @@ const Navbar: FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const navOpacity = scrolled ? 0.3 : 1;
-  const navScale = scrolled ? 0.85 : 1;
 
   return (
     <motion.nav
       initial={false}
       animate={{
         opacity: navOpacity,
-        scale: navScale,
       }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl flex items-center justify-between px-6 py-4 rounded-full transition-all duration-500 z-50 border border-white/30 bg-white/70 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(59,130,246,0.15),inset_0_1px_0_0_rgba(255,255,255,0.7)] hover:opacity-100 hover:scale-100"
+      className="fixed top-6 left-1/2 -translate-x-1/2 w-[96%] max-w-7xl flex items-center justify-between px-8 py-4 rounded-full transition-all duration-500 z-50 border border-white/20 backdrop-blur-3xl shadow-[0_8px_32px_0_rgba(59,130,246,0.08),inset_0_2px_0_0_rgba(255,255,255,0.8),inset_0_-1px_0_0_rgba(255,255,255,0.4)] hover:opacity-100"
       style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 100%)',
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
       }}
     >
       <Link to="/" className="relative group flex items-center gap-3">
