@@ -3,6 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Utility: easily switch text color based on scroll/background
+const getNavbarColor = (scrolled: boolean) => (scrolled ? "#0052CC" : "#FFFFFF");
+
 const Navbar: FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [divisionsOpen, setDivisionsOpen] = useState(false);
@@ -12,6 +15,7 @@ const Navbar: FC = () => {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
+  // Divisions list
   const divisions = [
     { name: "Studios", path: "/studios" },
     { name: "Media", path: "/media" },
@@ -21,12 +25,14 @@ const Navbar: FC = () => {
     { name: "Skill", path: "/skill" },
   ];
 
+  // Scroll listener
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handler);
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
+  // Click outside for menus
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -44,6 +50,7 @@ const Navbar: FC = () => {
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
+  const textColor = getNavbarColor(scrolled);
 
   const navBgClass = scrolled
     ? "bg-white/40 backdrop-blur-2xl border border-white/20 shadow-lg"
@@ -52,13 +59,14 @@ const Navbar: FC = () => {
   return (
     <motion.nav
       initial={false}
-      animate={{ color: scrolled ? "#0052CC" : "#FFFFFF" }}
+      animate={{ color: textColor }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
       className={`fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-5xl flex items-center justify-between
         px-6 py-3 rounded-full transition-all duration-500 z-50 ${navBgClass}`}
+      style={{ color: textColor }}
     >
       {/* Logo */}
-      <Link to="/" className="text-2xl font-extrabold tracking-tight" style={{ color: "inherit" }}>
+      <Link to="/" className="text-2xl font-extrabold tracking-tight" style={{ color: textColor }}>
         FOCSERA
       </Link>
 
@@ -69,13 +77,15 @@ const Navbar: FC = () => {
             key={path}
             to={path}
             className="relative text-sm font-medium transition-all duration-300 px-4 py-2 rounded-full"
-            style={{ color: "inherit" }}
+            style={{ color: textColor }}
           >
             <AnimatePresence>
               {isActive(path) && (
                 <motion.div
                   layoutId="active-pill"
-                  className="absolute inset-0 rounded-full bg-blue-100/40"
+                  className={`absolute inset-0 rounded-full ${
+                    scrolled ? "bg-blue-100/40" : "bg-white/20"
+                  }`}
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
               )}
@@ -94,12 +104,13 @@ const Navbar: FC = () => {
         >
           <button
             className="flex items-center gap-1 relative font-medium text-sm px-4 py-2 rounded-full transition-colors duration-300"
-            style={{ color: "inherit" }}
+            style={{ color: textColor }}
             aria-expanded={divisionsOpen}
           >
             <span className="relative z-10">Divisions</span>
             <ChevronDown
               size={16}
+              style={{ color: textColor }}
               className={`transition-transform ${divisionsOpen ? "rotate-180" : ""}`}
             />
           </button>
@@ -116,9 +127,12 @@ const Navbar: FC = () => {
                   <motion.div
                     key={d.path}
                     whileHover={{ scale: 1.03 }}
-                    className="block px-4 py-2 text-gray-700 hover:text-blue-700 font-medium text-sm"
+                    className="block px-4 py-2 font-medium text-sm"
+                    style={{ color: textColor }}
                   >
-                    <Link to={d.path}>Focsera {d.name}</Link>
+                    <Link to={d.path} style={{ color: textColor }}>
+                      Focsera {d.name}
+                    </Link>
                   </motion.div>
                 ))}
               </motion.div>
@@ -131,11 +145,11 @@ const Navbar: FC = () => {
       <button
         aria-label="Toggle Menu"
         className="md:hidden"
-        style={{ color: "inherit" }}
+        style={{ color: textColor }}
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         ref={menuButtonRef}
       >
-        {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        {mobileMenuOpen ? <X size={24} style={{ color: textColor }} /> : <Menu size={24} style={{ color: textColor }} />}
       </button>
 
       {/* Mobile Menu */}
@@ -148,12 +162,14 @@ const Navbar: FC = () => {
             exit={{ opacity: 0, y: -20 }}
             className="absolute right-0 top-16 w-64 p-4 rounded-2xl z-40 
                  bg-white/40 backdrop-blur-2xl border border-white/20 shadow-lg"
+            style={{ color: textColor }}
           >
             {["Home", "About", "Mission", "Journey", "Contact"].map((item) => (
               <Link
                 key={item}
                 to={`/${item.toLowerCase() === "home" ? "" : item.toLowerCase()}`}
-                className="block py-2 px-3 rounded-lg text-gray-700 hover:text-blue-700"
+                className="block py-2 px-3 rounded-lg font-medium"
+                style={{ color: textColor }}
               >
                 {item}
               </Link>
@@ -162,13 +178,14 @@ const Navbar: FC = () => {
             <div className="mt-3">
               <button
                 onClick={() => setDivisionsOpen(!divisionsOpen)}
-                className="flex justify-between items-center w-full py-2 px-3 text-gray-700 font-medium"
-                style={{ color: "inherit" }}
+                className="flex justify-between items-center w-full py-2 px-3 font-medium"
+                style={{ color: textColor }}
               >
                 Divisions
                 <ChevronDown
                   size={16}
                   className={`transition-transform ${divisionsOpen ? "rotate-180" : ""}`}
+                  style={{ color: textColor }}
                 />
               </button>
               <AnimatePresence>
@@ -180,10 +197,12 @@ const Navbar: FC = () => {
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       className="pl-4"
+                      style={{ color: textColor }}
                     >
                       <Link
                         to={d.path}
-                        className="block py-1 px-3 text-sm text-gray-600 hover:text-blue-700"
+                        className="block py-1 px-3 text-sm font-medium"
+                        style={{ color: textColor }}
                       >
                         {d.name}
                       </Link>
