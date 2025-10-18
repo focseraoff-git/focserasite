@@ -174,8 +174,8 @@ const Navbar: FC = () => {
           to={user ? "/account" : "/login"}
           className="relative ml-2 flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 overflow-hidden group"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 transition-transform duration-300 group-hover:scale-110"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500 transition-transform duration-300 group-hover:scale-110"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.4),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <span className="relative z-10 text-white flex items-center gap-2">
             {user ? (
@@ -264,13 +264,13 @@ const Navbar: FC = () => {
                 </Link>
               )
             )}
-            <div className="mt-4 pt-4 border-t border-white/20">
+            <div className="mt-4 pt-4 border-t border-slate-200">
               <Link
                 to={user ? "/account" : "/login"}
                 className="relative flex items-center gap-2 py-3 px-4 rounded-xl font-bold overflow-hidden group"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <span className="relative z-10 text-white flex items-center gap-2">
                   {user ? (
                     <>
