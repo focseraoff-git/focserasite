@@ -77,8 +77,8 @@ const Navbar: FC = () => {
   const textColor = getNavbarColor(scrolled);
 
   const navBgClass = scrolled
-    ? "bg-white/40 backdrop-blur-2xl border border-white/20 shadow-lg"
-    : "bg-transparent";
+    ? "bg-white/90 backdrop-blur-2xl border border-white/30 shadow-2xl shadow-blue-500/10"
+    : "bg-white/20 backdrop-blur-md border border-white/20";
 
   return (
     <motion.nav
@@ -90,8 +90,11 @@ const Navbar: FC = () => {
       style={{ color: textColor }}
     >
       {/* Logo */}
-      <Link to="/" className="text-2xl font-extrabold tracking-tight" style={{ color: textColor }}>
-        FOCSERA
+      <Link to="/" className="relative group">
+        <span className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+          FOCSERA
+        </span>
+        <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg opacity-0 group-hover:opacity-20 blur transition-opacity duration-300"></div>
       </Link>
 
       {/* Desktop Menu */}
@@ -123,8 +126,8 @@ const Navbar: FC = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 
-                        w-56 rounded-2xl shadow-xl p-2 bg-white/30 backdrop-blur-lg border border-white/10"
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3
+                        w-56 rounded-2xl shadow-2xl p-2 bg-white/95 backdrop-blur-2xl border border-white/50"
                   >
                     {divisions.map((d) => (
                       <motion.div
@@ -147,7 +150,7 @@ const Navbar: FC = () => {
             <Link
               key={item.label}
               to={item.path!}
-              className="relative text-sm font-medium transition-all duration-300 px-4 py-2 rounded-full"
+              className="relative text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-full hover:scale-105"
               style={{ color: textColor }}
             >
               <AnimatePresence>
@@ -155,8 +158,8 @@ const Navbar: FC = () => {
                   <motion.div
                     layoutId="active-pill"
                     className={`absolute inset-0 rounded-full ${
-                      scrolled ? "bg-blue-100/40" : "bg-white/20"
-                    }`}
+                      scrolled ? "bg-gradient-to-r from-blue-100 to-cyan-100" : "bg-white/30"
+                    } shadow-md`}
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -169,19 +172,24 @@ const Navbar: FC = () => {
         {/* Auth Button */}
         <Link
           to={user ? "/account" : "/login"}
-          className="ml-2 flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all duration-300 bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:shadow-lg hover:scale-105"
+          className="relative ml-2 flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 overflow-hidden group"
         >
-          {user ? (
-            <>
-              <User size={18} />
-              <span className="hidden lg:inline">Account</span>
-            </>
-          ) : (
-            <>
-              <LogIn size={18} />
-              <span>Log In</span>
-            </>
-          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 transition-transform duration-300 group-hover:scale-110"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.4),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <span className="relative z-10 text-white flex items-center gap-2">
+            {user ? (
+              <>
+                <User size={18} />
+                <span className="hidden lg:inline">Account</span>
+              </>
+            ) : (
+              <>
+                <LogIn size={18} />
+                <span>Log In</span>
+              </>
+            )}
+          </span>
         </Link>
       </div>
 
@@ -204,8 +212,8 @@ const Navbar: FC = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute right-0 top-16 w-64 p-4 rounded-2xl z-40 
-                 bg-white/40 backdrop-blur-2xl border border-white/20 shadow-lg"
+            className="absolute right-0 top-16 w-64 p-4 rounded-2xl z-40
+                 bg-white/95 backdrop-blur-2xl border border-white/50 shadow-2xl"
             style={{ color: textColor }}
           >
             {mainMenu.map((item) =>
@@ -259,19 +267,23 @@ const Navbar: FC = () => {
             <div className="mt-4 pt-4 border-t border-white/20">
               <Link
                 to={user ? "/account" : "/login"}
-                className="flex items-center gap-2 py-2 px-3 rounded-lg font-medium bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
+                className="relative flex items-center gap-2 py-3 px-4 rounded-xl font-bold overflow-hidden group"
               >
-                {user ? (
-                  <>
-                    <User size={18} />
-                    Account
-                  </>
-                ) : (
-                  <>
-                    <LogIn size={18} />
-                    Log In
-                  </>
-                )}
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span className="relative z-10 text-white flex items-center gap-2">
+                  {user ? (
+                    <>
+                      <User size={18} />
+                      Account
+                    </>
+                  ) : (
+                    <>
+                      <LogIn size={18} />
+                      Log In
+                    </>
+                  )}
+                </span>
               </Link>
             </div>
           </motion.div>

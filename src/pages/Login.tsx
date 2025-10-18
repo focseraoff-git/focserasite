@@ -1,86 +1,31 @@
-import React, { useState, useEffect, FC } from 'react';
-import { ArrowRight, Lock, Mail, User, Eye, EyeOff } from 'lucide-react';
-import { Session, createClient, SupabaseClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import { ArrowRight, Lock, Mail, User, Eye, EyeOff, Sparkles, Shield, Zap } from 'lucide-react';
 
-// --- Supabase Client Setup ---
-// IMPORTANT: Replace with your actual Supabase URL and Anon Key
-const supabaseUrl: string = 'YOUR_SUPABASE_URL';
-const supabaseAnonKey: string = 'YOUR_SUPABASE_ANON_KEY';
-
-// A simple check to ensure the user replaces the placeholder credentials.
-if (supabaseUrl === 'YOUR_SUPABASE_URL' || supabaseAnonKey === 'YOUR_SUPABASE_ANON_KEY') {
-    console.warn("Supabase credentials are placeholders. Please replace them in Login.tsx.");
-}
-
-const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
-
-
-// --- Type Definitions ---
-type Mode = 'login' | 'signup';
-
-interface InputFieldProps {
-    icon: React.ElementType;
-    type: string;
-    value: string;
-    onChange: (value: string) => void;
-    placeholder: string;
-    label: string;
-    required?: boolean;
-}
-
-interface PasswordFieldProps {
-    value: string;
-    onChange: (value: string) => void;
-}
-
-interface AccountProps {
-    session: Session;
-}
-
-
-// --- Main App Component ---
-export default function App() {
-    const [session, setSession] = useState<Session | null>(null);
-    const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
+const Login = () => {
+    const [mode, setMode] = useState<'login' | 'signup'>('login');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setLoadingInitial(false);
-        });
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChanged((_event, session) => {
-            setSession(session);
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
-
-    if (loadingInitial) {
-        return <div className="min-h-screen bg-gray-100 flex items-center justify-center">Loading...</div>;
-    }
-
-    if (!session) {
-        return <Login />;
-    } else {
-        return <Account key={session.user.id} session={session} />;
-    }
-}
-
-// --- Login/Signup Component ---
-const Login: FC = () => {
-    const [mode, setMode] = useState<Mode>('login');
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [fullName, setFullName] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string>('');
-    const [success, setSuccess] = useState<string>('');
+        const checkUser = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                navigate('/account');
+            }
+        };
+        checkUser();
+    }, [navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        setSuccess('');
         setLoading(true);
 
         try {
@@ -88,134 +33,235 @@ const Login: FC = () => {
                 const { data, error } = await supabase.auth.signUp({
                     email,
                     password,
-                    options: { data: { full_name: fullName } }
+                    options: {
+                        data: {
+                            full_name: fullName,
+                        }
+                    }
                 });
+
                 if (error) throw error;
+
                 if (data.user) {
-                    setSuccess('Account created! Please check your email for a verification link.');
+                    alert('Account created successfully! You can now log in.');
                     setMode('login');
-                    setEmail('');
-                    setPassword('');
-                    setFullName('');
                 }
             } else {
-                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                const { error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+
                 if (error) throw error;
+                navigate('/account');
             }
         } catch (err: any) {
-            setError(err.message || 'An error occurred. Please try again.');
+            setError(err.message || 'An error occurred');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center px-4 py-16">
-            <div className="w-full max-w-md">
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 inline-block mb-2">
-                        FOCSERA
-                    </h1>
-                    <p className="text-gray-600">Welcome! Please {mode === 'login' ? 'log in' : 'sign up'} to continue</p>
-                </div>
+        <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.15),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(6,182,212,0.15),transparent_50%)]"></div>
 
-                <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200 p-8">
-                    <div className="flex gap-2 mb-8 bg-gray-100 p-1 rounded-xl">
-                        {(['login', 'signup'] as Mode[]).map((m) => (
-                            <button
-                                key={m}
-                                onClick={() => { setMode(m); setError(''); setSuccess(''); }}
-                                className={`flex-1 py-3 rounded-lg font-semibold transition-all duration-300 ${
-                                    mode === m ? 'bg-[#0052CC] text-white shadow-md' : 'text-gray-600 hover:text-gray-900'
-                                }`}
-                            >
-                                {m === 'login' ? 'Log In' : 'Sign Up'}
-                            </button>
-                        ))}
+            <div className="absolute inset-0 opacity-30">
+                <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+                <div className="absolute top-40 right-10 w-72 h-72 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            </div>
+
+            <div className="relative min-h-screen flex items-center justify-center px-4 py-16">
+                <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div className="hidden lg:block text-white space-y-8 px-8">
+                        <div className="space-y-4">
+                            <div className="inline-block px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+                                <span className="text-sm font-semibold text-cyan-300">Premium Experience</span>
+                            </div>
+                            <h1 className="text-6xl font-extrabold leading-tight">
+                                Welcome to
+                                <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                                    FOCSERA
+                                </span>
+                            </h1>
+                            <p className="text-xl text-gray-300 leading-relaxed">
+                                Experience world-class photography, videography, and creative services tailored to perfection.
+                            </p>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="flex items-start gap-4 group">
+                                <div className="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                    <Sparkles className="text-white" size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold mb-1">Premium Quality</h3>
+                                    <p className="text-gray-400">Industry-leading services with meticulous attention to detail</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-4 group">
+                                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                    <Shield className="text-white" size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold mb-1">Secure & Trusted</h3>
+                                    <p className="text-gray-400">Your data is protected with enterprise-grade security</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-4 group">
+                                <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                    <Zap className="text-white" size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold mb-1">Lightning Fast</h3>
+                                    <p className="text-gray-400">Seamless booking experience and quick turnaround</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>}
-                    {success && <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">{success}</div>}
+                    <div className="w-full max-w-md mx-auto">
+                        <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-10">
+                            <div className="text-center mb-8 lg:hidden">
+                                <h2 className="text-4xl font-extrabold bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent inline-block mb-2">
+                                    FOCSERA
+                                </h2>
+                            </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {mode === 'signup' && <InputField icon={User} type="text" value={fullName} onChange={setFullName} placeholder="John Doe" label="Full Name" required />}
-                        <InputField icon={Mail} type="email" value={email} onChange={setEmail} placeholder="you@example.com" label="Email Address" required />
-                        <PasswordField value={password} onChange={setPassword} />
+                            <div className="flex gap-2 mb-8 bg-white/10 p-1.5 rounded-2xl backdrop-blur-sm">
+                                <button
+                                    onClick={() => setMode('login')}
+                                    className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${
+                                        mode === 'login'
+                                            ? 'bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/50'
+                                            : 'text-white/70 hover:text-white hover:bg-white/5'
+                                    }`}
+                                >
+                                    Log In
+                                </button>
+                                <button
+                                    onClick={() => setMode('signup')}
+                                    className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${
+                                        mode === 'signup'
+                                            ? 'bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/50'
+                                            : 'text-white/70 hover:text-white hover:bg-white/5'
+                                    }`}
+                                >
+                                    Sign Up
+                                </button>
+                            </div>
 
-                        <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 bg-[length:200%_100%] text-white font-bold py-4 rounded-xl hover:bg-right transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                            {loading ? 'Please wait...' : mode === 'login' ? 'Log In' : 'Create Account'}
-                            {!loading && <ArrowRight size={20} />}
-                        </button>
-                    </form>
-                </div>
-                <div className="text-center mt-6">
-                    <a href="#" className="text-sm text-gray-600 hover:text-gray-900 font-medium">&larr; Back to Home</a>
+                            {error && (
+                                <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm backdrop-blur-sm">
+                                    {error}
+                                </div>
+                            )}
+
+                            <form onSubmit={handleSubmit} className="space-y-5">
+                                {mode === 'signup' && (
+                                    <div className="group">
+                                        <label className="text-sm font-bold text-white/90 block mb-2 ml-1">
+                                            Full Name
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 z-10" size={20} />
+                                            <input
+                                                type="text"
+                                                value={fullName}
+                                                onChange={(e) => setFullName(e.target.value)}
+                                                className="relative w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl focus:border-cyan-400 focus:outline-none transition-all text-white placeholder:text-white/40"
+                                                placeholder="John Doe"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="group">
+                                    <label className="text-sm font-bold text-white/90 block mb-2 ml-1">
+                                        Email Address
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 z-10" size={20} />
+                                        <input
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="relative w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl focus:border-cyan-400 focus:outline-none transition-all text-white placeholder:text-white/40"
+                                            placeholder="you@example.com"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="group">
+                                    <label className="text-sm font-bold text-white/90 block mb-2 ml-1">
+                                        Password
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 z-10" size={20} />
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="relative w-full pl-12 pr-12 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl focus:border-cyan-400 focus:outline-none transition-all text-white placeholder:text-white/40"
+                                            placeholder="••••••••"
+                                            required
+                                            minLength={6}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white z-10 transition-colors"
+                                        >
+                                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="relative w-full group overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 rounded-xl"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.3),transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <div className="relative flex items-center justify-center gap-2 py-4 font-bold text-white">
+                                        {loading ? 'Please wait...' : mode === 'login' ? 'Log In' : 'Create Account'}
+                                        {!loading && <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />}
+                                    </div>
+                                </button>
+                            </form>
+
+                            <div className="mt-8 text-center">
+                                <p className="text-sm text-white/60">
+                                    {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
+                                    <button
+                                        onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+                                        className="text-cyan-400 font-bold hover:text-cyan-300 transition-colors"
+                                    >
+                                        {mode === 'login' ? 'Sign Up' : 'Log In'}
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="text-center mt-6">
+                            <Link to="/" className="text-sm text-white/70 hover:text-white font-medium inline-flex items-center gap-2 group">
+                                <span className="group-hover:-translate-x-1 transition-transform">&larr;</span>
+                                Back to Home
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     );
 };
 
-// --- Helper Input Field Components ---
-const InputField: FC<InputFieldProps> = ({ icon: Icon, type, value, onChange, placeholder, label, required }) => (
-    <div>
-        <label className="text-sm font-semibold text-gray-700 block mb-2">{label}</label>
-        <div className="relative">
-            <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <input
-                type={type}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#0052CC] focus:outline-none transition-colors"
-                placeholder={placeholder}
-                required={required}
-            />
-        </div>
-    </div>
-);
-
-const PasswordField: FC<PasswordFieldProps> = ({ value, onChange }) => {
-    const [showPassword, setShowPassword] = useState<boolean>(false);
-    return (
-        <div>
-            <label className="text-sm font-semibold text-gray-700 block mb-2">Password</label>
-            <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    className="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:border-[#0052CC] focus:outline-none transition-colors"
-                    placeholder="••••••••"
-                    required
-                    minLength={6}
-                />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-            </div>
-        </div>
-    );
-};
-
-// --- Account Page Component ---
-const Account: FC<AccountProps> = ({ session }) => {
-    return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 text-center">
-                <h1 className="text-2xl font-bold text-gray-800 mb-2">Welcome!</h1>
-                <p className="text-gray-600 mb-6">You are now logged in.</p>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                    <p className="text-sm text-blue-800 break-all"><strong>Email:</strong> {session.user.email}</p>
-                </div>
-                <button
-                    onClick={() => supabase.auth.signOut()}
-                    className="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-colors"
-                >
-                    Sign Out
-                </button>
-            </div>
-        </div>
-    );
-};
-
+export default Login;
