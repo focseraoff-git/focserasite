@@ -1,137 +1,169 @@
 import { FC, useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "../lib/supabase";
 
-const Navbar: FC = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [divisionsOpen, setDivisionsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const location = useLocation();
+// Note: Using a mock Supabase client for demonstration.
+// Replace with your actual Supabase client initialization.
+const supabase = {
+  auth: {
+    getSession: async () => ({ data: { session: null } }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+  },
+};
 
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
-
-  const divisions = [
-    { name: "Studios", path: "/studios" },
-    { name: "Media", path: "/media" },
-    { name: "Events", path: "/events" },
-    { name: "Web", path: "/web" },
-    { name: "Product Services", path: "/product-services" },
-    { name: "Skill", path: "/skill" },
-  ];
-
-  const mainMenu = [
-    { label: "Home", path: "/" },
-    { label: "Divisions", type: "dropdown" },
-    { label: "About", path: "/about" },
-    { label: "Mission", path: "/mission" },
-    { label: "Journey", path: "/journey" },
-    { label: "Contact", path: "/contact" },
-  ];
+/**
+ * Custom hook to determine which section is currently in the middle of the viewport.
+ * It uses the IntersectionObserver API for performance.
+ * @param {Array<React.RefObject<HTMLElement>>} sectionRefs - An array of refs to the sections to observe.
+ * @param {string} defaultTheme - The default theme to return ('light' or 'dark').
+ * @returns {string} The theme of the currently active section ('light' or 'dark').
+ */
+const useNavbarTheme = (sectionRefs, defaultTheme = 'dark') => {
+  const [activeTheme, setActiveTheme] = useState(defaultTheme);
+  const observerRef = useRef(null);
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handler);
-    return () => window.removeEventListener("scroll", handler);
-  }, []);
+    // Disconnect previous observer if refs change
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
 
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);
-    };
-    getUser();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const theme = entry.target.getAttribute('data-theme');
+            if (theme) {
+              setActiveTheme(theme);
+            }
+          }
+        });
+      },
+      {
+        root: null,
+        // This margin means the callback triggers when a section is in the vertical center of the viewport
+        rootMargin: "-50% 0px -50% 0px",
+        threshold: 0,
+      }
+    );
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user || null);
+    sectionRefs.forEach((ref) => {
+      if (ref.current) {
+        observer.observe(ref.current);
+      }
     });
+    
+    observerRef.current = observer;
 
     return () => {
-      authListener.subscription.unsubscribe();
+      observer.disconnect();
     };
+  }, [sectionRefs, defaultTheme]);
+
+  return activeTheme;
+};
+
+// --- Navbar Component ---
+// This component is now "dumb" and only cares about the theme it's passed.
+const Navbar = ({ theme }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [divisionsOpen, setDivisionsOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const location = useLocation();
+
+  const mobileMenuRef = useRef(null);
+  const menuButtonRef = useRef(null);
+
+  const divisions = [
+    { name: "Studios", path: "/studios" }, { name: "Media", path: "/media" },
+    { name: "Events", path: "/events" }, { name: "Web", path: "/web" },
+    { name: "Product Services", path: "/product-services" }, { name: "Skill", path: "/skill" },
+  ];
+  const mainMenu = [
+    { label: "Home", path: "/" }, { label: "Divisions", type: "dropdown" },
+    { label: "About", path: "/about" }, { label: "Mission", path: "/mission" },
+    { label: "Journey", path: "/journey" }, { label: "Contact", path: "/contact" },
+  ];
+  
+  // --- User Auth Effect ---
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null));
+    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => authListener.subscription.unsubscribe();
   }, []);
 
+  // --- Click Outside Effect ---
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(e.target as Node) &&
-        menuButtonRef.current &&
-        !menuButtonRef.current.contains(e.target as Node)
-      ) {
+    const handleClickOutside = (e) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target) &&
+          menuButtonRef.current && !menuButtonRef.current.contains(e.target)) {
         setMobileMenuOpen(false);
       }
-      setDivisionsOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path) => location.pathname === path;
 
-  const navOpacity = scrolled ? 0.3 : 1;
+  // --- THEME-BASED STYLING ---
+  const isDark = theme === 'dark';
 
+  const navClasses = isDark
+    ? "border-slate-700/80 bg-slate-900/50 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]"
+    : "border-white/40 bg-white/60 shadow-[0_8px_32px_0_rgba(59,130,246,0.1)]";
+
+  const textColor = isDark ? "text-slate-300" : "text-slate-700";
+  const hoverTextColor = isDark ? "hover:text-white" : "hover:text-blue-600";
+  const activeTextColor = isDark ? "text-white" : "text-blue-600";
+  const activePillColor = isDark ? "bg-white/10" : "bg-blue-100";
+  const dropdownBg = isDark ? "bg-slate-900/80 border-slate-700" : "bg-white/90 border-slate-200";
+  const dropdownLinkColor = isDark ? "text-slate-300" : "text-slate-700";
+  const dropdownHoverBg = isDark ? "hover:bg-slate-800" : "hover:bg-blue-50";
+
+  // Replace these with your actual logo URLs for light and dark backgrounds
+  const logoSrc = isDark 
+    ? "https://i.imgur.com/your-dark-theme-logo.png" 
+    : "https://i.imgur.com/your-light-theme-logo.png";
+  
   return (
     <motion.nav
-      initial={false}
-      animate={{
-        opacity: navOpacity,
-      }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className="fixed top-6 left-1/2 -translate-x-1/2 w-[96%] max-w-7xl flex items-center justify-between px-8 py-4 rounded-full transition-all duration-500 z-50 border border-white/20 backdrop-blur-3xl shadow-[0_8px_32px_0_rgba(59,130,246,0.08),inset_0_2px_0_0_rgba(255,255,255,0.8),inset_0_-1px_0_0_rgba(255,255,255,0.4)] hover:opacity-100"
-      style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
-      }}
+      animate={{ color: isDark ? '#d1d5db' : '#374151' }}
+      transition={{ duration: 0.4 }}
+      className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl flex items-center justify-between px-4 sm:px-6 py-2 rounded-full transition-all duration-300 z-50 border backdrop-blur-xl ${navClasses}`}
     >
-      <Link to="/" className="relative group flex items-center gap-3">
-        <img
-          src="/images/logos/logog.png"
+      <Link to="/" className="relative group flex items-center gap-3 shrink-0">
+         <img
+          src={logoSrc}
           alt="Focsera Logo"
           className="h-10 w-auto object-contain"
+          onError={(e) => { 
+            e.currentTarget.src = `https://placehold.co/140x40/${isDark ? '0f172a' : 'e2e8f0'}/${isDark ? 'e2e8f0' : '334155'}?text=Focsera&font=raleway`;
+            e.currentTarget.onerror = null;
+          }}
         />
-        <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 bg-clip-text text-transparent">
-          FOCSERA
-        </span>
-        <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-blue-400 rounded-full opacity-0 group-hover:opacity-10 blur-md transition-opacity duration-300"></div>
       </Link>
 
+      {/* Desktop Menu */}
       <div className="hidden lg:flex items-center gap-1">
         {mainMenu.map((item) =>
           item.type === "dropdown" ? (
-            <div
-              key={item.label}
-              onMouseEnter={() => setDivisionsOpen(true)}
-              onMouseLeave={() => setDivisionsOpen(false)}
-              className="relative"
-            >
-              <button
-                className="flex items-center gap-1 relative font-semibold text-sm px-4 py-2 rounded-full transition-all duration-300 text-slate-700 hover:text-blue-600 hover:bg-white/80"
-                aria-expanded={divisionsOpen}
-              >
-                <span className="relative z-10">Divisions</span>
-                <ChevronDown
-                  size={16}
-                  className={`transition-transform duration-300 ${divisionsOpen ? "rotate-180" : ""}`}
-                />
+            <div key={item.label} className="relative" onMouseEnter={() => setDivisionsOpen(true)} onMouseLeave={() => setDivisionsOpen(false)}>
+              <button className={`flex items-center gap-1 font-semibold text-sm px-4 py-2 rounded-full transition-colors duration-300 ${textColor} ${hoverTextColor}`}>
+                Divisions
+                <ChevronDown size={16} className={`transition-transform duration-300 ${divisionsOpen ? "rotate-180" : ""}`} />
               </button>
               <AnimatePresence>
                 {divisionsOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 rounded-2xl shadow-xl p-2 bg-white/95 backdrop-blur-xl border border-slate-200"
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
+                    className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 rounded-2xl shadow-xl p-2 border ${dropdownBg}`}
                   >
                     {divisions.map((d) => (
-                      <Link
-                        key={d.path}
-                        to={d.path}
-                        className="block px-4 py-2.5 font-semibold text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
-                      >
+                      <Link key={d.path} to={d.path} className={`block px-4 py-2.5 font-semibold text-sm rounded-xl transition-all duration-200 ${dropdownLinkColor} ${hoverTextColor} ${dropdownHoverBg}`}>
                         Focsera {d.name}
                       </Link>
                     ))}
@@ -140,135 +172,63 @@ const Navbar: FC = () => {
               </AnimatePresence>
             </div>
           ) : (
-            <Link
-              key={item.label}
-              to={item.path!}
-              className={`relative text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-full ${
-                isActive(item.path!)
-                  ? "text-blue-600 bg-blue-50/80"
-                  : "text-slate-700 hover:text-blue-600 hover:bg-white/80"
-              }`}
-            >
-              {item.label}
+            <Link key={item.label} to={item.path} className={`relative text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-full ${isActive(item.path) ? activeTextColor : `${textColor} ${hoverTextColor}`}`}>
+              {isActive(item.path) && (
+                <motion.div layoutId="active-pill" className={`absolute inset-0 rounded-full ${activePillColor}`}
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }} />
+              )}
+              <span className="relative z-10">{item.label}</span>
             </Link>
           )
         )}
-
-        <Link
-          to={user ? "/account" : "/login"}
-          className="relative ml-2 flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 overflow-hidden group"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500 transition-transform duration-300"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.3),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <span className="relative z-10 text-white flex items-center gap-2">
-            {user ? (
-              <>
-                <User size={18} />
-                <span className="hidden xl:inline">Account</span>
-              </>
-            ) : (
-              <>
-                <LogIn size={18} />
-                <span>Log In</span>
-              </>
-            )}
-          </span>
-        </Link>
       </div>
 
-      <button
-        aria-label="Toggle Menu"
-        className="lg:hidden text-slate-700 hover:text-blue-600 transition-colors"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        ref={menuButtonRef}
-      >
-        {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+       {/* Auth & Mobile Toggle */}
+      <div className="flex items-center gap-4">
+        <Link to={user ? "/account" : "/login"} className="relative hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm text-white transition-all duration-300 overflow-hidden group bg-gradient-to-r from-blue-600 to-cyan-500 hover:shadow-lg hover:shadow-blue-500/40">
+          <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <span className="relative z-10 flex items-center gap-2">
+            {user ? (<><User size={18} /> Account</>) : (<><LogIn size={18} /> Log In</>)}
+          </span>
+        </Link>
+        <button aria-label="Toggle Menu" className={`lg:hidden transition-colors ${textColor} ${hoverTextColor}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} ref={menuButtonRef}>
+          <AnimatePresence mode="wait">
+            <motion.div key={mobileMenuOpen ? 'x' : 'menu'} initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </motion.div>
+          </AnimatePresence>
+        </button>
+      </div>
 
+      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            ref={mobileMenuRef}
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute right-4 top-full mt-2 w-72 p-3 rounded-2xl z-40 bg-white/95 backdrop-blur-xl border border-slate-200 shadow-xl"
-          >
+          <motion.div ref={mobileMenuRef} initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+            className={`absolute right-4 top-full mt-2 w-72 p-3 rounded-2xl z-40 border shadow-xl ${dropdownBg}`}>
             {mainMenu.map((item) =>
               item.type === "dropdown" ? (
                 <div key={item.label}>
-                  <button
-                    onClick={() => setDivisionsOpen(!divisionsOpen)}
-                    className="flex justify-between items-center w-full py-2.5 px-3 font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 rounded-xl transition-all duration-200"
-                  >
+                  <button onClick={() => setDivisionsOpen(!divisionsOpen)} className={`flex justify-between items-center w-full py-2.5 px-3 font-semibold rounded-xl transition-all duration-200 ${textColor} ${hoverTextColor} ${dropdownHoverBg}`}>
                     Divisions
-                    <ChevronDown
-                      size={16}
-                      className={`transition-transform duration-300 ${divisionsOpen ? "rotate-180" : ""}`}
-                    />
+                    <ChevronDown size={16} className={`transition-transform duration-300 ${divisionsOpen ? "rotate-180" : ""}`} />
                   </button>
-                  <AnimatePresence>
-                    {divisionsOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="pl-3 space-y-1 mt-1"
-                      >
-                        {divisions.map((d) => (
-                          <Link
-                            key={d.path}
-                            to={d.path}
-                            className="block py-2 px-3 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            Focsera {d.name}
-                          </Link>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {divisionsOpen && divisions.map((d) => (
+                    <Link key={d.path} to={d.path} onClick={() => setMobileMenuOpen(false)} className={`block py-2 px-6 text-sm font-medium rounded-lg transition-all duration-200 ${dropdownLinkColor} ${hoverTextColor} ${dropdownHoverBg}`}>
+                      Focsera {d.name}
+                    </Link>
+                  ))}
                 </div>
               ) : (
-                <Link
-                  key={item.label}
-                  to={item.path!}
-                  className={`block py-2.5 px-3 rounded-xl font-semibold transition-all duration-200 ${
-                    isActive(item.path!)
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-slate-700 hover:text-blue-600 hover:bg-slate-50"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
+                <Link key={item.label} to={item.path} onClick={() => setMobileMenuOpen(false)}
+                  className={`block py-2.5 px-3 rounded-xl font-semibold transition-all duration-200 ${isActive(item.path) ? `${activeTextColor} ${activePillColor}` : `${textColor} ${hoverTextColor} ${dropdownHoverBg}`}`}>
                   {item.label}
                 </Link>
               )
             )}
-            <div className="mt-3 pt-3 border-t border-slate-200">
-              <Link
-                to={user ? "/account" : "/login"}
-                className="relative flex items-center gap-2 py-3 px-4 rounded-xl font-bold overflow-hidden group"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <span className="relative z-10 text-white flex items-center gap-2">
-                  {user ? (
-                    <>
-                      <User size={18} />
-                      Account
-                    </>
-                  ) : (
-                    <>
-                      <LogIn size={18} />
-                      Log In
-                    </>
-                  )}
-                </span>
-              </Link>
+            <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                <Link to={user ? "/account" : "/login"} onClick={() => setMobileMenuOpen(false)} className="relative flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-white overflow-hidden group bg-gradient-to-r from-blue-600 to-cyan-500">
+                   {user ? (<><User size={18} /> Account</>) : (<><LogIn size={18} /> Log In</>)}
+                </Link>
             </div>
           </motion.div>
         )}
@@ -277,4 +237,53 @@ const Navbar: FC = () => {
   );
 };
 
-export default Navbar;
+
+// --- Main App Component ---
+// This component demonstrates how to use the theme-aware Navbar.
+const App = () => {
+  // Create refs for each content section
+  const darkSectionRef = useRef(null);
+  const lightSectionRef = useRef(null);
+  const anotherDarkSectionRef = useRef(null);
+
+  // The hook returns the theme of the section currently in view
+  const theme = useNavbarTheme([darkSectionRef, lightSectionRef, anotherDarkSectionRef], 'dark');
+
+  return (
+    <Router>
+      {/* Pass the dynamic theme to the Navbar */}
+      <Navbar theme={theme} />
+      
+      <main>
+        {/* Add a data-theme attribute to each section */}
+        <section
+          ref={darkSectionRef}
+          data-theme="dark"
+          className="h-screen bg-slate-900 flex flex-col items-center justify-center text-center p-4"
+        >
+          <h1 className="text-5xl font-bold text-white">Dynamic Navbar</h1>
+          <p className="text-xl text-slate-300 mt-4">Scroll down to see the theme change.</p>
+        </section>
+
+        <section
+          ref={lightSectionRef}
+          data-theme="light"
+          className="h-screen bg-gray-100 flex items-center justify-center"
+        >
+          <h1 className="text-5xl font-bold text-gray-800">Light Section</h1>
+        </section>
+
+        <section
+          ref={anotherDarkSectionRef}
+          data-theme="dark"
+          className="h-screen bg-[#0b0014] flex items-center justify-center"
+        >
+          <h1 className="text-5xl font-bold text-white">Another Dark Section</h1>
+        </section>
+      </main>
+    </Router>
+  );
+};
+
+export default App;
+
