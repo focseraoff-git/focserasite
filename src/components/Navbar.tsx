@@ -117,16 +117,13 @@ const Navbar: FC = () => {
     ? "linear-gradient(135deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.05) 100%)"
     : "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)";
   const borderColor = isDarkBackground ? "border-white/10" : "border-white/20";
-  const shadowColor = isDarkBackground
-    ? "shadow-[0_8px_32px_0_rgba(0,0,0,0.3),inset_0_2px_0_0_rgba(255,255,255,0.1)]"
-    : "shadow-[0_8px_32px_0_rgba(59,130,246,0.08),inset_0_2px_0_0_rgba(255,255,255,0.8)]";
 
   return (
     <motion.nav
       ref={navRef}
       initial={false}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`fixed top-6 left-1/2 -translate-x-1/2 w-[96%] max-w-7xl flex items-center justify-between px-8 py-4 rounded-full transition-all duration-500 z-50 border ${borderColor} backdrop-blur-3xl ${shadowColor}`}
+      className={`fixed top-6 left-1/2 -translate-x-1/2 w-[96%] max-w-7xl flex items-center justify-between px-8 py-4 rounded-full transition-all duration-500 z-50 border ${borderColor} backdrop-blur-3xl`}
       style={{
         background: navBg,
       }}
