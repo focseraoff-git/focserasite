@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { ArrowRight, Lock, Mail, User, Eye, EyeOff, Sparkles, Shield, Zap } from 'lucide-react';
+import { ArrowRight, Lock, Mail, User, Eye, EyeOff, Sparkles, Shield, Zap, CheckCircle, AlertCircle, Info } from 'lucide-react';
 
 const Login = () => {
     const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -11,6 +11,8 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [messageType, setMessageType] = useState<'success' | 'error' | 'info'>('success');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -26,6 +28,7 @@ const Login = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setSuccessMessage('');
         setLoading(true);
 
         try {
@@ -40,11 +43,21 @@ const Login = () => {
                     }
                 });
 
-                if (error) throw error;
-
-                if (data.user) {
-                    alert('Account created successfully! Please check your email to confirm your account before logging in.');
-                    setMode('login');
+                if (error) {
+                    if (error.message.includes('already registered')) {
+                        setMessageType('info');
+                        setError('This email is already registered. Please sign in instead.');
+                        setTimeout(() => setMode('login'), 3000);
+                    } else {
+                        throw error;
+                    }
+                } else if (data.user) {
+                    setMessageType('success');
+                    setSuccessMessage('Account created successfully! Please check your email to confirm your account.');
+                    setTimeout(() => {
+                        setMode('login');
+                        setSuccessMessage('');
+                    }, 4000);
                 }
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
@@ -53,9 +66,15 @@ const Login = () => {
                 });
 
                 if (error) throw error;
-                navigate('/account');
+
+                setMessageType('success');
+                setSuccessMessage('Congratulations! You have successfully logged in.');
+                setTimeout(() => {
+                    navigate('/account');
+                }, 2000);
             }
         } catch (err: any) {
+            setMessageType('error');
             setError(err.message || 'An error occurred');
         } finally {
             setLoading(false);
@@ -153,8 +172,24 @@ const Login = () => {
                             </div>
 
                             {error && (
-                                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-                                    {error}
+                                <div className={`mb-6 p-4 rounded-xl text-sm flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300 ${
+                                    messageType === 'error'
+                                        ? 'bg-red-50 border border-red-200 text-red-700'
+                                        : 'bg-blue-50 border border-blue-200 text-blue-700'
+                                }`}>
+                                    {messageType === 'error' ? (
+                                        <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
+                                    ) : (
+                                        <Info size={20} className="flex-shrink-0 mt-0.5" />
+                                    )}
+                                    <span>{error}</span>
+                                </div>
+                            )}
+
+                            {successMessage && (
+                                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <CheckCircle size={20} className="flex-shrink-0 mt-0.5" />
+                                    <span>{successMessage}</span>
                                 </div>
                             )}
 
