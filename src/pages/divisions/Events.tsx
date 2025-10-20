@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { supabase } from '../../lib/supabase';
 
 // --- ICONS (using inline SVGs for self-containment) ---
 const Calendar = (props) => (
