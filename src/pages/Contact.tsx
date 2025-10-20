@@ -1,17 +1,12 @@
 import { useState } from 'react';
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import { supabase } from '../lib/supabase';
 import { Mail, Phone, MapPin, ArrowRight, Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
 
 // --- Supabase Setup ---
 // 1. Replace these with your actual Supabase URL and Anon Key from your project settings.
 //    It's best practice to store these in environment variables (.env.local file).
-const supabaseUrl = 'https://cqasskjgsmxsfcwgkwab.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxYXNza2pnc214c2Zjd2drd2FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyOTExMzcsImV4cCI6MjA3NTg2NzEzN30.ebJcxEYrtNAH2M9ddOatCrOXDzaoIOJV6s1FdNsMyv8';
 
-// 2. Initialize the Supabase client.
-//    In a real app, you would create this client in a separate utility file (e.g., 'src/lib/supabase.js')
-//    and import it wherever you need it.
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Using shared `supabase` client from `src/lib/supabase`.
 
 export default function Contact() {
   // --- State Management ---
@@ -25,15 +20,15 @@ export default function Contact() {
   const [formError, setFormError] = useState('');
 
   // --- Handlers ---
-  const handleChange = (e) => {
-    const { id, value } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { id, value } = e.target as HTMLInputElement;
     setFormData(prevData => ({
       ...prevData,
       [id]: value
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Basic validation
@@ -47,20 +42,20 @@ export default function Contact() {
 
     // 3. Insert the form data into your Supabase table.
     //    Make sure you have a table named 'contacts' with matching columns.
-    const { error } = await supabase
-      .from('contacts') // Your table name
-      .insert({
-        full_name: formData.name,        // Your column names
-        email: formData.email,
-        interested_division: formData.division,
-        message: formData.message
-      });
+    try {
+      if (!supabase) throw new Error('Supabase client not available');
 
-    if (error) {
-      console.error('Error submitting to Supabase:', error);
-      setFormError('There was an error sending your message. Please try again.');
-      setStatus('error');
-    } else {
+      const { error } = await supabase
+        .from('custom_contacts') // Ensure your DB has this table or change to the correct table name
+        .insert({
+          full_name: formData.name,
+          email: formData.email,
+          interested_division: formData.division,
+          message: formData.message
+        });
+
+      if (error) throw error;
+
       setStatus('success');
       setFormData({ // Reset form on success
         name: '',
@@ -70,6 +65,12 @@ export default function Contact() {
       });
       // Optionally, revert to idle status after a few seconds
       setTimeout(() => setStatus('idle'), 5000);
+    } catch (err: any) {
+      console.error('Error submitting to Supabase or network:', err);
+      // Provide a more detailed message if Supabase returns details
+      const friendly = err?.message || 'There was an error sending your message. Please try again.';
+      setFormError(friendly);
+      setStatus('error');
     }
   };
 
@@ -179,6 +180,10 @@ export default function Contact() {
                   <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 text-red-700">
                     <AlertTriangle size={20} />
                     <p className="font-semibold">{formError}</p>
+                    <button
+                      onClick={async (evt) => { evt.preventDefault(); setStatus('submitting'); await handleSubmit(evt as any); }}
+                      className="ml-4 px-3 py-1 bg-white text-red-700 rounded-md text-sm border"
+                    >Retry</button>
                   </div>
                 )}
               </div>

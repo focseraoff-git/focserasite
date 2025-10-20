@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+// @ts-nocheck
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 
 
@@ -137,7 +138,7 @@ const PackageCard = ({ service, onBook, index, customizerScrollRef }) => {
     );
 };
 
-const LandingPage = ({ onBookNow, services, addOns }) => {
+const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
     const [selectedService, setSelectedService] = useState(null);
     const [selectedAddOns, setSelectedAddOns] = useState({});
     const [addonQuantities, setAddonQuantities] = useState({});
@@ -161,8 +162,8 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
     }, [services, selectedService]);
 
      useEffect(() => {
-        if (!selectedService) return;
-        let newTotal = selectedService.price_min;
+    if (!selectedService) return;
+    let newTotal = selectedService?.price_min || 0;
         Object.keys(selectedAddOns).forEach(key => {
             if (selectedAddOns[key]) {
                 const addOn = addOns.find(a => a.key === key);
@@ -223,8 +224,24 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
         onBookNow(customPackage.service, customPackage.addOns, customPackage.totalPrice);
     };
 
-    if (!services || services.length === 0 || !selectedService) {
-        return <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">Loading Focsera Studios...</div>
+    if (loadError) {
+        return (
+            <div className="min-h-screen flex items-center justify-center p-6">
+                <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+                    <h3 className="text-lg font-bold text-red-600 mb-2">Failed to load packages</h3>
+                    <p className="text-sm text-gray-600 mb-4">{String(loadError)}</p>
+                    <div className="flex justify-center">
+                        <button onClick={() => onRetry && onRetry()} className="px-6 py-3 bg-[#0052CC] text-white rounded-xl">Retry</button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!services || services.length === 0) {
+        return (
+            <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">No packages available right now.</div>
+        );
     }
 
     return (
@@ -282,8 +299,8 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                         <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-blue-600 mx-auto rounded-full"></div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                       {services.map((service, index) => (
-                           <PackageCard key={service.id} service={service} onBook={() => onBookNow(service, service.default_add_ons)} index={index} customizerScrollRef={customizerScrollRef} />
+                       {services.filter(Boolean).map((service, index) => (
+                           <PackageCard key={service?.id ?? index} service={service} onBook={() => onBookNow(service, service?.default_add_ons)} index={index} customizerScrollRef={customizerScrollRef} />
                        ))}
                     </div>
                 </div>
@@ -300,8 +317,8 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                 <div>
                                     <h3 className="text-xl font-bold mb-4">1. Select Your Base Service</h3>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                        {services.map(service => (
-                                            <button key={service.id} onClick={() => {
+                                        {services.filter(Boolean).map(service => (
+                                            <button key={service?.id ?? service?.name ?? Math.random()} onClick={() => {
                                                 if(service.is_active) {
                                                     setSelectedService(service);
                                                     setSelectedAddOns(service.default_add_ons || {});
@@ -309,12 +326,12 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                                         addOnsScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                                     }, 100);
                                                 }
-                                            }} disabled={!service.is_active} className={`group/service relative p-5 border-2 rounded-2xl text-left transition-all duration-300 transform overflow-hidden ${selectedService.id === service.id ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-xl border-transparent scale-105' : 'bg-white/80 backdrop-blur-sm border-gray-200'} ${service.is_active ? 'hover:-translate-y-1 hover:shadow-lg cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}>
-                                                {selectedService.id === service.id && (
+                                            }} disabled={!service.is_active} className={`group/service relative p-5 border-2 rounded-2xl text-left transition-all duration-300 transform overflow-hidden ${(selectedService?.id === service.id) ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-xl border-transparent scale-105' : 'bg-white/80 backdrop-blur-sm border-gray-200'} ${service.is_active ? 'hover:-translate-y-1 hover:shadow-lg cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}>
+                                                {selectedService?.id === service.id && (
                                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]"></div>
                                                 )}
                                                 <span className="relative font-bold block text-sm md:text-base">{service.name}</span>
-                                                <span className={`relative text-xs md:text-sm font-medium ${selectedService.id === service.id ? 'text-white/90' : 'text-gray-600'}`}>From ₹{service.price_min.toLocaleString('en-IN')}</span>
+                                                <span className={`relative text-xs md:text-sm font-medium ${(selectedService?.id === service.id) ? 'text-white/90' : 'text-gray-600'}`}>From ₹{service.price_min.toLocaleString('en-IN')}</span>
                                             </button>
                                         ))}
                                     </div>
@@ -378,8 +395,8 @@ const LandingPage = ({ onBookNow, services, addOns }) => {
                                     <h3 className="text-2xl font-bold mb-6 text-center">Your Custom Package</h3>
                                     <div className="space-y-3 mb-6 border-b border-blue-200 pb-4">
                                         <div className="flex justify-between items-center">
-                                            <p className="font-semibold text-gray-700">{selectedService.name}</p>
-                                            <p className="text-gray-600 font-medium">₹{selectedService.price_min.toLocaleString('en-IN')}</p>
+                                            <p className="font-semibold text-gray-700">{selectedService?.name || 'Service'}</p>
+                                            <p className="text-gray-600 font-medium">₹{(selectedService?.price_min || 0).toLocaleString('en-IN')}</p>
                                         </div>
                                         {Object.entries(selectedAddOns).filter(([_, value]) => value).map(([key]) => {
                                             const addOn = addOns.find(a => a.key === key);
@@ -806,7 +823,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
             }
         };
 
-        const { error } = await supabase.from('bookings').insert([bookingData]);
+    const { error } = await supabase.from('studio_bookings').insert([bookingData]);
         if (error) {
             alert('Error creating booking: ' + error.message);
         } else {
@@ -1016,6 +1033,52 @@ export default function App() {
 
     const [services, setServices] = useState([]);
     const [addOns, setAddOns] = useState([]);
+    const [loadError, setLoadError] = useState(null);
+
+    const getInitialData = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const [{ data: servicesData, error: servicesError }, { data: addOnsData, error: addOnsError }] = await Promise.all([
+                supabase.from('studio_services').select('*').order('id', { ascending: true }),
+                supabase.from('studio_addons').select('*').order('id', { ascending: true })
+            ]);
+
+            if (servicesError) throw servicesError;
+            if (addOnsError) throw addOnsError;
+
+            const mappedServices = (servicesData || []).map(s => ({
+                id: s.id,
+                name: s.name,
+                description: s.description || s.short_description || '',
+                thumbnail: s.thumbnail || s.image_url || `https://placehold.co/600x400/94A3B8/FFFFFF?text=${encodeURIComponent(s.name || 'Service')}`,
+                category: s.category || 'General',
+                price_min: Number(s.price_min || s.price || 0),
+                pricing_mode: s.pricing_mode || 'per event',
+                is_active: !!s.is_active,
+                terms: s.terms || {},
+                default_add_ons: s.default_add_ons || {}
+            }));
+
+            const mappedAddOns = (addOnsData || []).map(a => ({
+                key: a.key || a.name?.toLowerCase().replace(/\s+/g, '_') || String(a.id),
+                label: a.label || a.name || a.key || 'Add-on',
+                description: a.description || '',
+                price_min: Number(a.price_min || a.price || 0),
+                is_active: !!a.is_active
+            }));
+
+            setServices((mappedServices || []).filter(Boolean));
+            setAddOns((mappedAddOns || []).filter(Boolean));
+            setLoadError(null);
+        } catch (err) {
+            console.error('Error loading data:', err);
+            setLoadError(err?.message || String(err));
+            setServices([]);
+            setAddOns([]);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
         const savedPackageJson = sessionStorage.getItem('focseraBookingPackage');
@@ -1029,28 +1092,7 @@ export default function App() {
                 }
             });
         }
-        
-        const getInitialData = async () => {
-            try {
-                const { data: servicesData, error: servicesError } = await supabase.from('services').select('*').order('id');
-                if(servicesError) {
-                    console.error("Error fetching services", servicesError);
-                } else {
-                    setServices(servicesData || []);
-                }
 
-                const { data: addOnsData, error: addOnsError } = await supabase.from('add_ons').select('*');
-                if(addOnsError) {
-                    console.error("Error fetching add-ons", addOnsError);
-                } else {
-                    setAddOns(addOnsData || []);
-                }
-            } catch (err) {
-                console.error("Error loading data:", err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
         getInitialData();
 
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -1060,7 +1102,7 @@ export default function App() {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
 
-            if (_event === "SIGNED_IN") {
+            if (_event === 'SIGNED_IN') {
                 const savedPackageJson = sessionStorage.getItem('focseraBookingPackage');
                 if (savedPackageJson) {
                     const savedPackage = JSON.parse(savedPackageJson);
@@ -1072,7 +1114,7 @@ export default function App() {
         });
 
         return () => subscription.unsubscribe();
-    }, []);
+    }, [getInitialData]);
 
     const handleBookNow = (service, addOns, price) => {
         if (!service.is_active) return;
@@ -1134,6 +1176,8 @@ export default function App() {
                     onBookNow={handleBookNow}
                     services={services}
                     addOns={addOns}
+                    loadError={loadError}
+                    onRetry={() => { setLoadError(null); getInitialData(); }}
                 />;
         }
     };

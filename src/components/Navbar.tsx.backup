@@ -1,19 +1,28 @@
-import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
+import { FC, useState, useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";  const textColor = isDarkBackground ? "text-white" : "text-blue-600";
+  const hoverTextColor = isDarkBackground ? "hover:text-blue-300" : "hover:text-blue-700";
+  const activeTextColor = isDarkBackground ? "text-blue-300" : "text-blue-700";
+  const activeBg = isDarkBackground ? "bg-white/10" : "bg-blue-50/80";
+  const dropdownBg = isDarkBackground ? "bg-slate-900/95 border-slate-700" : "bg-white/95 border-slate-200";
+  const dropdownTextColor = isDarkBackground ? "text-slate-300" : "text-blue-600";
+  const dropdownHoverBg = isDarkBackground ? "hover:bg-slate-800" : "hover:bg-blue-50/80"; { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../lib/supabase";
 
-const Navbar = () => {
+const Navbar:                         className="block py-2.5 px-3 rounded-xl font-semibold transition-all duration-200 ${
+                    isActive(item.path!)
+                      ? `${activeTextColor} ${activeBg}`
+                      : `${isDarkBackground ? 'text-slate-300 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'} ${dropdownHoverBg}`
+                  }`() => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [divisionsOpen, setDivisionsOpen] = useState(false);
-  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [isDarkBackground, setIsDarkBackground] = useState(false);
   const location = useLocation();
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const divisionsRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement>(null);
 
   const divisions = [
@@ -33,6 +42,12 @@ const Navbar = () => {
     { label: "Journey", path: "/journey" },
     { label: "Contact", path: "/contact" },
   ];
+
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handler);
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
 
   useEffect(() => {
     const getUser = async () => {
@@ -72,50 +87,27 @@ const Navbar = () => {
       }
     };
 
-    // Run once initially
     checkBackgroundColor();
-
-    // Throttle using requestAnimationFrame to avoid work on every scroll event
-    let ticking = false;
-    const onScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(() => {
-          checkBackgroundColor();
-          ticking = false;
-        });
-      }
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("scroll", checkBackgroundColor);
+    const interval = setInterval(checkBackgroundColor, 500);
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("scroll", checkBackgroundColor);
+      clearInterval(interval);
     };
   }, [location]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      // Close mobile menu only when click is outside mobile menu and menu button
       if (
         mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(target) &&
+        !mobileMenuRef.current.contains(e.target as Node) &&
         menuButtonRef.current &&
-        !menuButtonRef.current.contains(target)
+        !menuButtonRef.current.contains(e.target as Node)
       ) {
         setMobileMenuOpen(false);
       }
-
-      // Close divisions dropdown only when click is outside the dropdown and its button
-      if (divisionsRef.current && !divisionsRef.current.contains(target)) {
-        // But also allow clicks on the divisions button (so the button can toggle)
-        if (!(menuButtonRef.current && menuButtonRef.current.contains(target))) {
-          setDivisionsOpen(false);
-        }
-      }
+      setDivisionsOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -123,12 +115,12 @@ const Navbar = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const textColor = isDarkBackground ? "text-white" : "text-slate-700";
-  const hoverTextColor = isDarkBackground ? "hover:text-blue-300" : "hover:text-blue-600";
-  const activeTextColor = isDarkBackground ? "text-blue-300" : "text-blue-600";
+  const textColor = isDarkBackground ? "text-white" : "text-blue-600";
+  const hoverTextColor = isDarkBackground ? "hover:text-blue-300" : "hover:text-blue-700";
+  const activeTextColor = isDarkBackground ? "text-blue-300" : "text-blue-700";
   const activeBg = isDarkBackground ? "bg-white/10" : "bg-blue-50/80";
   const dropdownBg = isDarkBackground ? "bg-slate-900/95 border-slate-700" : "bg-white/95 border-slate-200";
-  const dropdownTextColor = isDarkBackground ? "text-slate-300" : "text-slate-700";
+  const dropdownTextColor = isDarkBackground ? "text-slate-300" : "text-blue-600";
   const dropdownHoverBg = isDarkBackground ? "hover:bg-slate-800" : "hover:bg-blue-50";
   const navBg = isDarkBackground
     ? "linear-gradient(135deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.05) 100%)"
@@ -140,9 +132,13 @@ const Navbar = () => {
       ref={navRef}
       initial={false}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`fixed top-4 left-1/2 -translate-x-1/2 w-[96%] max-w-7xl flex items-center justify-between px-6 py-2.5 rounded-full transition-all duration-500 z-50 border ${borderColor} backdrop-blur-3xl`}
+      className={`fixed top-4 left-1/2 -translate-x-1/2 w-[94%] max-w-6xl flex items-center justify-between px-6 py-2.5 rounded-full transition-all duration-500 z-50 border ${borderColor} backdrop-blur-3xl hover:backdrop-blur-2xl`}
       style={{
         background: navBg,
+        boxShadow: isDarkBackground 
+          ? '0 8px 32px -8px rgba(0, 0, 0, 0.3), 0 4px 8px -4px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.1)'
+          : '0 8px 32px -8px rgba(59, 130, 246, 0.15), 0 4px 8px -4px rgba(59, 130, 246, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5)',
+        transform: 'translate(-50%, 0)',
       }}
     >
       <Link to="/" className="relative group flex items-center gap-3">
@@ -151,10 +147,15 @@ const Navbar = () => {
           alt="Focsera Logo"
           className="h-8 w-auto object-contain"
         />
-        <span className={`text-xl font-black tracking-tight transition-colors duration-500 ${isDarkBackground ? "text-white" : "bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 bg-clip-text text-transparent"}`}>
+        <span className={`text-lg font-black tracking-tight transition-all duration-500 ${
+          isDarkBackground 
+            ? "text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" 
+            : "bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 bg-clip-text text-transparent"
+        } transform group-hover:scale-[1.02]`}>
           FOCSERA
         </span>
-        <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-blue-400 rounded-full opacity-0 group-hover:opacity-10 blur-md transition-opacity duration-300"></div>
+        <div className="absolute -inset-2 bg-gradient-to-r from-blue-600/20 via-blue-500/20 to-blue-400/20 rounded-full opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500 animate-pulse"></div>
+        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-blue-400 rounded-full opacity-0 group-hover:opacity-15 blur-md transition-all duration-300"></div>
       </Link>
 
       <div className="hidden lg:flex items-center gap-1">
@@ -167,7 +168,7 @@ const Navbar = () => {
               className="relative"
             >
               <button
-                className={`flex items-center gap-1 relative font-semibold text-sm px-3 py-1.5 rounded-full transition-all duration-500 ${textColor} ${hoverTextColor}`}
+                className={`flex items-center gap-1 relative font-semibold text-sm px-4 py-2 rounded-full transition-all duration-500 ${textColor} ${hoverTextColor}`}
                 aria-expanded={divisionsOpen}
               >
                 <span className="relative z-10">Divisions</span>
@@ -183,8 +184,12 @@ const Navbar = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.2 }}
-                    ref={(el) => (divisionsRef.current = el)}
-                    className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 rounded-2xl shadow-xl p-2 backdrop-blur-xl border ${dropdownBg}`}
+                    className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 rounded-2xl p-2 backdrop-blur-xl border ${dropdownBg}`}
+                    style={{
+                      boxShadow: isDarkBackground
+                        ? '0 8px 32px -8px rgba(0, 0, 0, 0.3), 0 4px 8px -4px rgba(0, 0, 0, 0.1)'
+                        : '0 8px 32px -8px rgba(59, 130, 246, 0.2), 0 4px 8px -4px rgba(59, 130, 246, 0.1)',
+                    }}
                   >
                     {divisions.map((d) => (
                       <Link
@@ -203,11 +208,16 @@ const Navbar = () => {
             <Link
               key={item.label}
               to={item.path!}
-              className={`relative text-sm font-semibold transition-all duration-500 px-4 py-2 rounded-full ${
+              className={`relative text-sm font-semibold transition-all duration-500 px-3 py-1.5 rounded-full hover:scale-[1.02] ${
                 isActive(item.path!)
-                  ? `${activeTextColor} ${activeBg}`
+                  ? `${activeTextColor} ${activeBg} shadow-sm shadow-blue-500/10`
                   : `${textColor} ${hoverTextColor}`
               }`}
+              style={{
+                textShadow: isActive(item.path!) 
+                  ? (isDarkBackground ? '0 0 10px rgba(147, 197, 253, 0.3)' : '0 0 10px rgba(37, 99, 235, 0.1)')
+                  : 'none'
+              }}
             >
               {item.label}
             </Link>
@@ -253,7 +263,7 @@ const Navbar = () => {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.2 }}
             className={`absolute right-4 top-full mt-2 w-72 p-3 rounded-2xl z-40 backdrop-blur-xl border shadow-xl ${dropdownBg}`}
           >
             {mainMenu.map((item) =>
@@ -275,7 +285,7 @@ const Navbar = () => {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        transition={{ duration: 0.2 }}
                         className="pl-3 space-y-1 mt-1"
                       >
                         {divisions.map((d) => (
