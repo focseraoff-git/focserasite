@@ -1012,6 +1012,7 @@ export default function App() {
     const [currentView, setCurrentView] = useState('landing');
     const [bookingPackage, setBookingPackage] = useState(null);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [services, setServices] = useState([]);
     const [addOns, setAddOns] = useState([]);
@@ -1030,13 +1031,25 @@ export default function App() {
         }
         
         const getInitialData = async () => {
-            const { data: servicesData, error: servicesError } = await supabase.from('services').select('*').order('id');
-            if(servicesError) console.error("Error fetching services", servicesError);
-            else setServices(servicesData);
+            try {
+                const { data: servicesData, error: servicesError } = await supabase.from('services').select('*').order('id');
+                if(servicesError) {
+                    console.error("Error fetching services", servicesError);
+                } else {
+                    setServices(servicesData || []);
+                }
 
-            const { data: addOnsData, error: addOnsError } = await supabase.from('add_ons').select('*');
-            if(addOnsError) console.error("Error fetching add-ons", addOnsError);
-            else setAddOns(addOnsData);
+                const { data: addOnsData, error: addOnsError } = await supabase.from('add_ons').select('*');
+                if(addOnsError) {
+                    console.error("Error fetching add-ons", addOnsError);
+                } else {
+                    setAddOns(addOnsData || []);
+                }
+            } catch (err) {
+                console.error("Error loading data:", err);
+            } finally {
+                setIsLoading(false);
+            }
         };
         getInitialData();
 
@@ -1124,6 +1137,17 @@ export default function App() {
                 />;
         }
     };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+                <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-lg font-semibold text-gray-700">Loading Focsera Studios...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>
