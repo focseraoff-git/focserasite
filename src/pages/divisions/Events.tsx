@@ -1,96 +1,1056 @@
-import { Link } from 'react-router-dom';
-import { PartyPopper, Briefcase, Users, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
 
-export default function Events() {
-  const services = [
-    {
-      icon: Briefcase,
-      title: 'Corporate Events',
-      description: 'Professional event management for conferences, product launches, exhibitions, and corporate gatherings.',
-      features: ['Conferences', 'Product Launches', 'Trade Shows', 'Team Building Events']
+// --- ICONS (using inline SVGs for self-containment) ---
+const Calendar = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+);
+const ArrowRight = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+);
+const Check = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="20 6 9 17 4 12"/></svg>
+);
+const ChevronDown = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="6 9 12 15 18 9"></polyline></svg>
+);
+const Instagram = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+);
+const Twitter = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+);
+const Facebook = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+);
+const ShoppingCart = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+);
+const User = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+);
+const CreditCard = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+);
+
+// --- MOCKED DATA (Based on the provided PDF) ---
+const MOCK_SERVICES = [
+  {
+    id: 1,
+    name: 'Private Events',
+    description: 'From joyous baby showers and vibrant pre-wedding functions to heartfelt anniversaries and fun-filled reunions, we design and execute life\'s most important moments.',
+    thumbnail: 'https://placehold.co/600x400/3B82F6/FFFFFF?text=Private+Event',
+    category: 'Life Milestones',
+    price_min: 50000,
+    pricing_mode: 'per event',
+    is_active: true,
+    terms: {
+      clientSupport: 'Full event coordination, vendor management, and on-site support.',
+      studioSupport: 'Dedicated event planner, custom decor design, and guest management.'
     },
-    {
-      icon: PartyPopper,
-      title: 'Private Events',
-      description: 'Personalized event planning for weddings, birthdays, anniversaries, and special celebrations.',
-      features: ['Weddings', 'Birthday Parties', 'Anniversaries', 'Private Celebrations']
+    default_add_ons: { custom_decor: true, crowd_engagement: false }
+  },
+  {
+    id: 2,
+    name: 'Corporate Events',
+    description: 'Your partner for professional, seamless, and engaging business events. We offer specialized planning for conferences, team-building, product launches, and gala dinners.',
+    thumbnail: 'https://placehold.co/600x400/10B981/FFFFFF?text=Corporate+Event',
+    category: 'Business',
+    price_min: 120000,
+    pricing_mode: 'per event',
+    is_active: true,
+    terms: {
+      clientSupport: 'Agenda planning, logistics management, and technical support coordination.',
+      studioSupport: 'Venue sourcing, corporate branding integration, and post-event analysis.'
     },
-    {
-      icon: Users,
-      title: 'Campus & School Events',
-      description: 'Dynamic event solutions for educational institutions, cultural festivals, and campus competitions.',
-      features: ['College Fests', 'Cultural Shows', 'Competitions', 'School Functions']
-    }
-  ];
+    default_add_ons: { av_support: true, catering_coordination: true }
+  },
+  {
+    id: 3,
+    name: 'Campus & School Events',
+    description: 'We partner with schools and universities to create memorable and successful campus events, managing all aspects of your gathering to ensure a fantastic experience.',
+    thumbnail: 'https://placehold.co/600x400/F59E0B/FFFFFF?text=Campus+Event',
+    category: 'Education',
+    price_min: 75000,
+    pricing_mode: 'per event',
+    is_active: true,
+    terms: {
+      clientSupport: 'Event promotion assistance, student volunteer coordination, and safety planning.',
+      studioSupport: 'Activity planning, budget management, and vendor negotiation for campus-friendly rates.'
+    },
+    default_add_ons: { crowd_engagement: true, venue_selection: false }
+  },
+  {
+    id: 4,
+    name: 'INNOVATEX Special',
+    description: 'An exciting event for students with fun, interactive games like a virtual IPL Auction and Brand Battles, designed to build teamwork, creativity, and planning skills.',
+    thumbnail: 'https://placehold.co/600x400/EF4444/FFFFFF?text=INNOVATEX',
+    category: 'Student Special',
+    price_min: 90000,
+    pricing_mode: 'per program',
+    is_active: true,
+    terms: {
+      clientSupport: 'Includes all materials for games, mentor coordination for sessions.',
+      studioSupport: 'Structured modules for IPL Auction, Brand Battles, Young Innovators, and Echoes sessions.'
+    },
+    default_add_ons: { mentor_session: true }
+  }
+];
 
-  return (
-    <div className="min-h-screen bg-white">
-      <section className="relative pt-32 pb-24 bg-gradient-to-br from-[#0052CC] to-[#0066FF] overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-full" style={{
-            backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
-            backgroundSize: '50px 50px'
-          }}></div>
-        </div>
+const MOCK_ADD_ONS = [
+  { key: 'custom_decor', label: 'Custom Decor', description: 'Themed decorations, floral arrangements, and lighting.', price_min: 15000, is_active: true },
+  { key: 'crowd_engagement', label: 'Crowd Engagement', description: 'Interactive games, live host/MC, and activities.', price_min: 10000, is_active: true },
+  { key: 'catering_coordination', label: 'Catering Coordination', description: 'Liaising with top caterers to match your event theme and budget.', price_min: 8000, is_active: true },
+  { key: 'venue_selection', label: 'Venue Selection', description: 'Scouting and booking the perfect venue for your event.', price_min: 12000, is_active: true },
+  { key: 'av_support', label: 'A/V & Technical Support', description: 'Sound systems, projectors, and technical staff for corporate events.', price_min: 20000, is_active: true },
+  { key: 'mentor_session', label: 'Expert Mentor Session', description: 'Add a professional mentor for the "Echoes" session in INNOVATEX.', price_min: 5000, is_active: true }
+];
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="w-32 h-32 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl p-4">
-            <img src="/images/logos/FocseraEvents.jpg" alt="Focsera Events" className="w-full h-full object-contain" />
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">Focsera Events</h1>
-          <p className="text-xl text-white/90 max-w-3xl mx-auto">
-            Creating unforgettable experiences. From corporate conferences to personal celebrations, we make every event extraordinary.
-          </p>
-        </div>
-      </section>
+// --- UTILITY HOOK ---
+const useIntersectionObserver = (options) => {
+    const [ref, setRef] = useState(null);
+    const [isVisible, setIsVisible] = useState(false);
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                setIsVisible(true);
+                observer.disconnect();
+            }
+        }, options);
+        if (ref) observer.observe(ref);
+        return () => { if (ref) observer.unobserve(ref); };
+    }, [ref, options]);
+    return [setRef, isVisible];
+};
 
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Services</h2>
-            <div className="w-24 h-1 bg-[#0052CC] mx-auto"></div>
-          </div>
+// --- COMPONENTS ---
+const PackageCard = ({ service, onBook, index, customizerScrollRef }) => {
+    const cardRef = useRef(null);
+    const [isTermsVisible, setIsTermsVisible] = useState(false);
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {services.map((service, index) => {
-              const Icon = service.icon;
-              return (
-                <div key={index} className="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#0052CC] to-[#0066FF] rounded-xl flex items-center justify-center mb-6">
-                    <Icon className="text-white" size={32} />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{service.title}</h3>
-                  <p className="text-gray-600 mb-6 leading-relaxed">{service.description}</p>
-                  <ul className="space-y-2">
-                    {service.features.map((feature, idx) => (
-                      <li key={idx} className="text-sm text-gray-500 flex items-start">
-                        <span className="text-[#0052CC] mr-2">✓</span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+    const handleMouseMove = (e) => {
+        if (!service.is_active) return;
+        const { clientX, clientY, currentTarget } = e;
+        const { left, top, width, height } = currentTarget.getBoundingClientRect();
+        const x = (clientX - left - width / 2) / 25;
+        const y = (clientY - top - height / 2) / 25;
+        currentTarget.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg) scale3d(1.05, 1.05, 1.05)`;
+    };
+
+    const handleMouseLeave = (e) => {
+        if (!service.is_active) return;
+        e.currentTarget.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale3d(1, 1, 1)';
+    };
+
+    return (
+        <div
+            ref={cardRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            className={`group relative bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl overflow-hidden shadow-xl flex flex-col transition-all duration-500 ease-out ${!service.is_active ? 'grayscale opacity-70' : 'hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)]'}`}
+            style={{ transitionDelay: `${index * 100}ms` }}
+        >
+            {!service.is_active && (
+                <div className="absolute top-4 right-4 bg-gray-700 text-white text-xs font-bold px-3 py-1.5 rounded-full z-10 shadow-lg">
+                    Currently Unavailable
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+            )}
+            <div className="relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <img src={service.thumbnail} alt={service.name} className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-110"/>
+                <div className="absolute top-4 left-4 z-20">
+                    <span className="px-4 py-1.5 bg-white/90 backdrop-blur-md text-xs font-bold text-gray-900 rounded-full shadow-lg">{service.category}</span>
+                </div>
+            </div>
+            <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-white/80 to-white backdrop-blur-lg">
+                <h3 className="text-3xl font-black text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-600 group-hover:to-blue-600 transition-all duration-300">{service.name}</h3>
+                <p className="text-gray-600 mb-8 leading-relaxed flex-grow text-sm">{service.description}</p>
+                <div className="mb-6 relative">
+                    <div className="inline-block">
+                        <span className="text-4xl font-black bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">₹{service.price_min.toLocaleString('en-IN')}</span>
+                        <span className="text-lg text-gray-500 font-semibold">+</span>
+                    </div>
+                    <span className="block text-sm text-gray-500 font-medium mt-1">per {service.pricing_mode.split(' ')[1]}</span>
+                </div>
 
-      <section className="py-24 bg-[#ECECEC]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Ready to Plan Your Next Event?</h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Let's create an unforgettable experience that your guests will remember forever.
-          </p>
-          <Link
-            to="/contact"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#0052CC] text-white rounded-full font-semibold hover:bg-[#0066FF] transition-all duration-300 group"
-          >
-            Get in Touch
-            <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
-          </Link>
+                <div className="border-t border-gray-200 mt-auto pt-4 space-y-4">
+                    <button onClick={() => setIsTermsVisible(!isTermsVisible)} className="flex justify-between items-center w-full text-sm font-semibold text-gray-600 hover:text-gray-900">
+                        <span>Terms & Details</span>
+                        <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isTermsVisible ? 'rotate-180' : ''}`} />
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isTermsVisible ? 'max-h-96' : 'max-h-0'}`}>
+                        <div className="text-xs text-gray-500 space-y-3 pt-2">
+                            <div>
+                                <h4 className="font-bold text-gray-700">Client Terms</h4>
+                                <p>{service.terms.clientSupport}</p>
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-gray-700">Studio Terms</h4>
+                                <p>{service.terms.studioSupport}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button onClick={() => {
+                    customizerScrollRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setTimeout(() => onBook(), 500);
+                }} disabled={!service.is_active} className="relative mt-4 w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed group/btn">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 bg-[length:200%_100%] group-hover/btn:bg-right transition-all duration-500"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000"></div>
+                    <span className="relative flex items-center justify-center gap-2">
+                        {service.is_active ? 'Book This Package' : 'Unavailable'}
+                        {service.is_active && <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />}
+                    </span>
+                </button>
+            </div>
         </div>
-      </section>
+    );
+};
+
+const LandingPage = ({ onBookNow, services, addOns }) => {
+    const [selectedService, setSelectedService] = useState(null);
+    const [selectedAddOns, setSelectedAddOns] = useState({});
+    const [addonQuantities, setAddonQuantities] = useState({});
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [displayPrice, setDisplayPrice] = useState(0);
+
+    const [packagesRef, packagesAreVisible] = useIntersectionObserver({ threshold: 0.1 });
+    const [customizerSectionRef, customizerIsVisible] = useIntersectionObserver({ threshold: 0.1 });
+    const [quoteSectionRef, quoteIsVisible] = useIntersectionObserver({ threshold: 0.1 });
+    const customizerScrollRef = useRef(null);
+    const addOnsScrollRef = useRef(null);
+
+    useEffect(() => {
+        if (services.length > 0 && !selectedService) {
+            const firstActive = services.find(s => s.is_active);
+            if(firstActive) {
+                setSelectedService(firstActive);
+                setSelectedAddOns(firstActive.default_add_ons || {});
+            }
+        }
+    }, [services, selectedService]);
+
+     useEffect(() => {
+        if (!selectedService) return;
+        let newTotal = selectedService.price_min;
+        Object.keys(selectedAddOns).forEach(key => {
+            if (selectedAddOns[key]) {
+                const addOn = addOns.find(a => a.key === key);
+                if (addOn) {
+                    const quantity = addonQuantities[key] || 1;
+                    newTotal += addOn.price_min * quantity;
+                }
+            }
+        });
+        setTotalPrice(newTotal);
+    }, [selectedService, selectedAddOns, addonQuantities, addOns]);
+
+    useEffect(() => {
+        const animation = requestAnimationFrame(() => {
+            const difference = totalPrice - displayPrice;
+            if (Math.abs(difference) < 1) setDisplayPrice(totalPrice);
+            else setDisplayPrice(displayPrice + difference * 0.1);
+        });
+        return () => cancelAnimationFrame(animation);
+    }, [totalPrice, displayPrice]);
+
+    const handleAddOnToggle = (key) => {
+        setSelectedAddOns(prev => ({ ...prev, [key]: !prev[key] }));
+        if (!addonQuantities[key]) {
+            setAddonQuantities(prev => ({ ...prev, [key]: 1 }));
+        }
+    };
+
+    const handleQuantityChange = (key, delta) => {
+        setAddonQuantities(prev => {
+            const current = prev[key] || 1;
+            const newValue = Math.max(1, current + delta);
+            return { ...prev, [key]: newValue };
+        });
+    };
+
+    const handleQuoteSubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const quoteData = Object.fromEntries(formData.entries());
+        console.log("Custom Quote Submitted:", quoteData);
+        alert('Thank you for your inquiry! We will get back to you shortly.');
+        e.target.reset();
+    };
+
+    const handleCustomBooking = () => {
+        if (!selectedService) return;
+        const customPackage = {
+            service: selectedService,
+            addOns: selectedAddOns,
+            totalPrice: totalPrice,
+        };
+        onBookNow(customPackage.service, customPackage.addOns, customPackage.totalPrice);
+    };
+
+    if (!services || services.length === 0 || !selectedService) {
+        return <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">Loading Focsera Events...</div>
+    }
+
+    return (
+        <>
+            <section className="relative py-32 bg-gradient-to-br from-[#0052CC] to-[#0066FF] overflow-hidden">
+                <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZHRoPSI1MCI+PHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSJ0cmFuc3BhcmVudCIvPjxjaXJjbGUgY3g9IjI1IiBjeT0iMjUiIHI9IjEiIGZpbGw9IndoaXRlIi8+PC9zdmc+')]"></div>
+                <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/10 rounded-full animate-[float_8s_ease-in-out_infinite]"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-white/10 rounded-2xl animate-[float_12s_ease-in-out_infinite]"></div>
+
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
+                    <div className="w-32 h-32 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                        <Calendar className="text-[#0052CC]" size={64} />
+                    </div>
+                    <h1 className="text-5xl sm:text-7xl font-bold text-white mb-6">Focsera Events</h1>
+                    <p className="text-xl text-white/90 max-w-3xl mx-auto mb-4">
+                        Expert Event Planning & Management
+                    </p>
+                    <p className="text-lg text-white/80 max-w-2xl mx-auto">
+                       We craft your next unforgettable event. From private parties to large corporate functions, we handle every detail to create a seamless and beautiful celebration.
+                    </p>
+                </div>
+            </section>
+
+            <section className="py-16 bg-white border-b border-gray-100">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                        <div className="text-center p-8">
+                            <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#0052CC]"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-3">Private & Social Events</h3>
+                            <p className="text-gray-600 text-lg">Unforgettable celebrations for life's milestones, from birthdays to weddings.</p>
+                        </div>
+                        <div className="text-center p-8">
+                           <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#0052CC]"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-3">Corporate & Campus</h3>
+                            <p className="text-gray-600 text-lg">Seamless and engaging events for businesses, schools, and universities.</p>
+                        </div>
+                    </div>
+                    <div className="mt-12 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-8 text-center">
+                        <p className="text-lg text-gray-700 font-medium max-w-3xl mx-auto">
+                            <span className="font-bold text-[#0052CC]">Note:</span> Focsera Events specializes in event planning and management.
+                            For photography and videography, please visit <span className="font-bold">Focsera Studios</span>.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section ref={packagesRef} className="py-24 bg-white">
+                <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${packagesAreVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Our Signature Packages</h2>
+                        <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-blue-600 mx-auto rounded-full"></div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                       {services.map((service, index) => (
+                           <PackageCard key={service.id} service={service} onBook={() => onBookNow(service, service.default_add_ons)} index={index} customizerScrollRef={customizerScrollRef} />
+                       ))}
+                    </div>
+                </div>
+            </section>
+
+             <section ref={customizerScrollRef} className="py-24 bg-gray-50 scroll-mt-24">
+                     <div ref={customizerSectionRef} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${customizerIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                         <div className="text-center mb-16">
+                             <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Build Your Own Package</h2>
+                             <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-blue-600 mx-auto rounded-full"></div>
+                         </div>
+                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                             <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-gray-200 shadow-2xl space-y-8">
+                                 <div>
+                                     <h3 className="text-xl font-bold mb-4">1. Select Your Base Service</h3>
+                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                         {services.map(service => (
+                                             <button key={service.id} onClick={() => {
+                                                 if(service.is_active) {
+                                                     setSelectedService(service);
+                                                     setSelectedAddOns(service.default_add_ons || {});
+                                                     setTimeout(() => {
+                                                         addOnsScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                     }, 100);
+                                                 }
+                                             }} disabled={!service.is_active} className={`group/service relative p-5 border-2 rounded-2xl text-left transition-all duration-300 transform overflow-hidden ${selectedService.id === service.id ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-xl border-transparent scale-105' : 'bg-white/80 backdrop-blur-sm border-gray-200'} ${service.is_active ? 'hover:-translate-y-1 hover:shadow-lg cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}>
+                                                 {selectedService.id === service.id && (
+                                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]"></div>
+                                                 )}
+                                                 <span className="relative font-bold block text-sm md:text-base">{service.name}</span>
+                                                 <span className={`relative text-xs md:text-sm font-medium ${selectedService.id === service.id ? 'text-white/90' : 'text-gray-600'}`}>From ₹{service.price_min.toLocaleString('en-IN')}</span>
+                                             </button>
+                                         ))}
+                                     </div>
+                                 </div>
+                                 <div ref={addOnsScrollRef}>
+                                     <h3 className="text-xl font-bold mb-4">2. Choose Add-ons</h3>
+                                     <div className="space-y-4">
+                                         {addOns.map((addOn) => {
+                                             const isQuantityBased = ['extra_photographer', 'extra_videographer', 'extended_coverage'].includes(addOn.key);
+                                             const isSelected = selectedAddOns[addOn.key];
+                                             const quantity = addonQuantities[addOn.key] || 1;
+
+                                             return (
+                                                 <div key={addOn.key} className={`p-4 border-2 rounded-xl transition-all duration-300 ${isSelected ? 'bg-blue-50 border-[#0052CC] shadow-md' : 'bg-gray-50 border-gray-200'}`}>
+                                                     <div className="flex items-start justify-between gap-4">
+                                                         <div className="flex-1">
+                                                             <div className="flex items-center gap-3 mb-2">
+                                                                 <button
+                                                                     onClick={() => handleAddOnToggle(addOn.key)}
+                                                                     className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[#0052CC] border-[#0052CC]' : 'border-gray-300 hover:border-gray-400'}`}
+                                                                 >
+                                                                     {isSelected && <Check className="text-white" size={16} />}
+                                                                 </button>
+                                                                 <span className="font-semibold text-gray-900">{addOn.label}</span>
+                                                             </div>
+                                                             {addOn.description && (
+                                                                 <p className="text-xs text-gray-600 ml-9">{addOn.description}</p>
+                                                             )}
+                                                         </div>
+                                                         <div className="flex flex-col items-end gap-2">
+                                                             <span className="text-sm font-bold text-gray-900">
+                                                                 ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}
+                                                             </span>
+                                                             {isSelected && isQuantityBased && (
+                                                                 <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-300 px-2 py-1">
+                                                                     <button
+                                                                         onClick={() => handleQuantityChange(addOn.key, -1)}
+                                                                         className="w-6 h-6 flex items-center justify-center text-gray-600 hover:text-[#0052CC] hover:bg-blue-50 rounded transition-all"
+                                                                     >
+                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                                                     </button>
+                                                                     <span className="text-sm font-semibold w-8 text-center">{quantity}</span>
+                                                                     <button
+                                                                         onClick={() => handleQuantityChange(addOn.key, 1)}
+                                                                         className="w-6 h-6 flex items-center justify-center text-gray-600 hover:text-[#0052CC] hover:bg-blue-50 rounded transition-all"
+                                                                     >
+                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                                                     </button>
+                                                                 </div>
+                                                             )}
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             );
+                                         })}
+                                     </div>
+                                 </div>
+                             </div>
+                             <div className="lg:col-span-1 sticky top-8">
+                                  <div className="bg-white/70 backdrop-blur-lg p-8 rounded-3xl border-2 border-[#0052CC] shadow-2xl">
+                                     <h3 className="text-2xl font-bold mb-6 text-center">Your Custom Package</h3>
+                                     <div className="space-y-3 mb-6 border-b border-blue-200 pb-4">
+                                         <div className="flex justify-between items-center">
+                                             <p className="font-semibold text-gray-700">{selectedService.name}</p>
+                                             <p className="text-gray-600 font-medium">₹{selectedService.price_min.toLocaleString('en-IN')}</p>
+                                         </div>
+                                         {Object.entries(selectedAddOns).filter(([_, value]) => value).map(([key]) => {
+                                             const addOn = addOns.find(a => a.key === key);
+                                             const quantity = addonQuantities[key] || 1;
+                                             return addOn ? (
+                                                 <div key={key} className="flex justify-between items-center text-sm">
+                                                     <p className="text-gray-600">{addOn.label}{quantity > 1 ? ` (x${quantity})` : ''}</p>
+                                                     <p className="text-gray-500 font-medium">+ ₹{(addOn.price_min * quantity).toLocaleString('en-IN')}</p>
+                                                 </div>
+                                             ) : null;
+                                         })}
+                                     </div>
+                                     <div className="flex justify-between items-center mb-6">
+                                         <p className="text-lg font-bold">Estimated Total</p>
+                                         <p className="text-3xl font-bold text-[#0052CC]">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
+                                     </div>
+                                     <button onClick={handleCustomBooking} className="button-primary w-full">
+                                         Book This Package
+                                         <ArrowRight className="button-primary-icon" />
+                                     </button>
+                                     <p className="text-xs text-gray-500 mt-4 text-center">Final price will be confirmed after consultation.</p>
+                                  </div>
+                             </div>
+                         </div>
+                     </div>
+                 </section>
+
+                <section ref={quoteSectionRef} className="py-24 bg-white">
+                    <div className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ${quoteIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                        <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Have a Unique Project?</h2>
+                        <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+                            If you didn't find the perfect package, tell us about your event, and we'll create a custom quote just for you.
+                        </p>
+                        <form onSubmit={handleQuoteSubmit} className="bg-gray-50 p-8 rounded-3xl border border-gray-200 shadow-2xl text-left max-w-3xl mx-auto space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div><label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field" placeholder="John Doe" required /></div>
+                                <div><label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field" placeholder="you@example.com" required /></div>
+                                <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field" placeholder="+91 12345 67890" /></div>
+                                <div><label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">Location / Venue</label><input type="text" id="location" name="location" className="w-full input-field" placeholder="City or Venue Name" /></div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <div>
+                                    <label htmlFor="event_date" className="block text-sm font-medium text-gray-700 mb-2">Event Start Date</label>
+                                    <input type="date" id="event_date" name="event_date" className="w-full input-field" />
+                                </div>
+                                <div>
+                                    <label htmlFor="event_end_date" className="block text-sm font-medium text-gray-700 mb-2">Event End Date <span className="text-gray-400">(Optional)</span></label>
+                                    <input type="date" id="event_end_date" name="event_end_date" className="w-full input-field" />
+                                </div>
+                            </div>
+                            <div><label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field" placeholder="Please include as many details as possible: type of event, number of guests, specific requirements, etc." required></textarea></div>
+                            <button type="submit" className="button-primary w-full">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
+                        </form>
+                    </div>
+                </section>
+
+                <footer className="bg-gray-800 text-white py-16">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300"><Calendar className="text-white" size={32} /></div>
+                        <p className="font-bold text-2xl mb-2">Focsera Events</p>
+                        <p className="text-gray-400">Crafting Unforgettable Moments.</p>
+                        <div className="flex justify-center gap-6 my-8">
+                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Twitter /></a>
+                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Instagram /></a>
+                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Facebook /></a>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-8">© {new Date().getFullYear()} Focsera Events. All Rights Reserved.</p>
+                    </div>
+                </footer>
+        </>
+    );
+};
+
+const CheckoutHeader = ({ currentStep }) => {
+    const steps = [
+        { id: 'login', name: 'Login', icon: <User className="w-5 h-5"/> },
+        { id: 'cart', name: 'Review Order', icon: <ShoppingCart className="w-5 h-5"/> },
+        { id: 'details', name: 'Checkout', icon: <CreditCard className="w-5 h-5"/> }
+    ];
+    const currentStepIndex = steps.findIndex(step => step.id === currentStep);
+
+    return (
+        <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
+            <nav className="max-w-5xl mx-auto px-4 py-4">
+                <div className="flex justify-between items-center mb-4">
+                     <a href="#" onClick={(e) => { e.preventDefault(); window.location.reload(); }} className="flex items-center gap-2 font-bold text-xl text-gray-800">
+                         <Calendar className="text-blue-600" />
+                         Focsera Events
+                     </a>
+                </div>
+                <div className="relative">
+                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200"></div>
+                    <div className="absolute top-1/2 left-0 h-0.5 bg-blue-600 transition-all duration-500" style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
+                    <div className="relative flex justify-between">
+                        {steps.map((step, index) => (
+                            <div key={step.id} className="flex flex-col items-center">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${index <= currentStepIndex ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-gray-300 text-gray-400'}`}>
+                                    {index < currentStepIndex ? <Check/> : step.icon}
+                                </div>
+                                <p className={`mt-2 text-xs font-semibold ${index <= currentStepIndex ? 'text-blue-600' : 'text-gray-500'}`}>{step.name}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </nav>
+        </header>
+    );
+};
+
+const LoginPage = ({ onLogin, onBack }) => {
+    // This component remains largely the same as it's for user authentication,
+    // which is generic. I've removed the Supabase logic for simplicity.
+    const [isLoginView, setIsLoginView] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState(null);
+
+    const handleAuth = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setMessage(null);
+
+        // Simulate API call
+        setTimeout(() => {
+            if (isLoginView) {
+                setMessage({type: 'success', text: 'Congratulations! You have successfully logged in.'});
+                setTimeout(onLogin, 1500);
+            } else {
+                 setMessage({type: 'success', text: 'Account created! Please log in to continue.'});
+                 setIsLoginView(true);
+            }
+            setLoading(false);
+        }, 1000);
+    }
+    
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex flex-col items-center justify-center p-4 pt-40 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(100,116,139,0.08),transparent_50%)]"></div>
+            <div className="w-full max-w-md animate-fadeInUp relative z-10">
+                <div className="bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-200 p-8 lg:p-10">
+                    <button onClick={onBack} className="absolute top-6 left-6 text-slate-600 hover:text-slate-800 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <span className="hover:-translate-x-1 transition-transform">&larr;</span> Back
+                    </button>
+
+                    <div className="text-center mb-8 mt-8">
+                        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent inline-block mb-2">
+                            FOCSERA
+                        </h2>
+                        <p className="text-slate-600">{isLoginView ? 'Sign in to continue your booking' : 'Join Focsera Events today'}</p>
+                    </div>
+
+                    <div className="flex gap-2 mb-8 bg-slate-100 p-1.5 rounded-2xl">
+                        <button
+                            onClick={() => setIsLoginView(true)}
+                            className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${ isLoginView ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200' }`}
+                        >
+                            Log In
+                        </button>
+                        <button
+                            onClick={() => setIsLoginView(false)}
+                            className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${ !isLoginView ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200' }`}
+                        >
+                            Sign Up
+                        </button>
+                    </div>
+                    
+                    {message && (
+                       <div className={`mb-6 p-4 rounded-xl text-sm ${message.type === 'success' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-red-50 border border-red-200 text-red-700'}`}>
+                           {message.text}
+                       </div>
+                    )}
+
+                    <form onSubmit={handleAuth} className="space-y-5">
+                       {!isLoginView && (
+                           <div className="group">
+                                <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Full Name</label>
+                                <input type="text" className="relative w-full pl-4 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="John Doe" required />
+                           </div>
+                       )}
+                       <div className="group">
+                           <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Email Address</label>
+                           <input type="email" className="relative w-full pl-4 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="you@example.com" required />
+                       </div>
+                       <div className="group">
+                           <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Password</label>
+                           <input type="password" className="relative w-full pl-4 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="••••••••" required minLength={6} />
+                       </div>
+                       <button type="submit" disabled={loading} className="relative w-full group overflow-hidden rounded-xl bg-blue-600 py-4 font-bold text-white shadow-lg">
+                           {loading ? 'Please wait...' : (isLoginView ? 'Log In' : 'Create Account')}
+                       </button>
+                    </form>
+
+                    <div className="mt-8 text-center">
+                        <p className="text-sm text-slate-600">
+                            {isLoginView ? "Don't have an account? " : "Already have an account? "}
+                            <button onClick={() => setIsLoginView(!isLoginView)} className="text-blue-600 font-bold hover:text-blue-700 transition-colors">
+                                {isLoginView ? 'Sign Up' : 'Log In'}
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8 pt-40">
+        <div className="max-w-5xl mx-auto animate-fadeInUp">
+            <div className="mb-8">
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">Review Your Order</h1>
+                <p className="text-gray-600">Please review your package details before proceeding to checkout</p>
+            </div>
+
+            <div className="grid lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2">
+                    <div className="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
+                        <div className="aspect-video w-full overflow-hidden bg-gray-200">
+                            <img src={bookingPackage.service.thumbnail} alt={bookingPackage.service.name} className="w-full h-full object-cover"/>
+                        </div>
+                        <div className="p-8">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-3">{bookingPackage.service.name}</h2>
+                            <p className="text-gray-600 leading-relaxed">{bookingPackage.service.description}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="lg:col-span-1">
+                    <div className="bg-white rounded-3xl shadow-lg p-8 border-2 border-[#0052CC] sticky top-28">
+                        <h3 className="text-xl font-bold mb-6">Order Summary</h3>
+                        <div className="space-y-4 mb-6">
+                            <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                <span className="font-semibold text-gray-700">Base Package</span>
+                                <span className="font-bold text-gray-900">₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</span>
+                            </div>
+                            {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
+                                const addOn = addOns.find(a => a.key === key);
+                                return addOn ? (
+                                    <div key={key} className="flex justify-between items-center">
+                                        <span className="text-gray-600">{addOn.label}</span>
+                                        <span className="text-gray-700 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</span>
+                                    </div>
+                                ) : null;
+                            })}
+                        </div>
+                        <div className="pt-6 border-t-2 border-gray-200 mb-6">
+                            <div className="flex justify-between items-center">
+                                <span className="text-lg font-bold">Total</span>
+                                <span className="text-3xl font-bold text-[#0052CC]">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</span>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-2">*Final price will be confirmed after consultation</p>
+                        </div>
+                        <button onClick={onProceed} className="button-primary w-full mb-3">
+                            Proceed to Checkout
+                            <ArrowRight className="button-primary-icon" />
+                        </button>
+                        <button onClick={onBack} className="w-full py-3 text-center font-semibold text-gray-600 hover:text-gray-900 transition-colors">
+                            &larr; Back to Packages
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  );
+);
+
+const DetailsPage = ({ bookingPackage, onConfirm, onBack, addOns }) => {
+
+    const handleConfirmBooking = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const clientDetails = Object.fromEntries(formData.entries());
+        console.log("Booking confirmed with details:", clientDetails);
+        alert('Booking request sent successfully!');
+        onConfirm();
+    };
+
+    return (
+     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 pt-40">
+        <div className="max-w-6xl mx-auto animate-fadeInUp">
+            <div className="mb-8">
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">Complete Your Booking</h1>
+                <p className="text-gray-600">Enter your event details to finalize your booking</p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div className="lg:col-span-2">
+                    <form onSubmit={handleConfirmBooking} className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 space-y-6">
+                        <div>
+                            <h3 className="text-xl font-bold mb-6">Contact Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Full Name</label>
+                                    <input name="name" type="text" className="w-full input-field" placeholder="John Doe" required />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Email Address</label>
+                                    <input name="email" type="email" className="w-full input-field" placeholder="you@example.com" required />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Phone Number</label>
+                                    <input name="phone" type="tel" className="w-full input-field" placeholder="+91 98765 43210" required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-gray-200">
+                            <h3 className="text-xl font-bold mb-6">Event Details</h3>
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Event Date(s)</label>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-xs text-gray-600 block mb-1">Start Date</label>
+                                            <input name="event_date" type="date" className="w-full input-field" required/>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs text-gray-600 block mb-1">End Date (Optional)</label>
+                                            <input name="event_end_date" type="date" className="w-full input-field"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-2">Event Venue / Location</label>
+                                    <textarea name="event_venue" rows="3" className="w-full input-field" placeholder="Enter the full address of your event venue" required></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 flex flex-col-reverse sm:flex-row items-center gap-4">
+                            <button type="button" onClick={onBack} className="w-full sm:w-auto font-semibold text-gray-600 hover:text-gray-900 py-3 px-8 rounded-xl transition-colors">
+                                &larr; Back
+                            </button>
+                            <button type="submit" className="button-primary w-full sm:flex-1">
+                                Confirm Booking
+                                <ArrowRight className="button-primary-icon" />
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div className="lg:col-span-1">
+                    <div className="bg-white rounded-3xl shadow-lg p-8 border-2 border-[#0052CC] sticky top-28">
+                        <h3 className="text-xl font-bold mb-6">Order Summary</h3>
+                        <div className="space-y-4 mb-6">
+                            <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                <span className="font-semibold text-gray-700">{bookingPackage.service.name}</span>
+                                <span className="font-bold text-gray-900">₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</span>
+                            </div>
+                             {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
+                                 const addOn = addOns.find(a => a.key === key);
+                                 return addOn ? (
+                                     <div key={key} className="flex justify-between items-center">
+                                         <span className="text-gray-600">{addOn.label}</span>
+                                         <span className="text-gray-700 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</span>
+                                     </div>
+                                 ) : null;
+                             })}
+                        </div>
+                        <div className="pt-6 border-t-2 border-gray-200">
+                            <div className="flex justify-between items-center">
+                                <span className="text-lg font-bold">Total</span>
+                                <span className="text-3xl font-bold text-[#0052CC]">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</span>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-2">*Final price confirmed after consultation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    );
+};
+
+const SuccessModal = ({ onClose }) => {
+    const [confetti, setConfetti] = React.useState(true);
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => setConfetti(false), 3000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    return (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fadeIn overflow-hidden">
+            {confetti && (
+                <div className="absolute inset-0 pointer-events-none">
+                    {[...Array(50)].map((_, i) => (
+                        <div
+                            key={i}
+                            className="absolute animate-confetti"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `-${Math.random() * 20}%`,
+                                width: `${Math.random() * 10 + 5}px`,
+                                height: `${Math.random() * 10 + 5}px`,
+                                backgroundColor: ['#0052CC', '#0066FF', '#00C7FF', '#FFD700', '#FF6B6B'][Math.floor(Math.random() * 5)],
+                                animationDelay: `${Math.random() * 2}s`,
+                                animationDuration: `${Math.random() * 3 + 2}s`,
+                                borderRadius: Math.random() > 0.5 ? '50%' : '0',
+                                transform: `rotate(${Math.random() * 360}deg)`
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
+
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl p-12 text-center max-w-2xl mx-auto border-2 border-[#0052CC] relative animate-scaleIn">
+                <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
+                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-2xl animate-bounce-slow">
+                        <Check className="w-20 h-20 text-white" strokeWidth={4}/>
+                    </div>
+                </div>
+
+                <div className="mt-20">
+                    <h2 className="text-5xl font-bold text-gray-900 mb-4 animate-slideDown">Booking Confirmed!</h2>
+                    <div className="w-24 h-1 bg-gradient-to-r from-[#0052CC] to-[#0066FF] mx-auto mb-6 rounded-full"></div>
+
+                    <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-8 mb-8">
+                        <p className="text-xl text-gray-700 leading-relaxed mb-6">
+                            Thank you for choosing <span className="font-bold text-[#0052CC]">Focsera Events</span>!
+                        </p>
+                        <p className="text-gray-600 leading-relaxed mb-6">
+                            Your booking request has been successfully received and our team is already reviewing the details.
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+                             <div className="bg-white rounded-xl p-6 shadow-md">
+                                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3"><span className="text-2xl font-bold text-[#0052CC]">1</span></div>
+                                 <h4 className="font-bold text-gray-900 mb-2">Confirmation Email</h4>
+                                 <p className="text-sm text-gray-600">Sent within 5 minutes</p>
+                             </div>
+                             <div className="bg-white rounded-xl p-6 shadow-md">
+                                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3"><span className="text-2xl font-bold text-[#0052CC]">2</span></div>
+                                 <h4 className="font-bold text-gray-900 mb-2">Team Contact</h4>
+                                 <p className="text-sm text-gray-600">Within 24 hours</p>
+                             </div>
+                             <div className="bg-white rounded-xl p-6 shadow-md">
+                                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3"><span className="text-2xl font-bold text-[#0052CC]">3</span></div>
+                                 <h4 className="font-bold text-gray-900 mb-2">Final Details</h4>
+                                 <p className="text-sm text-gray-600">Pricing & schedule</p>
+                             </div>
+                        </div>
+
+                        <p className="text-sm text-gray-500 italic">
+                            Our professional team will reach out to discuss the final details, confirm pricing, and plan your event.
+                        </p>
+                    </div>
+
+                    <button onClick={onClose} className="button-primary text-lg px-12 py-4 shadow-xl hover:shadow-2xl transition-all">
+                        Return Home
+                        <ArrowRight className="button-primary-icon" size={24} />
+                    </button>
+
+                    <p className="text-sm text-gray-500 mt-6">
+                        Need immediate assistance? Call us at <span className="font-semibold text-[#0052CC]">+91 98765 43210</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// --- MAIN APP COMPONENT ---
+export default function App() {
+    const [session, setSession] = useState(null); // Can be used for actual auth
+    const [currentView, setCurrentView] = useState('landing');
+    const [bookingPackage, setBookingPackage] = useState(null);
+    const [showSuccess, setShowSuccess] = useState(false);
+
+    const [services, setServices] = useState([]);
+    const [addOns, setAddOns] = useState([]);
+
+    useEffect(() => {
+        // Load mocked data on initial render
+        setServices(MOCK_SERVICES);
+        setAddOns(MOCK_ADD_ONS);
+        
+        // This logic checks if a user was in the middle of booking,
+        // then went to log in. It restores their cart after login.
+        const savedPackageJson = sessionStorage.getItem('focseraBookingPackage');
+        if (savedPackageJson && session) {
+            const savedPackage = JSON.parse(savedPackageJson);
+            setBookingPackage(savedPackage);
+            setCurrentView('cart');
+            sessionStorage.removeItem('focseraBookingPackage');
+        }
+    }, [session]);
+
+    const handleBookNow = (service, addOnsData, price) => {
+        if (!service.is_active) return;
+        const addOnsList = addOnsData || service.default_add_ons;
+        let finalPrice = price;
+
+        if (!finalPrice) {
+            const addOnsTotal = Object.entries(addOnsList || {}).reduce((acc, [key, value]) => {
+                if (value) {
+                    const addOn = addOns.find(a => a.key === key);
+                    return acc + (addOn ? addOn.price_min : 0);
+                }
+                return acc;
+            }, 0);
+            finalPrice = service.price_min + addOnsTotal;
+        }
+
+        const packageToBook = {
+            service: service,
+            addOns: addOnsList,
+            totalPrice: finalPrice,
+        };
+        
+        setBookingPackage(packageToBook);
+
+        // For demo purposes, we'll go to the cart directly.
+        // In a real app with Supabase, you'd check for a session.
+        // If no session, go to login. If session exists, go to cart.
+        setCurrentView('cart'); 
+
+        window.scrollTo(0, 0);
+    };
+
+    const resetToLanding = () => {
+        setCurrentView('landing');
+        setBookingPackage(null);
+        setShowSuccess(false);
+        sessionStorage.removeItem('focseraBookingPackage');
+    };
+
+    const renderContent = () => {
+        if (!bookingPackage && (currentView === 'cart' || currentView === 'details')) {
+             return <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">Please select a package first. <button onClick={resetToLanding} className="ml-2 text-blue-600 font-bold">Go Back</button></div>
+        }
+
+        switch (currentView) {
+            case 'login':
+                // The login page is simplified to not require Supabase for this demo
+                return <LoginPage onLogin={() => setCurrentView('cart')} onBack={resetToLanding} />;
+            case 'cart':
+                return <CartPage bookingPackage={bookingPackage} addOns={addOns} onProceed={() => setCurrentView('details')} onBack={resetToLanding} />;
+            case 'details':
+                return <DetailsPage bookingPackage={bookingPackage} addOns={addOns} session={session} onConfirm={() => setShowSuccess(true)} onBack={() => setCurrentView('cart')} />;
+            case 'landing':
+            default:
+                return <LandingPage
+                    onBookNow={handleBookNow}
+                    services={services}
+                    addOns={addOns}
+                />;
+        }
+    };
+
+    return (
+        <>
+            <style>{`
+                :root { --brand-blue: #0052CC; --brand-blue-dark: #0047b3; }
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
+                @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+                .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
+                @keyframes background-pan { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+                @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+
+                @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+                .animate-scaleIn { animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+                @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+                .animate-slideDown { animation: slideDown 0.6s ease-out forwards; animation-delay: 0.2s; opacity: 0; }
+
+                @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+                .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+                
+                @keyframes shimmer { 0% { transform: translateX(-100%) skewX(-15deg); } 100% { transform: translateX(200%) skewX(-15deg); } }
+                .animate-shimmer { animation: shimmer 2.5s infinite linear; }
+
+                @keyframes confetti { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+                .animate-confetti { animation: confetti forwards; }
+
+                .gradient-text { background: linear-gradient(90deg, #0052CC, #007BFF, #33A1FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: background-pan 5s linear infinite; }
+
+                .button-primary {
+                    position: relative; overflow: hidden;
+                    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+                    padding: 0.875rem 1.5rem; background-image: linear-gradient(90deg, var(--brand-blue) 0%, #0066FF 100%);
+                    color: white; border-radius: 9999px; font-weight: 600;
+                    transition: all 0.3s ease; transform: scale(1);
+                    box-shadow: 0 4px 15px rgba(0, 82, 204, 0.2);
+                }
+                .button-primary:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 82, 204, 0.3); }
+                .button-primary:active:not(:disabled) { transform: scale(0.98); }
+                .button-primary-icon { transition: transform 0.3s ease; }
+                .button-primary:hover:not(:disabled) .button-primary-icon { transform: translateX(4px); }
+
+                .input-field {
+                    background-color: white; border: 1px solid #e2e8f0; border-radius: 0.5rem;
+                    padding: 0.75rem 1rem; transition: all 0.2s ease-in-out;
+                }
+                .input-field:focus {
+                    outline: none; border-color: var(--brand-blue);
+                    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
+                }
+            `}</style>
+
+            <div className="bg-gray-50 text-gray-800 font-sans antialiased">
+                {['login', 'cart', 'details'].includes(currentView) && <CheckoutHeader currentStep={currentView} />}
+                {renderContent()}
+                {showSuccess && <SuccessModal onClose={resetToLanding} />}
+            </div>
+        </>
+    );
 }
+
