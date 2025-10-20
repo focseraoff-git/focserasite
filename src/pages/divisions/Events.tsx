@@ -556,28 +556,63 @@ const CheckoutHeader = ({ currentStep }) => {
 };
 
 const LoginPage = ({ onLogin, onBack }) => {
-    // This component remains largely the same as it's for user authentication,
-    // which is generic. I've removed the Supabase logic for simplicity.
     const [isLoginView, setIsLoginView] = useState(true);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
+    const [messageType, setMessageType] = useState('error');
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState(null);
 
-    const handleAuth = (e) => {
+    const handleAuth = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setMessage(null);
+        setError(null);
+        setSuccessMessage(null);
 
-        // Simulate API call
-        setTimeout(() => {
+        try {
             if (isLoginView) {
-                setMessage({type: 'success', text: 'Congratulations! You have successfully logged in.'});
-                setTimeout(onLogin, 1500);
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+                if (error) throw error;
+
+                setMessageType('success');
+                setSuccessMessage('Congratulations! You have successfully logged in.');
+                setTimeout(() => {
+                    onLogin();
+                }, 2000);
             } else {
-                 setMessage({type: 'success', text: 'Account created! Please log in to continue.'});
-                 setIsLoginView(true);
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: { data: { full_name: fullName } }
+                });
+
+                if (error) {
+                    if (error.message.includes('already registered')) {
+                        setMessageType('info');
+                        setError('This email is already registered. Please sign in instead.');
+                        setTimeout(() => setIsLoginView(true), 3000);
+                    } else {
+                        throw error;
+                    }
+                } else if (data.user) {
+                    setMessageType('success');
+                    setSuccessMessage('Account created successfully! Please check your email to confirm your account.');
+                    setTimeout(() => {
+                        setIsLoginView(true);
+                        setSuccessMessage(null);
+                    }, 4000);
+                }
             }
+        } catch (err) {
+            setMessageType('error');
+            setError(err.message || 'An error occurred');
+        } finally {
             setLoading(false);
-        }, 1000);
+        }
     }
     
     return (
@@ -611,29 +646,90 @@ const LoginPage = ({ onLogin, onBack }) => {
                         </button>
                     </div>
                     
-                    {message && (
-                       <div className={`mb-6 p-4 rounded-xl text-sm ${message.type === 'success' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-red-50 border border-red-200 text-red-700'}`}>
-                           {message.text}
-                       </div>
+                    {error && (
+                        <div className={`mb-6 p-4 rounded-xl text-sm flex items-start gap-3 ${
+                            messageType === 'error'
+                                ? 'bg-red-50 border border-red-200 text-red-700'
+                                : 'bg-blue-50 border border-blue-200 text-blue-700'
+                        }`}>
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    {successMessage && (
+                        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-start gap-3">
+                            <span>{successMessage}</span>
+                        </div>
                     )}
 
                     <form onSubmit={handleAuth} className="space-y-5">
                        {!isLoginView && (
                            <div className="group">
                                 <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Full Name</label>
-                                <input type="text" className="relative w-full pl-4 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="John Doe" required />
+                                <div className="relative">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" size={20} />
+                                    <input
+                                        type="text"
+                                        value={fullName}
+                                        onChange={e => setFullName(e.target.value)}
+                                        className="relative w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                        placeholder="John Doe"
+                                        required
+                                    />
+                                </div>
                            </div>
                        )}
                        <div className="group">
                            <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Email Address</label>
-                           <input type="email" className="relative w-full pl-4 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="you@example.com" required />
+                           <div className="relative">
+                               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+                               <input
+                                   type="email"
+                                   value={email}
+                                   onChange={e => setEmail(e.target.value)}
+                                   className="relative w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                   placeholder="you@example.com"
+                                   required
+                               />
+                           </div>
                        </div>
                        <div className="group">
                            <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Password</label>
-                           <input type="password" className="relative w-full pl-4 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="••••••••" required minLength={6} />
+                           <div className="relative">
+                               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                               <input
+                                   type={showPassword ? 'text' : 'password'}
+                                   value={password}
+                                   onChange={e => setPassword(e.target.value)}
+                                   className="relative w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                   placeholder="••••••••"
+                                   required
+                                   minLength={6}
+                               />
+                               <button
+                                   type="button"
+                                   onClick={() => setShowPassword(!showPassword)}
+                                   className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10 transition-colors"
+                               >
+                                   {showPassword ? (
+                                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                   ) : (
+                                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                   )}
+                               </button>
+                           </div>
                        </div>
-                       <button type="submit" disabled={loading} className="relative w-full group overflow-hidden rounded-xl bg-blue-600 py-4 font-bold text-white shadow-lg">
-                           {loading ? 'Please wait...' : (isLoginView ? 'Log In' : 'Create Account')}
+                       <button
+                           type="submit"
+                           disabled={loading}
+                           className="relative w-full group overflow-hidden rounded-xl"
+                       >
+                           <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500"></div>
+                           <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                           <div className="relative flex items-center justify-center gap-2 py-4 font-bold text-white shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow">
+                               {loading ? 'Please wait...' : (isLoginView ? 'Log In' : 'Create Account')}
+                               {!loading && <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />}
+                           </div>
                        </button>
                     </form>
 
@@ -645,6 +741,19 @@ const LoginPage = ({ onLogin, onBack }) => {
                             </button>
                         </p>
                     </div>
+
+                    <div className="flex items-center my-8">
+                        <div className="flex-grow border-t border-slate-200"></div>
+                        <span className="mx-4 text-slate-400 text-sm font-medium">OR</span>
+                        <div className="flex-grow border-t border-slate-200"></div>
+                    </div>
+
+                    <button
+                        onClick={onLogin}
+                        className="w-full py-3.5 border-2 border-slate-200 rounded-xl font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                    >
+                        Continue as Guest
+                    </button>
                 </div>
             </div>
         </div>
@@ -909,7 +1018,7 @@ const SuccessModal = ({ onClose }) => {
 
 // --- MAIN APP COMPONENT ---
 export default function App() {
-    const [session, setSession] = useState(null); // Can be used for actual auth
+    const [session, setSession] = useState(null);
     const [currentView, setCurrentView] = useState('landing');
     const [bookingPackage, setBookingPackage] = useState(null);
     const [showSuccess, setShowSuccess] = useState(false);
@@ -921,17 +1030,42 @@ export default function App() {
         // Load mocked data on initial render
         setServices(MOCK_SERVICES);
         setAddOns(MOCK_ADD_ONS);
-        
-        // This logic checks if a user was in the middle of booking,
-        // then went to log in. It restores their cart after login.
-        const savedPackageJson = sessionStorage.getItem('focseraBookingPackage');
-        if (savedPackageJson && session) {
+
+        // Check for saved booking package
+        const savedPackageJson = sessionStorage.getItem('focseraEventsBookingPackage');
+        if (savedPackageJson) {
             const savedPackage = JSON.parse(savedPackageJson);
-            setBookingPackage(savedPackage);
-            setCurrentView('cart');
-            sessionStorage.removeItem('focseraBookingPackage');
+            supabase.auth.getSession().then(({ data: { session } }) => {
+                if (session) {
+                    setBookingPackage(savedPackage);
+                    setCurrentView('cart');
+                    sessionStorage.removeItem('focseraEventsBookingPackage');
+                }
+            });
         }
-    }, [session]);
+
+        // Get initial session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+        });
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+
+            if (_event === "SIGNED_IN") {
+                const savedPackageJson = sessionStorage.getItem('focseraEventsBookingPackage');
+                if (savedPackageJson) {
+                    const savedPackage = JSON.parse(savedPackageJson);
+                    setBookingPackage(savedPackage);
+                    setCurrentView('cart');
+                    sessionStorage.removeItem('focseraEventsBookingPackage');
+                }
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
 
     const handleBookNow = (service, addOnsData, price) => {
         if (!service.is_active) return;
@@ -954,14 +1088,17 @@ export default function App() {
             addOns: addOnsList,
             totalPrice: finalPrice,
         };
-        
+
+        sessionStorage.setItem('focseraEventsBookingPackage', JSON.stringify(packageToBook));
+
         setBookingPackage(packageToBook);
 
-        // For demo purposes, we'll go to the cart directly.
-        // In a real app with Supabase, you'd check for a session.
-        // If no session, go to login. If session exists, go to cart.
-        setCurrentView('cart'); 
-
+        // Check if user is already logged in
+        if (session) {
+            setCurrentView('cart');
+        } else {
+            setCurrentView('login');
+        }
         window.scrollTo(0, 0);
     };
 
@@ -969,7 +1106,7 @@ export default function App() {
         setCurrentView('landing');
         setBookingPackage(null);
         setShowSuccess(false);
-        sessionStorage.removeItem('focseraBookingPackage');
+        sessionStorage.removeItem('focseraEventsBookingPackage');
     };
 
     const renderContent = () => {
@@ -979,10 +1116,9 @@ export default function App() {
 
         switch (currentView) {
             case 'login':
-                // The login page is simplified to not require Supabase for this demo
                 return <LoginPage onLogin={() => setCurrentView('cart')} onBack={resetToLanding} />;
             case 'cart':
-                return <CartPage bookingPackage={bookingPackage} addOns={addOns} onProceed={() => setCurrentView('details')} onBack={resetToLanding} />;
+                return <CartPage bookingPackage={bookingPackage} addOns={addOns} onProceed={() => setCurrentView('details')} onBack={() => setCurrentView('login')} />;
             case 'details':
                 return <DetailsPage bookingPackage={bookingPackage} addOns={addOns} session={session} onConfirm={() => setShowSuccess(true)} onBack={() => setCurrentView('cart')} />;
             case 'landing':
