@@ -4,8 +4,6 @@ import { supabase } from '../../lib/supabase';
 import FancyModal from '../../components/FancyModal';
 
 // --- ICONS (using inline SVGs for self-containment) ---
-// (Kept existing icons from your example + added a few new ones)
-
 const Megaphone = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
         <path d="M3 11v2a2 2 0 0 0 2 2h2l8 5V4l-8 5H5a2 2 0 0 0-2 2z"></path>
@@ -46,7 +44,7 @@ const CreditCard = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
 );
 const List = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
         <line x1="8" y1="6" x2="21" y2="6"></line>
         <line x1="8" y1="12" x2="21" y2="12"></line>
         <line x1="8" y1="18" x2="21" y2="18"></line>
@@ -56,7 +54,7 @@ const List = (props) => (
     </svg>
 );
 const Sparkles = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
         <path d="m12 3-1.5 3 3 1.5 1.5-3-3-1.5z"></path>
         <path d="m3 12-1.5 3 3 1.5 1.5-3-3-1.5z"></path>
         <path d="m21 12-1.5 3 3 1.5 1.5-3-3-1.5z"></path>
@@ -70,7 +68,7 @@ const Sparkles = (props) => (
 );
 
 // --- MOCK DATA based on Media packages pricing.docx ---
-
+// This data is used as a fallback if fetching from Supabase fails.
 const packagesData = [
     {
         id: 1,
@@ -133,15 +131,15 @@ const packagesData = [
         description: "Don't see a package that fits? Build your own by selecting only the services you need.",
         thumbnail: "https://images.unsplash.com/photo-1553877522-c36980345885?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTU5fDB8MHwxfGFsbHx8fHx8fHx8fDE3MzIzMzg5Nzh8&ixlib=rb-4.0.3&q=80&w=600",
         category: "Custom",
-        standard_price: 0, // Base price is 0, calculated from selections
+        standard_price: 0,
         premium_price: 0,
         included_services: ["Fully customizable - client selects any combination of services"],
-        is_active: false, // This card itself isn't bookable, it's a promo for the customizer
+        is_active: false, // This ensures it's treated as a promo card
     }
 ];
 
-// Individual services derived from the "Included Services" list in the doc 
-// Prices are invented for the customizer example.
+// Individual services derived from the "Included Services" list in the doc.
+// This is used for the custom package builder.
 const individualServicesData = [
     { id: 1, key: 'content_writing', label: 'Content Writing', description: 'Blog posts, articles, and scripts.', price_min: 8000, category: 'Content' },
     { id: 2, key: 'caption_generation', label: 'Caption Generation', description: 'Engaging captions for social media posts.', price_min: 5000, category: 'Content' },
@@ -158,8 +156,6 @@ const individualServicesData = [
     { id: 13, key: 'analysis', label: 'Performance Analysis', description: 'Monthly reports and insights on your content performance.', price_min: 12000, category: 'Strategy' },
     { id: 14, key: 'strategy', label: 'Content Planning & Strategy', description: 'Long-term content calendar and strategic planning.', price_min: 15000, category: 'Strategy' },
 ];
-
-// Use the first Creator's Choice package (id = 6). We removed the duplicate zero-cost package.
 
 // ID used throughout the file to identify the Creator's Choice / Custom package
 const CREATOR_CHOICE_ID = 6;
@@ -196,19 +192,6 @@ Limitation of Liability
 Focsera Media is not responsible for third-party platform issues (social media algorithm changes, ad rejections, SEO ranking fluctuations).
 Liability is limited to the value of the services purchased.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 B. Terms & Conditions for Per-Video Basis Packages
 Scope of Services
 The package applies to a single video as per the agreed services (editing, thumbnail, caption, SEO, etc.).
@@ -239,24 +222,23 @@ Liability is limited to the value of the per-video service purchased
 `;
 
 const TermsModal = ({ onClose }) => (
-    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 border-2 border-[#0052CC]">
-            <div className="flex justify-between items-start mb-4">
+    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 animate-fadeIn">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border-2 border-[#0052CC]">
+            <div className="flex justify-between items-start p-6 border-b">
                 <h3 className="text-2xl font-bold">FOCSERA MEDIA — Terms & Conditions</h3>
-                <button onClick={onClose} className="text-gray-600 hover:text-gray-900 font-bold">Close</button>
+                <button onClick={onClose} className="text-gray-500 hover:text-gray-900 font-bold text-2xl leading-none">&times;</button>
             </div>
-            <div className="text-sm text-gray-700 space-y-3">
+            <div className="text-sm text-gray-700 space-y-3 overflow-y-auto p-6">
                 {TERMS_TEXT.split('\n').map((line, idx) => (
                     line.trim() === '' ? <div key={idx} className="py-1" /> : <p key={idx}>{line}</p>
                 ))}
             </div>
-            <div className="mt-6 text-right">
+            <div className="mt-auto p-6 border-t text-right bg-gray-50 rounded-b-2xl">
                 <button onClick={onClose} className="button-primary px-6 py-2">I Understand</button>
             </div>
         </div>
     </div>
 );
-
 
 // --- HOOKS ---
 const useIntersectionObserver = (options) => {
@@ -277,7 +259,7 @@ const useIntersectionObserver = (options) => {
 
 // --- COMPONENTS ---
 
-const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onOpenTerms }) => {
+const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onOpenTerms, customEstimatedPrice = 0, customSelectedCount = 0 }) => {
     const cardRef = useRef(null);
     const [selectedTier, setSelectedTier] = useState('standard'); // 'standard' or 'premium'
 
@@ -295,7 +277,7 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
         e.currentTarget.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale3d(1, 1, 1)';
     };
 
-    // Handle the custom "Creator's Choice" card
+    // Handle the custom "Creator's Choice" card, which acts as a promo for the customizer
     if (!packageData.is_active) {
         return (
             <div
@@ -317,8 +299,21 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
                             <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                         </span>
                     </button>
+                    {/* Dynamic estimated price for Creator's Choice */}
+                    <div className="mt-6 w-full text-center">
+                        {customEstimatedPrice > 0 ? (
+                            <>
+                                <div className="text-2xl font-black text-gray-900">₹{Math.round(customEstimatedPrice).toLocaleString('en-IN')}</div>
+                                <div className="text-xs text-gray-500">per month</div>
+                            </>
+                        ) : (
+                            <div className="text-sm text-gray-500">Estimate will appear after you select services below</div>
+                        )}
+                        {customSelectedCount > 0 && <div className="text-xs text-gray-600 mt-1">{customSelectedCount} service(s) selected</div>}
+                    </div>
+
                     <div className="mt-3 text-center">
-                        <button type="button" onClick={() => onOpenTerms && onOpenTerms()} className="text-xs text-gray-600 hover:text-gray-900 underline">View Terms &amp; Conditions</button>
+                       <button type="button" onClick={() => onOpenTerms && onOpenTerms()} className="text-xs text-gray-600 hover:text-gray-900 underline">View Terms &amp; Conditions</button>
                     </div>
                 </div>
             </div>
@@ -352,24 +347,24 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
             </div>
             <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-white/80 to-white backdrop-blur-lg">
                 <h3 className="text-3xl font-black text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-600 group-hover:to-blue-600 transition-all duration-300">{packageData.name}</h3>
-                <p className="text-gray-600 mb-6 leading-relaxed text-sm">{packageData.description}</p>
+                <p className="text-gray-600 mb-6 leading-relaxed text-sm flex-grow">{packageData.description}</p>
                 
-                    <div className="mb-6">
-                        <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2"><List className="w-5 h-5 text-blue-600"/> Included Services</h4>
-                        <ul className="space-y-2">
-                            {packageData.included_services.map(service => {
-                                const highlighted = selectedTier === 'premium';
-                                return (
-                                    <li key={service} className={`flex items-center gap-3 transition-all ${highlighted ? 'bg-yellow-50 border border-yellow-200 rounded-md p-2 shadow-sm' : ''}`}>
-                                        <span className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${highlighted ? 'bg-yellow-100' : 'bg-green-100'}`}>
-                                            <Check className={`${highlighted ? 'text-yellow-600' : 'text-green-600'} w-4 h-4`} strokeWidth={3} />
-                                        </span>
-                                        <span className={`text-sm ${highlighted ? 'text-gray-900 font-semibold' : 'text-gray-600'}`}>{service}</span>
-                                    </li>
-                                )
-                            })}
-                        </ul>
-                    </div>
+                <div className="mb-6">
+                    <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2"><List className="w-5 h-5 text-blue-600"/> Included Services</h4>
+                    <ul className="space-y-2">
+                        {packageData.included_services.map(service => {
+                            const highlighted = selectedTier === 'premium';
+                            return (
+                                <li key={service} className={`flex items-center gap-3 transition-all ${highlighted ? 'bg-yellow-50 border border-yellow-200 rounded-md p-2 shadow-sm' : ''}`}>
+                                    <span className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${highlighted ? 'bg-yellow-100' : 'bg-green-100'}`}>
+                                        <Check className={`${highlighted ? 'text-yellow-600' : 'text-green-600'} w-4 h-4`} strokeWidth={3} />
+                                    </span>
+                                    <span className={`text-sm ${highlighted ? 'text-gray-900 font-semibold' : 'text-gray-600'}`}>{service}</span>
+                                </li>
+                            )
+                        })}
+                    </ul>
+                </div>
 
                 <div className="mt-auto pt-6 border-t border-gray-200">
                     <div className="flex bg-gray-100 p-1.5 rounded-2xl mb-6">
@@ -520,16 +515,25 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
             alert("Please select at least one service to build a custom package.");
             return;
         }
-        // find the Creator's Choice package from packages if available
-        const cc = packages.find(p => p.id === CREATOR_CHOICE_ID) || {
-            id: CREATOR_CHOICE_ID,
-            name: "Creator's Choice",
-            description: "Build your own package",
-            thumbnail: '',
-            category: 'Custom',
-            is_active: true
-        };
-        onBookNow(cc, selectedServices, totalPrice);
+        // Find the 'Creator's Choice' package from the main data source to use as a template.
+        // Be defensive: Supabase may return ids as strings, or the package may be missing from remote data.
+        const customPackageTemplate = (packages || []).find(p => Number(p?.id) === CREATOR_CHOICE_ID)
+            || packagesData.find(p => Number(p?.id) === CREATOR_CHOICE_ID);
+
+        if (!customPackageTemplate) {
+            console.error("Creator's Choice package template not found.");
+            alert("An error occurred. Could not create custom package. Please try again or contact support.");
+            return;
+        }
+
+        // Ensure the handler exists before calling (defensive)
+        if (typeof onBookNow !== 'function') {
+            console.error('onBookNow handler is not available');
+            alert('Booking is temporarily unavailable. Please try again later.');
+            return;
+        }
+
+        onBookNow(customPackageTemplate, selectedServices, totalPrice);
     };
 
     if (loadError) {
@@ -610,8 +614,29 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                         <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Our Signature Packages</h2>
                         <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-blue-600 mx-auto rounded-full"></div>
                     </div>
+                    {/* Creator's Choice promo card — scrolls to customizer and shows live estimate */}
+                    <div className="max-w-2xl mx-auto mb-6">
+                        {(() => {
+                            const cc = (packages || []).find(p => Number(p.id) === CREATOR_CHOICE_ID) || packagesData.find(p => Number(p.id) === CREATOR_CHOICE_ID);
+                            if (cc) {
+                                return (
+                                    <MediaPackageCard
+                                        packageData={cc}
+                                        onBook={onBookNow}
+                                        onOpenTerms={() => setShowTerms(true)}
+                                        index={-1}
+                                        customizerScrollRef={customizerScrollRef}
+                                        customEstimatedPrice={displayPrice}
+                                        customSelectedCount={Object.entries(selectedServices).filter(([_, v]) => v).length}
+                                    />
+                                );
+                            }
+                            return null;
+                        })()}
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                       {packages.filter(Boolean).map((pkg, index) => (
+                       {packages.filter(Boolean).filter(p => Number(p.id) !== CREATOR_CHOICE_ID).map((pkg, index) => (
                            <MediaPackageCard 
                                 key={pkg?.id ?? index} 
                                 packageData={pkg} 
@@ -696,7 +721,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                                      <p className="text-lg font-bold">Estimated Total</p>
                                      <p className="text-3xl font-bold text-[#0052CC]">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
                                  </div>
-                                 <p className="text-xs text-gray-500 italic">These are default estimates — final pricing will be discussed and negotiated after a consultation.</p>
+                                 <p className="text-xs text-gray-500 italic mb-4">These are default estimates — final pricing will be discussed and negotiated after a consultation.</p>
                                  <button onClick={handleCustomBooking} className="button-primary w-full">
                                      Book This Package
                                      <ArrowRight className="button-primary-icon" />
@@ -722,7 +747,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                         <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field" placeholder="+91 12345 67890" /></div>
                         <div><label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field" placeholder="Please include as many details as possible: your business, target audience, content goals, etc." required></textarea></div>
                         <button type="submit" className="button-primary w-full">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
-                        <div className="mt-3 text-center">
+                         <div className="mt-3 text-center">
                             <button type="button" onClick={() => setShowTerms(true)} className="text-xs text-gray-600 hover:text-gray-900 underline">View Terms &amp; Conditions</button>
                         </div>
                     </form>
@@ -975,7 +1000,7 @@ const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => 
                             </div>
                             <div className="p-8">
                                 <h2 className="text-3xl font-bold text-gray-900 mb-3">{bookingPackage.package.name}</h2>
-                                <p className="text-gray-600 leading-relaxed">{bookingPackage.package.description}</p>
+                                <p className="text-gray-600 leading-relaxed">{isCustom ? "A custom selection of our media services tailored to your needs." : bookingPackage.package.description}</p>
                             </div>
                         </div>
                     </div>
@@ -1039,7 +1064,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, individualSer
         let packageDetails = {};
     if (bookingPackage.package.id === CREATOR_CHOICE_ID) {
             packageDetails = {
-                serviceName: bookingPackage.package.name,
+                serviceName: "Creator's Choice (Custom)",
                 customServices: Object.entries(bookingPackage.services)
                     .filter(([_,v]) => v)
                     .map(([key]) => {
@@ -1296,7 +1321,38 @@ export default function App() {
 
             // If Supabase returned data, use it; otherwise use mock data
             if (Array.isArray(packagesRemote) && packagesRemote.length > 0) {
-                setPackages(packagesRemote.map(p => ({ ...p })));
+                // Deduplicate by id (defensive): prefer the first occurrence
+                const uniqueById = [];
+                const seenIds = new Set();
+                packagesRemote.forEach(p => {
+                    const id = Number(p?.id);
+                    if (!seenIds.has(id)) {
+                        seenIds.add(id);
+                        uniqueById.push({ ...p, id });
+                    }
+                });
+
+                // Further dedupe by normalized name, but prefer the canonical CREATOR_CHOICE_ID if present.
+                const nameMap = new Map();
+                const normalize = (s = '') => String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
+                uniqueById.forEach(p => {
+                    const key = normalize(p.name);
+                    if (!nameMap.has(key)) {
+                        nameMap.set(key, p);
+                    } else {
+                        const existing = nameMap.get(key);
+                        // Prefer the package that has the CREATOR_CHOICE_ID
+                        if (Number(p.id) === CREATOR_CHOICE_ID) {
+                            nameMap.set(key, p);
+                        } else if (Number(existing.id) === CREATOR_CHOICE_ID) {
+                            // keep existing
+                        } else {
+                            // keep existing (first)
+                        }
+                    }
+                });
+
+                setPackages(Array.from(nameMap.values()));
             } else {
                 setPackages(packagesData.filter(Boolean));
             }
@@ -1356,7 +1412,7 @@ export default function App() {
     }, []); // Empty dependency array, runs once
 
     const handleBookNow = (packageData, tierOrServices, price) => {
-        if (!packageData.is_active) return;
+        if (!packageData.is_active && packageData.id !== CREATOR_CHOICE_ID) return;
         
         let packageToBook = {};
 
@@ -1373,7 +1429,7 @@ export default function App() {
             // This is a Custom "Creator's Choice" package
             const selectedServices = tierOrServices;
             packageToBook = {
-                package: packageData,
+                package: { ...packageData, name: "Custom Media Package", is_active: true }, // Create a bookable version
                 services: selectedServices,
                 totalPrice: price,
             };
@@ -1410,7 +1466,7 @@ export default function App() {
                             bookingPackage={bookingPackage} 
                             individualServices={individualServices} 
                             onProceed={() => setCurrentView('details')} 
-                            onBack={() => setCurrentView('login')} 
+                            onBack={resetToLanding} 
                        />;
             case 'details':
                 return <DetailsPage 
