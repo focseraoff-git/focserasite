@@ -131,7 +131,7 @@ export default function App() {
         <div className="min-h-screen bg-slate-900 text-white font-sans selection:bg-cyan-300 selection:text-slate-900">
             {/* Background Gradient */}
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-900 via-slate-900 to-blue-900/50"></div>
-            <div className="absolute top-0 left-[-20%] w-96 h-96 bg-cyan-500/20 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
+              <div className="absolute top-0 left-[-20%] w-96 h-96 bg-cyan-500/20 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
             <div className="absolute bottom-0 right-[-20%] w-96 h-96 bg-blue-500/20 rounded-full filter blur-3xl opacity-30 animate-pulse animation-delay-4000"></div>
             
             <main className="relative z-10 pt-24 pb-16">
