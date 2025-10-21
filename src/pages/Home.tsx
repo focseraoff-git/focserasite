@@ -108,10 +108,10 @@ export default function Home() {
               <div className="absolute inset-0 shimmer"></div>
             </Link>
             <Link
-              to="/contact"
+              to="/journey"
               className="group px-10 py-5 glass-effect border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-[#0052CC] transition-all duration-300"
             >
-              Work With Us
+             Journey
             </Link>
           </div>
         </div>

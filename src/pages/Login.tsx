@@ -81,6 +81,19 @@ const Login = () => {
         }
     };
 
+    const handleGoogleSignIn = async () => {
+        try {
+            setLoading(true);
+            const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+            if (error) throw error;
+        } catch (err: any) {
+            setMessageType('error');
+            setError(err.message || 'Google sign-in failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(100,116,139,0.08),transparent_50%)]"></div>
@@ -283,6 +296,17 @@ const Login = () => {
                                         {mode === 'login' ? 'Sign Up' : 'Log In'}
                                     </button>
                                 </p>
+                            </div>
+                            <div className="mt-6">
+                                <button onClick={handleGoogleSignIn} className="w-full inline-flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-slate-200 bg-white hover:shadow transition-all">
+                                    <svg width="18" height="18" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0" aria-hidden>
+                                        <path d="M533.5 278.4c0-18.5-1.5-36.3-4.3-53.6H272v101.4h147.4c-6.3 34.1-25.4 62.9-54.1 82.2v68.2h87.4c51-47 80.8-116.3 80.8-198.2z" fill="#4285F4"/>
+                                        <path d="M272 544.3c73.6 0 135.5-24.4 180.7-66.3l-87.4-68.2c-24 16.1-54.7 25.6-93.3 25.6-71.6 0-132.3-48.3-154.1-113.1H30.3v70.9C75.7 486 167.2 544.3 272 544.3z" fill="#34A853"/>
+                                        <path d="M117.9 323.3c-10.7-31.9-10.7-66.7 0-98.6V153.8H30.3c-39.6 78.3-39.6 172.9 0 251.2l87.6-61.7z" fill="#FBBC05"/>
+                                        <path d="M272 109.7c39.9 0 75.8 13.8 104 40.9l78-78C407.6 24.7 345.7 0 272 0 167.2 0 75.7 58.3 30.3 153.8l87.6 70.9C139.7 158 200.4 109.7 272 109.7z" fill="#EA4335"/>
+                                    </svg>
+                                    <span className="text-sm font-semibold">Sign in with Google</span>
+                                </button>
                             </div>
                         </div>
 

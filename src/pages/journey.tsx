@@ -1,94 +1,174 @@
-import { Camera, Lightbulb, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
-// Helper component for individual timeline items
-const TimelineItem = ({ year, title, description, icon, isLeft, url, gallerySlug }) => (
-  <div className={`relative w-full md:w-1/2 ${isLeft ? 'md:pr-8' : 'md:pl-8'} mb-12`}>
-    <div className="absolute top-0 w-px h-full bg-blue-200 left-0 md:left-1/2 md:-translate-x-1/2"></div>
-    <div className="absolute top-0 left-0 md:left-1/2 w-8 h-8 bg-[#0052CC] rounded-full flex items-center justify-center -translate-x-1/2">
-      <div className="text-white">{icon}</div>
+// --- SVG Icon Components (Styled for the new design) ---
+const IconWrapper = ({ children }) => (
+    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg">
+        {children}
     </div>
-    <div className={`p-6 bg-gray-50 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 ml-8 md:ml-0 ${isLeft ? 'text-right' : 'text-left'}`}>
-      <p className="text-lg font-bold text-[#0052CC] mb-2">{year}</p>
-      <h3 className="text-2xl font-semibold text-gray-800 mb-3">{title}</h3>
-      <p className="text-gray-600 leading-relaxed">{description}</p>
-      <div className={`flex items-center gap-4 mt-4 ${isLeft ? 'justify-end' : 'justify-start'}`}>
-        {url && (
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#0052CC] hover:text-[#0047b3] group"
-          >
-            Visit Website
-            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-          </a>
-        )}
-        {gallerySlug && (
-          <Link
-            to={`/gallery/${gallerySlug}`}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#0052CC] hover:text-[#0047b3] group"
-          >
-            View Gallery
-            <Camera size={16} className="transition-transform group-hover:scale-110" />
-          </Link>
-        )}
-      </div>
+);
+
+const LightbulbIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-300">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 9 2c-3.1 0-5.5 2.2-6 5.1.1 1.6.6 3 1.5 4.2.9 1.2 1.5 2.5 1.5 3.8V18a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" /><path d="M9 18v2h6v-2" />
+    </svg>
+);
+
+const CameraIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-300">
+        <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" /><circle cx="12" cy="13" r="3" />
+    </svg>
+);
+
+const ArrowRightIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+    </svg>
+);
+
+const XIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+);
+
+// --- Stylish Media Gallery Component ---
+const MediaGallery = ({ items = [] }) => {
+    const [activeItem, setActiveItem] = useState(null);
+
+    useEffect(() => {
+        const handleEsc = (event) => {
+            if (event.key === 'Escape') setActiveItem(null);
+        };
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, []);
+
+    const videos = items.filter((m) => m.type === 'video');
+
+    return (
+        <div className="flex justify-center">
+            {videos.map((item, index) => (
+                <div key={index} className="w-full max-w-sm">
+                    <button onClick={() => setActiveItem(item)} className="block w-full text-left group">
+                        <div className="relative aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl bg-slate-900/50 border border-white/20 backdrop-blur-xl transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20">
+                            <video src={item.src} muted playsInline loop preload="auto" autoPlay className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center">
+                                    <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                                </div>
+                            </div>
+                            <div className="absolute top-4 left-4 bg-gradient-to-r from-cyan-400 to-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">REEL</div>
+                            <div className="absolute bottom-4 left-4 right-4">
+                                <p className="text-white font-bold text-lg truncate">{item.title}</p>
+                                <p className="text-slate-300 text-sm">{item.caption}</p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            ))}
+
+            {activeItem && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setActiveItem(null)}>
+                    <div className="relative w-full max-w-md bg-slate-900/50 border border-white/20 rounded-3xl shadow-2xl flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                        <div className="p-4 border-b border-white/10 flex justify-between items-center">
+                            <div>
+                                <p className="text-white font-bold text-lg">{activeItem.title}</p>
+                                <p className="text-sm text-slate-400 mt-1">{activeItem.caption}</p>
+                            </div>
+                            <button onClick={() => setActiveItem(null)} className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
+                                <XIcon />
+                            </button>
+                        </div>
+                        <div className="flex-1 flex items-center justify-center bg-black">
+                             <video src={activeItem.src} controls autoPlay className="w-full h-auto" />
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// --- Elegant Timeline Item Component ---
+const TimelineItem = ({ year, title, description, icon, isLeft, url }) => (
+  <div className={`relative w-full flex ${isLeft ? 'justify-start' : 'justify-end'} mb-12`}>
+    <div className="w-full md:w-1/2">
+        <div className={`relative p-6 rounded-2xl shadow-xl border border-white/20 bg-slate-800/50 backdrop-blur-lg transform transition-all duration-500 hover:scale-105 hover:shadow-blue-500/20 ${isLeft ? 'md:mr-6' : 'md:ml-6'}`}>
+            <div className={`absolute top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center ${isLeft ? 'right-[-20px]' : 'left-[-20px]'}`}>
+                {icon}
+            </div>
+            <p className="text-lg font-bold text-blue-400 mb-2">{year}</p>
+            <h3 className="text-2xl font-semibold text-white mb-3">{title}</h3>
+            <p className="text-slate-300 leading-relaxed">{description}</p>
+            {url && (
+                <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 hover:text-cyan-200 group mt-4">
+                    Visit Website <ArrowRightIcon />
+                </a>
+            )}
+        </div>
     </div>
   </div>
 );
 
-export default function Journey() {
-  const journeyData = [
-    {
-      year: '2025',
-      title: 'Hosted InnovateX25',
-      description: 'Hosted our flagship tech and creativity conference, InnovateX25, bringing together industry leaders and visionaries from around the globe in October.',
-      icon: <Lightbulb size={18} />,
-      url: 'https://innovatex25-1nfy.vercel.app/',
-      gallerySlug: 'innovatex25'
-    }
-  ];
+// --- Main Journey Page Component ---
+export default function App() {
+    const journeyData = [
+        {
+            year: '2025',
+            title: 'Hosted InnovateX25',
+            description: 'Hosted our flagship tech and creativity conference, InnovateX25, bringing together industry leaders and visionaries from around the globe in October.',
+            icon: <IconWrapper><LightbulbIcon /></IconWrapper>,
+            url: 'https://innovatex25-1nfy.vercel.app/',
+        }
+    ];
 
-  return (
-    <div className="min-h-screen bg-white pt-24 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Page Header */}
-        <div className="text-center mb-20">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            Our Journey
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            From a simple idea to a multi-divisional powerhouse. Follow our story of growth, innovation, and passion.
-          </p>
-          <div className="w-24 h-1.5 bg-[#0052CC] mx-auto mt-6 rounded-full"></div>
-        </div>
+    const mediaData = [
+        { type: 'video', src: 'public/videos/journey/IMG_5861.MOV', title: 'Teluginti Deepavali', caption: 'Let the lights inspire you! 🪔' },
+    ];
 
-        {/* Timeline Section */}
-        <div className="relative">
-          {/* The vertical line for the timeline on medium and up screens */}
-          <div className="hidden md:block absolute top-0 bottom-0 left-1/2 w-px bg-blue-200 -translate-x-1/2"></div>
-          
-          <div className="flex flex-col md:flex-row flex-wrap items-center">
-            {journeyData.map((item, index) => (
-              <div key={index} className="w-full flex md:justify-center">
-                {/* On MD screens, odd items are pushed to the left, even to the right */}
-                {index % 2 === 0 ? (
-                  <TimelineItem {...item} isLeft={true} />
-                ) : (
-                  <div className="w-full md:w-1/2"></div> // Spacer for left side
-                )}
-                 {index % 2 !== 0 ? (
-                  <TimelineItem {...item} isLeft={false} />
-                ) : (
-                  <div className="w-full md:w-1/2"></div> // Spacer for right side
-                )}
-              </div>
-            ))}
-          </div>
+    return (
+        <div className="min-h-screen bg-slate-900 text-white font-sans selection:bg-cyan-300 selection:text-slate-900">
+            {/* Background Gradient */}
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-900 via-slate-900 to-blue-900/50"></div>
+              <div className="absolute top-0 left-[-20%] w-96 h-96 bg-cyan-500/20 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
+            <div className="absolute bottom-0 right-[-20%] w-96 h-96 bg-blue-500/20 rounded-full filter blur-3xl opacity-30 animate-pulse animation-delay-4000"></div>
+            
+            <main className="relative z-10 pt-24 pb-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Page Header */}
+                    <header className="text-center mb-20">
+                        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 mb-4">
+                            Our Journey
+                        </h1>
+                        <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+                            From a simple idea to a multi-divisional powerhouse. Follow our story of growth, innovation, and passion.
+                        </p>
+                    </header>
+
+                    {/* Gallery Section */}
+                    <section className="mb-24" id="gallery">
+                        <h2 className="text-4xl font-bold text-center mb-10 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Reels</h2>
+                        <MediaGallery items={mediaData} />
+                    </section>
+
+                    {/* Timeline Section */}
+                    <section className="relative">
+                        <div className="absolute top-0 h-full w-0.5 bg-gradient-to-b from-cyan-400 via-blue-500 to-transparent left-4 md:left-1/2 md:-translate-x-1/2"></div>
+                        
+                        {journeyData.map((item, index) => {
+                            const isLeft = index % 2 === 0;
+                            return (
+                                <div key={index} className="w-full flex justify-center">
+                                    {isLeft ? <TimelineItem {...item} isLeft={true} /> : <div className="hidden md:block w-1/2"></div>}
+                                    {!isLeft ? <TimelineItem {...item} isLeft={false} /> : <div className="hidden md:block w-1/2"></div>}
+                                </div>
+                            );
+                        })}
+                    </section>
+                </div>
+            </main>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
