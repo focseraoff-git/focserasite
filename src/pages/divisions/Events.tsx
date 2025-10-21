@@ -98,10 +98,9 @@ const PackageCard = ({ service, onBook, index, addOnsScrollRef }) => {
                 <p className="text-gray-600 mb-8 leading-relaxed flex-grow text-sm">{service.description}</p>
                 <div className="mb-6 relative">
                     <div className="inline-block">
-                        <span className="text-4xl font-black bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">₹{service.price_min.toLocaleString('en-IN')}</span>
-                        <span className="text-lg text-gray-500 font-semibold">+</span>
+                        <span className="text-2xl font-extrabold text-[#0052CC]">Get your custom quote</span>
                     </div>
-                    <span className="block text-sm text-gray-500 font-medium mt-1">per {service.pricing_mode.split(' ')[1]}</span>
+                    <span className="block text-sm text-gray-500 font-medium mt-1">Contact us to discuss scope & pricing</span>
                 </div>
 
                 <div className="border-t border-gray-200 mt-auto pt-4 space-y-4">
@@ -349,7 +348,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]"></div>
                                                  )}
                                                  <span className="relative font-bold block text-sm md:text-base">{service.name}</span>
-                                                 <span className={`relative text-xs md:text-sm font-medium ${selectedService.id === service.id ? 'text-white/90' : 'text-gray-600'}`}>From ₹{service.price_min.toLocaleString('en-IN')}</span>
+                                                 <span className={`relative text-xs md:text-sm font-medium ${selectedService.id === service.id ? 'text-white/90' : 'text-gray-600'}`}>Get your custom quote</span>
                                              </button>
                                          ))}
                                      </div>
@@ -380,9 +379,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                                              )}
                                                          </div>
                                                          <div className="flex flex-col items-end gap-2">
-                                                             <span className="text-sm font-bold text-gray-900">
-                                                                 ₹{addOn.price_min.toLocaleString('en-IN')}{addOn.price_max ? ` - ₹${addOn.price_max.toLocaleString('en-IN')}` : ''}
-                                                             </span>
+                                                             <span className="text-sm font-semibold text-gray-900">Get custom quote</span>
                                                              {isSelected && isQuantityBased && (
                                                                  <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-300 px-2 py-1">
                                                                      <button
@@ -414,7 +411,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                      <div className="space-y-3 mb-6 border-b border-blue-200 pb-4">
                                          <div className="flex justify-between items-center">
                                              <p className="font-semibold text-gray-700">{selectedService.name}</p>
-                                             <p className="text-gray-600 font-medium">₹{selectedService.price_min.toLocaleString('en-IN')}</p>
+                                             <p className="text-gray-600 font-medium">Get your custom quote</p>
                                          </div>
                                          {Object.entries(selectedAddOns).filter(([_, value]) => value).map(([key]) => {
                                              const addOn = addOns.find(a => a.key === key);
@@ -422,14 +419,10 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                              return addOn ? (
                                                  <div key={key} className="flex justify-between items-center text-sm">
                                                      <p className="text-gray-600">{addOn.label}{quantity > 1 ? ` (x${quantity})` : ''}</p>
-                                                     <p className="text-gray-500 font-medium">+ ₹{(addOn.price_min * quantity).toLocaleString('en-IN')}</p>
+                                                     <p className="text-gray-500 font-medium">+ Get custom quote</p>
                                                  </div>
                                              ) : null;
                                          })}
-                                     </div>
-                                     <div className="flex justify-between items-center mb-6">
-                                         <p className="text-lg font-bold">Estimated Total</p>
-                                         <p className="text-3xl font-bold text-[#0052CC]">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
                                      </div>
                                      <button onClick={handleCustomBooking} className="button-primary w-full">
                                          Book This Package
@@ -756,14 +749,14 @@ const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
                         <div className="space-y-4 mb-6">
                             <div className="flex justify-between items-center pb-4 border-b border-gray-200">
                                 <span className="font-semibold text-gray-700">Base Package</span>
-                                <span className="font-bold text-gray-900">₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</span>
+                                <span className="font-bold text-gray-900">Get custom quote</span>
                             </div>
                             {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
                                 const addOn = addOns.find(a => a.key === key);
                                 return addOn ? (
                                     <div key={key} className="flex justify-between items-center">
                                         <span className="text-gray-600">{addOn.label}</span>
-                                        <span className="text-gray-700 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</span>
+                                        <span className="text-gray-700 font-medium">+ Get custom quote</span>
                                     </div>
                                 ) : null;
                             })}
@@ -771,7 +764,7 @@ const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
                         <div className="pt-6 border-t-2 border-gray-200 mb-6">
                             <div className="flex justify-between items-center">
                                 <span className="text-lg font-bold">Total</span>
-                                <span className="text-3xl font-bold text-[#0052CC]">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</span>
+                                <span className="text-3xl font-bold text-[#0052CC]">Get your custom quote</span>
                             </div>
                             <p className="text-xs text-gray-500 mt-2">*Final price will be confirmed after consultation</p>
                         </div>
@@ -923,14 +916,14 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, addOns }) => {
                         <div className="space-y-4 mb-6">
                             <div className="flex justify-between items-center pb-4 border-b border-gray-200">
                                 <span className="font-semibold text-gray-700">{bookingPackage.service.name}</span>
-                                <span className="font-bold text-gray-900">₹{bookingPackage.service.price_min.toLocaleString('en-IN')}</span>
+                                <span className="font-bold text-gray-900">Get custom quote</span>
                             </div>
                              {Object.entries(bookingPackage.addOns).filter(([_,v]) => v).map(([key]) => {
                                  const addOn = addOns.find(a => a.key === key);
                                  return addOn ? (
                                      <div key={key} className="flex justify-between items-center">
                                          <span className="text-gray-600">{addOn.label}</span>
-                                         <span className="text-gray-700 font-medium">+ ₹{addOn.price_min.toLocaleString('en-IN')}</span>
+                                         <span className="text-gray-700 font-medium">+ Get custom quote</span>
                                      </div>
                                  ) : null;
                              })}
@@ -938,7 +931,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, addOns }) => {
                         <div className="pt-6 border-t-2 border-gray-200">
                             <div className="flex justify-between items-center">
                                 <span className="text-lg font-bold">Total</span>
-                                <span className="text-3xl font-bold text-[#0052CC]">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</span>
+                                <span className="text-3xl font-bold text-[#0052CC]">Get your custom quote</span>
                             </div>
                             <p className="text-xs text-gray-500 mt-2">*Final price confirmed after consultation</p>
                         </div>
