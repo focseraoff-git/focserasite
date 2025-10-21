@@ -147,7 +147,7 @@ const Navbar = () => {
     >
       <Link to="/" className="relative group flex items-center gap-3">
         <img
-          src="/images/logos/logog.png"
+          src="public/images/logos/logog.png"
           alt="Focsera Logo"
           className="h-8 w-auto object-contain"
         />
