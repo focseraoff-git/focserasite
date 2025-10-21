@@ -37,6 +37,79 @@ const CreditCard = (props) => (
 // NOTE: Mock data has been removed. Services and add-ons are loaded from Supabase.
 // If Supabase fetch fails, the UI will show a friendly message and prompt the user to retry.
 
+// Shared Terms & Conditions text and modal
+const TERMS_TEXT = `FOCSERA EVENTS — Terms & Conditions
+
+1. Booking and Payments
+• A 60% advance payment of the total event cost is required to confirm the booking.
+• The remaining balance must be paid on event date, as stated in the invoice.
+• Delayed payments may result in service suspension or cancellation and may incur a penalty fee.
+• Travelling and transportation charges (for staff, logistics, or materials) are not included in the package cost and will be charged separately based on the event location.
+
+2. Cancellation Policy
+• CancellATIONS must be made at least 14 days prior to the scheduled event date.
+• Cancellations made after this period will not be eligible for a refund of the advance payment.
+
+3. Services Provided
+FOCSERA Events will professionally manage and execute the event, covering the following services as per the package selected:
+• Event planning, coordination, and management
+• Venue setup and decoration
+• Entertainment and activities (if included)
+• Catering services (if included)
+• Technical arrangements (sound, lighting, and related equipment)
+• Any additional services mutually agreed upon in writing
+All operations and services will be handled exclusively by FOCSERA EVENTS and its authorized partners.
+
+4. Media Coverage
+• All photography and videography for the event will be handled exclusively by FOCSERA Media.
+• External photographers or videographers are not permitted unless prior written approval is obtained from FOCSERA.
+
+5. Client Responsibilities
+• The Client must provide accurate details of the guest count well in advance.
+• All changes to the requirements must be informed at least one week prior to the event date.
+• The Client is responsible for obtaining all necessary permissions, venue access, licenses, and security clearances.
+• The Client must ensure that no illegal, hazardous, or disruptive activities occur during the event.
+• Any misbehaviour or misconduct towards FOCSERA staff will not be tolerated and may result in immediate termination of services.
+• The Client shall be liable for any damage caused to the venue, décor, or technical equipment and must compensate accordingly.
+• Access to the venue must be provided at least one day prior to the event for setup and coordination.
+• Cleaning and post-event maintenance are the responsibility of the client and the venue; FOCSERA will not handle cleanup.
+
+6. Restrictions
+• No last-minute changes will be accepted.
+• Alcohol, smoking, and restricted substances are strictly prohibited at the event venue.
+• Babysitting or childcare services are not provided.
+• FOCSERA is not responsible for loss, theft, or misplacement of any personal belongings of guests or clients.
+
+7. Adjustments and Modifications
+• Price adjustments may apply depending on changes that affect logistics, manpower, or supplies.
+• FOCSERA reserves the right to modify arrangements in case of unforeseen circumstances, with prior notification to the client.
+
+8. Weather and External Factors
+• FOCSERA shall not be held liable for delays, cancellations, or disruptions caused by bad weather, natural calamities, or other unavoidable situations.
+• FOCSERA is not responsible for delays or disturbances resulting from the client’s side.
+
+9. Acceptance of Terms
+By confirming the booking, making payment, or signing the proposal, the Client acknowledges that they have read, understood, and agreed to all the above Terms and Conditions of FOCSERA EVENTS.`;
+
+const TermsModal = ({ onClose }) => (
+    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 border-2 border-[#0052CC]">
+            <div className="flex justify-between items-start mb-4">
+                <h3 className="text-2xl font-bold">Focsera Events — Terms & Conditions</h3>
+                <button onClick={onClose} className="text-gray-600 hover:text-gray-900 font-bold">Close</button>
+            </div>
+            <div className="text-sm text-gray-700 space-y-3">
+                {TERMS_TEXT.split('\n').map((line, idx) => (
+                    line.trim() === '' ? <div key={idx} className="py-1" /> : <p key={idx}>{line}</p>
+                ))}
+            </div>
+            <div className="mt-6 text-right">
+                <button onClick={onClose} className="button-primary px-6 py-2">I Understand</button>
+            </div>
+        </div>
+    </div>
+);
+
 // --- UTILITY HOOK ---
 const useIntersectionObserver = (options) => {
     const [ref, setRef] = useState(null);
@@ -55,7 +128,7 @@ const useIntersectionObserver = (options) => {
 };
 
 // --- COMPONENTS ---
-const PackageCard = ({ service, onBook, index, addOnsScrollRef }) => {
+const PackageCard = ({ service, onBook, index, addOnsScrollRef, onOpenTerms }) => {
     const cardRef = useRef(null);
     const [isTermsVisible, setIsTermsVisible] = useState(false);
 
@@ -133,12 +206,15 @@ const PackageCard = ({ service, onBook, index, addOnsScrollRef }) => {
                         {service.is_active && <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />}
                     </span>
                 </button>
+                <div className="mt-3 text-center">
+                    <button onClick={() => onOpenTerms && onOpenTerms()} className="text-xs text-gray-600 hover:text-gray-900 underline">View Terms &amp; Conditions</button>
+                </div>
             </div>
         </div>
     );
 };
 
-const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
+const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTerms }) => {
     const [selectedService, setSelectedService] = useState(null);
     const [selectedAddOns, setSelectedAddOns] = useState({});
     const [addonQuantities, setAddonQuantities] = useState({});
@@ -317,6 +393,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                            }, 100);
                                        }
                                    }}
+                                   onOpenTerms={onOpenTerms}
                                />
                            ))}
                     </div>
@@ -428,6 +505,9 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                          Book This Package
                                          <ArrowRight className="button-primary-icon" />
                                      </button>
+                                    <div className="mt-3 text-center">
+                                        <button onClick={() => onOpenTerms && onOpenTerms()} className="text-xs text-gray-600 hover:text-gray-900 underline">View Terms &amp; Conditions</button>
+                                    </div>
                                      <p className="text-xs text-gray-500 mt-4 text-center">Final price will be confirmed after consultation.</p>
                                   </div>
                              </div>
@@ -1037,6 +1117,7 @@ export default function App() {
     const [currentView, setCurrentView] = useState('landing');
     const [bookingPackage, setBookingPackage] = useState(null);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [showTerms, setShowTerms] = useState(false);
 
     const [services, setServices] = useState([]);
     const [addOns, setAddOns] = useState([]);
@@ -1191,6 +1272,7 @@ export default function App() {
                     addOns={addOns}
                     loadError={loadError}
                     onRetry={() => { setLoadError(null); window.location.reload(); }}
+                    onOpenTerms={() => setShowTerms(true)}
                 />;
         }
     };
@@ -1250,6 +1332,7 @@ export default function App() {
                 {['login', 'cart', 'details'].includes(currentView) && <CheckoutHeader currentStep={currentView} />}
                 {renderContent()}
                 {showSuccess && <SuccessModal onClose={resetToLanding} />}
+                {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
             </div>
         </>
     );
