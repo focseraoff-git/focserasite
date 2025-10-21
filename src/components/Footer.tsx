@@ -20,10 +20,9 @@ const companyLinks = [
 ];
 
 const socialLinks = [
-  { name: 'LinkedIn', href: '#', icon: Linkedin },
-  { name: 'Instagram', href: '#', icon: Instagram },
-  { name: 'Twitter', href: '#', icon: Twitter },
-  { name: 'Facebook', href: '#', icon: Facebook },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/focsera/?originalSubdomain=in', icon: Linkedin },
+  { name: 'Instagram', href: 'https://www.instagram.com/focsera.in/', icon: Instagram },
+  { name: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61582302131809', icon: Facebook },
 ];
 
 // A reusable component for footer links to reduce repetition
