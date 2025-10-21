@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import FancyModal from '../../components/FancyModal';
 
 
 // --- ICONS (using inline SVGs for self-containment) ---
@@ -140,6 +141,8 @@ const PackageCard = ({ service, onBook, index, customizerScrollRef }) => {
 
 const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
     const [selectedService, setSelectedService] = useState(null);
+    const [showFancyModal, setShowFancyModal] = useState(false);
+    const [fancyModalContent, setFancyModalContent] = useState(null);
     const [selectedAddOns, setSelectedAddOns] = useState({});
     const [addonQuantities, setAddonQuantities] = useState({});
     const [totalPrice, setTotalPrice] = useState(0);
@@ -205,12 +208,63 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
         const formData = new FormData(e.target);
         const quoteData = Object.fromEntries(formData.entries());
 
-        const { error } = await supabase.from('quotes').insert([quoteData]);
-        if (error) {
-            alert('Error submitting quote: ' + error.message);
-        } else {
-            alert('Thank you for your inquiry! We will get back to you shortly.');
+        // Basic validation
+        const name = quoteData.name || quoteData.full_name || '';
+        const email = quoteData.email || '';
+        const details = quoteData.details || '';
+
+        if (!name.trim() || !email.trim() || !details.trim()) {
+            alert('Please provide your name, email, and some details about the project.');
+            return;
+        }
+
+        // Append contextual info (selected service, add-ons, location, dates, estimated total)
+        let contextualNotes = '';
+        if (selectedService) {
+            contextualNotes += `\n\nService: ${selectedService.name} (id: ${selectedService.id}, min: ${selectedService.price_min})`;
+        }
+        const selectedAddOnKeys = Object.entries(selectedAddOns || {}).filter(([_, v]) => v).map(([k]) => k);
+        if (selectedAddOnKeys.length) {
+            contextualNotes += `\nAdd-ons: ${selectedAddOnKeys.join(', ')}`;
+        }
+        if (quoteData.location) contextualNotes += `\nLocation: ${quoteData.location}`;
+        if (quoteData.event_end_date) contextualNotes += `\nEnd Date: ${quoteData.event_end_date}`;
+        if (totalPrice) contextualNotes += `\nEstimated Total: ${totalPrice}`;
+
+        const combinedDetails = details + contextualNotes;
+
+        const payload = {
+            name: name,
+            email: email,
+            phone: quoteData.phone || null,
+            event_date: quoteData.event_date || null,
+            details: combinedDetails,
+        };
+
+        try {
+            const { error } = await supabase.from('studio_quotes').insert([payload]);
+            if (error) {
+                console.error('Error inserting studio quote:', error);
+                alert('Error submitting quote: ' + (error.message || String(error)));
+                return;
+            }
+
+            // show grand modal
+            setShowFancyModal(true);
+            setFancyModalContent({
+                title: 'Inquiry Received',
+                subtitle: 'Thank you — our team will reach out shortly.',
+                details: (
+                    <>
+                        <p className="mb-2">We have received your project details and will review them shortly.</p>
+                        <p className="text-sm text-gray-600">Our studio team will contact you within 24 hours to discuss availability and pricing.</p>
+                    </>
+                )
+            });
             e.target.reset();
+        } catch (err) {
+            console.error('Unexpected error submitting studio quote:', err);
+            alert('An unexpected error occurred while submitting your request. Please try again later.');
         }
     };
 
@@ -463,6 +517,14 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                         <p className="text-sm text-gray-500 mt-8">© {new Date().getFullYear()} Focsera Studios. All Rights Reserved.</p>
                     </div>
                 </footer>
+                {showFancyModal && fancyModalContent && (
+                    <FancyModal
+                        title={fancyModalContent.title}
+                        subtitle={fancyModalContent.subtitle}
+                        details={fancyModalContent.details}
+                        onClose={() => setShowFancyModal(false)}
+                    />
+                )}
         </>
     );
 };
