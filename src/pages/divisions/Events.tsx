@@ -389,8 +389,8 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTe
                 <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-white/10 rounded-2xl animate-[float_12s_ease-in-out_infinite]"></div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
-                    <div className="w-32 h-32 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
-                        <Calendar className="text-[#0052CC]" size={64} />
+                    <div className="w-32 h-32 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl overflow-hidden">
+                        <img src="/images/logos/FocseraEvents.jpg" alt="Focsera Events" className="w-full h-full object-contain" />
                     </div>
                     <h1 className="text-5xl sm:text-7xl font-bold text-white mb-6">Focsera Events</h1>
                     <p className="text-xl text-white/90 max-w-3xl mx-auto mb-4">

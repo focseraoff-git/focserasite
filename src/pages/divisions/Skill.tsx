@@ -43,6 +43,9 @@ export default function Skill() {
           <div className="w-32 h-32 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl p-4">
             <img src="/images/logos/FocseraSkill.jpg" alt="Focsera Skill" className="w-full h-full object-contain" />
           </div>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <span className="inline-block px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 font-semibold text-sm shadow-sm">Launching soon!</span>
+          </div>
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">Focsera Skill</h1>
           <p className="text-xl text-white/90 max-w-3xl mx-auto">
             Empowering the next generation. Professional training in creative and digital technologies.

@@ -1,7 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { User, LogOut, Package, Calendar, MapPin, DollarSign, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { User, LogOut, Package, Calendar, MapPin, Clock, CheckCircle, XCircle } from 'lucide-react';
+
+const RupeeIcon = ({ size = 18, className = '' }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M18 3H6" />
+        <path d="M18 8H6" />
+        <path d="M6 8c3 3 7 3 8 8" />
+        <path d="M6 21c3-3 7-3 8-8" />
+    </svg>
+);
 
 const Account = () => {
     const [user, setUser] = useState<any>(null);
@@ -204,7 +213,7 @@ const Account = () => {
                                             </div>
                                             <div className="text-right">
                                                 <div className="flex items-center gap-1 text-2xl font-bold text-[#0052CC]">
-                                                    <DollarSign size={20} />
+                                                    <RupeeIcon size={20} />
                                                     ₹{Number(booking.total_price || booking.total_price === 0 ? booking.total_price : booking?.package_details?.total_price || booking?.price || 0).toLocaleString('en-IN')}
                                                 </div>
                                             </div>
