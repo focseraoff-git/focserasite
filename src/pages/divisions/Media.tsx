@@ -574,8 +574,8 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                 <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-white/10 rounded-2xl animate-[float_12s_ease-in-out_infinite]"></div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
-                    <div className="w-32 h-32 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
-                        <Megaphone className="text-[#0052CC]" size={64} />
+                    <div className="w-32 h-32 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl overflow-hidden">
+                        <img src="/images/logos/FocseraMedia.jpg" alt="Focsera Media" className="w-full h-full object-contain" />
                     </div>
                     <h1 className="text-5xl sm:text-7xl font-bold text-white mb-6">Focsera Media</h1>
                     <p className="text-xl text-white/90 max-w-3xl mx-auto mb-4">
@@ -1334,7 +1334,16 @@ export default function App() {
 
                 // Further dedupe by normalized name, but prefer the canonical CREATOR_CHOICE_ID if present.
                 const nameMap = new Map();
-                const normalize = (s = '') => String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
+                const normalize = (s = '') => {
+                    let t = String(s || '').toLowerCase();
+                    // remove parenthetical suffixes like "(custom)" or "(custom)"
+                    t = t.replace(/\(.*?\)/g, '');
+                    // remove common word 'custom' and whitespace
+                    t = t.replace(/\bcustom\b/g, '');
+                    // remove non-alphanumeric characters
+                    t = t.replace(/[^a-z0-9]/g, '');
+                    return t.trim();
+                };
                 uniqueById.forEach(p => {
                     const key = normalize(p.name);
                     if (!nameMap.has(key)) {
