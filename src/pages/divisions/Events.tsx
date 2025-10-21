@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
+import FancyModal from '../../components/FancyModal';
 import { supabase } from '../../lib/supabase';
 
 // --- ICONS (using inline SVGs for self-containment) ---
@@ -216,6 +217,8 @@ const PackageCard = ({ service, onBook, index, addOnsScrollRef, onOpenTerms }) =
 
 const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTerms }) => {
     const [selectedService, setSelectedService] = useState(null);
+    const [showFancyModal, setShowFancyModal] = useState(false);
+    const [fancyModalContent, setFancyModalContent] = useState(null);
     const [selectedAddOns, setSelectedAddOns] = useState({});
     const [addonQuantities, setAddonQuantities] = useState({});
     const [totalPrice, setTotalPrice] = useState(0);
@@ -280,9 +283,67 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTe
         e.preventDefault();
         const formData = new FormData(e.target);
         const quoteData = Object.fromEntries(formData.entries());
-        console.log("Custom Quote Submitted:", quoteData);
-        alert('Thank you for your inquiry! We will get back to you shortly.');
-        e.target.reset();
+
+        // Basic validation
+        const name = quoteData.name || quoteData.full_name || '';
+        const email = quoteData.email || '';
+        const details = quoteData.details || '';
+
+        if (!name.trim() || !email.trim() || !details.trim()) {
+            alert('Please provide your name, email, and some details about the project.');
+            return;
+        }
+
+        // Build payload that matches the `quotes` table columns: name, email, phone, event_date, details.
+        // Append contextual info (service/add-ons/location/end date/estimated total) into the details string
+        // so we don't send unknown columns to Supabase.
+        let contextualNotes = '';
+        if (selectedService) {
+            contextualNotes += `\n\nService: ${selectedService.name} (id: ${selectedService.id}, min: ${selectedService.price_min})`;
+        }
+        const selectedAddOnKeys = Object.entries(selectedAddOns || {}).filter(([_, v]) => v).map(([k]) => k);
+        if (selectedAddOnKeys.length) {
+            contextualNotes += `\nAdd-ons: ${selectedAddOnKeys.join(', ')}`;
+        }
+        if (quoteData.location) contextualNotes += `\nLocation: ${quoteData.location}`;
+        if (quoteData.event_end_date) contextualNotes += `\nEnd Date: ${quoteData.event_end_date}`;
+        if (totalPrice) contextualNotes += `\nEstimated Total: ${totalPrice}`;
+
+        const combinedDetails = details + contextualNotes;
+
+        const payload = {
+            name: name,
+            email: email,
+            phone: quoteData.phone || null,
+            event_date: quoteData.event_date || null,
+            details: combinedDetails,
+        };
+
+        try {
+            const { error } = await supabase.from('event_quotes').insert([payload]);
+            if (error) {
+                console.error('Error inserting quote:', error);
+                alert('There was an error submitting your quote request: ' + (error.message || String(error)));
+                return;
+            }
+
+                // Show grand modal instead of alert
+                setFancyModalContent({
+                    title: 'Inquiry Received',
+                    subtitle: 'Thank you — our team will reach out shortly.',
+                    details: (
+                        <>
+                            <p className="mb-2">We have received your project details and will review them shortly.</p>
+                            <p className="text-sm text-gray-600">If you provided a date, our team will check availability and contact you within 24 hours.</p>
+                        </>
+                    )
+                });
+                setShowFancyModal(true);
+            e.target.reset();
+        } catch (err) {
+            console.error('Unexpected error submitting quote:', err);
+            alert('An unexpected error occurred. Please try again later.');
+        }
     };
 
     const handleCustomBooking = () => {
