@@ -124,7 +124,7 @@ export default function App() {
     ];
 
     const mediaData = [
-        { type: 'video', src: ' /videos/journey/IMG_5861.MOV', title: 'Teluginti Deepavali', caption: 'Let the lights inspire you! 🪔' },
+        { type: 'video', src: '/videos/journey/IMG_5861.MOV', title: 'Teluginti Deepavali', caption: 'Let the lights inspire you! 🪔' },
     ];
 
     return (
