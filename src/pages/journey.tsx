@@ -50,7 +50,8 @@ const MediaGallery = ({ items = [] }) => {
             {/* This is the grid layout, like an Instagram profile page */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
                 {videos.map((item, index) => (
-                    <div key={index} className="w-full max-w-sm">
+                    // After
+<div key={index} className="w-full max-w-[300px]">
                         <button onClick={() => setActiveItem(item)} className="block w-full text-left group">
                             <div className="relative aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl bg-slate-900/50 border border-white/20 backdrop-blur-xl transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20">
                                 {/* This <video> tag is for the preview */}
@@ -144,14 +145,7 @@ export default function App() {
             title: 'Teluginti Deepavali', 
             caption: 'Let the lights inspire you! 🪔' 
         },
-     
-        // Add more videos here...
-        // { 
-        //     type: 'video', 
-        //     src: '/videos/journey/new-reel.mp4', 
-        //     title: 'New Reel', 
-        //     caption: 'A new description.' 
-        // },
+       
     ];
     // =================================================================
 
