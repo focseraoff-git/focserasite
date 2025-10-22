@@ -144,12 +144,7 @@ export default function App() {
             title: 'Teluginti Deepavali', 
             caption: 'Let the lights inspire you! 🪔' 
         },
-        { 
-            type: 'video', 
-            src: '/videos/journey/innovatex-highlights.mp4', // <-- Add your next video file here
-            title: 'InnovateX25 Highlights', 
-            caption: 'A look back at our 2025 conference.' 
-        },
+     
         // Add more videos here...
         // { 
         //     type: 'video', 
