@@ -46,28 +46,33 @@ const MediaGallery = ({ items = [] }) => {
     const videos = items.filter((m) => m.type === 'video');
 
     return (
-        <div className="flex justify-center">
-            {videos.map((item, index) => (
-                <div key={index} className="w-full max-w-sm">
-                    <button onClick={() => setActiveItem(item)} className="block w-full text-left group">
-                        <div className="relative aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl bg-slate-900/50 border border-white/20 backdrop-blur-xl transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20">
-                            <video src={item.src} muted playsInline loop preload="auto" autoPlay className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center">
-                                    <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+        <>
+            {/* This is the grid layout, like an Instagram profile page */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+                {videos.map((item, index) => (
+                    <div key={index} className="w-full max-w-sm">
+                        <button onClick={() => setActiveItem(item)} className="block w-full text-left group">
+                            <div className="relative aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl bg-slate-900/50 border border-white/20 backdrop-blur-xl transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20">
+                                {/* This <video> tag is for the preview */}
+                                <video src={item.src} muted playsInline loop preload="auto" autoPlay className="w-full h-full object-cover" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center">
+                                        <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                                    </div>
+                                </div>
+                                <div className="absolute top-4 left-4 bg-gradient-to-r from-cyan-400 to-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">REEL</div>
+                                <div className="absolute bottom-4 left-4 right-4">
+                                    <p className="text-white font-bold text-lg truncate">{item.title}</p>
+                                    <p className="text-slate-300 text-sm">{item.caption}</p>
                                 </div>
                             </div>
-                            <div className="absolute top-4 left-4 bg-gradient-to-r from-cyan-400 to-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">REEL</div>
-                            <div className="absolute bottom-4 left-4 right-4">
-                                <p className="text-white font-bold text-lg truncate">{item.title}</p>
-                                <p className="text-slate-300 text-sm">{item.caption}</p>
-                            </div>
-                        </div>
-                    </button>
-                </div>
-            ))}
+                        </button>
+                    </div>
+                ))}
+            </div>
 
+            {/* This is the popup modal player */}
             {activeItem && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setActiveItem(null)}>
                     <div className="relative w-full max-w-md bg-slate-900/50 border border-white/20 rounded-3xl shadow-2xl flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
@@ -81,19 +86,20 @@ const MediaGallery = ({ items = [] }) => {
                             </button>
                         </div>
                         <div className="flex-1 flex items-center justify-center bg-black">
-                             <video src={activeItem.src} controls autoPlay className="w-full h-auto" />
+                            {/* This <video> tag is for the active player with controls */}
+                            <video src={activeItem.src} controls autoPlay className="w-full h-auto" />
                         </div>
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 
 // --- Elegant Timeline Item Component ---
 const TimelineItem = ({ year, title, description, icon, isLeft, url }) => (
   <div className={`relative w-full flex ${isLeft ? 'justify-start' : 'justify-end'} mb-12`}>
-    <div className="w-full md:w-1/2">
+    <div className="w-full md:w-1DQCjrU-gTYq/2">
         <div className={`relative p-6 rounded-2xl shadow-xl border border-white/20 bg-slate-800/50 backdrop-blur-lg transform transition-all duration-500 hover:scale-105 hover:shadow-blue-500/20 ${isLeft ? 'md:mr-6' : 'md:ml-6'}`}>
             <div className={`absolute top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center ${isLeft ? 'right-[-20px]' : 'left-[-20px]'}`}>
                 {icon}
@@ -123,9 +129,37 @@ export default function App() {
         }
     ];
 
+    // =================================================================
+    // THIS IS THE SECTION TO EDIT
+    //
+    // 1. Make sure your video files (e.g., 'teluginti-deepavali.mp4')
+    //    are in the 'public/videos/journey/' folder.
+    // 2. Use .mp4 for web compatibility, not .MOV.
+    // 3. The 'src' path must start with '/' to point to the public folder.
+    //
     const mediaData = [
-        { type: 'video', src: '/videos/journey/IMG_5861.MOV', title: 'Teluginti Deepavali', caption: 'Let the lights inspire you! 🪔' },
+        { 
+            type: 'video', 
+            src: '/videos/journey/IMG_5861.MOV', 
+            title: 'Teluginti Deepavali', 
+            caption: 'Let the lights inspire you! 🪔' 
+        },
+        { 
+            type: 'video', 
+            src: '/videos/journey/innovatex-highlights.mp4', // <-- Add your next video file here
+            title: 'InnovateX25 Highlights', 
+            caption: 'A look back at our 2025 conference.' 
+        },
+        // Add more videos here...
+        // { 
+        //     type: 'video', 
+        //     src: '/videos/journey/new-reel.mp4', 
+        //     title: 'New Reel', 
+        //     caption: 'A new description.' 
+        // },
     ];
+    // =================================================================
+
 
     return (
         <div className="min-h-screen bg-slate-900 text-white font-sans selection:bg-cyan-300 selection:text-slate-900">
