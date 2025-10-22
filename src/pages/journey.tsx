@@ -140,7 +140,7 @@ export default function App() {
     const mediaData = [
         { 
             type: 'video', 
-            src: '/videos/journey/IMG_5861.MOV', 
+            src: '/videos/journey/Adobe Express - IMG_5861.mp4', 
             title: 'Teluginti Deepavali', 
             caption: 'Let the lights inspire you! 🪔' 
         },

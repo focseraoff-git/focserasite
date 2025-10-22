@@ -1,3 +1,5 @@
 *.mov filter=lfs diff=lfs merge=lfs -text
 *.MOV filter=lfs diff=lfs merge=lfs -text
 public/videos/journey/IMG_5861.MOV filter=lfs diff=lfs merge=lfs -text
+/videos/journey/Adobe[[:space:]]Express[[:space:]]-[[:space:]]IMG_5861.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
