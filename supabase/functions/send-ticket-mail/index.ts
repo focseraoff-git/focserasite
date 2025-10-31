@@ -1,11 +1,14 @@
-// [EDIT] Updated imports to use deno.json
 // @ts-nocheck
+// [EDIT] Updated imports to use deno.json
 import { serve } from 'std/http/server.ts';
 import { Resend } from 'resend';
 import qrcode from 'qrcode';
 
+console.log('Function cold start: index.ts loaded.');
+
 // Helper function for email HTML
 const createEmailHtml = (name: string, ticketId: string, qrDataUrl: string) => {
+  // ... (HTML code is unchanged) ...
   return `
     <html lang="en">
     <head>
@@ -55,43 +58,62 @@ const createEmailHtml = (name: string, ticketId: string, qrDataUrl: string) => {
   `;
 };
 
-serve(async (req) => {
+// [FIX] Added 'any' type to req for Deno
+serve(async (req: any) => {
+  console.log('Function invoked with a request.'); // <-- NEW LOG
+
   if (req.method !== 'POST') {
+    console.warn('Request rejected: Not a POST method.');
     return new Response('Method Not Allowed', { status: 405 });
   }
 
   try {
+    console.log('Inside try block. Checking for API key...'); // <-- NEW LOG
+    
     // 1. Get Resend API Key from Supabase Secrets
-    const RESEND_API_KEY = Deno.env.get('49999f7ce02c0beae495019393fefdd14e3b60c5f79b080b5cb9e6cb99a4d15f');
+    // [FIX] This MUST be the NAME of the secret ('RESEND_API_KEY'), not the key itself.
+    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+    
     if (!RESEND_API_KEY) {
+      console.error('CRITICAL: RESEND_API_KEY is not set.');
       throw new Error('RESEND_API_KEY is not set in Supabase Secrets.');
     }
+    console.log('RESEND_API_KEY found. Initializing Resend...'); // <-- NEW LOG
     const resend = new Resend(RESEND_API_KEY);
 
     // 2. Parse the new registration data from the webhook
+    console.log('Parsing JSON from request body...'); // <-- NEW LOG
     const { record } = await req.json();
+    console.log('JSON parsed. Record received with ID:', record?.id); // <-- NEW LOG
+
+    // This is where the email is taken from the custom_contacts table record
     const { id, full_name, email } = record;
 
     if (!email) {
+      console.warn('Record ' + id + ' has no email. Skipping email send.');
       return new Response('No email provided for this record.', { status: 400 });
     }
+    console.log('Email ' + email + ' found. Generating ticket...'); // <-- NEW LOG
 
     // 3. Generate Unique Ticket ID
-    // We use the database row 'id' to ensure it's unique
     const ticketId = `PROMPTX-${id.toString().padStart(6, '0')}`;
+    console.log('Ticket ID ' + ticketId + ' generated.'); // <-- NEW LOG
 
     // 4. Generate QR Code
-    // This creates a base64 Data URL (e.g., "data:image/png;base64,...")
+    console.log('Generating QR code...'); // <-- NEW LOG
     const qrCodeDataURL = await qrcode(ticketId, {
       size: 200,
       errorCorrection: 'H',
     });
+    console.log('QR code generated.'); // <-- NEW LOG
 
     // 5. Create the Email
     const emailHtml = createEmailHtml(full_name, ticketId, qrCodeDataURL);
+    console.log('HTML email created. Sending via Resend...'); // <-- NEW LOG
 
     // 6. Send the Email via Resend
-    const { data, error } = await resend.emails.send({
+    console.log('Calling resend.emails.send...');
+    const sendResult = await resend.emails.send({
       from: 'PromptX <onboarding@resend.dev>', // IMPORTANT: Use onboarding@resend.dev OR your verified domain
       to: [email],
       subject: 'Your PromptX Workshop Ticket is Here! 🎟️',
@@ -99,17 +121,23 @@ serve(async (req) => {
       attachments: [
         {
           filename: `PromptX_Ticket_${ticketId}.png`,
-          // Get only the base64 part of the Data URL
-          content: qrCodeDataURL.split('base64,')[1],
-          encoding: 'base64', // Specify encoding as base64
+          content: qrCodeDataURL.includes('base64,') ? qrCodeDataURL.split('base64,')[1] : qrCodeDataURL,
+          encoding: 'base64',
         },
       ],
     });
 
-    if (error) {
-      console.error('Resend Error:', error);
-      throw new Error(error.message);
+    console.log('Resend sendResult:', JSON.stringify(sendResult));
+
+    // Support different response shapes from the Resend SDK
+    const possibleError = (sendResult as any)?.error || (sendResult as any)?.errors;
+    if (possibleError) {
+      console.error('Resend returned an error:', possibleError);
+      throw new Error(JSON.stringify(possibleError));
     }
+
+    const messageId = (sendResult as any)?.id || (sendResult as any)?.messageId || (sendResult as any)?.data?.id || null;
+    console.log('Email sent successfully! Message ID:', messageId); // <-- NEW LOG
 
     // 7. Return a success response to the webhook
     return new Response(JSON.stringify({ success: true, messageId: data?.id }), {
@@ -117,9 +145,11 @@ serve(async (req) => {
       headers: { 'Content-Type': 'application/json' },
     });
 
-  } catch (err) {
-    console.error('Function Error:', err.message);
-    return new Response(JSON.stringify({ error: err.message }), {
+  // [FIX] Kept your improved error handling
+  } catch (err: unknown) { 
+    const msg = (err as any)?.message || String(err);
+    console.error('Function Error:', msg); // <-- THIS IS THE MOST IMPORTANT LOG
+    return new Response(JSON.stringify({ error: msg }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
