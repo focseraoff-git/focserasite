@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
 // --- SVG Icon Components ---
@@ -107,6 +107,7 @@ export default function PromptXDark() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [isError, setIsError] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const formRef = useRef(null);
 
@@ -121,11 +122,13 @@ export default function PromptXDark() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (supabaseUrl === 'https://your-project-id.supabase.co') {
-        setMessage('Please configure Supabase URL and Key in the code.');
-        setIsError(true);
-        return;
-    }
+  // Ensure Supabase client is available
+  if (!supabase) {
+    setMessage('Supabase client not available. Please configure the Supabase client.');
+    setIsError(true);
+    setSubmitting(false);
+    return;
+  }
     
     setSubmitting(true);
     setMessage(null);
@@ -188,6 +191,7 @@ export default function PromptXDark() {
       
       setMessage('Registration received! We will contact you shortly to confirm.');
       setIsError(false);
+      setShowSuccessPopup(true);
       setName(''); setParentName(''); setMobile(''); setEmail(''); setNotes(''); setTransactionId(''); setClassLevel('7'); // [EDIT] Reset to Class 7
       setPaymentScreenshot(null);
       if (formRef.current) {
@@ -201,6 +205,13 @@ export default function PromptXDark() {
       setSubmitting(false);
     }
   };
+
+  // auto-hide success popup after a few seconds
+  useEffect(() => {
+    if (!showSuccessPopup) return;
+    const t = setTimeout(() => setShowSuccessPopup(false), 6000);
+    return () => clearTimeout(t);
+  }, [showSuccessPopup]);
   
   const workshopHighlights = [
     { text: "Live AI Tool Demonstrations", icon: <IconSparkles className="w-7 h-7 text-blue-400" /> },
@@ -588,6 +599,24 @@ export default function PromptXDark() {
           </section>
 
           {/* Contact section removed as requested */}
+
+          {/* --- Registration Success Popup --- */}
+          {showSuccessPopup && (
+            <div className="fixed inset-0 z-[100002] flex items-center justify-center p-6">
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowSuccessPopup(false)} />
+              <div className="relative z-10 max-w-md w-full bg-white/5 border border-white/10 rounded-2xl p-6 shadow-2xl text-center">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 mx-auto mb-4">
+                  <IconCheck className="w-8 h-8 text-green-400" />
+                </div>
+                <h4 className="text-xl font-bold text-white mb-2">Registration Successful</h4>
+                <p className="text-sm text-slate-300 mb-4">Thank you — we received your registration and will contact you soon to confirm your slot.</p>
+                <div className="flex items-center justify-center gap-3">
+                  <button onClick={() => setShowSuccessPopup(false)} className="px-6 py-2 bg-green-500 text-white rounded-full font-semibold hover:scale-105 transition-transform">Close</button>
+                  <a href="#" onClick={() => setShowSuccessPopup(false)} className="px-4 py-2 border border-white/10 rounded-full text-white/90">View Details</a>
+                </div>
+              </div>
+            </div>
+          )}
           
         </div>
       </div>
