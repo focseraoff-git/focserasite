@@ -74,12 +74,16 @@ export default function PromptXPopup({ autoShow = true, alwaysShow = false }) {
   if (!open) return null;
 
   const modal = (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-6" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-[99999] flex items-start md:items-center justify-center p-4 md:p-6" role="dialog" aria-modal="true">
       {/* --- Backdrop --- */}
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => close(false)} />
 
       {/* [STYLE] Enhanced glassmorphism effect: darker, more blur, better border */}
-  <div ref={modalRef} tabIndex={-1} className="relative z-[100000] w-full max-w-md sm:max-w-2xl md:max-w-4xl bg-gradient-to-br from-gray-900/70 to-gray-800/60 border border-white/20 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
+  <div
+    ref={modalRef}
+    tabIndex={-1}
+    style={{ WebkitOverflowScrolling: 'touch' }}
+    className="relative z-[100000] w-full max-w-md sm:max-w-2xl md:max-w-4xl bg-gradient-to-br from-gray-900/70 to-gray-800/60 border border-white/20 backdrop-blur-lg rounded-3xl shadow-2xl overflow-auto max-h-[90vh]">
         
         {/* [STYLE] New close button: icon-based, rounded, and better position */}
         <button 
