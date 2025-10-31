@@ -206,12 +206,7 @@ export default function PromptXDark() {
     }
   };
 
-  // auto-hide success popup after a few seconds
-  useEffect(() => {
-    if (!showSuccessPopup) return;
-    const t = setTimeout(() => setShowSuccessPopup(false), 6000);
-    return () => clearTimeout(t);
-  }, [showSuccessPopup]);
+  // Success popup remains open until user closes it via the Close button
   
   const workshopHighlights = [
     { text: "Live AI Tool Demonstrations", icon: <IconSparkles className="w-7 h-7 text-blue-400" /> },
@@ -277,6 +272,35 @@ export default function PromptXDark() {
           animation: aurora-slide 25s infinite ease-in-out;
           z-index: -5;
         }
+        /* Success popup: grand futuristic celebration */
+        @keyframes popup-scale {
+          0% { transform: translateY(10px) scale(0.96); opacity: 0 }
+          60% { transform: translateY(-6px) scale(1.02); opacity: 1 }
+          100% { transform: translateY(0) scale(1); opacity: 1 }
+        }
+        .grand-popup {
+          animation: popup-scale 550ms cubic-bezier(.2,.9,.2,1);
+          border: 1px solid rgba(255,255,255,0.06);
+          background: linear-gradient(135deg, rgba(10,12,20,0.9), rgba(20,22,30,0.85));
+          backdrop-filter: blur(8px) saturate(140%);
+        }
+        .confetti-area { position: absolute; inset: -20% -10% auto -10%; pointer-events: none; overflow: visible; }
+        @keyframes confetti-fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1 } 100% { transform: translateY(110vh) rotate(360deg); opacity: 0.95 } }
+        .confetti-piece { width: 10px; height: 16px; position: absolute; top: -10vh; border-radius: 2px; opacity: 0.95; animation: confetti-fall 2400ms linear infinite; }
+        .confetti-piece.c1 { left: 8%; background: #06b6d4; animation-delay: 0ms; }
+        .confetti-piece.c2 { left: 16%; background: #7c3aed; animation-delay: 120ms; }
+        .confetti-piece.c3 { left: 24%; background: #60a5fa; animation-delay: 240ms; }
+        .confetti-piece.c4 { left: 32%; background: #f97316; animation-delay: 360ms; }
+        .confetti-piece.c5 { left: 40%; background: #f43f5e; animation-delay: 480ms; }
+        .confetti-piece.c6 { left: 48%; background: #34d399; animation-delay: 600ms; }
+        .confetti-piece.c7 { left: 56%; background: #06b6d4; animation-delay: 720ms; }
+        .confetti-piece.c8 { left: 64%; background: #7c3aed; animation-delay: 840ms; }
+        .confetti-piece.c9 { left: 72%; background: #60a5fa; animation-delay: 960ms; }
+        .confetti-piece.c10 { left: 80%; background: #f97316; animation-delay: 1080ms; }
+        .confetti-piece.c11 { left: 88%; background: #f43f5e; animation-delay: 1200ms; }
+        .confetti-piece.c12 { left: 96%; background: #34d399; animation-delay: 1320ms; }
+        .popup-hero { font-size: 48px; line-height: 1; letter-spacing: -2px; }
+        @media (max-width: 640px) { .popup-hero { font-size: 34px; } }
       `}</style>
       
       {/* [STYLE] Added relative, overflow-hidden */}
@@ -305,8 +329,8 @@ export default function PromptXDark() {
                 Register Now
               </a>
               {/* [STYLE] Enhanced border and hover */}
-              <a href="#" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/5 text-slate-200 font-semibold text-lg border border-blue-400/30 shadow-sm hover:bg-white/10 hover:border-blue-400/70 transition-all transform hover:-translate-y-0.5">
-                Download Brochure
+              <a href="/images/logos/PromptX.jpg" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/5 text-slate-200 font-semibold text-lg border border-blue-400/30 shadow-sm hover:bg-white/10 hover:border-blue-400/70 transition-all transform hover:-translate-y-0.5">
+                Download Poster
               </a>
             </div>
           </header>
@@ -317,7 +341,7 @@ export default function PromptXDark() {
             <h2 className="text-3xl font-bold text-white mb-6 text-center">About PromptX</h2>
             <div className="text-lg text-slate-300 space-y-5 leading-relaxed max-w-4xl mx-auto">
               <p>
-                <strong>PromptX</strong> is an interactive 2-3 hour workshop designed to demystify Artificial Intelligence for students. We move beyond the hype and focus on practical, hands-on applications that can immediately help students with their schoolwork.
+                <strong>PromptX</strong> is an interactive 6 hour workshop designed to demystify Artificial Intelligence for students. We move beyond the hype and focus on practical, hands-on applications that can immediately help students with their schoolwork.
               </p>
               <p>
                 This workshop introduces students to powerful AI tools for research, writing, presentation design, and creative projects. We emphasize ethical use and critical thinking, ensuring students become responsible digital citizens. No prior coding knowledge is required; all activities are project-focused and designed to be fun and engaging.
@@ -373,18 +397,18 @@ export default function PromptXDark() {
                 <tbody>
                   <tr className="border-b border-white/10">
                     <td className="py-4 px-5 text-slate-300 text-lg">Session 1: Discovering the World of AI</td>
-                    <td className="py-4 px-5 text-slate-300 text-lg">1 hr</td>
+                    <td className="py-4 px-5 text-slate-300 text-lg">3 hr</td>
                     <td className="py-4 px-5 text-slate-300 text-lg">Intro to AI, its impact, & tool demos</td>
                   </tr>
                   <tr className="border-b border-white/10">
                     <td className="py-4 px-5 text-slate-300 text-lg">Session 2: Hands-On with AI Tools</td>
-                    <td className="py-4 px-5 text-slate-300 text-lg">1–1.5 hrs</td>
+                    <td className="py-4 px-5 text-slate-300 text-lg">3 hrs</td>
                     <td className="py-4 px-5 text-slate-300 text-lg">Guided practice, Q&A, & feedback</td>
                   </tr>
                 </tbody>
               </table>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <p className="text-xl text-slate-300">Total Duration: <strong>2–3 Hours</strong></p>
+                <p className="text-xl text-slate-300">Total Duration: <strong>6 Hours</strong></p>
                 <p className="text-2xl font-bold text-blue-400">Fee: ₹149 per participant</p>
               </div>
             </div>
@@ -542,7 +566,7 @@ export default function PromptXDark() {
                   </div>
                   
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-slate-400 mb-1">Email (Optional)</label>
+                    <label htmlFor="email" className="block text-sm font-medium text-slate-400 mb-1">Email (Required)</label>
                     {/* [STYLE] Added neon-input-focus */}
                     <input id="email" type="email" placeholder="e.g. parent@email.com" value={email} onChange={e => setEmail(e.target.value)} className="w-full p-4 border border-gray-700 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all neon-input-focus" />
                   </div>
@@ -602,17 +626,39 @@ export default function PromptXDark() {
 
           {/* --- Registration Success Popup --- */}
           {showSuccessPopup && (
-            <div className="fixed inset-0 z-[100002] flex items-center justify-center p-6">
-              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowSuccessPopup(false)} />
-              <div className="relative z-10 max-w-md w-full bg-white/5 border border-white/10 rounded-2xl p-6 shadow-2xl text-center">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 mx-auto mb-4">
-                  <IconCheck className="w-8 h-8 text-green-400" />
+            <div className="fixed inset-0 z-[100002] flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={() => setShowSuccessPopup(false)} />
+
+              <div className="relative z-10 w-full max-w-2xl grand-popup rounded-3xl p-6 sm:p-8 md:p-10 text-center overflow-visible">
+                {/* Confetti layer */}
+                <div className="confetti-area" aria-hidden>
+                  <div className="confetti-piece c1"></div>
+                  <div className="confetti-piece c2"></div>
+                  <div className="confetti-piece c3"></div>
+                  <div className="confetti-piece c4"></div>
+                  <div className="confetti-piece c5"></div>
+                  <div className="confetti-piece c6"></div>
+                  <div className="confetti-piece c7"></div>
+                  <div className="confetti-piece c8"></div>
+                  <div className="confetti-piece c9"></div>
+                  <div className="confetti-piece c10"></div>
+                  <div className="confetti-piece c11"></div>
+                  <div className="confetti-piece c12"></div>
                 </div>
-                <h4 className="text-xl font-bold text-white mb-2">Registration Successful</h4>
-                <p className="text-sm text-slate-300 mb-4">Thank you — we received your registration and will contact you soon to confirm your slot.</p>
-                <div className="flex items-center justify-center gap-3">
-                  <button onClick={() => setShowSuccessPopup(false)} className="px-6 py-2 bg-green-500 text-white rounded-full font-semibold hover:scale-105 transition-transform">Close</button>
-                  <a href="#" onClick={() => setShowSuccessPopup(false)} className="px-4 py-2 border border-white/10 rounded-full text-white/90">View Details</a>
+
+                <div className="mx-auto max-w-xl">
+                  <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-green-400 to-teal-400 flex items-center justify-center mb-4 shadow-lg">
+                    <div className="text-white popup-hero">🎉</div>
+                  </div>
+                  <h3 className="text-3xl sm:text-4xl font-extrabold text-white mb-3">Registration Confirmed!</h3>
+                  <p className="text-md sm:text-lg text-slate-200 mb-4">You've successfully registered for PromptX.</p>
+                  <p className="text-sm sm:text-base text-slate-300 mb-6">You'll receive your ticket via email shortly. Please print the ticket from that email and present the printed ticket at the event entrance. You may use the button below to save a PDF or print this confirmation as a backup if needed.</p>
+
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button onClick={() => { window.print(); }} className="px-6 py-3 bg-gradient-to-r from-green-400 to-teal-400 text-black font-bold rounded-full shadow hover:scale-105 transition-transform">Save as PDF / Print (Backup)</button>
+                    <button onClick={() => setShowSuccessPopup(false)} className="px-6 py-3 border border-white/10 text-white rounded-full">Close</button>
+                    <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer" onClick={() => { setShowSuccessPopup(false); }} className="px-4 py-2 text-sm text-white/90">Got Email? View Ticket</a>
+                  </div>
                 </div>
               </div>
             </div>

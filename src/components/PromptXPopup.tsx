@@ -79,7 +79,7 @@ export default function PromptXPopup({ autoShow = true, alwaysShow = false }) {
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => close(false)} />
 
       {/* [STYLE] Enhanced glassmorphism effect: darker, more blur, better border */}
-  <div ref={modalRef} tabIndex={-1} className="relative z-[100000] max-w-4xl w-full bg-gradient-to-br from-gray-900/70 to-gray-800/60 border border-white/20 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
+  <div ref={modalRef} tabIndex={-1} className="relative z-[100000] w-full max-w-md sm:max-w-2xl md:max-w-4xl bg-gradient-to-br from-gray-900/70 to-gray-800/60 border border-white/20 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden">
         
         {/* [STYLE] New close button: icon-based, rounded, and better position */}
         <button 
@@ -103,8 +103,8 @@ export default function PromptXPopup({ autoShow = true, alwaysShow = false }) {
             {/* [EDIT] Removed the large background SVG icon */}
 
             <div className="relative z-10 text-center text-white">
-              <div className="text-6xl font-extrabold mb-4 drop-shadow-lg">PromptX</div>
-              <div className="text-lg mb-6 drop-shadow-md">AI Workshop — Classes 6–10</div>
+              <div className="text-4xl sm:text-6xl font-extrabold mb-4 drop-shadow-lg">PromptX</div>
+              <div className="text-sm sm:text-lg mb-6 drop-shadow-md">AI Workshop — Classes 6–10</div>
               <div className="inline-flex items-center gap-3 justify-center">
                 <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white font-semibold">Future Skills</div>
                 <div className="px-3 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white">Hands-on</div>
@@ -117,11 +117,11 @@ export default function PromptXPopup({ autoShow = true, alwaysShow = false }) {
           </div>
 
           {/* --- Right — content --- */}
-          <div className="relative p-8 md:p-12 bg-gradient-to-b from-white/5 to-transparent">
+          <div className="relative p-6 sm:p-8 md:p-12 bg-gradient-to-b from-white/5 to-transparent">
             
             <div>
-              <h3 className="text-3xl font-extrabold text-white">Join PromptX: AI Workshop</h3>
-              <p className="text-sm text-white/80 mt-2">A hands-on workshop to boost academic creativity & productivity using AI tools.</p>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Join PromptX: AI Workshop</h3>
+                <p className="text-xs sm:text-sm text-white/80 mt-2">A hands-on workshop to boost academic creativity & productivity using AI tools.</p>
             </div>
 
             <div className="mt-8 grid grid-cols-1 gap-4">
@@ -133,26 +133,26 @@ export default function PromptXPopup({ autoShow = true, alwaysShow = false }) {
               </ul>
 
               <div className="pt-2">
-                <p className="text-white/80">Eligibility: Classes 6–10 · Fee: <strong>₹149</strong></p>
+                <p className="text-white/80">Eligibility: Classes 7–10 · Fee: <strong>₹149</strong></p>
               </div>
 
               {/* [EDIT] Buttons now stacked vertically */}
-              <div className="flex flex-col items-stretch gap-4 mt-4">
+              <div className="flex flex-col items-stretch gap-3 mt-4">
                 <a 
                   href="/promptx" 
-                  className="text-center px-6 py-3 bg-white text-blue-700 font-bold rounded-lg shadow-lg shadow-white/10 hover:shadow-xl hover:shadow-white/20 hover:scale-105 transition-all transform"
+                  className="text-center px-4 py-2 sm:px-6 sm:py-3 bg-white text-blue-700 font-bold rounded-lg shadow-lg shadow-white/10 hover:shadow-xl hover:shadow-white/20 hover:scale-105 transition-all transform text-sm"
                 >
                   Register Now
                 </a>
                 <a 
-                  href="#" 
-                  className="text-center px-5 py-3 border border-white/20 rounded-full text-white/90 hover:bg-white/10 transition-colors"
+                  href="/images/logos/PromptX.jpg" 
+                  className="text-center px-4 py-2 sm:px-5 sm:py-3 border border-white/20 rounded-full text-white/90 hover:bg-white/10 transition-colors text-sm"
                 >
                   Download Poster
                 </a>
               </div>
 
-              <div className="mt-6 text-xs text-white/60">Limited seats — schools & groups welcome. Click register to view full workshop details.</div>
+              <div className="mt-6 text-xs text-white/60">Limited seats. Click register to view full workshop details.</div>
             </div>
 
             <div className="mt-8 flex items-center gap-3 text-white/70 border-t border-white/10 pt-6">
