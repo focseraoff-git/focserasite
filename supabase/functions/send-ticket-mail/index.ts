@@ -62,7 +62,7 @@ serve(async (req) => {
 
   try {
     // 1. Get Resend API Key from Supabase Secrets
-    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+    const RESEND_API_KEY = Deno.env.get('49999f7ce02c0beae495019393fefdd14e3b60c5f79b080b5cb9e6cb99a4d15f');
     if (!RESEND_API_KEY) {
       throw new Error('RESEND_API_KEY is not set in Supabase Secrets.');
     }
