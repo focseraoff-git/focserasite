@@ -61,6 +61,52 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-[#ECECEC]">
+  <style>{` 
+      /* PromptX shining banner + CTA effects */
+  /* Badge: white sheen (subtle moving white highlight) while keeping theme blue accent */
+  .promptx-badge {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    padding: 6px 14px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: white;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.06), 0 3px 12px rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* gentle scale pulse */
+  @keyframes promptx-pulse { 0% { transform: scale(1); opacity: 0.99 } 50% { transform: scale(1.02); opacity: 1 } 100% { transform: scale(1); opacity: 0.99 } }
+  .promptx-badge { animation: promptx-pulse 2600ms ease-in-out infinite; }
+
+  /* moving white sheen overlay */
+  .promptx-badge::after {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -120%;
+    width: 60%;
+    height: 120%;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.75) 50%, rgba(255,255,255,0) 100%);
+    transform: skewX(-20deg);
+    opacity: 0.7;
+    animation: promptx-white-sheen 3.2s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes promptx-white-sheen { 0% { left: -120%; } 60% { left: 140%; } 100% { left: 140%; } }
+
+  /* text remains white but with subtle blue glow to fit theme */
+  .promptx-text { color: white; text-shadow: 0 6px 18px rgba(6,182,212,0.06); font-weight:700; }
+      .promptx-cta { box-shadow: 0 6px 36px rgba(6,182,212,0.12); position: relative; overflow: visible; }
+      .promptx-cta::after { content: ''; position: absolute; inset: -6px; border-radius: 9999px; background: radial-gradient(circle at 30% 20%, rgba(99,102,241,0.12), transparent 10%, transparent 40%), radial-gradient(circle at 70% 80%, rgba(6,182,212,0.08), transparent 10%); z-index: -1; }
+      .promptx-shimmer { position: absolute; inset: 0; pointer-events: none; opacity: 0.35; mix-blend-mode: screen; background: linear-gradient(120deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.05) 100%); transform: translateX(-110%); transition: transform .8s ease-in-out; }
+      .promptx-cta:hover .promptx-shimmer { transform: translateX(110%); }
+      @media (max-width: 640px) { .promptx-badge { padding: 6px 10px; font-size: 13px } }
+    `}</style>
   <PromptXPopup autoShow={true} alwaysShow={true} />
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0052CC] via-[#0066FF] to-[#0052CC]">
@@ -93,6 +139,13 @@ export default function Home() {
             <div className="inline-block px-6 py-2 glass-effect rounded-full text-white text-sm font-medium mb-6">
               Welcome to the Future of Creativity
             </div>
+            {/* PromptX shining badge to indicate nearby event */}
+            <div className="mt-2">
+              <span className="promptx-badge">
+                <PartyPopper size={16} className="text-[var(--theme-blue-500)]" />
+                <span className="promptx-text">PromptX Workshop — Happening Soon</span>
+              </span>
+            </div>
           </div>
           <h1 className="text-5xl sm:text-6xl lg:text-8xl font-bold text-white mb-8 animate-fade-in leading-tight">
             Focus. Create.<br />Celebrate.
@@ -110,10 +163,11 @@ export default function Home() {
               <div className="absolute inset-0 shimmer"></div>
             </Link>
             <Link
-              to="/journey"
-              className="group px-10 py-5 glass-effect border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-[#0052CC] transition-all duration-300"
+              to="/promptx"
+              className="group px-10 py-5 glass-effect border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-[#0052CC] transition-all duration-300 promptx-cta"
             >
-             Journey
+             <span className="relative z-10">PromptX</span>
+             <div className="promptx-shimmer" aria-hidden></div>
             </Link>
           </div>
         </div>
