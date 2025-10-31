@@ -152,54 +152,7 @@ export default function PromptXDark() {
       return;
     }
 
-    // Transaction ID must be present (input already has required attr, but double-check)
-    if (!transactionId || !transactionId.trim()) {
-      setMessage('Transaction ID is required.');
-      setIsError(true);
-      setSubmitting(false);
-      return;
-    }
-
-    // --- Normalize and check uniqueness of Transaction ID before uploading screenshot ---
-    const rawTx = transactionId || '';
-    const txTrimmed = rawTx.trim().replace(/\s+/g, ' ');
-    // Remove SQL wildcard chars to avoid accidental matches
-    const safeTx = txTrimmed.replace(/[%_]/g, '');
-
-    try {
-      const txSearch = `%Transaction ID: ${safeTx}%`;
-      const { data: existing, error: txError } = await supabase
-        .from('custom_contacts')
-        .select('id, message')
-        .ilike('message', txSearch)
-        .limit(1);
-
-      if (txError) {
-        console.error('Error checking transaction uniqueness:', txError);
-        setMessage('Unable to verify transaction ID uniqueness. Please try again later.');
-        setIsError(true);
-        setSubmitting(false);
-        return;
-      }
-
-      // Debug log for troubleshooting (can be removed later)
-      console.debug('Transaction uniqueness check:', { txSearch, existing });
-
-      if (existing && existing.length > 0) {
-        setMessage('This Transaction ID has already been used. If you think this is an error, contact us.');
-        setIsError(true);
-        setSubmitting(false);
-        return;
-      }
-      // use safeTx for the rest of the submission
-      transactionId = safeTx;
-    } catch (err) {
-      console.error('Unexpected error when checking transaction uniqueness:', err);
-      setMessage('Unexpected error while validating transaction ID. Please try again.');
-      setIsError(true);
-      setSubmitting(false);
-      return;
-    }
+    // Transaction ID validation removed per request — we'll submit whatever the user enters (trimmed when used in payload)
 
     let screenshotPath = 'N/A';
     let uploadError = null;
@@ -641,7 +594,7 @@ export default function PromptXDark() {
                   <div className="md:col-span-2">
                     <label htmlFor="transactionId" className="block text-sm font-medium text-slate-400 mb-1">Transaction ID (Required)</label>
                     {/* [STYLE] Added neon-input-focus */}
-                    <input id="transactionId" required placeholder="Enter UPI Transaction ID or Ref No." value={transactionId} onChange={e => setTransactionId(e.target.value)} className="w-full p-4 border border-gray-700 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all neon-input-focus" />
+                    <input id="transactionId" placeholder="Enter UPI Transaction ID or Ref No." value={transactionId} onChange={e => setTransactionId(e.target.value)} className="w-full p-4 border border-gray-700 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all neon-input-focus" />
                   </div>
 
                   <div className="md:col-span-2">
