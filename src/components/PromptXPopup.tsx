@@ -4,22 +4,28 @@ import { createPortal } from 'react-dom';
 // [FIX] Removed 'Link' import as react-router-dom is not available
 // import { Link } from 'react-router-dom';
 
-export default function PromptXPopup({ autoShow = true }) {
+export default function PromptXPopup({ autoShow = true, alwaysShow = false }) {
   const [open, setOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!autoShow) return;
+    // If alwaysShow is true, ignore localStorage and show every time
+    if (alwaysShow) {
+      const t = setTimeout(() => setOpen(true), 900);
+      return () => clearTimeout(t);
+    }
     const dismissed = localStorage.getItem('promptx_popup_dismissed');
     if (!dismissed) {
       const t = setTimeout(() => setOpen(true), 900);
       return () => clearTimeout(t);
     }
-  }, [autoShow]);
+  }, [autoShow, alwaysShow]);
 
   const close = (remember = true) => {
     setOpen(false);
-    if (remember) localStorage.setItem('promptx_popup_dismissed', '1');
+    // Only persist dismissal if we're not in alwaysShow mode
+    if (!alwaysShow && remember) localStorage.setItem('promptx_popup_dismissed', '1');
   };
 
   // Prevent background scroll when modal is open and restore when closed
