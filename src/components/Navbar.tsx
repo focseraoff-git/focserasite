@@ -28,10 +28,11 @@ const Navbar = () => {
 
   const mainMenu = [
     { label: "Home", path: "/" },
+    { label: "PromptX", path: "/promptx" },
     { label: "Divisions", type: "dropdown" },
     { label: "About", path: "/about" },
     { label: "Mission", path: "/mission" },
-    { label: "PromptX", path: "/promptx" },
+    
     { label: "Journey", path: "/journey" },
     { label: "Contact", path: "/contact" },
   ];
