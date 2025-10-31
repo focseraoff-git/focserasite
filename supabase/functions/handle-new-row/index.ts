@@ -1,3 +1,4 @@
+// @ts-nocheck
 // No import for 'serve' is needed! It's now built-in.
 
 const RESEND_API_URL = 'https://api.resend.com/emails';
