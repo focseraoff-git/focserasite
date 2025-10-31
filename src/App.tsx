@@ -16,6 +16,7 @@ import Journey from './pages/journey'
 import Gallery from './pages/Gallery'
 import Login from './pages/Login'
 import Account from './pages/Account'
+import PromptX from './pages/PromptX'
 
 function App() {
   return (
@@ -35,6 +36,8 @@ function App() {
             <Route path="/product-services" element={<ProductServices />} />
             <Route path="/skill" element={<Skill />} />
             <Route path="/journey" element={<Journey />} />
+            <Route path="/promptx" element={<PromptX />} />
+            <Route path="/ai-workshop" element={<PromptX />} />
             <Route path="/gallery/:eventSlug" element={<Gallery />} />
             <Route path="/login" element={<Login />} />
             <Route path="/account" element={<Account />} />

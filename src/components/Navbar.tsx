@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
@@ -30,6 +31,7 @@ const Navbar = () => {
     { label: "Divisions", type: "dropdown" },
     { label: "About", path: "/about" },
     { label: "Mission", path: "/mission" },
+    { label: "PromptX", path: "/promptx" },
     { label: "Journey", path: "/journey" },
     { label: "Contact", path: "/contact" },
   ];

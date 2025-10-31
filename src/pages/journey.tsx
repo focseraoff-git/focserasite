@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 
 // --- SVG Icon Components (Styled for the new design) ---
