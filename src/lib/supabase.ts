@@ -1,4 +1,12 @@
-import { createClient } from '@supabase/supabase-js';
+import * as supabaseJs from '@supabase/supabase-js';
+
+// Some bundlers / ESM CDNs expose the library as named exports, others as a
+// namespace/default object. Try both shapes for maximum compatibility.
+const createClient = (supabaseJs as any).createClient ?? (supabaseJs as any).default?.createClient;
+
+if (!createClient) {
+  throw new Error('Unable to locate createClient on @supabase/supabase-js. Check your bundler/CDN configuration.');
+}
 
 // 1. Load environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;

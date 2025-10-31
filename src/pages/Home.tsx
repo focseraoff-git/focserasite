@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import PromptXPopup from '../components/PromptXPopup';
 import { Camera, Megaphone, PartyPopper, Globe, Package, GraduationCap, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function Home() {
@@ -60,6 +61,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-[#ECECEC]">
+      <PromptXPopup autoShow={true} />
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0052CC] via-[#0066FF] to-[#0052CC]">
           <div className="absolute inset-0 opacity-20">
