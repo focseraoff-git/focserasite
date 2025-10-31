@@ -1,6 +1,8 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { Resend } from 'npm:resend';
-import qrcode from 'https://deno.land/x/qrcode@v2.0.0/mod.ts';
+// [EDIT] Updated imports to use deno.json
+// @ts-nocheck
+import { serve } from 'std/http/server.ts';
+import { Resend } from 'resend';
+import qrcode from 'qrcode';
 
 // Helper function for email HTML
 const createEmailHtml = (name: string, ticketId: string, qrDataUrl: string) => {
@@ -89,8 +91,8 @@ serve(async (req) => {
     const emailHtml = createEmailHtml(full_name, ticketId, qrCodeDataURL);
 
     // 6. Send the Email via Resend
-    const { data, error }_ = await resend.emails.send({
-      from: 'PromptX <onboarding@resend.dev>', // IMPORTANT: See setup guide!
+    const { data, error } = await resend.emails.send({
+      from: 'PromptX <onboarding@resend.dev>', // IMPORTANT: Use onboarding@resend.dev OR your verified domain
       to: [email],
       subject: 'Your PromptX Workshop Ticket is Here! 🎟️',
       html: emailHtml,
@@ -99,6 +101,7 @@ serve(async (req) => {
           filename: `PromptX_Ticket_${ticketId}.png`,
           // Get only the base64 part of the Data URL
           content: qrCodeDataURL.split('base64,')[1],
+          encoding: 'base64', // Specify encoding as base64
         },
       ],
     });
@@ -122,3 +125,4 @@ serve(async (req) => {
     });
   }
 });
+
