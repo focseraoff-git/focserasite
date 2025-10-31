@@ -675,7 +675,6 @@ export default function PromptXDark() {
                   <p className="text-sm sm:text-base text-slate-300 mb-6">You'll receive your ticket via email shortly. Please print the ticket from that email and present the printed ticket at the event entrance. You may use the button below to save a PDF or print this confirmation as a backup if needed.</p>
 
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <button onClick={() => { window.print(); }} className="px-6 py-3 bg-gradient-to-r from-green-400 to-teal-400 text-black font-bold rounded-full shadow hover:scale-105 transition-transform">Save as PDF / Print (Backup)</button>
                     <button onClick={() => setShowSuccessPopup(false)} className="px-6 py-3 border border-white/10 text-white rounded-full">Close</button>
                     <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer" onClick={() => { setShowSuccessPopup(false); }} className="px-4 py-2 text-sm text-white/90">Got Email? View Ticket</a>
                   </div>
