@@ -774,50 +774,6 @@ export default function PromptXDark() {
               </div>
             </div>
           </section>
-
-          {/* --- [NEW] Footer Section --- */}
-          <footer className="pt-24 border-t border-blue-100 animate-on-scroll">
-            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-              {/* Column 1: Brand */}
-              <div className="md:col-span-2">
-                <h4 className="text-2xl font-bold text-blue-600 mb-3">PromptX</h4>
-                <p className="text-gray-600 max-w-md">
-                  Powered by Focsera. We're dedicated to bringing future-ready AI skills to students everywhere.
-                </p>
-              </div>
-              
-              {/* Column 2: Quick Links */}
-              <div>
-                <h5 className="text-lg font-semibold text-gray-900 mb-4">Quick Links</h5>
-                <ul className="space-y-2">
-                  <li><a href="#registration" className="text-gray-600 hover:text-blue-600 transition-colors">Register</a></li>
-                  <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">About</a></li>
-                  <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Highlights</a></li>
-                </ul>
-              </div>
-              
-              {/* Column 3: Contact */}
-              <div>
-                <h5 className="text-lg font-semibold text-gray-900 mb-4">Contact</h5>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2">
-                    <IconPhone className="w-5 h-5 text-gray-500" />
-                    <span className="text-gray-600">+91 12345 67890</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <IconMail className="w-5 h-5 text-gray-500" />
-                    <span className="text-gray-600">hello@focsera.com</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            
-            <div className="mt-12 pt-8 border-t border-blue-100 text-center">
-              <p className="text-gray-500 text-sm">
-                © {new Date().getFullYear()} Focsera. All rights reserved.
-              </p>
-            </div>
-          </footer>
           
         </div>
       </div>
