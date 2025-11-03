@@ -70,7 +70,7 @@ const IconPhone = ({ className = "w-6 h-6" }) => (
 const IconMail = ({ className = "w-6 h-6" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <rect width="20" height="16" x="2" y="4" rx="2" />
-    <path d="m22 7-8.97 5.7a1.94 19.4 0 0 1-2.06 0L2 7" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
   </svg>
 );
 
@@ -775,55 +775,99 @@ export default function PromptXDark() {
             </div>
           </section>
 
-          {/* --- Registration Success Popup --- */}
-          {showSuccessPopup && (
-            <div className="fixed inset-0 z-[100002] flex items-center justify-center p-4" style={{ perspective: '1000px' }}>
-              {/* [THEME] Lighter backdrop */ }
-              <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowSuccessPopup(false)} />
-
-              {/* [ULTIMATE] Frosted glass tiltable popup */ }
-              <TiltableCard className="w-full max-w-2xl">
-                <div className="relative z-10 w-full grand-popup rounded-3xl p-6 sm:p-8 md:p-10 text-center overflow-visible">
-                  {/* Confetti layer */}
-                  <div className="confetti-area" aria-hidden>
-                    <div className="confetti-piece c1"></div>
-                    <div className="confetti-piece c2"></div>
-                    <div className="confetti-piece c3"></div>
-                    <div className="confetti-piece c4"></div>
-                    <div className="confetti-piece c5"></div>
-                    <div className="confetti-piece c6"></div>
-                    <div className="confetti-piece c7"></div>
-                    <div className="confetti-piece c8"></div>
-                    <div className="confetti-piece c9"></div>
-                    <div className="confetti-piece c10"></div>
-                    <div className="confetti-piece c11"></div>
-                    <div className="confetti-piece c12"></div>
-                  </div>
-
-                  <div className="mx-auto max-w-xl">
-                    <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-green-400 to-teal-400 flex items-center justify-center mb-4 shadow-lg">
-                      {/* [THEME] Emoji hero */ }
-                      <div className="text-white popup-hero">🎉</div>
-                    </div>
-                    {/* [THEME] Light text */ }
-                    <h3 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">Registration Confirmed!</h3>
-                    <p className="text-md sm:text-lg text-gray-800 mb-4">You've successfully registered for PromptX.</p>
-                    <p className="text-sm sm:text-base text-gray-600 mb-6">You'll receive your ticket via email shortly. Please print the ticket from that email and present the printed ticket at the event entrance. You may use the button below to save a PDF or print this confirmation as a backup if needed.</p>
-
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                      <button onClick={() => setShowSuccessPopup(false)} className="px-6 py-3 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-100 transition-colors">Close</button>
-                      <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer" onClick={() => { setShowSuccessPopup(false); }} className="px-4 py-2 text-sm text-blue-600 hover:underline">Got Email? View Ticket</a>
-                    </div>
-                  </div>
-                </div>
-              </TiltableCard>
+          {/* --- [NEW] Footer Section --- */}
+          <footer className="pt-24 border-t border-blue-100 animate-on-scroll">
+            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+              {/* Column 1: Brand */}
+              <div className="md:col-span-2">
+                <h4 className="text-2xl font-bold text-blue-600 mb-3">PromptX</h4>
+                <p className="text-gray-600 max-w-md">
+                  Powered by Focsera. We're dedicated to bringing future-ready AI skills to students everywhere.
+                </p>
+              </div>
+              
+              {/* Column 2: Quick Links */}
+              <div>
+                <h5 className="text-lg font-semibold text-gray-900 mb-4">Quick Links</h5>
+                <ul className="space-y-2">
+                  <li><a href="#registration" className="text-gray-600 hover:text-blue-600 transition-colors">Register</a></li>
+                  <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">About</a></li>
+                  <li><a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Highlights</a></li>
+                </ul>
+              </div>
+              
+              {/* Column 3: Contact */}
+              <div>
+                <h5 className="text-lg font-semibold text-gray-900 mb-4">Contact</h5>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2">
+                    <IconPhone className="w-5 h-5 text-gray-500" />
+                    <span className="text-gray-600">+91 12345 67890</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <IconMail className="w-5 h-5 text-gray-500" />
+                    <span className="text-gray-600">hello@focsera.com</span>
+                  </li>
+                </ul>
+              </div>
             </div>
-          )}
+            
+            <div className="mt-12 pt-8 border-t border-blue-100 text-center">
+              <p className="text-gray-500 text-sm">
+                © {new Date().getFullYear()} Focsera. All rights reserved.
+              </p>
+            </div>
+          </footer>
           
         </div>
       </div>
+
+      {/* --- Registration Success Popup --- */}
+      {showSuccessPopup && (
+        <div className="fixed inset-0 z-[100002] flex items-center justify-center p-4" style={{ perspective: '1000px' }}>
+          {/* [THEME] Lighter backdrop */ }
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowSuccessPopup(false)} />
+
+          {/* [ULTIMATE] Frosted glass tiltable popup */ }
+          <TiltableCard className="w-full max-w-2xl">
+            <div className="relative z-10 w-full grand-popup rounded-3xl p-6 sm:p-8 md:p-10 text-center overflow-visible">
+              {/* Confetti layer */}
+              <div className="confetti-area" aria-hidden>
+                <div className="confetti-piece c1"></div>
+                <div className="confetti-piece c2"></div>
+                <div className="confetti-piece c3"></div>
+                <div className="confetti-piece c4"></div>
+                <div className="confetti-piece c5"></div>
+                <div className="confetti-piece c6"></div>
+                <div className="confetti-piece c7"></div>
+                <div className="confetti-piece c8"></div>
+                <div className="confetti-piece c9"></div>
+                <div className="confetti-piece c10"></div>
+                <div className="confetti-piece c11"></div>
+                <div className="confetti-piece c12"></div>
+              </div>
+
+              <div className="mx-auto max-w-xl">
+                <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-green-400 to-teal-400 flex items-center justify-center mb-4 shadow-lg">
+                  {/* [THEME] Emoji hero */ }
+                  <div className="text-white popup-hero">🎉</div>
+                </div>
+                {/* [THEME] Light text */ }
+                <h3 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">Registration Confirmed!</h3>
+                <p className="text-md sm:text-lg text-gray-800 mb-4">You've successfully registered for PromptX.</p>
+                <p className="text-sm sm:text-base text-gray-600 mb-6">You'll receive your ticket via email shortly. Please print the ticket from that email and present the printed ticket at the event entrance. You may use the button below to save a PDF or print this confirmation as a backup if needed.</p>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <button onClick={() => setShowSuccessPopup(false)} className="px-6 py-3 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-100 transition-colors">Close</button>
+                  <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer" onClick={() => { setShowSuccessPopup(false); }} className="px-4 py-2 text-sm text-blue-600 hover:underline">Got Email? View Ticket</a>
+                </div>
+              </div>
+            </div>
+          </TiltableCard>
+        </div>
+      )}
+      
     </>
   );
 }
-
 

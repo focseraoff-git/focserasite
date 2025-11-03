@@ -44,26 +44,28 @@ const MediaGallery = ({ items = [] }) => {
         return () => window.removeEventListener('keydown', handleEsc);
     }, []);
 
-    const videos = items.filter((m) => m.type === 'video');
-
     return (
         <>
-            {/* This is the grid layout, like an Instagram profile page */}
+            {/* Grid supports both images and videos */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-                {videos.map((item, index) => (
-                    // After
-<div key={index} className="w-full max-w-[300px]">
+                {items.map((item, index) => (
+                    <div key={index} className="w-full max-w-[360px]">
                         <button onClick={() => setActiveItem(item)} className="block w-full text-left group">
-                            <div className="relative aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl bg-slate-900/50 border border-white/20 backdrop-blur-xl transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20">
-                                {/* This <video> tag is for the preview */}
-                                <video src={item.src} muted playsInline loop preload="auto" autoPlay className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                            <div className={`relative ${item.type === 'video' ? 'aspect-[9/16] rounded-3xl' : 'aspect-[16/10] rounded-2xl'} overflow-hidden shadow-2xl bg-slate-900/50 border border-white/20 backdrop-blur-xl transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20`}>
+                                {item.type === 'video' ? (
+                                    <video src={item.src} muted playsInline loop preload="auto" autoPlay className="w-full h-full object-cover" />
+                                ) : (
+                                    <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
+                                )}
+
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center">
-                                        <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                                        <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="currentColor"><path d={item.type === 'video' ? 'M8 5v14l11-7z' : 'M21 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8'} /></svg>
                                     </div>
                                 </div>
-                                <div className="absolute top-4 left-4 bg-gradient-to-r from-cyan-400 to-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">REEL</div>
+
+                                <div className="absolute top-4 left-4 bg-gradient-to-r from-cyan-400 to-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">{item.type === 'video' ? 'REEL' : 'PHOTO'}</div>
                                 <div className="absolute bottom-4 left-4 right-4">
                                     <p className="text-white font-bold text-lg truncate">{item.title}</p>
                                     <p className="text-slate-300 text-sm">{item.caption}</p>
@@ -74,10 +76,10 @@ const MediaGallery = ({ items = [] }) => {
                 ))}
             </div>
 
-            {/* This is the popup modal player */}
+            {/* Modal viewer for both image and video */}
             {activeItem && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setActiveItem(null)}>
-                    <div className="relative w-full max-w-md bg-slate-900/50 border border-white/20 rounded-3xl shadow-2xl flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                    <div className="relative w-full max-w-3xl bg-slate-900/50 border border-white/20 rounded-3xl shadow-2xl flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
                         <div className="p-4 border-b border-white/10 flex justify-between items-center">
                             <div>
                                 <p className="text-white font-bold text-lg">{activeItem.title}</p>
@@ -87,9 +89,12 @@ const MediaGallery = ({ items = [] }) => {
                                 <XIcon />
                             </button>
                         </div>
-                        <div className="flex-1 flex items-center justify-center bg-black">
-                            {/* This <video> tag is for the active player with controls */}
-                            <video src={activeItem.src} controls autoPlay className="w-full h-auto" />
+                        <div className="flex-1 flex items-center justify-center bg-black p-6">
+                            {activeItem.type === 'video' ? (
+                                <video src={activeItem.src} controls autoPlay className="w-full h-auto rounded-lg" />
+                            ) : (
+                                <img src={activeItem.src} alt={activeItem.title} className="w-full h-auto rounded-lg object-contain" />
+                            )}
                         </div>
                     </div>
                 </div>
@@ -148,6 +153,14 @@ export default function App() {
         },
        
     ];
+
+    // InnovateX gallery data (external links)
+    const innovatexData = [
+        { type: 'image', src: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80', title: 'InnovateX Day 1', caption: 'Keynote and opening' },
+        { type: 'image', src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80', title: 'Workshops', caption: 'Hands-on sessions' },
+        { type: 'image', src: 'https://images.unsplash.com/photo-1532619187605-1c7a8b6b7a3b?auto=format&fit=crop&w=1200&q=80', title: 'Hackathon', caption: 'Team projects in action' },
+        { type: 'video', src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', title: 'Highlights Reel', caption: 'InnovateX highlights' },
+    ];
     // =================================================================
 
 
@@ -174,6 +187,13 @@ export default function App() {
                     <section className="mb-24" id="gallery">
                         <h2 className="text-4xl font-bold text-center mb-10 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Reels</h2>
                         <MediaGallery items={mediaData} />
+                    </section>
+
+                    {/* InnovateX Gallery Section */}
+                    <section className="mb-24" id="innovatex-gallery">
+                        <h2 className="text-4xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">InnovateX Gallery</h2>
+                        <p className="text-center text-slate-300 max-w-2xl mx-auto mb-6">Highlights from our InnovateX conference — keynotes, workshops and community moments. Use the viewer to enlarge photos or play highlight reels.</p>
+                        <MediaGallery items={innovatexData} />
                     </section>
 
                     {/* Timeline Section */}
