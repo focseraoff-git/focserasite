@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { Linkedin, Instagram, Twitter, Facebook } from 'lucide-react';
+import { Linkedin, Instagram, Facebook } from 'lucide-react';
 
 // Data for the footer links, making them easy to manage
 const divisions = [
