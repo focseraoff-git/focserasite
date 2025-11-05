@@ -126,7 +126,7 @@ export default function CertificatePage({ user, supabase = lmsSupabaseClient }) 
           Learn. Complete challenges. Earn an official, shareable Focsera Skill Certificate — verified and recognized by peers.
         </p>
         <button
-          onClick={() => (window.location.href = "/login")}
+          onClick={() => (window.location.href = "/divisions/skill/auth")}
           className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full shadow-md transition"
         >
           <LogIn size={18} /> Log in to Start Learning
