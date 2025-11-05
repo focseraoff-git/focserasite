@@ -87,6 +87,15 @@ export default function CodeEditorPage({ user, supabase = lmsSupabaseClient }) {
   const mapLanguage = (lang) =>
     ({ java: 62, python: 71, cpp: 54, javascript: 63 }[lang] || 62);
 
+  // Minimal HTML sanitizer to remove <script> tags and inline event handlers.
+  const sanitizeHtml = (html = "") => {
+    if (!html) return "";
+    let cleaned = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
+    cleaned = cleaned.replace(/\son[a-z]+\s*=\s*(\"[^\"]*\"|'[^']*'|[^\s>]+)/gi, "");
+    cleaned = cleaned.replace(/(href|src)\s*=\s*(\"|')\s*javascript:[^\"']*(\"|')/gi, "");
+    return cleaned;
+  };
+
   // 🧠 Run or Submit Code
   const handleRunCode = async (isSubmit = false) => {
     if (!code.trim()) return alert("Write some code first!");
@@ -230,7 +239,7 @@ export default function CodeEditorPage({ user, supabase = lmsSupabaseClient }) {
                   theme === "dark" ? "prose-invert" : "prose-slate"
                 }`}
                 dangerouslySetInnerHTML={{
-                  __html: challenge.code_challenges?.body || "",
+                  __html: sanitizeHtml(challenge.code_challenges?.body || ""),
                 }}
               />
 

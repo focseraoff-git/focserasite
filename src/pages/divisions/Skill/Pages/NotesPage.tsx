@@ -110,6 +110,20 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
   const assignments = contents.filter((c) => c.type === "assignment");
   const challenges = contents.filter((c) => c.type === "challenge");
 
+  // Minimal HTML sanitizer to remove <script> tags and inline event handlers.
+  // This is purposely conservative to avoid executing any injected scripts which
+  // can trigger Trusted Types CSP restrictions or XSS risks.
+  const sanitizeHtml = (html = "") => {
+    if (!html) return "";
+    // remove script tags
+    let cleaned = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
+    // remove inline event handlers like onclick=, onerror= etc.
+    cleaned = cleaned.replace(/\son[a-z]+\s*=\s*(\"[^\"]*\"|'[^']*'|[^\s>]+)/gi, "");
+    // remove javascript: URLs in href/src attributes
+    cleaned = cleaned.replace(/(href|src)\s*=\s*(\"|')\s*javascript:[^\"']*(\"|')/gi, "");
+    return cleaned;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pt-20 pb-12 px-4">
       <div className="max-w-4xl mx-auto">
@@ -153,7 +167,7 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
                   </h3>
                   <div
                     className="text-gray-600 leading-relaxed prose"
-                    dangerouslySetInnerHTML={{ __html: note.body }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(note.body) }}
                   />
                 </div>
               ))}
