@@ -24,7 +24,7 @@ const Navbar = () => {
     { name: "Web", path: "/web" },
     { name: "Product Services", path: "/product-services" },
     // ✅ Corrected Skill division path
-    { name: "Skill", path: "/divisions/skill" },
+    { name: "Skill", path: "/divisions/skill/dashboard" },
   ];
 
   const mainMenu = [
@@ -280,7 +280,7 @@ const Navbar = () => {
 
             {/* ✅ Add Skill CTA on mobile */}
             <Link
-              to="/divisions/skill"
+              to="/divisions/skill/dashboard "
               onClick={() => setMobileMenuOpen(false)}
               className="block mt-3 text-center py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-semibold"
             >
