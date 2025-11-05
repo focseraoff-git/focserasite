@@ -196,7 +196,7 @@ const Navbar = () => {
 
         {/* ✅ Skill Portal CTA */}
         <Link
-          to="/divisions/skill"
+          to="/divisions/skill/dashboard"
           className="ml-3 px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-semibold shadow-md hover:scale-105 transition-transform duration-300"
         >
           Skill Portal
@@ -280,7 +280,7 @@ const Navbar = () => {
 
             {/* ✅ Add Skill CTA on mobile */}
             <Link
-              to="/divisions/skill/dashboard "
+              to="/divisions/skill/dashboard"
               onClick={() => setMobileMenuOpen(false)}
               className="block mt-3 text-center py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-semibold"
             >
