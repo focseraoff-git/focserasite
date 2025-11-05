@@ -12,16 +12,21 @@
   },
   "dependencies": {
     "@eslint/plugin-kit": "^0.4.0",
+    "@monaco-editor/react": "^4.7.0",
     "@supabase/supabase-js": "^2.75.1",
+    "canvas-confetti": "^1.9.4",
     "esbuild": "^0.25.11",
     "framer-motion": "^12.23.24",
+    "html2canvas": "^1.4.1",
     "lucide-react": "^0.344.0",
+    "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.9.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^5.0.4",

@@ -1,0 +1,165 @@
+// @ts-nocheck
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Loader2, Mail, LogIn, UserPlus, Chrome } from "lucide-react";
+import { lmsSupabaseClient } from "../../../../lib/ssupabase";
+
+export default function AuthPage() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState("login"); // "login" | "signup"
+
+  // 🔹 Handle Supabase Email Auth
+  const handleEmailAuth = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      let result;
+      if (mode === "login") {
+        result = await lmsSupabaseClient.auth.signInWithPassword({
+          email,
+          password,
+        });
+      } else {
+        result = await lmsSupabaseClient.auth.signUp({
+          email,
+          password,
+        });
+      }
+
+      if (result.error) throw result.error;
+
+      alert(
+        mode === "login"
+          ? "✅ Logged in successfully!"
+          : "✅ Signup successful! Please verify your email."
+      );
+
+      navigate("/divisions/skill/dashboard");
+    } catch (err) {
+      alert("❌ " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔹 Google OAuth Login
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/divisions/skill/dashboard`,
+        },
+      });
+      if (error) throw error;
+    } catch (err) {
+      alert("❌ Google login failed: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8 border border-gray-100">
+        {/* Header */}
+        <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-2">
+          {mode === "login" ? "Welcome Back 👋" : "Create an Account"}
+        </h1>
+        <p className="text-center text-gray-500 mb-6">
+          {mode === "login"
+            ? "Log in to continue your learning journey."
+            : "Sign up and start your first course for free!"}
+        </p>
+
+        {/* Google Login */}
+        <button
+          onClick={handleGoogleLogin}
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-3 bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 rounded-lg transition-all mb-5"
+        >
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Chrome className="w-5 h-5" />
+          )}
+          Continue with Google
+        </button>
+
+        <div className="relative mb-5">
+          <hr className="border-gray-300" />
+          <span className="absolute top-[-10px] left-1/2 transform -translate-x-1/2 bg-white px-2 text-gray-400 text-sm">
+            or
+          </span>
+        </div>
+
+        {/* Email/Password Form */}
+        <form onSubmit={handleEmailAuth} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full flex items-center justify-center gap-2 font-semibold text-white py-2.5 rounded-lg transition-all ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
+          >
+            {loading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : mode === "login" ? (
+              <LogIn className="w-5 h-5" />
+            ) : (
+              <UserPlus className="w-5 h-5" />
+            )}
+            {mode === "login" ? "Login" : "Sign Up"}
+          </button>
+        </form>
+
+        {/* Toggle Mode */}
+        <p className="text-center text-gray-500 text-sm mt-4">
+          {mode === "login" ? "New here?" : "Already have an account?"}{" "}
+          <button
+            type="button"
+            className="text-blue-600 hover:underline font-semibold"
+            onClick={() => setMode(mode === "login" ? "signup" : "login")}
+          >
+            {mode === "login" ? "Create one" : "Login"}
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+}
