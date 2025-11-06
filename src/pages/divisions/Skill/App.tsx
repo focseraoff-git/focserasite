@@ -7,12 +7,12 @@ import { lmsSupabaseClient } from "../../../lib/ssupabase";
 import HomePage from "./Pages/HomePage";
 import DashboardPage from "./Pages/DashboardPage";
 import SyllabusPage from "./Pages/SyllabusPage";
-import NotesPage from "./Pages/NotesPage";
-import AssignmentPage from "./Pages/AssignmentPage";
+import ModulePage from "./Pages/ModulePage"; // ✅ New page
 import CodeEditorPage from "./Pages/CodeEditorPage";
 import AuthPage from "./Pages/AuthPage";
 import CertificatePage from "./Pages/CertificatePage";
 import AuthCallback from "./Pages/AuthCallback";
+import AssignmentPage from "./Pages/AssignmentPage"; // (still optional if needed)
 
 // ✅ Layout components
 import Header from "./components/Header";
@@ -53,27 +53,58 @@ export default function SkillApp() {
         onLogout={async () => {
           await lmsSupabaseClient.auth.signOut();
           setUser(null);
-          navigate("/divisions/skill/dashboard");
+          navigate("/divisions/skill/dashboard"); // ✅ stays within the app
         }}
       />
 
       {/* Skill Routes */}
       <main className="pt-20">
         <Routes>
-          {/* Public routes only (no protection now) */}
-          <Route path="/" element={<HomePage user={user} supabase={lmsSupabaseClient} />} />
+          {/* Public */}
+          <Route
+            path="/"
+            element={<HomePage user={user} supabase={lmsSupabaseClient} />}
+          />
           <Route path="/auth" element={<AuthPage supabase={lmsSupabaseClient} />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
 
-          <Route path="/dashboard" element={<DashboardPage user={user} supabase={lmsSupabaseClient} />} />
-          <Route path="/syllabus/:programId" element={<SyllabusPage user={user} supabase={lmsSupabaseClient} />} />
-          <Route path="/notes/:moduleId" element={<NotesPage user={user} supabase={lmsSupabaseClient} />} />
-          <Route path="/assignment/:contentId" element={<AssignmentPage user={user} supabase={lmsSupabaseClient} />} />
-          <Route path="/code/:contentId" element={<CodeEditorPage user={user} supabase={lmsSupabaseClient} />} />
-          <Route path="/certificate/:programName" element={<CertificatePage user={user} />} />
+          {/* Core Pages */}
+          <Route
+            path="/dashboard"
+            element={<DashboardPage user={user} supabase={lmsSupabaseClient} />}
+          />
+
+          {/* Learning Flow */}
+          <Route
+            path="/syllabus/:programId"
+            element={<SyllabusPage user={user} supabase={lmsSupabaseClient} />}
+          />
+          <Route
+            path="/module/:moduleId"
+            element={<ModulePage user={user} supabase={lmsSupabaseClient} />}
+          />
+          <Route
+            path="/code/:challengeId"
+            element={<CodeEditorPage user={user} supabase={lmsSupabaseClient} />}
+          />
+
+          {/* Optional: Direct assignment route */}
+          <Route
+            path="/assignment/:contentId"
+            element={<AssignmentPage user={user} supabase={lmsSupabaseClient} />}
+          />
+
+          {/* Certificates */}
+          <Route
+            path="/certificate/:programName"
+            element={<CertificatePage user={user} />}
+          />
 
           {/* Catch-all redirect */}
-          <Route path="*" element={<HomePage user={user} supabase={lmsSupabaseClient} />} />
+          <Route
+            path="*"
+            element={<HomePage user={user} supabase={lmsSupabaseClient} />}
+          />
         </Routes>
       </main>
 

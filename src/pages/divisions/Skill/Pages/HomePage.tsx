@@ -1,27 +1,27 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, BookOpen, ClipboardCheck, Terminal } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import ProgramCard from "../components/ProgramCard";
 import FeatureCard from "../components/FeatureCard";
-import { BookOpen, ClipboardCheck, Terminal } from "lucide-react";
 
-export default function HomePage({ navigate, supabase }) {
+export default function HomePage({ supabase }) {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPrograms = async () => {
-      // ✅ Fetch ALL programs, not just one
-      const { data, error } = await supabase.from("programs").select("*");
-
-      if (error) {
-        console.error("Error fetching programs:", error.message);
-      } else {
+      try {
+        const { data, error } = await supabase.from("programs").select("*");
+        if (error) throw error;
         setPrograms(data || []);
+      } catch (error) {
+        console.error("❌ Error fetching programs:", error.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
-
     fetchPrograms();
   }, [supabase]);
 
@@ -35,17 +35,20 @@ export default function HomePage({ navigate, supabase }) {
         </p>
         <a
           href="#programs"
-          className="inline-flex items-center px-8 py-4 bg-white text-blue-700 rounded-full font-bold hover:bg-gray-100"
+          className="inline-flex items-center px-8 py-4 bg-white text-blue-700 rounded-full font-bold hover:bg-gray-100 transition-all"
         >
           Start Learning
           <ArrowRight className="ml-2" />
         </a>
       </section>
 
-      {/* All Programs */}
+      {/* Programs Section */}
       <section id="programs" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Our Free Programs</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">
+            Our Free Programs
+          </h2>
+
           {loading ? (
             <div className="flex justify-center">
               <Loader2 className="animate-spin w-10 h-10 text-blue-500" />
@@ -54,7 +57,23 @@ export default function HomePage({ navigate, supabase }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {programs.length > 0 ? (
                 programs.map((program) => (
-                  <ProgramCard key={program.id} program={program} navigate={navigate} />
+                  <div
+                    key={program.id}
+                    onClick={() => navigate(`/divisions/skill/syllabus/${program.id}`)}
+                    className="cursor-pointer bg-white border rounded-2xl shadow-sm hover:shadow-md transition-all p-6 text-left"
+                  >
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                      {program.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4">
+                      {program.description || "Learn and practice with structured modules."}
+                    </p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-blue-600 font-medium">
+                        View Program →
+                      </span>
+                    </div>
+                  </div>
                 ))
               ) : (
                 <p className="text-center text-gray-500 col-span-full">

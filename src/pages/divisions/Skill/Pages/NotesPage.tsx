@@ -1,10 +1,11 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Code2, Loader2, ArrowLeft, BookOpen } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Code2, Loader2, ArrowLeft } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
+  const { topicName } = useParams();
   const navigate = useNavigate();
 
   const [challenges, setChallenges] = useState([]);
@@ -17,7 +18,8 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
       setErrorMsg("");
 
       try {
-        console.log("🔹 Fetching all challenges...");
+        console.log(`🔹 Fetching challenges for topic: ${topicName}`);
+
         const { data, error } = await supabase
           .from("code_challenges")
           .select(`
@@ -30,6 +32,7 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
             topics (name),
             difficulties (level)
           `)
+          .eq("topics.name", topicName) // ✅ Filter by topic name
           .order("created_at", { ascending: true });
 
         if (error) throw error;
@@ -44,9 +47,9 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
     };
 
     fetchChallenges();
-  }, [supabase]);
+  }, [supabase, topicName]);
 
-  // 🔄 Loading spinner
+  // 🔄 Loading Spinner
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
@@ -54,7 +57,7 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
       </div>
     );
 
-  // 🚫 Error state
+  // 🚫 Error State
   if (errorMsg)
     return (
       <div className="min-h-[60vh] flex items-center justify-center text-gray-500 text-center px-4">
@@ -90,18 +93,18 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
         </button>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Coding Challenges
+          <h1 className="text-3xl font-bold text-gray-800 mb-2 capitalize">
+            {topicName} Challenges
           </h1>
           <p className="text-gray-500">
-            Explore challenges by topic and difficulty
+            Explore {topicName} coding challenges by difficulty
           </p>
         </div>
 
         {/* 💻 Challenges List */}
         {challenges.length === 0 ? (
           <p className="text-gray-500 text-sm pl-1">
-            No coding challenges available yet.
+            No {topicName} challenges available yet.
           </p>
         ) : (
           <div className="space-y-6">

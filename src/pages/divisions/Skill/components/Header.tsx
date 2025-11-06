@@ -10,7 +10,7 @@ export default function Header({ user, onLogout }) {
     <header className="fixed w-full bg-blue-600 text-white px-8 py-4 flex justify-between items-center shadow-md z-50">
       {/* Left: Brand */}
       <div
-        onClick={() => handleNav("")}
+        onClick={() => handleNav("dashboard")}
         className="text-2xl font-extrabold cursor-pointer tracking-tight hover:opacity-90 transition"
       >
         Focsera Skill
