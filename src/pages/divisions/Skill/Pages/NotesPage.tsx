@@ -4,7 +4,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { BookOpen, FileText, Code2, Loader2, ArrowLeft } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
-
 export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
   const { moduleId } = useParams();
   const navigate = useNavigate();
@@ -28,7 +27,7 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
       try {
         console.log("🔹 Fetching module + content for:", moduleId);
 
-        // ✅ 1️⃣ Fetch module info (simple flat query)
+        // ✅ 1️⃣ Fetch module info
         const { data: moduleData, error: moduleError } = await supabase
           .from("modules")
           .select("*")
@@ -41,7 +40,7 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
           return;
         }
 
-        // ✅ 2️⃣ Fetch program title separately
+        // ✅ 2️⃣ Fetch program title
         let programTitle = null;
         if (moduleData?.program_id) {
           const { data: programData, error: programError } = await supabase
@@ -55,10 +54,24 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
 
         setModule({ ...moduleData, program_title: programTitle });
 
-        // ✅ 3️⃣ Fetch content for this module
+        // ✅ 3️⃣ Fetch related content (include code_challenges)
         const { data: contentData, error: contentError } = await supabase
           .from("content")
-          .select("*")
+          .select(`
+            id,
+            module_id,
+            type,
+            title,
+            body,
+            created_at,
+            code_challenges:code_challenge_id (
+              id,
+              title,
+              description,
+              default_code,
+              language
+            )
+          `)
           .eq("module_id", moduleId)
           .order("created_at", { ascending: true });
 
@@ -88,7 +101,7 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
       </div>
     );
 
-  // 🚫 Error or missing module
+  // 🚫 Error handler
   if (errorMsg || !module)
     return (
       <div className="min-h-[60vh] flex items-center justify-center text-gray-500 text-center px-4">
@@ -106,22 +119,26 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
       </div>
     );
 
+  // ✅ Categorize contents
   const notes = contents.filter((c) => c.type === "note");
   const assignments = contents.filter((c) => c.type === "assignment");
-  const challenges = contents.filter((c) => c.type === "challenge");
 
-  // Minimal HTML sanitizer to remove <script> tags and inline event handlers.
-  // This is purposely conservative to avoid executing any injected scripts which
-  // can trigger Trusted Types CSP restrictions or XSS risks.
+  // ✅ Build challenge list safely
+  const challenges = contents
+    .filter((c) => c.type === "challenge" && c.code_challenges)
+    .map((c) => ({
+      id: c.code_challenges.id,
+      title: c.code_challenges.title,
+      body: c.code_challenges.description || c.body || "",
+    }));
+
+  // ✅ Sanitizer
   const sanitizeHtml = (html = "") => {
     if (!html) return "";
-    // remove script tags
-    let cleaned = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
-    // remove inline event handlers like onclick=, onerror= etc.
-    cleaned = cleaned.replace(/\son[a-z]+\s*=\s*(\"[^\"]*\"|'[^']*'|[^\s>]+)/gi, "");
-    // remove javascript: URLs in href/src attributes
-    cleaned = cleaned.replace(/(href|src)\s*=\s*(\"|')\s*javascript:[^\"']*(\"|')/gi, "");
-    return cleaned;
+    return html
+      .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+      .replace(/\son[a-z]+\s*=\s*(\"[^\"]*\"|'[^']*'|[^\s>]+)/gi, "")
+      .replace(/(href|src)\s*=\s*(\"|')\s*javascript:[^\"']*(\"|')/gi, "");
   };
 
   return (
@@ -148,105 +165,102 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
           </p>
         </div>
 
-        {/* 📝 Notes Section */}
-        <section className="mb-8">
-          <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800 mb-4">
-            <BookOpen size={20} className="text-blue-600" /> Notes
-          </h2>
-          {notes.length === 0 ? (
-            <p className="text-gray-500 text-sm pl-1">No notes available.</p>
-          ) : (
-            <div className="space-y-4">
-              {notes.map((note) => (
-                <div
-                  key={note.id}
-                  className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all"
-                >
-                  <h3 className="text-lg font-semibold mb-2 text-gray-800">
-                    {note.title}
-                  </h3>
-                  <div
-                    className="text-gray-600 leading-relaxed prose"
-                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(note.body) }}
-                  />
-                </div>
-              ))}
-            </div>
+        {/* 📝 Notes */}
+        <Section
+          icon={<BookOpen size={20} className="text-blue-600" />}
+          title="Notes"
+          items={notes}
+          emptyMessage="No notes available."
+          renderItem={(note) => (
+            <>
+              <h3 className="text-lg font-semibold mb-2 text-gray-800">
+                {note.title}
+              </h3>
+              <div
+                className="text-gray-600 leading-relaxed prose"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(note.body) }}
+              />
+            </>
           )}
-        </section>
+        />
 
-        {/* 📂 Assignments Section */}
-        <section className="mb-8">
-          <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800 mb-4">
-            <FileText size={20} className="text-green-600" /> Assignments
-          </h2>
-          {assignments.length === 0 ? (
-            <p className="text-gray-500 text-sm pl-1">No assignments yet.</p>
-          ) : (
-            <div className="space-y-4">
-              {assignments.map((a) => (
-                <div
-                  key={a.id}
-                  className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all"
-                >
-                  <h3 className="text-lg font-semibold mb-2 text-gray-800">
-                    {a.title}
-                  </h3>
-                  <div
-                    className="text-gray-600 leading-relaxed mb-3 prose"
-                    dangerouslySetInnerHTML={{ __html: a.body }}
-                  />
-                  <button
-                    onClick={() =>
-                      navigate(`/divisions/skill/assignment/${a.id}`)
-                    }
-                    className="text-blue-600 font-semibold hover:text-blue-800 transition-all text-sm"
-                  >
-                    Open Assignment →
-                  </button>
-                </div>
-              ))}
-            </div>
+        {/* 📂 Assignments */}
+        <Section
+          icon={<FileText size={20} className="text-green-600" />}
+          title="Assignments"
+          items={assignments}
+          emptyMessage="No assignments yet."
+          renderItem={(a) => (
+            <>
+              <h3 className="text-lg font-semibold mb-2 text-gray-800">
+                {a.title}
+              </h3>
+              <div
+                className="text-gray-600 leading-relaxed mb-3 prose"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(a.body) }}
+              />
+              <button
+                onClick={() =>
+                  navigate(`/divisions/skill/assignment/${a.id}`)
+                }
+                className="text-blue-600 font-semibold hover:text-blue-800 transition-all text-sm"
+              >
+                Open Assignment →
+              </button>
+            </>
           )}
-        </section>
+        />
 
-        {/* 💻 Challenges Section */}
-        <section>
-          <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800 mb-4">
-            <Code2 size={20} className="text-purple-600" /> Coding Challenges
-          </h2>
-          {challenges.length === 0 ? (
-            <p className="text-gray-500 text-sm pl-1">
-              No challenges for this module.
-            </p>
-          ) : (
-            <div className="space-y-4">
-              {challenges.map((c) => (
-                <div
-                  key={c.id}
-                  className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all"
-                >
-                  <h3 className="text-lg font-semibold mb-2 text-gray-800">
-                    {c.title}
-                  </h3>
-                  <div
-                    className="text-gray-600 leading-relaxed mb-3 prose"
-                    dangerouslySetInnerHTML={{ __html: c.body }}
-                  />
-                  <button
-                    onClick={() =>
-                      navigate(`/divisions/skill/code/${c.id}`)
-                    }
-                    className="text-purple-600 font-semibold hover:text-purple-800 transition-all text-sm"
-                  >
-                    Solve Challenge →
-                  </button>
-                </div>
-              ))}
-            </div>
+        {/* 💻 Challenges */}
+        <Section
+          icon={<Code2 size={20} className="text-purple-600" />}
+          title="Coding Challenges"
+          items={challenges}
+          emptyMessage="No challenges for this module."
+          renderItem={(c) => (
+            <>
+              <h3 className="text-lg font-semibold mb-2 text-gray-800">
+                {c.title}
+              </h3>
+              <div
+                className="text-gray-600 leading-relaxed mb-3 prose"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(c.body) }}
+              />
+              <button
+                onClick={() => navigate(`/divisions/skill/code/${c.id}`)}
+                className="text-purple-600 font-semibold hover:text-purple-800 transition-all text-sm"
+              >
+                Solve Challenge →
+              </button>
+            </>
           )}
-        </section>
+        />
       </div>
     </div>
+  );
+}
+
+/* 🔧 Reusable Section Component */
+function Section({ icon, title, items, emptyMessage, renderItem }) {
+  return (
+    <section className="mb-8">
+      <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800 mb-4">
+        {icon} {title}
+      </h2>
+      {items.length === 0 ? (
+        <p className="text-gray-500 text-sm pl-1">{emptyMessage}</p>
+      ) : (
+        <div className="space-y-4">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all"
+            >
+              {renderItem(item)}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
