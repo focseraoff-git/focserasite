@@ -1,97 +1,50 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { BookOpen, FileText, Code2, Loader2, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Code2, Loader2, ArrowLeft, BookOpen } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
-  const { moduleId } = useParams();
   const navigate = useNavigate();
 
-  const [module, setModule] = useState(null);
-  const [contents, setContents] = useState([]);
+  const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!moduleId) {
-        setErrorMsg("Invalid module ID.");
-        setLoading(false);
-        return;
-      }
-
+    const fetchChallenges = async () => {
       setLoading(true);
       setErrorMsg("");
 
       try {
-        console.log("🔹 Fetching module + content for:", moduleId);
-
-        // ✅ 1️⃣ Fetch module info
-        const { data: moduleData, error: moduleError } = await supabase
-          .from("modules")
-          .select("*")
-          .eq("id", moduleId)
-          .single();
-
-        if (moduleError) {
-          console.error("❌ Module fetch error:", moduleError.message);
-          setErrorMsg("Failed to load module details.");
-          return;
-        }
-
-        // ✅ 2️⃣ Fetch program title
-        let programTitle = null;
-        if (moduleData?.program_id) {
-          const { data: programData, error: programError } = await supabase
-            .from("programs")
-            .select("title")
-            .eq("id", moduleData.program_id)
-            .single();
-
-          if (!programError) programTitle = programData?.title;
-        }
-
-        setModule({ ...moduleData, program_title: programTitle });
-
-        // ✅ 3️⃣ Fetch related content (include code_challenges)
-        const { data: contentData, error: contentError } = await supabase
-          .from("content")
+        console.log("🔹 Fetching all challenges...");
+        const { data, error } = await supabase
+          .from("code_challenges")
           .select(`
             id,
-            module_id,
-            type,
             title,
-            body,
+            description,
+            language,
+            default_code,
             created_at,
-            code_challenges:code_challenge_id (
-              id,
-              title,
-              description,
-              default_code,
-              language
-            )
+            topics (name),
+            difficulties (level)
           `)
-          .eq("module_id", moduleId)
           .order("created_at", { ascending: true });
 
-        if (contentError) {
-          console.error("❌ Content fetch error:", contentError.message);
-          setErrorMsg("Failed to load module contents.");
-          return;
-        }
+        if (error) throw error;
 
-        setContents(contentData || []);
+        setChallenges(data || []);
       } catch (err) {
-        console.error("❌ Unexpected error:", err.message);
-        setErrorMsg("Something went wrong while loading this module.");
+        console.error("❌ Error fetching challenges:", err.message);
+        setErrorMsg("Failed to load coding challenges.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [moduleId, supabase]);
+    fetchChallenges();
+  }, [supabase]);
 
   // 🔄 Loading spinner
   if (loading)
@@ -101,166 +54,98 @@ export default function NotesPage({ user, supabase = lmsSupabaseClient }) {
       </div>
     );
 
-  // 🚫 Error handler
-  if (errorMsg || !module)
+  // 🚫 Error state
+  if (errorMsg)
     return (
       <div className="min-h-[60vh] flex items-center justify-center text-gray-500 text-center px-4">
         <div>
-          <p className="text-lg font-semibold mb-2">
-            {errorMsg || "Module not found."}
-          </p>
+          <p className="text-lg font-semibold mb-2">{errorMsg}</p>
           <button
             onClick={() => navigate(-1)}
             className="text-blue-600 hover:text-blue-800 font-semibold text-sm mt-3"
           >
-            ← Back to Syllabus
+            ← Back
           </button>
         </div>
       </div>
     );
 
-  // ✅ Categorize contents
-  const notes = contents.filter((c) => c.type === "note");
-  const assignments = contents.filter((c) => c.type === "assignment");
-
-  // ✅ Build challenge list safely
-  const challenges = contents
-    .filter((c) => c.type === "challenge" && c.code_challenges)
-    .map((c) => ({
-      id: c.code_challenges.id,
-      title: c.code_challenges.title,
-      body: c.code_challenges.description || c.body || "",
-    }));
-
-  // ✅ Sanitizer
-  const sanitizeHtml = (html = "") => {
-    if (!html) return "";
-    return html
+  // ✅ Safe HTML
+  const sanitizeHtml = (html = "") =>
+    html
       .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
       .replace(/\son[a-z]+\s*=\s*(\"[^\"]*\"|'[^']*'|[^\s>]+)/gi, "")
       .replace(/(href|src)\s*=\s*(\"|')\s*javascript:[^\"']*(\"|')/gi, "");
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20 pb-12 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* 🔙 Back button */}
+        {/* Header */}
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold mb-6"
         >
           <ArrowLeft size={18} />
-          Back to Syllabus
+          Back
         </button>
 
-        {/* 📘 Module Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            {module.title}
+            Coding Challenges
           </h1>
           <p className="text-gray-500">
-            {module.program_title
-              ? `Part of ${module.program_title}`
-              : "Learning Module"}
+            Explore challenges by topic and difficulty
           </p>
         </div>
 
-        {/* 📝 Notes */}
-        <Section
-          icon={<BookOpen size={20} className="text-blue-600" />}
-          title="Notes"
-          items={notes}
-          emptyMessage="No notes available."
-          renderItem={(note) => (
-            <>
-              <h3 className="text-lg font-semibold mb-2 text-gray-800">
-                {note.title}
-              </h3>
+        {/* 💻 Challenges List */}
+        {challenges.length === 0 ? (
+          <p className="text-gray-500 text-sm pl-1">
+            No coding challenges available yet.
+          </p>
+        ) : (
+          <div className="space-y-6">
+            {challenges.map((c) => (
               <div
-                className="text-gray-600 leading-relaxed prose"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(note.body) }}
-              />
-            </>
-          )}
-        />
-
-        {/* 📂 Assignments */}
-        <Section
-          icon={<FileText size={20} className="text-green-600" />}
-          title="Assignments"
-          items={assignments}
-          emptyMessage="No assignments yet."
-          renderItem={(a) => (
-            <>
-              <h3 className="text-lg font-semibold mb-2 text-gray-800">
-                {a.title}
-              </h3>
-              <div
-                className="text-gray-600 leading-relaxed mb-3 prose"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(a.body) }}
-              />
-              <button
-                onClick={() =>
-                  navigate(`/divisions/skill/assignment/${a.id}`)
-                }
-                className="text-blue-600 font-semibold hover:text-blue-800 transition-all text-sm"
+                key={c.id}
+                className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all"
               >
-                Open Assignment →
-              </button>
-            </>
-          )}
-        />
-
-        {/* 💻 Challenges */}
-        <Section
-          icon={<Code2 size={20} className="text-purple-600" />}
-          title="Coding Challenges"
-          items={challenges}
-          emptyMessage="No challenges for this module."
-          renderItem={(c) => (
-            <>
-              <h3 className="text-lg font-semibold mb-2 text-gray-800">
-                {c.title}
-              </h3>
-              <div
-                className="text-gray-600 leading-relaxed mb-3 prose"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(c.body) }}
-              />
-              <button
-                onClick={() => navigate(`/divisions/skill/code/${c.id}`)}
-                className="text-purple-600 font-semibold hover:text-purple-800 transition-all text-sm"
-              >
-                Solve Challenge →
-              </button>
-            </>
-          )}
-        />
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {c.title}
+                  </h3>
+                  <span
+                    className={`text-sm px-3 py-1 rounded-full ${
+                      c.difficulties?.level === "Hard"
+                        ? "bg-red-100 text-red-700"
+                        : c.difficulties?.level === "Medium"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-green-100 text-green-700"
+                    }`}
+                  >
+                    {c.difficulties?.level || "Easy"}
+                  </span>
+                </div>
+                <p className="text-gray-500 text-sm mt-1">
+                  Topic: {c.topics?.name || "General"}
+                </p>
+                <div
+                  className="text-gray-600 leading-relaxed mt-3 prose"
+                  dangerouslySetInnerHTML={{
+                    __html: sanitizeHtml(c.description),
+                  }}
+                />
+                <button
+                  onClick={() => navigate(`/divisions/skill/code/${c.id}`)}
+                  className="mt-4 text-purple-600 font-semibold hover:text-purple-800 transition-all text-sm"
+                >
+                  Solve Challenge →
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
-  );
-}
-
-/* 🔧 Reusable Section Component */
-function Section({ icon, title, items, emptyMessage, renderItem }) {
-  return (
-    <section className="mb-8">
-      <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800 mb-4">
-        {icon} {title}
-      </h2>
-      {items.length === 0 ? (
-        <p className="text-gray-500 text-sm pl-1">{emptyMessage}</p>
-      ) : (
-        <div className="space-y-4">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all"
-            >
-              {renderItem(item)}
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
   );
 }
