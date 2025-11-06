@@ -2,17 +2,18 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { lmsSupabaseClient } from "../../../lib/ssupabase";
+import ScrollToTop from "./components/ScrollToTop";
 
 // ✅ Pages
 import HomePage from "./Pages/HomePage";
 import DashboardPage from "./Pages/DashboardPage";
 import SyllabusPage from "./Pages/SyllabusPage";
-import ModulePage from "./Pages/ModulePage"; // ✅ New page
+import ModulePage from "./Pages/ModulePage";
 import CodeEditorPage from "./Pages/CodeEditorPage";
 import AuthPage from "./Pages/AuthPage";
 import CertificatePage from "./Pages/CertificatePage";
 import AuthCallback from "./Pages/AuthCallback";
-import AssignmentPage from "./Pages/AssignmentPage"; // (still optional if needed)
+import AssignmentPage from "./Pages/AssignmentPage";
 
 // ✅ Layout components
 import Header from "./components/Header";
@@ -47,13 +48,16 @@ export default function SkillApp() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-inter">
+      {/* ✅ ScrollToTop ensures you always start at top on route change */}
+      <ScrollToTop />
+
       {/* Shared Header */}
       <Header
         user={user}
         onLogout={async () => {
           await lmsSupabaseClient.auth.signOut();
           setUser(null);
-          navigate("/divisions/skill/dashboard"); // ✅ stays within the app
+          navigate("/divisions/skill/dashboard");
         }}
       />
 
@@ -65,7 +69,10 @@ export default function SkillApp() {
             path="/"
             element={<HomePage user={user} supabase={lmsSupabaseClient} />}
           />
-          <Route path="/auth" element={<AuthPage supabase={lmsSupabaseClient} />} />
+          <Route
+            path="/auth"
+            element={<AuthPage supabase={lmsSupabaseClient} />}
+          />
           <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* Core Pages */}
@@ -79,6 +86,7 @@ export default function SkillApp() {
             path="/syllabus/:programId"
             element={<SyllabusPage user={user} supabase={lmsSupabaseClient} />}
           />
+
           <Route
             path="/module/:moduleId"
             element={<ModulePage user={user} supabase={lmsSupabaseClient} />}

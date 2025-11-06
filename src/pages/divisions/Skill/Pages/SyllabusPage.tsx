@@ -9,7 +9,6 @@ import {
   Layers,
   ArrowRight,
   Loader2,
-  Star,
   BarChart3,
 } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
@@ -35,7 +34,9 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
 
         setPrograms(data || []);
         if (programId) {
-          const selected = data.find((p) => p.id === programId || p.slug === programId);
+          const selected = data.find(
+            (p) => p.id === programId || p.slug === programId
+          );
           setSelectedProgram(selected);
           if (selected) fetchModules(selected.id);
         }
@@ -75,7 +76,6 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
       </div>
     );
 
-  // Difficulty & progress mock data for visual richness
   const difficulties = ["Beginner", "Intermediate", "Advanced"];
   const getDifficultyColor = (level) => {
     switch (level) {
@@ -103,7 +103,7 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
           Explore Skill Programs
         </motion.h1>
 
-        {/* COURSE GRID */}
+        {/* PROGRAM GRID */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -140,13 +140,15 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
                   {program.title}
                 </h3>
                 <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                  {program.description || "Structured learning through projects and challenges."}
+                  {program.description ||
+                    "Structured learning through projects and challenges."}
                 </p>
 
                 {/* INFO */}
                 <div className="flex items-center text-gray-500 text-sm mb-4">
                   <Clock size={15} className="mr-1" /> 30 Days
-                  <Layers size={15} className="ml-4 mr-1" /> {program.modules_count || 30} Modules
+                  <Layers size={15} className="ml-4 mr-1" />{" "}
+                  {program.modules_count || 30} Modules
                 </div>
 
                 {/* PROGRESS BAR */}
@@ -220,9 +222,10 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
                       </p>
                       <p className="text-gray-500 text-sm">{mod.description}</p>
                     </div>
+                    {/* ✅ FIXED NAVIGATION */}
                     <button
-                      onClick={() => navigate(`/divisions/skill/notes/${mod.id}`)}
-                      className="text-blue-600 font-semibold hover:text-blue-800 text-sm"
+                      onClick={() => navigate(`../module/${mod.id}`)}
+                      className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
                     >
                       Open →
                     </button>
