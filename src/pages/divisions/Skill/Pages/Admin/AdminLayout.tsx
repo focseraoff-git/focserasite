@@ -1,19 +1,17 @@
 // @ts-nocheck
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import {
-  LayoutDashboard,
-  PlusSquare,
-  FolderPlus,
-  LogOut,
-  Menu,
-  X,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { LayoutDashboard, PlusSquare, FolderPlus, LogOut, Menu, X } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../../lib/ssupabase";
 
 export default function AdminLayout() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const role = localStorage.getItem("user_role");
+    if (role !== "admin") navigate("/divisions/skill/dashboard");
+  }, []);
 
   const handleLogout = async () => {
     await lmsSupabaseClient.auth.signOut();
@@ -42,10 +40,7 @@ export default function AdminLayout() {
           >
             SkillPortal Admin
           </h1>
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="md:hidden text-gray-600 hover:text-gray-800"
-          >
+          <button onClick={() => setMenuOpen(false)} className="md:hidden text-gray-600 hover:text-gray-800">
             <X size={22} />
           </button>
         </div>
@@ -58,9 +53,7 @@ export default function AdminLayout() {
               onClick={() => setMenuOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                  isActive
-                    ? "bg-blue-100 text-blue-700"
-                    : "hover:bg-gray-100 text-gray-700"
+                  isActive ? "bg-blue-100 text-blue-700" : "hover:bg-gray-100 text-gray-700"
                 }`
               }
             >
@@ -80,20 +73,14 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* Content */}
       <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top Bar */}
         <header className="bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setMenuOpen(true)}
-              className="md:hidden text-gray-700"
-            >
+            <button onClick={() => setMenuOpen(true)} className="md:hidden text-gray-700">
               <Menu size={22} />
             </button>
-            <h2 className="text-lg font-semibold text-gray-800">
-              Admin Control Panel
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-800">Admin Control Panel</h2>
           </div>
           <button
             onClick={handleLogout}
@@ -103,7 +90,6 @@ export default function AdminLayout() {
           </button>
         </header>
 
-        {/* Page Content */}
         <main className="flex-1 p-6">
           <Outlet />
         </main>

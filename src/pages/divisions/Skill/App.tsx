@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { lmsSupabaseClient } from "../../../lib/ssupabase";
 import ScrollToTop from "./components/ScrollToTop";
 
-// ✅ Pages
+// ✅ User Pages
 import HomePage from "./Pages/HomePage";
 import DashboardPage from "./Pages/DashboardPage";
 import SyllabusPage from "./Pages/SyllabusPage";
@@ -20,8 +20,9 @@ import AdminLayout from "./Pages/Admin/AdminLayout";
 import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import AddProgramPage from "./Pages/Admin/AddProgramPage";
 import AddChallengePage from "./Pages/Admin/AddChallengePage";
+import AdminEditPage from "./Pages/Admin/AdminEditPage"; // ✅ Added
 
-// ✅ Layout Components
+// ✅ Shared
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import FullPageLoader from "./components/FullPageLoader";
@@ -33,7 +34,7 @@ export default function SkillApp() {
   const navigate = useNavigate();
 
   /* ===========================================================
-     🔹 Initialize Authentication and Role
+     🔹 Initialize Authentication
   =========================================================== */
   useEffect(() => {
     const initAuth = async () => {
@@ -52,7 +53,6 @@ export default function SkillApp() {
         setRole(userRole);
         localStorage.setItem("user_role", userRole);
 
-        // 🚀 Auto Redirect Admin
         if (userRole === "admin") {
           navigate("/divisions/skill/admin/dashboard", { replace: true });
         }
@@ -61,7 +61,6 @@ export default function SkillApp() {
       setAuthLoading(false);
     };
 
-    // Supabase Auth Listener
     const { data: listener } = lmsSupabaseClient.auth.onAuthStateChange(
       async (_event, session) => {
         const newUser = session?.user || null;
@@ -77,10 +76,6 @@ export default function SkillApp() {
           const userRole = profile?.role || "user";
           setRole(userRole);
           localStorage.setItem("user_role", userRole);
-
-          if (userRole === "admin") {
-            navigate("/divisions/skill/admin/dashboard", { replace: true });
-          }
         } else {
           setRole(null);
           localStorage.removeItem("user_role");
@@ -95,13 +90,9 @@ export default function SkillApp() {
   if (authLoading) return <FullPageLoader />;
 
   /* ===========================================================
-     🔒 Protected Route Guards
+     🔒 Protected Routes
   =========================================================== */
-  const PrivateRoute = ({ element }) => {
-    if (!user) return <Navigate to="/divisions/skill/auth" />;
-    return element;
-  };
-
+  const PrivateRoute = ({ element }) => (!user ? <Navigate to="/divisions/skill/auth" /> : element);
   const AdminRoute = ({ element }) => {
     if (!user) return <Navigate to="/divisions/skill/auth" />;
     if (role !== "admin") return <Navigate to="/divisions/skill/dashboard" />;
@@ -109,67 +100,47 @@ export default function SkillApp() {
   };
 
   /* ===========================================================
-     🚀 Render Application
+     🚀 Render
   =========================================================== */
   return (
     <div className="min-h-screen bg-gray-50 font-inter">
       <ScrollToTop />
 
-      {/* Hide header/footer for admin */}
       {role !== "admin" && (
         <Header
           user={user}
           onLogout={async () => {
             await lmsSupabaseClient.auth.signOut();
-            setUser(null);
-            setRole(null);
-            navigate("/divisions/skill/dashboard");
+            navigate("/divisions/skill/auth");
           }}
         />
       )}
 
       <main className={role !== "admin" ? "pt-20" : ""}>
         <Routes>
-          {/* 🌍 Public Routes */}
-          <Route path="/" element={<HomePage user={user} supabase={lmsSupabaseClient} />} />
-          <Route path="/auth" element={<AuthPage supabase={lmsSupabaseClient} />} />
+          {/* Public */}
+          <Route path="/" element={<HomePage user={user} />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
 
-          {/* 👩‍🎓 User Routes */}
-          <Route
-            path="/dashboard"
-            element={<PrivateRoute element={<DashboardPage user={user} supabase={lmsSupabaseClient} />} />}
-          />
-          <Route
-            path="/syllabus/:programId"
-            element={<PrivateRoute element={<SyllabusPage user={user} supabase={lmsSupabaseClient} />} />}
-          />
-          <Route
-            path="/module/:moduleId"
-            element={<PrivateRoute element={<ModulePage user={user} supabase={lmsSupabaseClient} />} />}
-          />
-          <Route
-            path="/code/:challengeId"
-            element={<PrivateRoute element={<CodeEditorPage user={user} supabase={lmsSupabaseClient} />} />}
-          />
-          <Route
-            path="/assignment/:contentId"
-            element={<PrivateRoute element={<AssignmentPage user={user} supabase={lmsSupabaseClient} />} />}
-          />
-          <Route
-            path="/certificate/:programName"
-            element={<PrivateRoute element={<CertificatePage user={user} />} />}
-          />
+          {/* User */}
+          <Route path="/dashboard" element={<PrivateRoute element={<DashboardPage user={user} />} />} />
+          <Route path="/syllabus/:programId" element={<PrivateRoute element={<SyllabusPage />} />} />
+          <Route path="/module/:moduleId" element={<PrivateRoute element={<ModulePage />} />} />
+          <Route path="/code/:challengeId" element={<PrivateRoute element={<CodeEditorPage />} />} />
+          <Route path="/assignment/:contentId" element={<PrivateRoute element={<AssignmentPage />} />} />
+          <Route path="/certificate/:programName" element={<PrivateRoute element={<CertificatePage />} />} />
 
-          {/* 🧩 Admin Routes */}
+          {/* Admin */}
           <Route path="/admin" element={<AdminRoute element={<AdminLayout />} />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="add-program" element={<AddProgramPage />} />
             <Route path="add-challenge" element={<AddChallengePage />} />
+            <Route path="edit/:table/:id" element={<AdminEditPage />} /> {/* ✅ Added */}
           </Route>
 
-          {/* 🚫 Fallback */}
-          <Route path="*" element={<HomePage user={user} supabase={lmsSupabaseClient} />} />
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
 
