@@ -40,7 +40,7 @@ export default function AdminLayout() {
             className="text-2xl font-bold text-blue-600 cursor-pointer"
             onClick={() => navigate("/divisions/skill/admin/dashboard")}
           >
-            SkillVerse Admin
+            SkillPortal Admin
           </h1>
           <button
             onClick={() => setMenuOpen(false)}
