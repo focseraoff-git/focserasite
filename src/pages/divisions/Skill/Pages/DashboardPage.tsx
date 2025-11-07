@@ -21,7 +21,12 @@ import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   const navigate = useNavigate();
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({
+    total_modules: 0,
+    daily_streak: 0,
+    badges: [],
+    total_score: 0,
+  });
   const [recentSubs, setRecentSubs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [programs, setPrograms] = useState([]);
@@ -31,12 +36,38 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   const [newName, setNewName] = useState("");
   const fileInputRef = useRef(null);
 
-  /* 🔹 Fetch everything */
+  /* ===========================================================
+     🔹 Auto Redirect if Admin
+  =========================================================== */
+  useEffect(() => {
+    const checkAdminRole = async () => {
+      if (!user) return;
+      try {
+        const { data } = await supabase
+          .from("users")
+          .select("role")
+          .eq("email", user.email)
+          .single();
+
+        if (data?.role === "admin") {
+          navigate("/divisions/skill/admin/dashboard");
+        }
+      } catch (err) {
+        console.warn("Error checking admin role:", err.message);
+      }
+    };
+    checkAdminRole();
+  }, [user]);
+
+  /* ===========================================================
+     🔹 Fetch all dashboard data
+  =========================================================== */
   useEffect(() => {
     const fetchAll = async () => {
       try {
         setLoading(true);
 
+        // Fetch programs
         const { data: programsData } = await supabase
           .from("programs")
           .select("*")
@@ -44,14 +75,14 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
         setPrograms(programsData || []);
 
         if (user) {
-          // Local cache (instant)
+          // Load cached profile if exists
           const cached = JSON.parse(localStorage.getItem("user_profile"));
           if (cached) {
             setProfile(cached);
             setNewName(cached.full_name || "");
           }
 
-          // Fresh profile
+          // Fetch fresh profile
           const { data: freshProfile } = await supabase
             .from("users")
             .select("full_name, avatar_url, email")
@@ -64,21 +95,38 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
             localStorage.setItem("user_profile", JSON.stringify(freshProfile));
           }
 
-          const [statsRes, subsRes] = await Promise.all([
-            supabase.from("user_stats").select("*").eq("user_id", user.id).single(),
-            supabase
+          // Safely fetch stats and submissions (won’t crash if missing tables)
+          let statsData = { total_modules: 0, daily_streak: 0, badges: [], total_score: 0 };
+          let submissionsData = [];
+
+          try {
+            const statsRes = await supabase
+              .from("user_stats")
+              .select("*")
+              .eq("user_id", user.id)
+              .single();
+            if (statsRes?.data) statsData = statsRes.data;
+          } catch {
+            console.warn("user_stats table missing — using defaults");
+          }
+
+          try {
+            const subsRes = await supabase
               .from("submissions")
-              .select("*, content(title)")
+              .select("*")
               .eq("user_id", user.id)
               .order("submitted_at", { ascending: false })
-              .limit(5),
-          ]);
+              .limit(5);
+            if (subsRes?.data) submissionsData = subsRes.data;
+          } catch {
+            console.warn("submissions table or join invalid — skipping");
+          }
 
-          if (!statsRes.error) setStats(statsRes.data);
-          if (!subsRes.error) setRecentSubs(subsRes.data || []);
+          setStats(statsData);
+          setRecentSubs(submissionsData);
         }
       } catch (err) {
-        console.error(err.message);
+        console.error("Dashboard error:", err.message);
       } finally {
         setLoading(false);
       }
@@ -86,7 +134,9 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
     fetchAll();
   }, [user]);
 
-  /* 🔹 Avatar Upload */
+  /* ===========================================================
+     🔹 Avatar Upload
+  =========================================================== */
   const handleAvatarChange = async (e) => {
     try {
       const file = e.target.files?.[0];
@@ -119,7 +169,9 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
     }
   };
 
-  /* 🔹 Name Update */
+  /* ===========================================================
+     🔹 Update Name
+  =========================================================== */
   const handleSaveProfile = async () => {
     if (!newName.trim()) return alert("Enter a valid name!");
     try {
@@ -134,11 +186,12 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
     }
   };
 
-  /* 🔹 Public view before login */
+  /* ===========================================================
+     🔹 Before Login View
+  =========================================================== */
   if (!user)
     return (
       <div className="min-h-screen bg-gray-50 text-gray-800">
-        {/* HERO SECTION */}
         <section className="relative overflow-hidden text-center py-32 bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
           <motion.div
             animate={{ y: [0, -10, 0] }}
@@ -160,8 +213,8 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
             Learn. Create. Grow.
           </h1>
           <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
-            Master coding, design, and creative skills through 30-day challenges —
-            powered by <strong>Focsera SkillVerse</strong>.
+            Master coding, design, and creative skills through 30-day challenges — powered by{" "}
+            <strong>Focsera SkillVerse</strong>.
           </p>
 
           <motion.button
@@ -173,7 +226,6 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           </motion.button>
         </section>
 
-        {/* FEATURED COURSES */}
         <section className="py-20 bg-white">
           <div className="max-w-6xl mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-10">Explore Skill Challenges</h2>
@@ -202,7 +254,9 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
       </div>
     );
 
-  /* 🔹 Logged-in dashboard */
+  /* ===========================================================
+     🔹 Logged-in User Dashboard
+  =========================================================== */
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-screen text-blue-600 text-lg font-semibold">
@@ -316,7 +370,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
                 <tbody>
                   {recentSubs.map((sub) => (
                     <tr key={sub.id} className="border-b hover:bg-gray-50 transition">
-                      <td className="p-3 font-medium">{sub.content?.title || "Untitled Task"}</td>
+                      <td className="p-3 font-medium">{sub.title || "Untitled Task"}</td>
                       <td
                         className={`p-3 font-semibold ${
                           sub.status === "passed"
@@ -328,8 +382,8 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
                       >
                         {sub.status}
                       </td>
-                      <td className="p-3">{sub.score}</td>
-                      <td className="p-3">{new Date(sub.submitted_at).toLocaleDateString()}</td>
+                      <td className="p-3">{sub.score ?? "—"}</td>
+                      <td className="p-3">{sub.submitted_at ? new Date(sub.submitted_at).toLocaleDateString() : "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -380,7 +434,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   );
 }
 
-/* Small components */
+/* Components */
 function StatCard({ icon: Icon, title, value, color }) {
   return (
     <motion.div

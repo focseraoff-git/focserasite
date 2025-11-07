@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Mail, LogIn, UserPlus, Chrome } from "lucide-react";
+import { Loader2, LogIn, UserPlus, Chrome } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function AuthPage() {
@@ -9,36 +9,39 @@ export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState("login"); // "login" | "signup"
+  const [mode, setMode] = useState("login");
+  const [fullName, setFullName] = useState("");
 
-  // 🔹 Handle Supabase Email Auth
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       let result;
       if (mode === "login") {
-        result = await lmsSupabaseClient.auth.signInWithPassword({
-          email,
-          password,
-        });
+        result = await lmsSupabaseClient.auth.signInWithPassword({ email, password });
       } else {
-        result = await lmsSupabaseClient.auth.signUp({
-          email,
-          password,
-        });
+        result = await lmsSupabaseClient.auth.signUp({ email, password });
       }
 
       if (result.error) throw result.error;
+      const userId = result.data?.user?.id || result.user?.id;
 
-      alert(
-        mode === "login"
-          ? "✅ Logged in successfully!"
-          : "✅ Signup successful! Please verify your email."
-      );
+      let { data: userData } = await lmsSupabaseClient.from("users").select("*").eq("id", userId).single();
 
-      navigate("/divisions/skill/dashboard");
+      if (!userData && mode === "signup") {
+        const { data: newUser } = await lmsSupabaseClient
+          .from("users")
+          .insert([{ id: userId, email, full_name: fullName || email.split("@")[0], role: "user" }])
+          .select()
+          .single();
+        userData = newUser;
+      }
+
+      const role = userData?.role || "user";
+      localStorage.setItem("user_role", role);
+
+      alert(`✅ Logged in as ${role === "admin" ? "Admin" : "User"}`);
+      navigate(role === "admin" ? "/divisions/skill/admin/dashboard" : "/divisions/skill/dashboard");
     } catch (err) {
       alert("❌ " + err.message);
     } finally {
@@ -46,54 +49,41 @@ export default function AuthPage() {
     }
   };
 
-  // 🔹 Google OAuth Login
- const handleGoogleLogin = async () => {
-  setLoading(true);
-  try {
-    const redirectUrl =
-      window.location.hostname === "localhost"
-        ? "http://localhost:5173/divisions/skill/auth/callback"
-        : "https://focsera.in/divisions/skill/auth/callback";
-
-    const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: redirectUrl,
-      },
-    });
-    if (error) throw error;
-  } catch (err) {
-    alert("❌ Google login failed: " + err.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      const redirectUrl =
+        window.location.hostname === "localhost"
+          ? "http://localhost:5173/divisions/skill/auth/callback"
+          : "https://focsera.in/divisions/skill/auth/callback";
+      const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: redirectUrl },
+      });
+      if (error) throw error;
+    } catch (err) {
+      alert("❌ Google login failed: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8 border border-gray-100">
-        {/* Header */}
         <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-2">
           {mode === "login" ? "Welcome Back 👋" : "Create an Account"}
         </h1>
         <p className="text-center text-gray-500 mb-6">
-          {mode === "login"
-            ? "Log in to continue your learning journey."
-            : "Sign up and start your first course for free!"}
+          {mode === "login" ? "Log in to continue learning." : "Sign up to start your journey!"}
         </p>
 
-        {/* Google Login */}
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
           className="w-full flex items-center justify-center gap-3 bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 rounded-lg transition-all mb-5"
         >
-          {loading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            <Chrome className="w-5 h-5" />
-          )}
+          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Chrome className="w-5 h-5" />}
           Continue with Google
         </button>
 
@@ -104,15 +94,26 @@ export default function AuthPage() {
           </span>
         </div>
 
-        {/* Email/Password Form */}
         <form onSubmit={handleEmailAuth} className="space-y-4">
+          {mode === "signup" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+                placeholder="John Doe"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </div>
+          )}
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               type="email"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -121,13 +122,11 @@ export default function AuthPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
               type="password"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your password"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -138,27 +137,17 @@ export default function AuthPage() {
             type="submit"
             disabled={loading}
             className={`w-full flex items-center justify-center gap-2 font-semibold text-white py-2.5 rounded-lg transition-all ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {loading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : mode === "login" ? (
-              <LogIn className="w-5 h-5" />
-            ) : (
-              <UserPlus className="w-5 h-5" />
-            )}
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : mode === "login" ? <LogIn /> : <UserPlus />}
             {mode === "login" ? "Login" : "Sign Up"}
           </button>
         </form>
 
-        {/* Toggle Mode */}
         <p className="text-center text-gray-500 text-sm mt-4">
           {mode === "login" ? "New here?" : "Already have an account?"}{" "}
           <button
-            type="button"
             className="text-blue-600 hover:underline font-semibold"
             onClick={() => setMode(mode === "login" ? "signup" : "login")}
           >

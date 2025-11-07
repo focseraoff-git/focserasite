@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { lmsSupabaseClient } from "../../../lib/ssupabase";
 import ScrollToTop from "./components/ScrollToTop";
@@ -15,28 +15,76 @@ import CertificatePage from "./Pages/CertificatePage";
 import AuthCallback from "./Pages/AuthCallback";
 import AssignmentPage from "./Pages/AssignmentPage";
 
-// ✅ Layout components
+// ✅ Admin Pages
+import AdminLayout from "./Pages/Admin/AdminLayout";
+import AdminDashboard from "./Pages/Admin/AdminDashboard";
+import AddProgramPage from "./Pages/Admin/AddProgramPage";
+import AddChallengePage from "./Pages/Admin/AddChallengePage";
+
+// ✅ Layout Components
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import FullPageLoader from "./components/FullPageLoader";
 
 export default function SkillApp() {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const navigate = useNavigate();
 
-  // 🔹 Manage Supabase Auth state
+  /* ===========================================================
+     🔹 Initialize Authentication and Role
+  =========================================================== */
   useEffect(() => {
     const initAuth = async () => {
       const { data } = await lmsSupabaseClient.auth.getSession();
-      setUser(data?.session?.user || null);
+      const sessionUser = data?.session?.user || null;
+      setUser(sessionUser);
+
+      if (sessionUser) {
+        const { data: profile } = await lmsSupabaseClient
+          .from("users")
+          .select("role")
+          .eq("email", sessionUser.email)
+          .single();
+
+        const userRole = profile?.role || "user";
+        setRole(userRole);
+        localStorage.setItem("user_role", userRole);
+
+        // 🚀 Auto Redirect Admin
+        if (userRole === "admin") {
+          navigate("/divisions/skill/admin/dashboard", { replace: true });
+        }
+      }
+
       setAuthLoading(false);
     };
 
-    // Realtime listener (login/logout)
+    // Supabase Auth Listener
     const { data: listener } = lmsSupabaseClient.auth.onAuthStateChange(
       async (_event, session) => {
-        setUser(session?.user || null);
+        const newUser = session?.user || null;
+        setUser(newUser);
+
+        if (newUser) {
+          const { data: profile } = await lmsSupabaseClient
+            .from("users")
+            .select("role")
+            .eq("email", newUser.email)
+            .single();
+
+          const userRole = profile?.role || "user";
+          setRole(userRole);
+          localStorage.setItem("user_role", userRole);
+
+          if (userRole === "admin") {
+            navigate("/divisions/skill/admin/dashboard", { replace: true });
+          }
+        } else {
+          setRole(null);
+          localStorage.removeItem("user_role");
+        }
       }
     );
 
@@ -46,77 +94,86 @@ export default function SkillApp() {
 
   if (authLoading) return <FullPageLoader />;
 
+  /* ===========================================================
+     🔒 Protected Route Guards
+  =========================================================== */
+  const PrivateRoute = ({ element }) => {
+    if (!user) return <Navigate to="/divisions/skill/auth" />;
+    return element;
+  };
+
+  const AdminRoute = ({ element }) => {
+    if (!user) return <Navigate to="/divisions/skill/auth" />;
+    if (role !== "admin") return <Navigate to="/divisions/skill/dashboard" />;
+    return element;
+  };
+
+  /* ===========================================================
+     🚀 Render Application
+  =========================================================== */
   return (
     <div className="min-h-screen bg-gray-50 font-inter">
-      {/* ✅ ScrollToTop ensures you always start at top on route change */}
       <ScrollToTop />
 
-      {/* Shared Header */}
-      <Header
-        user={user}
-        onLogout={async () => {
-          await lmsSupabaseClient.auth.signOut();
-          setUser(null);
-          navigate("/divisions/skill/dashboard");
-        }}
-      />
+      {/* Hide header/footer for admin */}
+      {role !== "admin" && (
+        <Header
+          user={user}
+          onLogout={async () => {
+            await lmsSupabaseClient.auth.signOut();
+            setUser(null);
+            setRole(null);
+            navigate("/divisions/skill/dashboard");
+          }}
+        />
+      )}
 
-      {/* Skill Routes */}
-      <main className="pt-20">
+      <main className={role !== "admin" ? "pt-20" : ""}>
         <Routes>
-          {/* Public */}
-          <Route
-            path="/"
-            element={<HomePage user={user} supabase={lmsSupabaseClient} />}
-          />
-          <Route
-            path="/auth"
-            element={<AuthPage supabase={lmsSupabaseClient} />}
-          />
+          {/* 🌍 Public Routes */}
+          <Route path="/" element={<HomePage user={user} supabase={lmsSupabaseClient} />} />
+          <Route path="/auth" element={<AuthPage supabase={lmsSupabaseClient} />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
 
-          {/* Core Pages */}
+          {/* 👩‍🎓 User Routes */}
           <Route
             path="/dashboard"
-            element={<DashboardPage user={user} supabase={lmsSupabaseClient} />}
+            element={<PrivateRoute element={<DashboardPage user={user} supabase={lmsSupabaseClient} />} />}
           />
-
-          {/* Learning Flow */}
           <Route
             path="/syllabus/:programId"
-            element={<SyllabusPage user={user} supabase={lmsSupabaseClient} />}
+            element={<PrivateRoute element={<SyllabusPage user={user} supabase={lmsSupabaseClient} />} />}
           />
-
           <Route
             path="/module/:moduleId"
-            element={<ModulePage user={user} supabase={lmsSupabaseClient} />}
+            element={<PrivateRoute element={<ModulePage user={user} supabase={lmsSupabaseClient} />} />}
           />
           <Route
             path="/code/:challengeId"
-            element={<CodeEditorPage user={user} supabase={lmsSupabaseClient} />}
+            element={<PrivateRoute element={<CodeEditorPage user={user} supabase={lmsSupabaseClient} />} />}
           />
-
-          {/* Optional: Direct assignment route */}
           <Route
             path="/assignment/:contentId"
-            element={<AssignmentPage user={user} supabase={lmsSupabaseClient} />}
+            element={<PrivateRoute element={<AssignmentPage user={user} supabase={lmsSupabaseClient} />} />}
           />
-
-          {/* Certificates */}
           <Route
             path="/certificate/:programName"
-            element={<CertificatePage user={user} />}
+            element={<PrivateRoute element={<CertificatePage user={user} />} />}
           />
 
-          {/* Catch-all redirect */}
-          <Route
-            path="*"
-            element={<HomePage user={user} supabase={lmsSupabaseClient} />}
-          />
+          {/* 🧩 Admin Routes */}
+          <Route path="/admin" element={<AdminRoute element={<AdminLayout />} />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="add-program" element={<AddProgramPage />} />
+            <Route path="add-challenge" element={<AddChallengePage />} />
+          </Route>
+
+          {/* 🚫 Fallback */}
+          <Route path="*" element={<HomePage user={user} supabase={lmsSupabaseClient} />} />
         </Routes>
       </main>
 
-      <Footer />
+      {role !== "admin" && <Footer />}
     </div>
   );
 }
