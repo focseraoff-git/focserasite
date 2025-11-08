@@ -20,7 +20,7 @@ export default function AIAssistant({ editorRef, getCode }) {
     if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [messages]);
 
-  /* Shortcut — Ctrl + Shift + C */
+  /* Shortcut — Ctrl + Shift + C toggles assistant */
   useEffect(() => {
     const onKey = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "c") {
@@ -32,7 +32,7 @@ export default function AIAssistant({ editorRef, getCode }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  /* Dragging (move window) */
+  /* Drag window */
   const handleDragStart = (e) => {
     setDragging(true);
     dragOffset.current = { x: e.clientX - position.x, y: e.clientY - position.y };
@@ -56,22 +56,38 @@ export default function AIAssistant({ editorRef, getCode }) {
   const sendMessage = async (customPrompt = null) => {
     const prompt = customPrompt || input.trim();
     if (!prompt) return;
+
     const newMsg = [...messages, { role: "user", content: prompt }];
     setMessages(newMsg);
     setInput("");
     setLoading(true);
+
+    // ✅ Detect environment and choose correct API base
+    const API_URL =
+      import.meta.env.VITE_API_URL ||
+      (window.location.hostname === "localhost"
+        ? "http://localhost:3000"
+        : "https://focsera-ai-api.vercel.app");
+
     try {
-      const res = await axios.post("/api/chat", { messages: newMsg, code: getCode() });
+      const res = await axios.post(`${API_URL}/api/chat`, {
+        messages: newMsg,
+        code: getCode(),
+      });
       const reply = res.data.reply || "No response.";
       setMessages([...newMsg, { role: "assistant", content: reply }]);
-    } catch {
-      setMessages([...newMsg, { role: "assistant", content: "⚠️ Error: unable to reach AI." }]);
+    } catch (err) {
+      console.error("AI request failed:", err);
+      setMessages([
+        ...newMsg,
+        { role: "assistant", content: "⚠️ Error: unable to reach AI server." },
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
-  /* Add context menu in Monaco: Ask AI about this */
+  /* Add Monaco context menu: Ask AI about selected code */
   useEffect(() => {
     if (!editorRef?.current) return;
     const editor = editorRef.current;
@@ -84,7 +100,7 @@ export default function AIAssistant({ editorRef, getCode }) {
       contextMenuGroupId: "navigation",
       run: () => {
         const selection = editor.getModel().getValueInRange(editor.getSelection());
-        if (!selection.trim()) return alert("Select code to ask AI about!");
+        if (!selection.trim()) return alert("Select some code to ask AI about!");
         setOpen(true);
         sendMessage(`Explain this selected code:\n${selection}`);
       },
@@ -93,11 +109,11 @@ export default function AIAssistant({ editorRef, getCode }) {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Chat Button */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-8 right-8 z-[999] bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 rounded-full shadow-lg"
+        className="fixed bottom-8 right-8 z-[999] bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4 rounded-full shadow-lg hover:shadow-blue-400/30 transition-all"
       >
         {open ? <X size={20} /> : <MessageSquare size={24} />}
       </motion.button>
@@ -122,8 +138,12 @@ export default function AIAssistant({ editorRef, getCode }) {
             <GripVertical size={16} className="text-gray-400" />
           </div>
 
-          {/* Messages */}
-          <div ref={chatRef} className="flex-1 overflow-auto p-3 space-y-3 text-sm">
+          {/* Chat Messages */}
+          <div
+            ref={chatRef}
+            className="flex-1 overflow-auto p-3 space-y-3 text-sm"
+            style={{ fontFamily: "'Fira Code', Consolas, monospace" }}
+          >
             {messages.length === 0 ? (
               <div className="text-gray-400 text-center mt-10">
                 💡 Ask me to explain, fix, or optimize your code!
@@ -156,12 +176,12 @@ export default function AIAssistant({ editorRef, getCode }) {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
               placeholder="Ask anything about your code..."
-              className="flex-1 bg-white/10 text-gray-100 rounded-lg px-3 py-2 text-sm outline-none"
+              className="flex-1 bg-white/10 text-gray-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500"
             />
             <button
               onClick={() => sendMessage()}
               disabled={loading}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition-all"
             >
               <Send size={16} />
             </button>
