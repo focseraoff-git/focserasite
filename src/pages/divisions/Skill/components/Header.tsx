@@ -16,7 +16,7 @@ export default function Header({ user, onLogout }) {
         Focsera Skill
       </div>
 
-      {/* Middle: Navigation (visible on desktop) */}
+      {/* Middle: Navigation */}
       <nav className="hidden md:flex gap-6 text-sm font-semibold">
         <button
           onClick={() => handleNav("dashboard")}
@@ -24,23 +24,27 @@ export default function Header({ user, onLogout }) {
         >
           Dashboard
         </button>
+
         <button
           onClick={() => handleNav("syllabus/30-days-of-java")}
           className="hover:text-blue-200 transition"
         >
           Courses
         </button>
+
         <button
           onClick={() => handleNav("certificate/30-days-of-java")}
           className="hover:text-blue-200 transition"
         >
           Certificates
         </button>
+
+        {/* 🧠 Unique Compiler Button */}
         <button
-          onClick={() => handleNav("about")}
+          onClick={() => handleNav("online-compiler")}
           className="hover:text-blue-200 transition"
         >
-          
+          PlayGround
         </button>
       </nav>
 

@@ -14,9 +14,13 @@ import {
   Rocket,
   PenTool,
   ArrowRight,
+  Play,
+  Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import MonacoEditor from "react-monaco-editor";
+import axios from "axios";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
@@ -66,8 +70,6 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
     const fetchAll = async () => {
       try {
         setLoading(true);
-
-        // Fetch programs
         const { data: programsData } = await supabase
           .from("programs")
           .select("*")
@@ -75,14 +77,12 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
         setPrograms(programsData || []);
 
         if (user) {
-          // Load cached profile if exists
           const cached = JSON.parse(localStorage.getItem("user_profile"));
           if (cached) {
             setProfile(cached);
             setNewName(cached.full_name || "");
           }
 
-          // Fetch fresh profile
           const { data: freshProfile } = await supabase
             .from("users")
             .select("full_name, avatar_url, email")
@@ -95,7 +95,6 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
             localStorage.setItem("user_profile", JSON.stringify(freshProfile));
           }
 
-          // Safely fetch stats and submissions (won’t crash if missing tables)
           let statsData = { total_modules: 0, daily_streak: 0, badges: [], total_score: 0 };
           let submissionsData = [];
 
@@ -107,7 +106,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
               .single();
             if (statsRes?.data) statsData = statsRes.data;
           } catch {
-            console.warn("user_stats table missing — using defaults");
+            console.warn("user_stats missing");
           }
 
           try {
@@ -119,7 +118,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
               .limit(5);
             if (subsRes?.data) submissionsData = subsRes.data;
           } catch {
-            console.warn("submissions table or join invalid — skipping");
+            console.warn("submissions fetch error");
           }
 
           setStats(statsData);
@@ -209,9 +208,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
             <PenTool className="w-9 h-9 text-pink-300 opacity-70" />
           </motion.div>
 
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-4">
-            Learn. Create. Grow.
-          </h1>
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4">Learn. Create. Grow.</h1>
           <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
             Master coding, design, and creative skills through 30-day challenges — powered by{" "}
             <strong>Focsera SkillVerse</strong>.
@@ -225,38 +222,9 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
             Start Learning Free →
           </motion.button>
         </section>
-
-        <section className="py-20 bg-white">
-          <div className="max-w-6xl mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-10">Explore Skill Challenges</h2>
-            {loading ? (
-              <p className="text-gray-500">Loading...</p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {programs.map((p) => (
-                  <motion.div
-                    key={p.id}
-                    whileHover={{ y: -5 }}
-                    onClick={() => navigate("/divisions/skill/auth")}
-                    className="bg-gray-50 rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all p-6 cursor-pointer"
-                  >
-                    <h3 className="text-xl font-semibold mb-2">{p.title}</h3>
-                    <p className="text-gray-600 text-sm mb-4">{p.description}</p>
-                    <button className="text-blue-600 hover:text-blue-800 font-semibold text-sm flex items-center gap-1 mx-auto">
-                      Join Challenge <ArrowRight size={14} />
-                    </button>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
       </div>
     );
 
-  /* ===========================================================
-     🔹 Logged-in User Dashboard
-  =========================================================== */
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-screen text-blue-600 text-lg font-semibold">
@@ -271,6 +239,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 pt-24 pb-10 px-4">
       <div className="max-w-6xl mx-auto">
+
         {/* 👤 Profile Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -350,7 +319,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
         </div>
 
         {/* 🧩 Recent Submissions */}
-        <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 mb-10">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
             <FileText className="text-blue-500" /> Recent Submissions
           </h2>
@@ -373,9 +342,9 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
                       <td className="p-3 font-medium">{sub.title || "Untitled Task"}</td>
                       <td
                         className={`p-3 font-semibold ${
-                          sub.status === "passed"
+                          sub.status === "success"
                             ? "text-green-600"
-                            : sub.status === "failed"
+                            : sub.status === "error"
                             ? "text-red-600"
                             : "text-gray-500"
                         }`}
@@ -383,13 +352,23 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
                         {sub.status}
                       </td>
                       <td className="p-3">{sub.score ?? "—"}</td>
-                      <td className="p-3">{sub.submitted_at ? new Date(sub.submitted_at).toLocaleDateString() : "—"}</td>
+                      <td className="p-3">
+                        {sub.submitted_at ? new Date(sub.submitted_at).toLocaleDateString() : "—"}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           )}
+        </div>
+
+        {/* 🧠 Online Compiler */}
+        <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <PenTool className="text-blue-500" /> Try Code Online
+          </h2>
+          <OnlineCompiler user={user} supabase={supabase} setRecentSubs={setRecentSubs} />
         </div>
       </div>
 
@@ -434,7 +413,130 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   );
 }
 
-/* Components */
+/* ===========================================================
+   🧠 Online Compiler Component
+=========================================================== */
+function OnlineCompiler({ user, supabase, setRecentSubs }) {
+  const [language, setLanguage] = useState("cpp");
+  const [code, setCode] = useState(`#include <iostream>\nusing namespace std;\nint main(){\n  cout << "Hello World!";\n  return 0;\n}`);
+  const [output, setOutput] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const getLanguageId = (lang) => {
+    switch (lang) {
+      case "cpp": return 54;
+      case "c": return 50;
+      case "java": return 62;
+      case "python": return 71;
+      case "javascript": return 63;
+      default: return 63;
+    }
+  };
+
+  const handleRun = async () => {
+    setLoading(true);
+    setOutput("Running...");
+    try {
+      const res = await axios.post(
+        "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
+        {
+          source_code: code,
+          language_id: getLanguageId(language),
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+            "X-RapidAPI-Key": "ddad48de98mshcfa84bd23318ed6p1f81e1jsnbc11733943a9",
+          },
+        }
+      );
+      const { stdout, stderr, compile_output, time } = res.data;
+      const resultOutput =
+        stdout
+          ? `${stdout}\n\nExecution Time: ${time}s`
+          : stderr || compile_output || "No output";
+
+      setOutput(resultOutput);
+
+      // Save to Supabase
+      if (user) {
+        await supabase.from("submissions").insert([
+          {
+            user_id: user.id,
+            title: "Online Code Run",
+            language,
+            code,
+            output: resultOutput,
+            status: stderr || compile_output ? "error" : "success",
+            execution_time: time || null,
+            submitted_at: new Date().toISOString(),
+          },
+        ]);
+
+        setRecentSubs((prev) => [
+          {
+            id: Math.random().toString(36),
+            title: "Online Code Run",
+            status: stderr || compile_output ? "error" : "success",
+            score: null,
+            submitted_at: new Date().toISOString(),
+          },
+          ...prev.slice(0, 4),
+        ]);
+      }
+    } catch (err) {
+      console.error(err);
+      setOutput("⚠️ Error executing code");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="border rounded-2xl overflow-hidden">
+      <div className="flex justify-between items-center bg-gray-50 px-4 py-3 border-b">
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="border rounded-lg px-3 py-1.5 text-sm"
+        >
+          <option value="cpp">C++</option>
+          <option value="c">C</option>
+          <option value="java">Java</option>
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript</option>
+        </select>
+
+        <button
+          onClick={handleRun}
+          disabled={loading}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+        >
+          {loading ? <Loader2 className="animate-spin" size={16} /> : <Play size={16} />}
+          {loading ? "Running..." : "Run Code"}
+        </button>
+      </div>
+
+      <MonacoEditor
+        height="320"
+        language={language === "cpp" ? "cpp" : language}
+        value={code}
+        theme="vs-dark"
+        onChange={setCode}
+        options={{ fontSize: 14, automaticLayout: true }}
+      />
+
+      <div className="bg-gray-900 text-green-400 p-3 text-sm overflow-auto min-h-[120px]">
+        <pre>{output}</pre>
+      </div>
+    </div>
+  );
+}
+
+/* ===========================================================
+   📊 Stats & Course Cards
+=========================================================== */
 function StatCard({ icon: Icon, title, value, color }) {
   return (
     <motion.div

@@ -14,6 +14,7 @@ import AuthPage from "./Pages/AuthPage";
 import CertificatePage from "./Pages/CertificatePage";
 import AuthCallback from "./Pages/AuthCallback";
 import AssignmentPage from "./Pages/AssignmentPage";
+import OnlineCompilerPage from "./Pages/OnlineCompilerPage.";
 
 // ✅ Admin Pages
 import AdminLayout from "./Pages/Admin/AdminLayout";
@@ -116,6 +117,7 @@ export default function SkillApp() {
           <Route path="/code/:challengeId" element={<CodeEditorPage />} />
           <Route path="/assignment/:contentId" element={<AssignmentPage />} />
           <Route path="/certificate/:programName" element={<CertificatePage />} />
+          <Route path="/online-compiler" element={<OnlineCompilerPage />} />
 
           {/* Admin */}
           <Route path="/admin" element={<AdminLayout />}>
