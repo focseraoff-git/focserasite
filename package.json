@@ -17,10 +17,13 @@
     "axios": "^1.13.2",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
+    "cors": "^2.8.5",
     "esbuild": "^0.25.11",
+    "express": "^5.1.0",
     "framer-motion": "^12.23.24",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.344.0",
+    "openai": "^6.8.1",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -44,5 +47,18 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
     "vite": "^7.1.11"
-  }
+  },
+  "description": "focserasite",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/focseraoff-git/focserasite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/focseraoff-git/focserasite/issues"
+  },
+  "homepage": "https://github.com/focseraoff-git/focserasite#readme"
 }
