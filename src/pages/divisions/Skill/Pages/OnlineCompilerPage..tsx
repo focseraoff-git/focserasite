@@ -25,40 +25,30 @@ import {
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function OnlineCompilerPage() {
-  // ---------- Editor / UI ----------
   const [language, setLanguage] = useState(localStorage.getItem("playground_language") || "cpp");
-  const [code, setCode] = useState(
-    localStorage.getItem("playground_code") ||
-      `#include <iostream>\nusing namespace std;\nint main(){\n  cout << "Hello World!";\n  return 0;\n}`
-  );
+  const [code, setCode] = useState(localStorage.getItem("playground_code") || "");
   const [notes, setNotes] = useState(localStorage.getItem("playground_notes") || "");
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
 
-  // ---------- Drawing ----------
   const [drawMode, setDrawMode] = useState(false);
-  const [penColor, setPenColor] = useState("#FFD43B");
+  const [penColor, setPenColor] = useState("#3B82F6");
   const [penSize, setPenSize] = useState(3);
   const [eraseMode, setEraseMode] = useState(false);
   const [history, setHistory] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
 
-  // ---------- Font size ----------
   const [fontSize, setFontSize] = useState(Number(localStorage.getItem("playground_fontSize")) || 14);
-
-  // ---------- Layout ----------
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showNotes, setShowNotes] = useState(true);
 
-  // ---------- Refs ----------
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const drawingRef = useRef(false);
   const pointsRef = useRef([]);
 
-  // ---------- Language Templates ----------
   const templates = {
     cpp: `#include <iostream>\nusing namespace std;\nint main(){\n  cout << "Hello World!";\n  return 0;\n}`,
     c: `#include <stdio.h>\nint main(){\n  printf("Hello World!");\n  return 0;\n}`,
@@ -67,15 +57,12 @@ export default function OnlineCompilerPage() {
     javascript: `console.log("Hello World!");`,
   };
 
-  // ---------- Auth ----------
   useEffect(() => {
     lmsSupabaseClient.auth.getSession().then(({ data }) => setUser(data?.session?.user || null));
   }, []);
 
-  // ---------- Auto language switch ----------
   useEffect(() => setCode(templates[language]), [language]);
 
-  // ---------- Canvas Setup ----------
   const resizeCanvas = useCallback(() => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
@@ -98,49 +85,59 @@ export default function OnlineCompilerPage() {
     return () => window.removeEventListener("resize", resizeCanvas);
   }, [resizeCanvas]);
 
-  // ---------- Drawing Logic ----------
-  const startDraw = (e) => {
-    if (!drawMode || e.button !== 0) return;
+  // 🖊️ Tablet + Stylus Drawing Support (Pointer Events)
+  const handlePointerDown = (e) => {
+    if (!drawMode) return;
     drawingRef.current = true;
     const rect = containerRef.current.getBoundingClientRect();
-    pointsRef.current.push({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    pointsRef.current = [{ x, y }];
   };
 
-  const draw = (e) => {
+  const handlePointerMove = (e) => {
     if (!drawingRef.current || !drawMode) return;
     const ctx = ctxRef.current;
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
     const arr = pointsRef.current;
     arr.push({ x, y });
     if (arr.length >= 2) {
       const [p1, p2] = arr.slice(-2);
       ctx.beginPath();
-      if (eraseMode) {
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.lineWidth = penSize * 2;
-      } else {
-        ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = penColor;
-        ctx.lineWidth = penSize;
-      }
+      ctx.globalCompositeOperation = eraseMode ? "destination-out" : "source-over";
+      ctx.strokeStyle = penColor;
+      ctx.lineWidth = penSize * (e.pressure ? Math.max(0.5, e.pressure * 1.5) : 1);
       ctx.moveTo(p1.x, p1.y);
       ctx.lineTo(p2.x, p2.y);
       ctx.stroke();
     }
   };
 
-  const endDraw = () => {
+  const handlePointerUp = () => {
     if (!drawingRef.current) return;
     drawingRef.current = false;
-    pointsRef.current = [];
     const snapshot = canvasRef.current.toDataURL();
     setHistory((h) => [...h, snapshot]);
     setRedoStack([]);
   };
 
-  // ---------- Undo / Redo / Clear ----------
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    canvas.addEventListener("pointerdown", handlePointerDown);
+    canvas.addEventListener("pointermove", handlePointerMove);
+    canvas.addEventListener("pointerup", handlePointerUp);
+    canvas.addEventListener("pointerleave", handlePointerUp);
+    return () => {
+      canvas.removeEventListener("pointerdown", handlePointerDown);
+      canvas.removeEventListener("pointermove", handlePointerMove);
+      canvas.removeEventListener("pointerup", handlePointerUp);
+      canvas.removeEventListener("pointerleave", handlePointerUp);
+    };
+  }, [drawMode, penColor, penSize, eraseMode]);
+
   const redraw = (url) => {
     const ctx = ctxRef.current;
     const img = new Image();
@@ -187,30 +184,11 @@ export default function OnlineCompilerPage() {
     link.click();
   };
 
-  // ---------- Dynamic Cursor ----------
   useEffect(() => {
-    if (!drawMode) {
-      document.body.style.cursor = "auto";
-      return;
-    }
-    const size = Math.max(12, penSize * 3);
-    const svg = eraseMode
-      ? `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'><circle cx='${
-          size / 2
-        }' cy='${size / 2}' r='${penSize}' fill='white' stroke='gray'/></svg>`
-      : `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'><circle cx='${
-          size / 2
-        }' cy='${size / 2}' r='${penSize / 2}' fill='${penColor}' stroke='black'/></svg>`;
-    const url = `data:image/svg+xml;base64,${btoa(svg)}`;
-    document.body.style.cursor = `url(${url}) ${Math.round(size / 2)} ${Math.round(size / 2)}, auto`;
-  }, [drawMode, penColor, penSize, eraseMode]);
+    if (!drawMode) document.body.style.cursor = "auto";
+    else document.body.style.cursor = "crosshair";
+  }, [drawMode]);
 
-  // ---------- Font Controls ----------
-  const incFont = () => setFontSize((f) => Math.min(30, f + 1));
-  const decFont = () => setFontSize((f) => Math.max(8, f - 1));
-  const resetFont = () => setFontSize(14);
-
-  // ---------- Run Code ----------
   const getLanguageId = (lang) =>
     ({ cpp: 54, c: 50, java: 62, python: 71, javascript: 63 }[lang] || 63);
 
@@ -220,10 +198,7 @@ export default function OnlineCompilerPage() {
     try {
       const res = await axios.post(
         "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
-        {
-          source_code: code,
-          language_id: getLanguageId(language),
-        },
+        { source_code: code, language_id: getLanguageId(language) },
         {
           headers: {
             "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
@@ -231,7 +206,7 @@ export default function OnlineCompilerPage() {
           },
         }
       );
-      const { stdout, stderr, compile_output, time } = res.data;
+      const { stdout, stderr, compile_output } = res.data;
       setOutput(stdout || stderr || compile_output || "No output");
     } catch {
       setOutput("⚠️ Error executing code");
@@ -240,11 +215,10 @@ export default function OnlineCompilerPage() {
     }
   };
 
-  // ---------- JSX ----------
   return (
     <div
       className={`${
-        isFullscreen ? "fixed inset-0 bg-gray-900 z-50" : "min-h-screen bg-gradient-to-br from-slate-100 to-gray-200 p-6"
+        isFullscreen ? "fixed inset-0 bg-gray-900 z-50" : "min-h-screen bg-gray-100 p-6"
       } font-inter`}
     >
       <div
@@ -258,22 +232,24 @@ export default function OnlineCompilerPage() {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <Sparkles className="text-blue-600" />
-            <h2 className="text-xl font-semibold text-gray-800">Playground</h2>
+            <h2 className="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent tracking-tight">
+              Playground
+            </h2>
           </div>
 
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowNotes((s) => !s)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium shadow-sm ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium ${
                 showNotes ? "bg-yellow-400 text-black" : "bg-gray-200 text-gray-800"
               }`}
             >
-              <FileEdit size={16} /> {showNotes ? "Hide Notes" : "Open Notes"}
+              <FileEdit size={16} /> {showNotes ? "Hide Notes" : "Notes"}
             </button>
 
             <button
               onClick={() => setDrawMode((d) => !d)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium shadow-sm ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium ${
                 drawMode ? "bg-pink-500 text-white" : "bg-gray-200 text-gray-800"
               }`}
             >
@@ -291,19 +267,6 @@ export default function OnlineCompilerPage() {
               <option value="python">Python</option>
               <option value="javascript">JavaScript</option>
             </select>
-
-            <div className="flex items-center gap-2 bg-white border rounded-lg px-2 py-1">
-              <button onClick={decFont}>
-                <Minus size={14} />
-              </button>
-              <span className="text-sm">{fontSize}px</span>
-              <button onClick={incFont}>
-                <Plus size={14} />
-              </button>
-              <button onClick={resetFont}>
-                <RotateCcw size={14} />
-              </button>
-            </div>
 
             <button
               onClick={handleRun}
@@ -323,7 +286,7 @@ export default function OnlineCompilerPage() {
           </div>
         </div>
 
-        {/* Workspace */}
+        {/* Editor + Notes */}
         <div ref={containerRef} className="relative flex gap-6" style={{ minHeight: 520 }}>
           <div className={`${showNotes ? "flex-[2]" : "flex-1"} border rounded-xl overflow-hidden`}>
             <MonacoEditor
@@ -360,21 +323,18 @@ export default function OnlineCompilerPage() {
 
           <canvas
             ref={canvasRef}
-            onMouseDown={startDraw}
-            onMouseMove={draw}
-            onMouseUp={endDraw}
-            onMouseLeave={endDraw}
             style={{
               position: "absolute",
               top: 0,
               left: 0,
               zIndex: 40,
               pointerEvents: drawMode ? "auto" : "none",
+              touchAction: "none",
             }}
           />
         </div>
 
-        {/* Drawing Toolbar */}
+        {/* Draw Toolbar */}
         {drawMode && (
           <div className="fixed top-6 right-6 bg-gray-800 text-white rounded-xl p-3 shadow-lg z-50 w-64 border border-gray-700">
             <div className="flex justify-between mb-2">
@@ -382,16 +342,16 @@ export default function OnlineCompilerPage() {
                 <Menu size={16} /> Tools
               </div>
               <div className="flex gap-1">
-                <button onClick={saveCanvas} title="Save sketch" className="p-1 hover:bg-gray-700 rounded">
+                <button onClick={saveCanvas} title="Save" className="p-1 hover:bg-gray-700 rounded">
                   <ImageDown size={15} />
                 </button>
-                <button onClick={handleClear} title="Clear layer" className="p-1 hover:bg-gray-700 rounded">
+                <button onClick={handleClear} title="Clear" className="p-1 hover:bg-gray-700 rounded">
                   <Trash2 size={15} />
                 </button>
                 <button
                   onClick={handleClearAll}
-                  title="Clear all drawings"
-                  className="p-1 hover:bg-red-600 bg-red-600 rounded"
+                  title="Clear All"
+                  className="p-1 bg-red-600 hover:bg-red-700 rounded"
                 >
                   <RotateCcw size={15} />
                 </button>
