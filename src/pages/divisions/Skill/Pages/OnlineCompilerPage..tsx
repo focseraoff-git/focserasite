@@ -1,152 +1,289 @@
 // @ts-nocheck
-import { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import MonacoEditor from "react-monaco-editor";
 import axios from "axios";
-import { Play, Loader2, Maximize2, Minimize2 } from "lucide-react";
+import {
+  Play,
+  Loader2,
+  Maximize2,
+  Minimize2,
+  FileEdit,
+  Save,
+  Undo,
+  Redo,
+  Pencil,
+  Eraser,
+  Palette,
+  ImageDown,
+  Trash2,
+  Sparkles,
+  Menu,
+  Plus,
+  Minus,
+  RotateCcw,
+} from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function OnlineCompilerPage() {
-  const [language, setLanguage] = useState("cpp");
-  const [code, setCode] = useState("");
+  // ---------- Editor / UI ----------
+  const [language, setLanguage] = useState(localStorage.getItem("playground_language") || "cpp");
+  const [code, setCode] = useState(
+    localStorage.getItem("playground_code") ||
+      `#include <iostream>\nusing namespace std;\nint main(){\n  cout << "Hello World!";\n  return 0;\n}`
+  );
+  const [notes, setNotes] = useState(localStorage.getItem("playground_notes") || "");
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
+
+  // ---------- Drawing ----------
+  const [drawMode, setDrawMode] = useState(false);
+  const [penColor, setPenColor] = useState("#FFD43B");
+  const [penSize, setPenSize] = useState(3);
+  const [eraseMode, setEraseMode] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [redoStack, setRedoStack] = useState([]);
+
+  // ---------- Font size ----------
+  const [fontSize, setFontSize] = useState(Number(localStorage.getItem("playground_fontSize")) || 14);
+
+  // ---------- Layout ----------
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showNotes, setShowNotes] = useState(true);
 
-  // 🧠 Load logged-in user
-  useEffect(() => {
-    const session = lmsSupabaseClient.auth.getSession().then(({ data }) => {
-      setUser(data?.session?.user || null);
-    });
-  }, []);
+  // ---------- Refs ----------
+  const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const ctxRef = useRef(null);
+  const drawingRef = useRef(false);
+  const pointsRef = useRef([]);
 
-  // 🔁 Default code for each language
-  const codeTemplates = {
-    cpp: `#include <iostream>
-using namespace std;
-int main(){
-  cout << "Hello World!";
-  return 0;
-}`,
-    c: `#include <stdio.h>
-int main(){
-  printf("Hello World!");
-  return 0;
-}`,
-    java: `public class Main {
-  public static void main(String[] args) {
-    System.out.println("Hello World!");
-  }
-}`,
+  // ---------- Language Templates ----------
+  const templates = {
+    cpp: `#include <iostream>\nusing namespace std;\nint main(){\n  cout << "Hello World!";\n  return 0;\n}`,
+    c: `#include <stdio.h>\nint main(){\n  printf("Hello World!");\n  return 0;\n}`,
+    java: `public class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello World!");\n  }\n}`,
     python: `print("Hello World!")`,
     javascript: `console.log("Hello World!");`,
   };
 
-  // 🧩 Set initial code when language changes
+  // ---------- Auth ----------
   useEffect(() => {
-    setCode(codeTemplates[language]);
-  }, [language]);
+    lmsSupabaseClient.auth.getSession().then(({ data }) => setUser(data?.session?.user || null));
+  }, []);
 
-  // 🔢 Judge0 Language IDs
-  const getLanguageId = (lang) => {
-    switch (lang) {
-      case "cpp": return 54;
-      case "c": return 50;
-      case "java": return 62;
-      case "python": return 71;
-      case "javascript": return 63;
-      default: return 63;
+  // ---------- Auto language switch ----------
+  useEffect(() => setCode(templates[language]), [language]);
+
+  // ---------- Canvas Setup ----------
+  const resizeCanvas = useCallback(() => {
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
+    if (!container || !canvas) return;
+    const rect = container.getBoundingClientRect();
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = rect.width * ratio;
+    canvas.height = rect.height * ratio;
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.lineCap = "round";
+    ctxRef.current = ctx;
+  }, []);
+
+  useEffect(() => {
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, [resizeCanvas]);
+
+  // ---------- Drawing Logic ----------
+  const startDraw = (e) => {
+    if (!drawMode || e.button !== 0) return;
+    drawingRef.current = true;
+    const rect = containerRef.current.getBoundingClientRect();
+    pointsRef.current.push({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
+  const draw = (e) => {
+    if (!drawingRef.current || !drawMode) return;
+    const ctx = ctxRef.current;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const arr = pointsRef.current;
+    arr.push({ x, y });
+    if (arr.length >= 2) {
+      const [p1, p2] = arr.slice(-2);
+      ctx.beginPath();
+      if (eraseMode) {
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.lineWidth = penSize * 2;
+      } else {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = penColor;
+        ctx.lineWidth = penSize;
+      }
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
     }
   };
 
-  // ▶ Run Code
+  const endDraw = () => {
+    if (!drawingRef.current) return;
+    drawingRef.current = false;
+    pointsRef.current = [];
+    const snapshot = canvasRef.current.toDataURL();
+    setHistory((h) => [...h, snapshot]);
+    setRedoStack([]);
+  };
+
+  // ---------- Undo / Redo / Clear ----------
+  const redraw = (url) => {
+    const ctx = ctxRef.current;
+    const img = new Image();
+    const rect = containerRef.current.getBoundingClientRect();
+    img.onload = () => ctx.drawImage(img, 0, 0, rect.width, rect.height);
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    if (url) img.src = url;
+  };
+
+  const handleUndo = () => {
+    if (!history.length) return;
+    const newHist = [...history];
+    const last = newHist.pop();
+    setRedoStack((r) => [...r, last]);
+    setHistory(newHist);
+    redraw(newHist[newHist.length - 1]);
+  };
+
+  const handleRedo = () => {
+    if (!redoStack.length) return;
+    const next = redoStack.pop();
+    setRedoStack([...redoStack]);
+    setHistory((h) => [...h, next]);
+    redraw(next);
+  };
+
+  const handleClear = () => {
+    const ctx = ctxRef.current;
+    const rect = containerRef.current.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    setHistory([]);
+    setRedoStack([]);
+  };
+
+  const handleClearAll = () => {
+    if (!confirm("Clear ALL drawings and reset history?")) return;
+    handleClear();
+  };
+
+  const saveCanvas = () => {
+    const link = document.createElement("a");
+    link.download = "playground-sketch.png";
+    link.href = canvasRef.current.toDataURL();
+    link.click();
+  };
+
+  // ---------- Dynamic Cursor ----------
+  useEffect(() => {
+    if (!drawMode) {
+      document.body.style.cursor = "auto";
+      return;
+    }
+    const size = Math.max(12, penSize * 3);
+    const svg = eraseMode
+      ? `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'><circle cx='${
+          size / 2
+        }' cy='${size / 2}' r='${penSize}' fill='white' stroke='gray'/></svg>`
+      : `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'><circle cx='${
+          size / 2
+        }' cy='${size / 2}' r='${penSize / 2}' fill='${penColor}' stroke='black'/></svg>`;
+    const url = `data:image/svg+xml;base64,${btoa(svg)}`;
+    document.body.style.cursor = `url(${url}) ${Math.round(size / 2)} ${Math.round(size / 2)}, auto`;
+  }, [drawMode, penColor, penSize, eraseMode]);
+
+  // ---------- Font Controls ----------
+  const incFont = () => setFontSize((f) => Math.min(30, f + 1));
+  const decFont = () => setFontSize((f) => Math.max(8, f - 1));
+  const resetFont = () => setFontSize(14);
+
+  // ---------- Run Code ----------
+  const getLanguageId = (lang) =>
+    ({ cpp: 54, c: 50, java: 62, python: 71, javascript: 63 }[lang] || 63);
+
   const handleRun = async () => {
     setLoading(true);
     setOutput("Running...");
-
     try {
-      const response = await axios.post(
+      const res = await axios.post(
         "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
         {
           source_code: code,
           language_id: getLanguageId(language),
-          stdin: "",
         },
         {
           headers: {
-            "Content-Type": "application/json",
             "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
-            "X-RapidAPI-Key": "ddad48de98mshcfa84bd23318ed6p1f81e1jsnbc11733943a9", // Replace with env key later
+            "X-RapidAPI-Key": "ddad48de98mshcfa84bd23318ed6p1f81e1jsnbc11733943a9",
           },
         }
       );
-
-      const { stdout, stderr, compile_output, time } = response.data;
-      const resultOutput =
-        stdout
-          ? `${stdout}\n\nExecution Time: ${time}s`
-          : stderr || compile_output || "No output";
-
-      setOutput(resultOutput);
-
-      // ✅ Save to Supabase
-      if (user) {
-        await lmsSupabaseClient.from("submissions").insert([
-          {
-            user_id: user.id,
-            title: "SkillLab Online Run",
-            language,
-            code,
-            output: resultOutput,
-            status: stderr || compile_output ? "error" : "success",
-            execution_time: time || null,
-            submitted_at: new Date().toISOString(),
-          },
-        ]);
-      }
-    } catch (err) {
+      const { stdout, stderr, compile_output, time } = res.data;
+      setOutput(stdout || stderr || compile_output || "No output");
+    } catch {
       setOutput("⚠️ Error executing code");
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  // 🧭 Toggle fullscreen mode
-  const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
-
+  // ---------- JSX ----------
   return (
     <div
       className={`${
-        isFullscreen
-          ? "fixed inset-0 bg-gray-900 z-50"
-          : "min-h-screen bg-gray-100 p-6"
-      } font-inter transition-all`}
+        isFullscreen ? "fixed inset-0 bg-gray-900 z-50" : "min-h-screen bg-gradient-to-br from-slate-100 to-gray-200 p-6"
+      } font-inter`}
     >
       <div
         className={`${
           isFullscreen
             ? "w-full h-full flex flex-col"
-            : "max-w-7xl mx-auto bg-white rounded-2xl shadow-lg p-6"
+            : "max-w-8xl mx-auto bg-white rounded-3xl shadow-2xl p-6"
         }`}
       >
-        {/* Top Toolbar */}
-        <div
-          className={`flex justify-between items-center mb-4 ${
-            isFullscreen ? "bg-gray-800 px-4 py-3 rounded-t-xl text-white" : ""
-          }`}
-        >
-          <h2 className="text-xl font-semibold">
-            SkillLab Online Compiler
-          </h2>
+        {/* Header */}
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="text-blue-600" />
+            <h2 className="text-xl font-semibold text-gray-800">Playground</h2>
+          </div>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowNotes((s) => !s)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium shadow-sm ${
+                showNotes ? "bg-yellow-400 text-black" : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              <FileEdit size={16} /> {showNotes ? "Hide Notes" : "Open Notes"}
+            </button>
+
+            <button
+              onClick={() => setDrawMode((d) => !d)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium shadow-sm ${
+                drawMode ? "bg-pink-500 text-white" : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              <Pencil size={16} /> {drawMode ? "Drawing On" : "Draw"}
+            </button>
+
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className={`border rounded-lg px-3 py-2 text-sm ${
-                isFullscreen ? "text-black" : ""
-              }`}
+              className="bg-white border px-3 py-2 rounded-lg"
             >
               <option value="cpp">C++</option>
               <option value="c">C</option>
@@ -155,76 +292,160 @@ int main(){
               <option value="javascript">JavaScript</option>
             </select>
 
+            <div className="flex items-center gap-2 bg-white border rounded-lg px-2 py-1">
+              <button onClick={decFont}>
+                <Minus size={14} />
+              </button>
+              <span className="text-sm">{fontSize}px</span>
+              <button onClick={incFont}>
+                <Plus size={14} />
+              </button>
+              <button onClick={resetFont}>
+                <RotateCcw size={14} />
+              </button>
+            </div>
+
             <button
               onClick={handleRun}
               disabled={loading}
-              className={`flex items-center gap-2 ${
-                isFullscreen
-                  ? "bg-blue-600 hover:bg-blue-700 text-white"
-                  : "bg-blue-600 hover:bg-blue-700 text-white"
-              } px-5 py-2 rounded-lg transition`}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold"
             >
-              {loading ? (
-                <Loader2 className="animate-spin" size={16} />
-              ) : (
-                <Play size={16} />
-              )}
+              {loading ? <Loader2 className="animate-spin" size={16} /> : <Play size={16} />}{" "}
               {loading ? "Running..." : "Run"}
             </button>
 
             <button
-              onClick={toggleFullscreen}
-              className={`flex items-center gap-2 ${
-                isFullscreen
-                  ? "bg-gray-700 hover:bg-gray-600"
-                  : "bg-gray-200 hover:bg-gray-300"
-              } px-3 py-2 rounded-lg transition`}
+              onClick={() => setIsFullscreen((s) => !s)}
+              className="bg-gray-200 px-3 py-2 rounded-lg"
             >
-              {isFullscreen ? (
-                <>
-                  <Minimize2 size={16} /> Exit
-                </>
-              ) : (
-                <>
-                  <Maximize2 size={16} /> Fullscreen
-                </>
-              )}
+              {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
             </button>
           </div>
         </div>
 
-        {/* Editor Section */}
-        <div className="flex-1 border rounded-xl overflow-hidden">
-          <MonacoEditor
-            height={isFullscreen ? "calc(100vh - 220px)" : "400"}
-            language={language === "cpp" ? "cpp" : language}
-            value={code}
-            theme={isFullscreen ? "vs-dark" : "vs-dark"}
-            onChange={setCode}
-            options={{
-              fontSize: 14,
-              automaticLayout: true,
-              minimap: { enabled: false },
+        {/* Workspace */}
+        <div ref={containerRef} className="relative flex gap-6" style={{ minHeight: 520 }}>
+          <div className={`${showNotes ? "flex-[2]" : "flex-1"} border rounded-xl overflow-hidden`}>
+            <MonacoEditor
+              height={isFullscreen ? "calc(100vh - 200px)" : "520"}
+              language={language}
+              value={code}
+              theme="vs-dark"
+              onChange={setCode}
+              options={{ fontSize, minimap: { enabled: false }, automaticLayout: true }}
+            />
+          </div>
+
+          {showNotes && (
+            <div className="flex flex-col flex-1 bg-gray-50 border rounded-xl">
+              <div className="flex justify-between items-center bg-yellow-100 px-3 py-2 border-b">
+                <span className="font-semibold text-gray-700">Notes</span>
+                <button
+                  onClick={() => {
+                    localStorage.setItem("playground_notes", notes);
+                    alert("✅ Notes saved!");
+                  }}
+                  className="bg-green-500 text-white px-3 py-1 rounded-md text-sm"
+                >
+                  <Save size={14} /> Save
+                </button>
+              </div>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="flex-1 p-3 outline-none resize-none text-sm font-mono bg-yellow-50"
+              />
+            </div>
+          )}
+
+          <canvas
+            ref={canvasRef}
+            onMouseDown={startDraw}
+            onMouseMove={draw}
+            onMouseUp={endDraw}
+            onMouseLeave={endDraw}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              zIndex: 40,
+              pointerEvents: drawMode ? "auto" : "none",
             }}
           />
         </div>
 
-        {/* Output Section */}
-        <div
-          className={`mt-4 ${
-            isFullscreen
-              ? "bg-gray-950 text-green-400 border border-gray-700 p-4 rounded-lg overflow-auto h-[25vh]"
-              : "bg-gray-900 text-green-400 p-3 rounded-lg overflow-auto min-h-[120px]"
-          }`}
-        >
-          <h3
-            className={`font-semibold mb-2 ${
-              isFullscreen ? "text-white" : "text-gray-200"
-            }`}
-          >
-            Output:
-          </h3>
-          <pre>{output}</pre>
+        {/* Drawing Toolbar */}
+        {drawMode && (
+          <div className="fixed top-6 right-6 bg-gray-800 text-white rounded-xl p-3 shadow-lg z-50 w-64 border border-gray-700">
+            <div className="flex justify-between mb-2">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Menu size={16} /> Tools
+              </div>
+              <div className="flex gap-1">
+                <button onClick={saveCanvas} title="Save sketch" className="p-1 hover:bg-gray-700 rounded">
+                  <ImageDown size={15} />
+                </button>
+                <button onClick={handleClear} title="Clear layer" className="p-1 hover:bg-gray-700 rounded">
+                  <Trash2 size={15} />
+                </button>
+                <button
+                  onClick={handleClearAll}
+                  title="Clear all drawings"
+                  className="p-1 hover:bg-red-600 bg-red-600 rounded"
+                >
+                  <RotateCcw size={15} />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 mb-2">
+              <Palette size={14} />
+              <input
+                type="color"
+                value={penColor}
+                onChange={(e) => setPenColor(e.target.value)}
+                className="cursor-pointer"
+              />
+              <input
+                type="range"
+                min="1"
+                max="30"
+                value={penSize}
+                onChange={(e) => setPenSize(Number(e.target.value))}
+                className="flex-1"
+              />
+            </div>
+
+            <div className="flex gap-2 mb-2">
+              <button
+                onClick={() => setEraseMode((em) => !em)}
+                className={`flex-1 px-3 py-1 rounded-md text-sm ${
+                  eraseMode ? "bg-gray-600" : "bg-gray-700/40"
+                }`}
+              >
+                <Eraser size={14} /> {eraseMode ? "Eraser" : "Pen"}
+              </button>
+              <button onClick={handleUndo} className="px-2 bg-gray-700/40 rounded-md">
+                <Undo size={14} />
+              </button>
+              <button onClick={handleRedo} className="px-2 bg-gray-700/40 rounded-md">
+                <Redo size={14} />
+              </button>
+            </div>
+
+            <button
+              onClick={() => setDrawMode(false)}
+              className="w-full bg-pink-600 hover:bg-pink-700 text-white rounded-md py-1 font-semibold"
+            >
+              Stop Drawing
+            </button>
+          </div>
+        )}
+
+        {/* Output */}
+        <div className="mt-6 bg-gray-900 text-green-300 p-4 rounded-xl overflow-auto min-h-[100px] font-mono border border-gray-800">
+          <h3 className="text-white font-semibold mb-2">Output</h3>
+          <pre className="whitespace-pre-wrap">{output}</pre>
         </div>
       </div>
     </div>
