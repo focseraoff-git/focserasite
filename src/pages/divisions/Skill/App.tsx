@@ -20,7 +20,7 @@ import AdminLayout from "./Pages/Admin/AdminLayout";
 import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import AddProgramPage from "./Pages/Admin/AddProgramPage";
 import AddChallengePage from "./Pages/Admin/AddChallengePage";
-import AdminEditPage from "./Pages/Admin/AdminEditPage"; // ✅ Added
+import AdminEditPage from "./Pages/Admin/AdminEditPage";
 
 // ✅ Shared
 import Header from "./components/Header";
@@ -34,7 +34,7 @@ export default function SkillApp() {
   const navigate = useNavigate();
 
   /* ===========================================================
-     🔹 Initialize Authentication
+     🔹 Initialize Authentication (Optional)
   =========================================================== */
   useEffect(() => {
     const initAuth = async () => {
@@ -52,10 +52,6 @@ export default function SkillApp() {
         const userRole = profile?.role || "user";
         setRole(userRole);
         localStorage.setItem("user_role", userRole);
-
-        if (userRole === "admin") {
-          navigate("/divisions/skill/admin/dashboard", { replace: true });
-        }
       }
 
       setAuthLoading(false);
@@ -90,16 +86,6 @@ export default function SkillApp() {
   if (authLoading) return <FullPageLoader />;
 
   /* ===========================================================
-     🔒 Protected Routes
-  =========================================================== */
-  const PrivateRoute = ({ element }) => (!user ? <Navigate to="/divisions/skill/auth" /> : element);
-  const AdminRoute = ({ element }) => {
-    if (!user) return <Navigate to="/divisions/skill/auth" />;
-    if (role !== "admin") return <Navigate to="/divisions/skill/dashboard" />;
-    return element;
-  };
-
-  /* ===========================================================
      🚀 Render
   =========================================================== */
   return (
@@ -124,19 +110,19 @@ export default function SkillApp() {
           <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* User */}
-          <Route path="/dashboard" element={<PrivateRoute element={<DashboardPage user={user} />} />} />
-          <Route path="/syllabus/:programId" element={<PrivateRoute element={<SyllabusPage />} />} />
-          <Route path="/module/:moduleId" element={<PrivateRoute element={<ModulePage />} />} />
-          <Route path="/code/:challengeId" element={<PrivateRoute element={<CodeEditorPage />} />} />
-          <Route path="/assignment/:contentId" element={<PrivateRoute element={<AssignmentPage />} />} />
-          <Route path="/certificate/:programName" element={<PrivateRoute element={<CertificatePage />} />} />
+          <Route path="/dashboard" element={<DashboardPage user={user} />} />
+          <Route path="/syllabus/:programId" element={<SyllabusPage />} />
+          <Route path="/module/:moduleId" element={<ModulePage />} />
+          <Route path="/code/:challengeId" element={<CodeEditorPage />} />
+          <Route path="/assignment/:contentId" element={<AssignmentPage />} />
+          <Route path="/certificate/:programName" element={<CertificatePage />} />
 
           {/* Admin */}
-          <Route path="/admin" element={<AdminRoute element={<AdminLayout />} />}>
+          <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="add-program" element={<AddProgramPage />} />
             <Route path="add-challenge" element={<AddChallengePage />} />
-            <Route path="edit/:table/:id" element={<AdminEditPage />} /> {/* ✅ Added */}
+            <Route path="edit/:table/:id" element={<AdminEditPage />} />
           </Route>
 
           {/* Fallback */}
