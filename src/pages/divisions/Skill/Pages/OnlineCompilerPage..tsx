@@ -196,16 +196,12 @@ export default function OnlineCompilerPage() {
     setLoading(true);
     setOutput("Running...");
     try {
-      const res = await axios.post(
-        "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
-        { source_code: code, language_id: getLanguageId(language) },
-        {
-          headers: {
-            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
-            "X-RapidAPI-Key": "ddad48de98mshcfa84bd23318ed6p1f81e1jsnbc11733943a9",
-          },
-        }
-      );
+  const res = await axios.post("/api/compile", {
+  source_code: code,
+  language_id: getLanguageId(language),
+  stdin: input || "",
+});
+
       const { stdout, stderr, compile_output } = res.data;
       setOutput(stdout || stderr || compile_output || "No output");
     } catch {
