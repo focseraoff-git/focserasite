@@ -11,8 +11,7 @@
   ],
   "routes": [
     { "src": "/api/chat", "dest": "/api/chat.js" },
-    { "src": "/api/compile", "dest": "/api/compile.js" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/api/compile", "dest": "/api/compile.js" }
   ],
   "rewrites": [
     {
