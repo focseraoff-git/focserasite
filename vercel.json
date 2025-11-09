@@ -1,19 +1,23 @@
 {
+  "version": 2,
+  "builds": [
+    { "src": "api/chat.js", "use": "@vercel/node" },
+    { "src": "api/compile.js", "use": "@vercel/node" },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    { "src": "/api/chat", "dest": "/api/chat.js" },
+    { "src": "/api/compile", "dest": "/api/compile.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ],
   "rewrites": [
     {
       "source": "/((?!api/|.*\\..*).*)",
       "destination": "/index.html"
     }
-  ]
-}
-{
-  "version": 2,
-  "builds": [
-    { "src": "api/chat.js", "use": "@vercel/node" },
-    { "src": "api/compile.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/api/chat", "dest": "/api/chat.js" },
-    { "src": "/api/compile", "dest": "/api/compile.js" }
   ]
 }
