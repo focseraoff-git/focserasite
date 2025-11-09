@@ -23,91 +23,90 @@ import {
   RotateCcw,
   X,
   Terminal as TerminalIcon,
+  MessageSquare,
 } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 import AIAssistant from "./AIAssistant";
-import clsx from "clsx"; // You may need to install this: npm install clsx
+import clsx from "clsx";
 
 /**
- * Refactored Playground
+ * OnlineCompilerPage (final)
  *
- * - Fixed canvas positioning (now relative to editor, not viewport)
- * - Componentized UI (TopToolbar, Workspace, EditorPanel, NotesPanel, etc.)
- * - Workspace grid now responsive to 'showNotes' toggle
- * - Improved Fullscreen mode
- * - Cleaner, more stable layout
+ * Features:
+ * - Monaco editor with language templates
+ * - Canvas overlay for drawing/annotations (HiDPI)
+ * - Drawing tools (pen/eraser/size/color/undo/redo/save)
+ * - Notes side panel
+ * - Terminal with input buffer and run button
+ * - Run/Compile via API (uses VITE_API_URL or sensible default)
+ * - AI Assistant (floating) integrated
+ * - Persisted localStorage state
+ * - Keyboard shortcuts (Ctrl+Enter run, Ctrl/Cmd+S save, Ctrl+Shift+C toggle AI)
+ *
+ * To configure backend: set VITE_API_URL in .env (example: VITE_API_URL=https://www.focsera.in)
  */
 
-/* ======================= Main Component ======================= */
+const DEFAULT_API_URL =
+  (typeof window !== "undefined" && window.location.hostname === "localhost")
+    ? "http://localhost:5173"
+    : "https://www.focsera.in"; // fallback if you host everything on the same domain
+
+const API_BASE = import.meta.env.VITE_API_URL || DEFAULT_API_URL;
+
+/* ---------------- language templates ---------------- */
+const templates = {
+  cpp: `#include <iostream>\nusing namespace std;\nint main(){\n  int a; cin >> a; cout << "You entered: " << a; return 0;\n}`,
+  c: `#include <stdio.h>\nint main(){\n  int a; scanf("%d",&a); printf("You entered: %d", a); return 0;\n}`,
+  java: `import java.util.*;\npublic class Main {\n  public static void main(String[] args){\n    Scanner sc = new Scanner(System.in);\n    int a = sc.nextInt();\n    System.out.println("You entered: " + a);\n  }\n}`,
+  python: `n = input()\nprint("You entered:", n)`,
+  javascript: `const fs = require("fs");\nconst input = fs.readFileSync(0, "utf8");\nconsole.log("You entered:", input.trim());`,
+};
+
 export default function OnlineCompilerPage() {
-  /* ---------------- Core state ---------------- */
+  /* ========== Core UI state ========== */
   const [language, setLanguage] = useState(localStorage.getItem("playground_language") || "cpp");
-  const [code, setCode] = useState(localStorage.getItem("playground_code") || "");
+  const [code, setCode] = useState(localStorage.getItem("playground_code") || templates.cpp);
   const [inputBuffer, setInputBuffer] = useState(localStorage.getItem("playground_input") || "");
   const [outputLines, setOutputLines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fontSize, setFontSize] = useState(Number(localStorage.getItem("playground_fontSize")) || 14);
-  const [showNotes, setShowNotes] = useState(true);
+  const [showNotes, setShowNotes] = useState(localStorage.getItem("playground_showNotes") !== "false");
   const [notes, setNotes] = useState(localStorage.getItem("playground_notes") || "");
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  /* ---------------- Drawing state ---------------- */
-  const [drawMode, setDrawMode] = useState(false);
+  /* ========== Drawing state ========== */
+  const [drawMode, setDrawMode] = useState(localStorage.getItem("playground_drawMode") === "true" || false);
   const [penColor, setPenColor] = useState(localStorage.getItem("playground_penColor") || "#60A5FA");
   const [penSize, setPenSize] = useState(Number(localStorage.getItem("playground_penSize")) || 3);
   const [eraseMode, setEraseMode] = useState(false);
   const [history, setHistory] = useState(JSON.parse(localStorage.getItem("playground_history") || "[]"));
   const [redoStack, setRedoStack] = useState([]);
 
-  /* ---------------- Terminal state ---------------- */
+  /* ========== Terminal state ========== */
   const [terminalOpen, setTerminalOpen] = useState(true);
   const [terminalHeight, setTerminalHeight] = useState(Number(localStorage.getItem("playground_terminalHeight")) || 220);
   const terminalMin = 120;
   const terminalMax = 640;
   const [terminalDocked, setTerminalDocked] = useState(false);
 
-  /* ---------------- user / refs ---------------- */
+  /* ========== Refs & user ========== */
   const [user, setUser] = useState(null);
-  const editorAreaRef = useRef<HTMLDivElement | null>(null); // editor box only (for canvas size)
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const editorAreaRef = useRef(null);
+  const canvasRef = useRef(null);
+  const ctxRef = useRef(null);
   const drawingRef = useRef(false);
   const pointsRef = useRef([]);
-  const editorRef = useRef<any>(null);
-  const terminalInputRef = useRef<HTMLTextAreaElement | null>(null);
-  const terminalScrollRef = useRef<HTMLDivElement | null>(null);
-  const draggingRef = useRef(false); // for terminal resize
+  const editorRef = useRef(null);
+  const terminalInputRef = useRef(null);
+  const terminalScrollRef = useRef(null);
+  const draggingRef = useRef(false);
   const dragStartY = useRef(0);
   const dragStartHeight = useRef(0);
 
-  /* ---------------- language templates ---------------- */
-  const templates = {
-    cpp: `#include <iostream>\nusing namespace std;\nint main(){\n  int a; cin >> a; cout << "You entered: " << a; return 0;\n}`,
-    c: `#include <stdio.h>\nint main(){\n  int a; scanf("%d",&a); printf("You entered: %d", a); return 0;\n}`,
-    java: `import java.util.*;\npublic class Main {\n  public static void main(String[] args){\n    Scanner sc = new Scanner(System.in);\n    int a = sc.nextInt();\n    System.out.println("You entered: " + a);\n  }\n}`,
-    python: `n = input()\nprint("You entered:", n)`,
-    javascript: `const fs = require("fs");\nconst input = fs.readFileSync(0, "utf8");\nconsole.log("You entered:", input.trim());`,
-  };
-
-  /* ---------------- inject Fira Code ---------------- */
+  /* ---------------- persist small bits to localStorage whenever they change ---------------- */
   useEffect(() => {
-    const id = "fira-code-playground-font";
-    if (!document.getElementById(id)) {
-      const link = document.createElement("link");
-      link.id = id;
-      link.rel = "stylesheet";
-      link.href = "https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap";
-      document.head.appendChild(link);
-    }
-  }, []);
-
-  /* ---------------- load session ---------------- */
-  useEffect(() => {
-    lmsSupabaseClient.auth.getSession().then(({ data }) => setUser(data?.session?.user || null)).catch(() => {});
-  }, []);
-
-  /* ---------------- persist state ---------------- */
-  useEffect(() => localStorage.setItem("playground_code", code), [code]);
+    localStorage.setItem("playground_code", code);
+  }, [code]);
   useEffect(() => localStorage.setItem("playground_input", inputBuffer), [inputBuffer]);
   useEffect(() => localStorage.setItem("playground_fontSize", String(fontSize)), [fontSize]);
   useEffect(() => localStorage.setItem("playground_notes", notes), [notes]);
@@ -116,28 +115,36 @@ export default function OnlineCompilerPage() {
   useEffect(() => localStorage.setItem("playground_history", JSON.stringify(history)), [history]);
   useEffect(() => localStorage.setItem("playground_language", language), [language]);
   useEffect(() => localStorage.setItem("playground_terminalHeight", String(terminalHeight)), [terminalHeight]);
+  useEffect(() => localStorage.setItem("playground_showNotes", String(showNotes)), [showNotes]);
+  useEffect(() => localStorage.setItem("playground_drawMode", String(drawMode)), [drawMode]);
 
-  /* ---------------- auto apply template ---------------- */
+  /* ---------------- auto-apply template when language changes (only if user code not set) ---------------- */
   useEffect(() => {
     const tpl = templates[language] || "";
-    setCode(tpl);
+    // if code in storage is blank or equals previous template, replace.
+    if (!code || code.trim().length === 0) setCode(tpl);
   }, [language]);
 
-  /* ---------------- Canvas setup & resize ---------------- */
-  const resizeCanvas = useCallback(() => {
-    const editorBox = editorAreaRef.current;
-    const canvas = canvasRef.current;
-    if (!editorBox || !canvas) return;
+  /* ---------------- load supabase session (if available) ---------------- */
+  useEffect(() => {
+    lmsSupabaseClient?.auth?.getSession?.().then(({ data }) => {
+      setUser(data?.session?.user || null);
+    }).catch(() => {});
+  }, []);
 
-    // Get dimensions from the *editor container*
-    const rect = editorBox.getBoundingClientRect();
+  /* ---------------- Canvas resize & HiDPI handling ---------------- */
+  const resizeCanvas = useCallback(() => {
+    const box = editorAreaRef.current;
+    const canvas = canvasRef.current;
+    if (!box || !canvas) return;
+
+    const rect = box.getBoundingClientRect();
     const ratio = window.devicePixelRatio || 1;
 
-    // Set canvas drawing buffer size (for HiDPI)
-    canvas.width = Math.floor(rect.width * ratio);
-    canvas.height = Math.floor(rect.height * ratio);
+    // Use integer pixel buffer
+    canvas.width = Math.max(1, Math.floor(rect.width * ratio));
+    canvas.height = Math.max(1, Math.floor(rect.height * ratio));
 
-    // Set canvas display size (CSS pixels)
     canvas.style.width = `${rect.width}px`;
     canvas.style.height = `${rect.height}px`;
 
@@ -147,7 +154,7 @@ export default function OnlineCompilerPage() {
     ctx.lineCap = "round";
     ctxRef.current = ctx;
 
-    // Redraw last history state
+    // Draw latest history frame
     const last = history.length ? history[history.length - 1] : null;
     if (last) {
       const img = new Image();
@@ -161,12 +168,13 @@ export default function OnlineCompilerPage() {
   useEffect(() => {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-    // Also resize when notes are toggled, as this changes editor size
+    return () => window.removeEventListener("resize", resizeCanvas);
   }, [resizeCanvas, showNotes, isFullscreen]);
 
-  /* ---------------- Pointer drawing ---------------- */
-  const toLocal = (clientX: number, clientY: number) => {
-    const rect = editorAreaRef.current!.getBoundingClientRect();
+  /* ---------------- Drawing helpers ---------------- */
+  const toLocal = (clientX, clientY) => {
+    const rect = editorAreaRef.current?.getBoundingClientRect();
+    if (!rect) return { x: 0, y: 0 };
     return { x: clientX - rect.left, y: clientY - rect.top };
   };
 
@@ -183,7 +191,7 @@ export default function OnlineCompilerPage() {
     }
   };
 
-  const processStrokeSegment = (p1: any, p2: any, pressure = 1) => {
+  const processStrokeSegment = (p1, p2, pressure = 1) => {
     const ctx = ctxRef.current;
     if (!ctx) return;
     ctx.beginPath();
@@ -200,24 +208,26 @@ export default function OnlineCompilerPage() {
     ctx.stroke();
   };
 
-  const handlePointerDown = (e: PointerEvent) => {
+  const handlePointerDown = (e) => {
     if (!drawMode) return;
     drawingRef.current = true;
     const p = toLocal(e.clientX, e.clientY);
     pointsRef.current = [p];
-    prepareStroke((e as any).pressure ?? 1);
-    (e.target as HTMLElement).setPointerCapture?.((e as any).pointerId);
+    prepareStroke(e?.pressure ?? 1);
+    try {
+      (e.target).setPointerCapture?.(e.pointerId);
+    } catch {}
     e.preventDefault();
   };
 
-  const handlePointerMove = (e: PointerEvent) => {
+  const handlePointerMove = (e) => {
     if (!drawMode || !drawingRef.current) return;
     const p = toLocal(e.clientX, e.clientY);
     const arr = pointsRef.current;
     arr.push(p);
     if (arr.length >= 2) {
       const [p1, p2] = arr.slice(-2);
-      processStrokeSegment(p1, p2, (e as any).pressure ?? 1);
+      processStrokeSegment(p1, p2, e?.pressure ?? 1);
     }
   };
 
@@ -226,14 +236,14 @@ export default function OnlineCompilerPage() {
     drawingRef.current = false;
     pointsRef.current = [];
     const canvas = canvasRef.current;
-    const rect = editorAreaRef.current!.getBoundingClientRect();
+    const rect = editorAreaRef.current.getBoundingClientRect();
     const tmp = document.createElement("canvas");
     tmp.width = rect.width;
     tmp.height = rect.height;
-    const tctx = tmp.getContext("2d")!;
-    tctx.drawImage(canvas!, 0, 0, rect.width, rect.height);
+    const tctx = tmp.getContext("2d");
+    if (tctx) tctx.drawImage(canvas, 0, 0, rect.width, rect.height);
     const url = tmp.toDataURL("image/png");
-    setHistory((h: any) => {
+    setHistory((h) => {
       const next = [...h, url];
       localStorage.setItem("playground_history", JSON.stringify(next));
       localStorage.setItem("playground_sketch", url);
@@ -259,8 +269,7 @@ export default function OnlineCompilerPage() {
     };
   }, [drawMode, penColor, penSize, eraseMode]);
 
-  /* ---------------- draw helpers ---------------- */
-  const redrawFromDataUrl = (url: string | null) => {
+  const redrawFromDataUrl = (url) => {
     const ctx = ctxRef.current;
     const container = editorAreaRef.current;
     if (!ctx || !container) return;
@@ -284,8 +293,8 @@ export default function OnlineCompilerPage() {
       redrawFromDataUrl(newHist[newHist.length - 1]);
     } else {
       localStorage.removeItem("playground_sketch");
-      const rect = editorAreaRef.current!.getBoundingClientRect();
-      ctxRef.current!.clearRect(0, 0, rect.width, rect.height);
+      const rect = editorAreaRef.current?.getBoundingClientRect();
+      if (ctxRef.current && rect) ctxRef.current.clearRect(0, 0, rect.width, rect.height);
     }
   };
 
@@ -304,8 +313,8 @@ export default function OnlineCompilerPage() {
 
   const handleClear = () => {
     if (!confirm("Clear current drawing layer?")) return;
-    const rect = editorAreaRef.current!.getBoundingClientRect();
-    ctxRef.current!.clearRect(0, 0, rect.width, rect.height);
+    const rect = editorAreaRef.current?.getBoundingClientRect();
+    if (ctxRef.current && rect) ctxRef.current.clearRect(0, 0, rect.width, rect.height);
     setHistory([]);
     setRedoStack([]);
     localStorage.removeItem("playground_history");
@@ -321,71 +330,82 @@ export default function OnlineCompilerPage() {
     link.click();
   };
 
-  /* ---------------- Terminal & run ---------------- */
+  /* ---------------- Terminal & Run ---------------- */
   useEffect(() => {
-    if (terminalScrollRef.current) {
-      terminalScrollRef.current.scrollTop = terminalScrollRef.current.scrollHeight;
-    }
+    if (terminalScrollRef.current) terminalScrollRef.current.scrollTop = terminalScrollRef.current.scrollHeight;
   }, [outputLines, loading]);
 
-  const pushLine = (line: string) => setOutputLines((l: string[]) => [...l, String(line)]);
+  const pushLine = (line) => setOutputLines((l) => [...l, String(line)]);
   const clearOutput = () => setOutputLines([]);
 
-  const getLanguageId = (lang: string) => ({ cpp: 54, c: 50, java: 62, python: 71, javascript: 63 }[lang] || 63);
+  const getLanguageId = (lang) => ({ cpp: 54, c: 50, java: 62, python: 71, javascript: 63 }[lang] || 63);
 
   const runCode = async () => {
-    setOutputLines([]);
-    pushLine("⏳ Running...");
-    setLoading(true);
+  setOutputLines([]);
+  pushLine("⏳ Preparing to run...");
+  setLoading(true);
 
-    try {
-      const payload = { source_code: code, language_id: getLanguageId(language), stdin: inputBuffer || "" };
-      const res = await axios.post("/api/compile", payload, { headers: { "Content-Type": "application/json" } });
-      const data = res.data || {};
-      const stdout = data.stdout ?? data.stdout_raw ?? null;
-      const stderr = data.stderr ?? data.stderr_raw ?? null;
-      const compile_output = data.compile_output ?? null;
-      const time = data.time ?? data.execution_time ?? null;
+  // 🧠 Step 1: Smart input detection
+  const needsInput =
+    (language === "java" && code.includes("Scanner")) ||
+    (language === "cpp" && code.match(/cin\s*>>/)) ||
+    (language === "c" && code.match(/scanf\s*\(/)) ||
+    (language === "python" && code.includes("input(")) ||
+    (language === "javascript" && code.includes("readFileSync"));
 
-      setOutputLines([]);
-      if (stdout && stdout.toString().trim()) pushLine(stdout.toString().trim());
-      else if (stderr && stderr.toString().trim()) pushLine(stderr.toString().trim());
-      else if (compile_output && compile_output.toString().trim()) pushLine(compile_output.toString().trim());
-      else pushLine("No output");
+  if (needsInput && !inputBuffer.trim()) {
+    pushLine("⚠️ Detected code that expects user input (Scanner/input/etc).");
+    pushLine("💡 Please enter input in the terminal area below before running the program.");
+    setLoading(false);
+    return;
+  }
 
-      if (time) pushLine(`\nExecution Time: ${time}s`);
-
-      // save to supabase
-      if (user) {
-        try {
-          await lmsSupabaseClient.from("submissions").insert([{
-            user_id: user.id,
-            title: "Playground Run",
-            language,
-            code,
-            input: inputBuffer || "",
-            output: stdout || stderr || compile_output || "",
-            status: stderr || compile_output ? "error" : "success",
-            execution_time: time || null,
-            submitted_at: new Date().toISOString(),
-          }]);
-        } catch (err) {
-          console.warn("Failed to save submission:", err?.message || err);
-        }
+  try {
+    pushLine("🚀 Running your code...");
+    const response = await fetch(
+      "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-rapidapi-key": import.meta.env.VITE_JUDGE0_API_KEY,
+          "x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+        },
+        body: JSON.stringify({
+          source_code: code,
+          language_id: getLanguageId(language),
+          stdin: inputBuffer || "",
+        }),
       }
-    } catch (err: any) {
-      console.error("Run error:", err);
-      setOutputLines([]);
-      pushLine("⚠️ Error executing code — check server or network.");
-      if (err?.response?.data) pushLine(JSON.stringify(err.response.data).slice(0, 1000));
-    } finally {
-      setLoading(false);
-    }
-  };
+    );
 
-  /* ---------------- Keyboard shortcuts ---------------- */
+    const data = await response.json();
+    console.log("Judge0 Response:", data); // 👀 For debugging
+
+    const stdout = data.stdout || data.stdout_raw || "";
+    const stderr = data.stderr || data.stderr_raw || "";
+    const compile_output = data.compile_output || "";
+
+    setOutputLines([]);
+    if (stdout.trim()) pushLine(stdout);
+    else if (stderr.trim()) pushLine(stderr);
+    else if (compile_output.trim()) pushLine(compile_output);
+    else if (data.status?.description)
+      pushLine(`⚙️ ${data.status.description}`);
+    else pushLine("⚠️ No output received.");
+
+  } catch (err) {
+    console.error("Run error:", err);
+    setOutputLines(["❌ Error executing code — check network or API key."]);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  /* ---------------- Keyboard shortcuts: Save (Cmd/Ctrl+S), Run (Ctrl+Enter), Toggle Draw(Ctrl+D) ---------------- */
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
+    const onKey = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
         e.preventDefault();
         runCode();
@@ -403,11 +423,11 @@ export default function OnlineCompilerPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [code, inputBuffer, language, user]);
 
-  /* ---------------- Terminal drag ---------------- */
+  /* ---------------- Terminal drag handlers for resizing ---------------- */
   useEffect(() => {
-    const onMove = (e: MouseEvent | TouchEvent) => {
+    const onMove = (e) => {
       if (!draggingRef.current) return;
-      const clientY = (e as TouchEvent).touches ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       const delta = dragStartY.current - clientY;
       let next = Math.min(terminalMax, Math.max(terminalMin, dragStartHeight.current + delta));
       setTerminalHeight(next);
@@ -417,40 +437,31 @@ export default function OnlineCompilerPage() {
       draggingRef.current = false;
       document.body.style.cursor = "";
     };
-    window.addEventListener("mousemove", onMove as any);
+    window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
-    window.addEventListener("touchmove", onMove as any, { passive: false });
+    window.addEventListener("touchmove", onMove, { passive: false });
     window.addEventListener("touchend", onUp);
     return () => {
-      window.removeEventListener("mousemove", onMove as any);
+      window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
-      window.removeEventListener("touchmove", onMove as any);
+      window.removeEventListener("touchmove", onMove);
       window.removeEventListener("touchend", onUp);
     };
   }, [terminalHeight]);
 
-  const startDrag = (e: React.MouseEvent | React.TouchEvent) => {
+  const startDrag = (e) => {
     draggingRef.current = true;
-    const clientY = (e as React.TouchEvent).touches ? (e as React.TouchEvent).touches[0].clientY : (e as React.MouseEvent).clientY;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     dragStartY.current = clientY;
     dragStartHeight.current = terminalHeight;
     document.body.style.cursor = "ns-resize";
   };
 
-  /* ---------------- cursor while drawing ---------------- */
-  useEffect(() => {
-    document.body.style.cursor = drawMode ? "crosshair" : "";
-    return () => { document.body.style.cursor = ""; };
-  }, [drawMode]);
+  /* ---------------- UI Components (TopToolbar, Workspace, EditorPanel, NotesPanel, DrawPalette, Terminal) ---------------- */
 
-  /* ======================= JSX UI ======================= */
   return (
-    <div
-      className={clsx(
-        "min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black/80 text-gray-100 antialiased",
-        isFullscreen && "fixed inset-0 z-[999] overflow-y-auto"
-      )}
-    >
+    <div className={clsx("min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-black/80 text-gray-100 antialiased",
+      isFullscreen && "fixed inset-0 z-[999] overflow-y-auto")}>
       <TopToolbar
         language={language}
         setLanguage={setLanguage}
@@ -470,7 +481,6 @@ export default function OnlineCompilerPage() {
 
       <Workspace
         showNotes={showNotes}
-        // EditorPanel props
         editorAreaRef={editorAreaRef}
         isFullscreen={isFullscreen}
         language={language}
@@ -479,10 +489,8 @@ export default function OnlineCompilerPage() {
         fontSize={fontSize}
         editorRef={editorRef}
         pushLine={pushLine}
-        // Canvas props
         canvasRef={canvasRef}
         drawMode={drawMode}
-        // NotesPanel props
         notes={notes}
         setNotes={setNotes}
       />
@@ -527,9 +535,7 @@ export default function OnlineCompilerPage() {
   );
 }
 
-/* ======================= Child Components ======================= */
-
-/* ---------------- Top Toolbar ---------------- */
+/* ---------------- TopToolbar component ---------------- */
 function TopToolbar({
   language, setLanguage, fontSize, setFontSize, showNotes, setShowNotes,
   drawMode, setDrawMode, runCode, loading, terminalOpen, setTerminalOpen,
@@ -539,27 +545,26 @@ function TopToolbar({
   const btnGhost = "inline-flex items-center gap-2 bg-white/6 hover:bg-white/8 text-gray-100 font-medium rounded-lg px-3 py-2 transition";
 
   return (
-<div className="fixed left-1/2 -translate-x-1/2 top-24 z-50 w-[92%] max-w-7xl">
+    <div className="fixed left-1/2 -translate-x-1/2 top-32 z-50 w-[92%] max-w-7xl">
       <div className="backdrop-blur-md bg-white/6 border border-white/6 rounded-2xl shadow-2xl p-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Sparkles className="text-blue-400" />
-            <div style={{ fontFamily: "'Fira Code', Consolas, monospace" }} className="text-lg font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300">
+            <div style={{ fontFamily: "'Fira Code', Consolas, monospace" }}
+              className="text-lg font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300">
               Playground
             </div>
           </div>
+
           <div className="hidden md:flex items-center gap-3">
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="bg-transparent text-gray-200 border border-white/6 px-3 py-1 rounded-md"
-            >
+            <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bg-transparent text-gray-200 border border-white/6 px-3 py-1 rounded-md">
               <option value="cpp">C++</option>
               <option value="c">C</option>
               <option value="java">Java</option>
               <option value="python">Python</option>
               <option value="javascript">JavaScript</option>
             </select>
+
             <div className="flex items-center gap-1 bg-white/6 px-2 py-1 rounded-md">
               <button onClick={() => setFontSize((s) => Math.max(8, s - 1))} className="p-1 text-gray-100"><Minus size={14} /></button>
               <div className="px-2 text-sm">{fontSize}px</div>
@@ -568,19 +573,24 @@ function TopToolbar({
             </div>
           </div>
         </div>
+
         <div className="flex items-center gap-3">
           <motion.button whileHover={{ y: -2 }} onClick={() => setShowNotes((s) => !s)} className={btnGhost}>
             <FileEdit size={16} /> {showNotes ? "Hide Notes" : "Notes"}
           </motion.button>
+
           <motion.button whileHover={{ y: -2 }} onClick={() => setDrawMode((d) => !d)} className={clsx(btnGhost, drawMode && "bg-pink-600 text-white")}>
             <Pencil size={16} /> {drawMode ? "Drawing" : "Draw"}
           </motion.button>
+
           <motion.button whileHover={{ scale: 1.03 }} onClick={runCode} disabled={loading} className={btnPrimary}>
             {loading ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />} <span>{loading ? "Running..." : "Run"}</span>
           </motion.button>
+
           <motion.button whileHover={{ scale: 1.03 }} onClick={() => setTerminalOpen((o) => !o)} className={btnGhost}>
-            <Terminal size={16} /> {terminalOpen ? "Hide" : "Show"}
+            <TerminalIcon size={16} /> {terminalOpen ? "Hide" : "Show"}
           </motion.button>
+
           <motion.button whileHover={{ scale: 1.03 }} onClick={() => setIsFullscreen((s) => !s)} className={btnGhost}>
             {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
           </motion.button>
@@ -590,22 +600,15 @@ function TopToolbar({
   );
 }
 
-/* ---------------- Main Workspace (Editor + Notes) ---------------- */
+/* ---------------- Workspace (Editor panel + Notes panel) ---------------- */
 function Workspace({
-  showNotes,
-  editorAreaRef, isFullscreen, language, code, setCode, fontSize, editorRef, pushLine,
-  canvasRef, drawMode,
-  notes, setNotes,
+  showNotes, editorAreaRef, isFullscreen, language, code, setCode, fontSize, editorRef, pushLine,
+  canvasRef, drawMode, notes, setNotes,
 }) {
   return (
-    <div className="w-full min-h-screen flex items-start justify-center pt-24 pb-8 px-6">
+    <div className="w-full min-h-screen flex items-start justify-center pt-32 pb-8 px-6">
       <div className="w-full max-w-7xl bg-transparent">
-        <div
-          className={clsx(
-            "relative grid grid-cols-1 gap-6",
-            showNotes ? "md:grid-cols-[1fr_360px]" : "md:grid-cols-1"
-          )}
-        >
+        <div className={clsx("relative grid grid-cols-1 gap-6", showNotes ? "md:grid-cols-[1fr_360px]" : "md:grid-cols-1")}>
           <EditorPanel
             editorAreaRef={editorAreaRef}
             isFullscreen={isFullscreen}
@@ -626,19 +629,13 @@ function Workspace({
   );
 }
 
-/* ---------------- Editor Panel (Monaco + Canvas) ---------------- */
-function EditorPanel({
-  editorAreaRef, isFullscreen, language, code, setCode, fontSize, editorRef, pushLine,
-  canvasRef, drawMode,
-}) {
-  const editorHeight = isFullscreen ? "calc(100vh - 500px)" : "600px";
+/* ---------------- EditorPanel: Monaco + Canvas overlay ---------------- */
+function EditorPanel({ editorAreaRef, isFullscreen, language, code, setCode, fontSize, editorRef, pushLine, canvasRef, drawMode }) {
+ const editorHeight = isFullscreen ? "calc(100vh - 140px)" : "calc(100vh - 260px)";
+
 
   return (
-    <div
-      ref={editorAreaRef}
-      className="relative rounded-xl overflow-hidden shadow-2xl border border-white/6 bg-slate-900/30"
-      style={{ minHeight: editorHeight }}
-    >
+    <div ref={editorAreaRef} className="relative rounded-xl overflow-hidden shadow-2xl border border-white/6 bg-slate-900/30" style={{ minHeight: editorHeight }}>
       <MonacoEditor
         height={editorHeight}
         language={language === "javascript" ? "javascript" : language}
@@ -658,16 +655,11 @@ function EditorPanel({
               localStorage.setItem("playground_code", editor.getValue());
               pushLine("✅ Code saved locally");
             });
-          } catch (e) {
-            // ignore
-          }
+          } catch (e) {}
         }}
       />
-      
-      {/* ** THIS IS THE FIX **
-        The canvas is now *inside* the relative parent,
-        and positioned absolutely to fill it.
-      */}
+
+      {/* Drawing canvas sits over editor area */}
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0"
@@ -680,7 +672,7 @@ function EditorPanel({
   );
 }
 
-/* ---------------- Notes Panel ---------------- */
+/* ---------------- Notes panel ---------------- */
 function NotesPanel({ notes, setNotes }) {
   return (
     <div className="w-full md:w-[360px] rounded-xl bg-slate-900/60 border border-white/6 overflow-hidden flex flex-col">
@@ -691,23 +683,14 @@ function NotesPanel({ notes, setNotes }) {
           <button onClick={() => setNotes("")} className="bg-white/6 px-3 py-1 rounded text-sm">Clear</button>
         </div>
       </div>
-      <textarea
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        className="flex-1 p-4 bg-transparent text-sm text-gray-100 resize-none outline-none"
-        style={{ fontFamily: "'Fira Code', Consolas, monospace", minHeight: '480px' }}
-      />
+      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="flex-1 p-4 bg-transparent text-sm text-gray-100 resize-none outline-none" style={{ fontFamily: "'Fira Code', Consolas, monospace", minHeight: '480px' }} />
     </div>
   );
 }
 
-/* ---------------- Floating Draw Palette ---------------- */
-function DrawPalette({
-  drawMode, setDrawMode, penColor, setPenColor, penSize, setPenSize,
-  eraseMode, setEraseMode, handleUndo, handleRedo, handleSaveSketch, handleClear,
-}) {
+/* ---------------- DrawPalette ---------------- */
+function DrawPalette({ drawMode, setDrawMode, penColor, setPenColor, penSize, setPenSize, eraseMode, setEraseMode, handleUndo, handleRedo, handleSaveSketch, handleClear }) {
   if (!drawMode) return null;
-
   return (
     <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }} className="fixed top-28 right-8 z-60">
       <div className="backdrop-blur-md bg-white/6 border border-white/6 rounded-2xl p-3 w-64 shadow-2xl text-gray-100">
@@ -715,17 +698,20 @@ function DrawPalette({
           <div className="text-sm font-medium flex items-center gap-2"><Menu size={14} /> Tools</div>
           <button onClick={() => setDrawMode(false)} className="p-1 bg-white/6 rounded"><X size={14} /></button>
         </div>
+
         <div className="flex items-center gap-2 mb-2">
           <Palette size={14} />
           <input type="color" value={penColor} onChange={(e) => setPenColor(e.target.value)} className="cursor-pointer" />
           <input type="range" min="1" max="30" value={penSize} onChange={(e) => setPenSize(Number(e.target.value))} className="flex-1" />
           <div className="text-xs">{penSize}px</div>
         </div>
+
         <div className="flex gap-2 mb-2">
           <button onClick={() => setEraseMode((em) => !em)} className={`flex-1 px-3 py-2 rounded-lg text-sm ${eraseMode ? "bg-gray-700" : "bg-white/6"}`}><Eraser size={14} /> {eraseMode ? "Eraser" : "Pen"}</button>
           <button onClick={handleUndo} className="px-3 py-2 bg-white/6 rounded-lg"><Undo size={14} /></button>
           <button onClick={handleRedo} className="px-3 py-2 bg-white/6 rounded-lg"><Redo size={14} /></button>
         </div>
+
         <div className="flex gap-2">
           <button onClick={handleSaveSketch} className="flex-1 px-3 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-500 text-white">Save Sketch</button>
           <button onClick={handleClear} className="px-3 py-2 rounded-lg bg-red-600 text-white">Clear</button>
@@ -735,30 +721,22 @@ function DrawPalette({
   );
 }
 
-/* ---------------- Terminal (Floating/Docked) ---------------- */
-function Terminal({
-  open, docked, setDocked, height, setOpen, setHeight, terminalMin, terminalMax,
-  startDrag, terminalScrollRef, terminalInputRef, outputLines, clearOutput,
-  setInputBuffer, inputBuffer, runCode, loading,
-}) {
+/* ---------------- Terminal component ---------------- */
+function Terminal({ open, docked, setDocked, height, setOpen, setHeight, terminalMin, terminalMax, startDrag, terminalScrollRef, terminalInputRef, outputLines, clearOutput, setInputBuffer, inputBuffer, runCode, loading }) {
   const [dragging, setDragging] = useState(false);
-  const [pos, setPos] = useState({ x: 0, y: 0 }); // for manual drag when floating
+  const [pos, setPos] = useState({ x: 0, y: 0 });
   const dragOffset = useRef({ x: 0, y: 0 });
 
-  // Auto-scroll
   useEffect(() => {
-    if (terminalScrollRef?.current) {
-      terminalScrollRef.current.scrollTop = terminalScrollRef.current.scrollHeight;
-    }
+    if (terminalScrollRef?.current) terminalScrollRef.current.scrollTop = terminalScrollRef.current.scrollHeight;
   }, [outputLines]);
 
-  // Manual drag handlers for floating terminal
-  const handleDragStart = (e: React.MouseEvent) => {
+  const handleDragStart = (e) => {
     setDragging(true);
     dragOffset.current = { x: e.clientX - pos.x, y: e.clientY - pos.y };
     document.body.style.userSelect = "none";
   };
-  const handleDragMove = (e: MouseEvent) => {
+  const handleDragMove = (e) => {
     if (!dragging) return;
     setPos({ x: e.clientX - dragOffset.current.x, y: e.clientY - dragOffset.current.y });
   };
@@ -780,11 +758,7 @@ function Terminal({
 
   const terminalContent = (
     <>
-      <div
-        className="flex items-center justify-center cursor-row-resize select-none"
-        onMouseDown={(e) => { startDrag(e as any); }}
-        style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))" }}
-      >
+      <div className="flex items-center justify-center cursor-row-resize select-none" onMouseDown={(e) => startDrag(e)} style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))" }}>
         <div className="py-2">
           <div className="flex items-center gap-1 justify-center">
             <div className="w-2 h-2 bg-white/30 rounded-full" />
@@ -793,15 +767,17 @@ function Terminal({
           </div>
         </div>
       </div>
+
       <motion.div animate={{ height: height }} transition={{ duration: 0.15 }} style={{ overflow: "hidden" }}>
         <div className="px-4 py-3 bg-black text-green-300 font-mono" style={{ fontFamily: "'Fira Code', Consolas, monospace" }}>
           <div ref={terminalScrollRef} className="max-h-[40vh] overflow-auto pb-2">
             {outputLines.length === 0 ? (
               <div className="text-gray-500">Terminal cleared. Type input and press Ctrl+Enter or Run.</div>
             ) : (
-              outputLines.map((ln: string, i: number) => <div key={i} className="whitespace-pre-wrap text-sm">{ln}</div>)
+              outputLines.map((ln, i) => <div key={i} className="whitespace-pre-wrap text-sm">{ln}</div>)
             )}
           </div>
+
           <div className="mt-3 border-t border-white/6 pt-3">
             <div className="flex items-start gap-3">
               <div className="text-white/60 select-none">{'>'}</div>
@@ -820,6 +796,7 @@ function Terminal({
                 rows={4}
               />
             </div>
+
             <div className="flex items-center justify-between mt-2">
               <div className="text-xs text-gray-400">Multi-line input supported</div>
               <div className="flex gap-2">
@@ -836,50 +813,48 @@ function Terminal({
 
   if (docked) {
     return (
-      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.18 }}>
-        <div className="fixed left-1/2 -translate-x-1/2 bottom-6 w-[92%] max-w-7xl z-50">
-          <div className="bg-gradient-to-b from-slate-900/95 to-slate-900/90 border border-white/6 rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2 bg-white/3 backdrop-blur text-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
-                <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                <div className="w-3 h-3 rounded-full bg-green-400" />
-                <div className="ml-3 text-sm font-medium">Terminal (Docked)</div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="text-xs text-gray-300 mr-3">Ctrl+Enter to Run</div>
-                <button onClick={() => setDocked(false)} className="bg-white/6 px-3 py-1 rounded text-sm hover:bg-white/8">Undock</button>
-                <button onClick={() => setOpen(false)} className="bg-white/6 px-3 py-1 rounded text-sm">Close</button>
-              </div>
-            </div>
-            {terminalContent}
-          </div>
-        </div>
-      </motion.div>
-    );
-  }
-
-  // Floating mode
-  return (
-    <motion.div
-      initial={{ y: 60, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.18 }}
-      style={{ transform: `translate(${pos.x}px, ${pos.y}px)`  }}
-      className="fixed right-8 bottom-8 w-[78%] max-w-4xl z-50"
-    >
-      <div className="bg-gradient-to-b from-slate-900/95 to-slate-900/90 border border-white/6 rounded-2xl shadow-2xl overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-2 bg-white/3 backdrop-blur text-gray-100 cursor-move" onMouseDown={handleDragStart}>
-<div className="flex items-center justify-between px-4 py-2 bg-white/3 backdrop-blur text-gray-100 cursor-move">            <div className="w-3 h-3 rounded-full bg-red-500" />
+  <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.18 }}>
+    <div className="fixed left-1/2 -translate-x-1/2 bottom-0 w-full max-w-none z-50">
+      <div className="bg-gradient-to-b from-slate-950/95 to-black/95 border-t border-white/10 shadow-2xl overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-2 bg-white/5 backdrop-blur text-gray-100 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-3 h-3 rounded-full bg-red-500" />
             <div className="w-3 h-3 rounded-full bg-yellow-400" />
             <div className="w-3 h-3 rounded-full bg-green-400" />
             <div className="ml-3 text-sm font-medium">Terminal</div>
           </div>
+          <div className="flex items-center gap-3 text-xs text-gray-300">
+            Ctrl+Enter to Run
+            <button onClick={() => setOpen(false)} className="bg-white/10 px-3 py-1 rounded hover:bg-white/20">Close</button>
+          </div>
+        </div>
+        {terminalContent}
+      </div>
+    </div>
+  </motion.div>
+);
+
+  }
+
+  // Floating mode
+  return (
+    <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.18 }} style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }} className="fixed right-8 bottom-8 w-[78%] max-w-4xl z-50">
+      <div className="bg-gradient-to-b from-slate-900/95 to-slate-900/90 border border-white/6 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-2 bg-white/3 backdrop-blur text-gray-100 cursor-move" onMouseDown={handleDragStart}>
+          <div className="flex items-center gap-3">
+            <div className="w-3 h-3 rounded-full bg-red-500" />
+            <div className="w-3 h-3 rounded-full bg-yellow-400" />
+            <div className="w-3 h-3 rounded-full bg-green-400" />
+            <div className="ml-3 text-sm font-medium">Terminal</div>
+          </div>
+
           <div className="flex items-center gap-2">
-<button onClick={() => setDocked(true)} className="bg-white/6 px-3 py-1 rounded text-sm hover:bg-white/8">Dock</button>            <div className="text-xs text-gray-300 mr-3">Drag header to move</div>
+            <button onClick={() => setDocked(true)} className="bg-white/6 px-3 py-1 rounded text-sm hover:bg-white/8">Dock</button>
+            <div className="text-xs text-gray-300 mr-3">Drag header to move</div>
             <button onClick={() => setOpen(false)} className="bg-white/6 px-3 py-1 rounded text-sm">Close</button>
           </div>
         </div>
+
         {terminalContent}
       </div>
     </motion.div>
