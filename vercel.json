@@ -9,14 +9,10 @@
       "config": { "distDir": "dist" }
     }
   ],
-  "routes": [
-    { "src": "/api/chat", "dest": "/api/chat.js" },
-    { "src": "/api/compile", "dest": "/api/compile.js" }
-  ],
   "rewrites": [
-    {
-      "source": "/((?!api/|.*\\..*).*)",
-      "destination": "/index.html"
-    }
+   
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    
+    { "source": "/((?!.*\\..*).*)", "destination": "/index.html" }
   ]
 }
