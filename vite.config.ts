@@ -3,11 +3,11 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: './', // ✅ ensures assets resolve correctly
+  base: './', // important for correct paths
   build: {
-    outDir: 'dist' // ✅ build output folder
+    outDir: 'dist', // ensures vite outputs to /dist
   },
   optimizeDeps: {
-    exclude: ['lucide-react']
-  }
+    exclude: ['lucide-react'],
+  },
 });
