@@ -4,38 +4,34 @@ import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function AuthCallback() {
   useEffect(() => {
-    const handleAuth = async () => {
+    const finalizeLogin = async () => {
       try {
-        // ✅ If Supabase needs to parse tokens from URL hash (e.g., #access_token)
+        // ✅ Exchange the access_token from URL hash for a session
         const { data, error } = await lmsSupabaseClient.auth.getSessionFromUrl({
           storeSession: true,
         });
 
         if (error) {
-          console.error("Error storing session:", error);
-          // Try manually refreshing the session
-          const session = await lmsSupabaseClient.auth.getSession();
-          if (session?.data?.session) {
-            window.location.replace("/divisions/skill/dashboard");
-            return;
-          }
-          throw error;
+          console.error("Error saving session:", error);
+          window.location.replace("/divisions/skill/auth");
+          return;
         }
 
         if (data?.session) {
-          // ✅ Success! Session stored, now redirect to dashboard
+          // ✅ Clean the URL (remove #access_token) and redirect to dashboard
+          window.history.replaceState({}, document.title, "/divisions/skill/dashboard");
           window.location.replace("/divisions/skill/dashboard");
         } else {
-          // ❌ No session → fallback to login
+          // ❌ No session — redirect to login
           window.location.replace("/divisions/skill/auth");
         }
       } catch (err) {
-        console.error("AuthCallback failed:", err);
+        console.error("Auth callback failed:", err);
         window.location.replace("/divisions/skill/auth");
       }
     };
 
-    handleAuth();
+    finalizeLogin();
   }, []);
 
   return (
