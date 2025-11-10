@@ -10,13 +10,9 @@
     }
   ],
   "rewrites": [
+   
     { "source": "/api/(.*)", "destination": "/api/$1" },
-
     
-    { "source": "/(.*)", "destination": "/" }
-  ],
-  "redirects": [
-    
-    { "source": "/(.*)", "destination": "https://www.focsera.in/$1", "permanent": true }
+    { "source": "/((?!.*\\..*).*)", "destination": "/index.html" }
   ]
 }
