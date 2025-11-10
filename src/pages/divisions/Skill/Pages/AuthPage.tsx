@@ -45,46 +45,37 @@ export default function SkillAuthPage() {
   useEffect(() => {
   const handleAuthRedirect = async () => {
     try {
-      // Check if Google returned OAuth tokens in URL
+      const isLocal =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+
+      const dashboardUrl = isLocal
+        ? "http://localhost:5173/divisions/skill/dashboard"
+        : "https://www.focsera.in/divisions/skill/dashboard";
+
+      // ✅ 1. If redirected from Google with access_token
       if (window.location.hash.includes("access_token")) {
         setLoading(true);
 
-        // ✅ Extract and store the session in Supabase
+        // Store session in Supabase (important)
         const { data, error } = await lmsSupabaseClient.auth.getSessionFromUrl({
           storeSession: true,
         });
-
         if (error) throw error;
 
-        // ✅ Clean up the URL (remove the #access_token fragment)
+        // ✅ 2. Remove #access_token from URL for a clean look
         window.history.replaceState({}, document.title, window.location.pathname);
 
-        // ✅ Redirect to the correct dashboard (local or prod)
-        const isLocal =
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1";
-
-        const dashboardUrl = isLocal
-          ? "http://localhost:5173/divisions/skill/dashboard"
-          : "https://www.focsera.in/divisions/skill/dashboard";
-
+        // ✅ 3. Redirect to dashboard
         if (data?.session) {
           window.location.replace(dashboardUrl);
           return;
         }
       }
 
-      // Already logged in → redirect
+      // ✅ 4. Already logged-in users go straight to dashboard
       const { data } = await lmsSupabaseClient.auth.getSession();
       if (data?.session) {
-        const isLocal =
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1";
-
-        const dashboardUrl = isLocal
-          ? "http://localhost:5173/divisions/skill/dashboard"
-          : "https://www.focsera.in/divisions/skill/dashboard";
-
         window.location.replace(dashboardUrl);
       }
     } catch (err) {
