@@ -4,5 +4,21 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   base: './',
-  build: { outDir: 'dist' }
+  build: { 
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'monaco-editor': ['monaco-editor']
+        }
+      }
+    }
+  },
+  define: {
+    'process.env': {}
+  },
+  optimizeDeps: {
+    include: ['@monaco-editor/react']
+  }
 });
+3

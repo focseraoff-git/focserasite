@@ -9,6 +9,18 @@ export default function SkillAuthCallback() {
       try {
         console.log("🔄 Processing Supabase OAuth callback...");
 
+        // Generate and verify state parameter to prevent CSRF
+        const urlParams = new URLSearchParams(window.location.hash.substring(1));
+        const stateParam = urlParams.get("state");
+        const storedState = sessionStorage.getItem("oauth_state");
+        
+        if (!stateParam || !storedState || stateParam !== storedState) {
+          throw new Error("Invalid state parameter - possible CSRF attack");
+        }
+
+        // Clear state after verification
+        sessionStorage.removeItem("oauth_state");
+
         // Supabase will parse the access token from URL hash automatically
         const { data, error } = await lmsSupabaseClient.auth.getSessionFromUrl({
           storeSession: true,
@@ -19,22 +31,22 @@ export default function SkillAuthCallback() {
           throw error;
         }
 
-        // ✅ Determine environment
-        const currentHost = window.location.hostname;
-        const isLocal = currentHost === "localhost" || currentHost === "127.0.0.1";
+        // ✅ Determine environment and build URLs
+        const baseUrl = window.location.origin;
+        const dashboardUrl = `${baseUrl}/divisions/skill/dashboard`;
+        const authUrl = `${baseUrl}/divisions/skill/auth`;
 
-        // ✅ Correct dashboard URLs
-        const dashboardUrl = isLocal
-          ? "http://localhost:5173/divisions/skill/dashboard"
-          : "https://www.focsera.in/divisions/skill/dashboard";
-
-        const authUrl = isLocal
-          ? "http://localhost:5173/divisions/skill/auth"
-          : "https://www.focsera.in/divisions/skill/auth";
-
-        // ✅ Redirect based on session presence
+        // ✅ Verify session and handle redirect
         if (data?.session) {
+          // Store refresh token securely
+          if (data.session.refresh_token) {
+            sessionStorage.setItem("skill_refresh_token", data.session.refresh_token);
+          }
+
           console.log("✅ Session established:", data.session.user?.email);
+          
+          // Clean URL hash before redirect
+          window.location.hash = "";
           window.location.replace(dashboardUrl);
         } else {
           console.warn("⚠️ No session found. Redirecting to login...");
@@ -43,14 +55,12 @@ export default function SkillAuthCallback() {
       } catch (err) {
         console.error("⚠️ Auth callback failed:", err);
 
-        // Fallback redirect if anything fails
-        const isLocal =
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1";
+        // Clear any sensitive data on error
+        sessionStorage.removeItem("oauth_state");
+        sessionStorage.removeItem("skill_refresh_token");
 
-        const fallbackUrl = isLocal
-          ? "http://localhost:5173/divisions/skill/auth"
-          : "https://www.focsera.in/divisions/skill/auth";
+        const baseUrl = window.location.origin;
+        const fallbackUrl = `${baseUrl}/divisions/skill/auth`;
 
         window.location.replace(fallbackUrl);
       }

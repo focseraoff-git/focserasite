@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Play, Send, Loader2, Sun, Moon, ArrowLeft } from "lucide-react";
-import Editor from "@monaco-editor/react";
+import { Editor } from "@monaco-editor/react";
 import confetti from "canvas-confetti";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 

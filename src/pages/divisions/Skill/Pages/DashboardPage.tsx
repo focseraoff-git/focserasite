@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import MonacoEditor from "react-monaco-editor";
+import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 

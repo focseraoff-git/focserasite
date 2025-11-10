@@ -1,7 +1,7 @@
 // OnlineCompilerPage.tsx
 // @ts-nocheck
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import MonacoEditor from "react-monaco-editor";
+import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import {
@@ -636,19 +636,19 @@ function EditorPanel({ editorAreaRef, isFullscreen, language, code, setCode, fon
 
   return (
     <div ref={editorAreaRef} className="relative rounded-xl overflow-hidden shadow-2xl border border-white/6 bg-slate-900/30" style={{ minHeight: editorHeight }}>
-      <MonacoEditor
+      <Editor
         height={editorHeight}
         language={language === "javascript" ? "javascript" : language}
         value={code}
         theme="vs-dark"
-        onChange={(v) => setCode(v)}
+        onChange={(v) => setCode(v || "")}
         options={{
           fontSize,
           minimap: { enabled: false },
           automaticLayout: true,
           fontFamily: "'Fira Code', Consolas, monospace",
         }}
-        editorDidMount={(editor, monaco) => {
+        onMount={(editor, monaco) => {
           editorRef.current = editor;
           try {
             editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
