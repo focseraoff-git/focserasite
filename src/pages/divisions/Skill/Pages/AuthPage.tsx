@@ -7,7 +7,6 @@ import {
   Eye,
   EyeOff,
   Loader2,
-  // CheckCircle and AlertCircle removed as they aren't used in this file's logic
 } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
@@ -21,45 +20,41 @@ export default function SkillAuthPage() {
   const [message, setMessage] = useState({ type: "", text: "" });
 
   const baseUrl = window.location.origin;
-  
-  // NOTE: This variable is no longer needed as the dashboard path is used directly.
-  // const redirectTo = `${baseUrl}/divisions/skill/auth/callback`; 
-  
   const dashboardUrl = `${baseUrl}/divisions/skill/dashboard`;
-  const dashboardRedirectPath = `${baseUrl}/divisions/skill/dashboard`;
-  
-  // The path for this authentication page (needed for email sign-up redirect)
   const authPageRedirect = `${baseUrl}/divisions/skill/auth`;
 
-  // ✅ 1. Session Handler (Checks for existing session AND handles OAuth callback redirect)
+  // ✅ 0. Clean up OAuth hash if present
   useEffect(() => {
-    // Use onAuthStateChange for reliability in detecting sessions (including from URL hash)
-    const { data: { subscription } } = lmsSupabaseClient.auth.onAuthStateChange(
-      (event, session) => {
-        // If a session is found (either existing or just set by the OAuth token), redirect.
-        if (session) {
-          window.location.replace(dashboardUrl);
-        }
-      }
-    );
-
-    // Clean up the subscription
-    return () => {
-      subscription.unsubscribe();
-    };
+    const hash = window.location.hash;
+    if (hash.includes("access_token")) {
+      const cleanUrl = `${baseUrl}/divisions/skill/dashboard`;
+      window.history.replaceState(null, "", cleanUrl);
+    }
   }, []);
 
-  // ✅ 2. Google Sign-In
+  // ✅ 1. Session handler — detects login or OAuth completion
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = lmsSupabaseClient.auth.onAuthStateChange((event, session) => {
+      if (session && !window.location.href.includes("/dashboard")) {
+        window.location.replace(dashboardUrl);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // ✅ 2. Google OAuth login
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ type: "", text: "" });
 
-    const { data, error } = await lmsSupabaseClient.auth.signInWithOAuth({
+    const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
       provider: "google",
       options: {
-        // Tell Supabase to send the user directly to the clean dashboard URL after auth
-        redirectTo: dashboardRedirectPath, 
+        redirectTo: dashboardUrl,
         access_type: "offline",
         prompt: "consent",
       },
@@ -67,12 +62,15 @@ export default function SkillAuthPage() {
 
     if (error) {
       console.error("OAuth error:", error);
-      setMessage({ type: "error", text: "Failed to start Google sign-in. Try again." });
+      setMessage({
+        type: "error",
+        text: "Failed to start Google sign-in. Try again.",
+      });
       setLoading(false);
     }
   };
 
-  // ✅ 3. Email/Password Login/Sign-up
+  // ✅ 3. Email/password login or signup
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ type: "", text: "" });
@@ -91,7 +89,6 @@ export default function SkillAuthPage() {
           email,
           password,
           options: {
-            // Email verification redirect points to the auth page
             emailRedirectTo: authPageRedirect,
             data: { full_name: fullName },
           },
@@ -180,7 +177,13 @@ export default function SkillAuthPage() {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md"
           >
-            {loading ? <Loader2 className="animate-spin mx-auto" /> : mode === "signin" ? "Sign In" : "Sign Up"}
+            {loading ? (
+              <Loader2 className="animate-spin mx-auto" />
+            ) : mode === "signin" ? (
+              "Sign In"
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </form>
 
@@ -203,14 +206,20 @@ export default function SkillAuthPage() {
           {mode === "signin" ? (
             <>
               Don’t have an account?{" "}
-              <button onClick={() => setMode("signup")} className="text-blue-600">
+              <button
+                onClick={() => setMode("signup")}
+                className="text-blue-600"
+              >
                 Sign up
               </button>
             </>
           ) : (
             <>
               Already have an account?{" "}
-              <button onClick={() => setMode("signin")} className="text-blue-600">
+              <button
+                onClick={() => setMode("signin")}
+                className="text-blue-600"
+              >
                 Sign in
               </button>
             </>
