@@ -26,15 +26,15 @@ export default function SkillAuthPage() {
   const dashboardUrl = `${baseUrl}/divisions/skill/dashboard`;
 
   // ✅ Check existing session
-  useEffect(() => {
-    (async () => {
-      const { data } = await lmsSupabaseClient.auth.getSession();
-      if (data?.session) {
-        window.location.replace(dashboardUrl);
-      }
-    })();
-  }, []);
-
+  // ✅ Check existing session
+useEffect(() => {
+  (async () => {
+    const { data } = await lmsSupabaseClient.auth.getSession();
+    if (data?.session) {
+      window.location.replace(dashboardUrl);
+    }
+  })();
+}, []);
   // ✅ Google Sign-In (NO manual state)
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();

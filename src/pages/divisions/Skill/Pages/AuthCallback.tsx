@@ -1,56 +1,33 @@
+// AuthCallback (Simplified and Corrected)
 // @ts-nocheck
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function SkillAuthCallback() {
+  const dashboardUrl = "/divisions/skill/dashboard";
+  const authUrl = "/divisions/skill/auth";
+
   useEffect(() => {
-    const handleCallback = async () => {
-      try {
-        const hash = new URLSearchParams(window.location.hash.substring(1));
-        const query = new URLSearchParams(window.location.search);
-        const accessToken = hash.get("access_token") || query.get("access_token");
-        const refreshToken = hash.get("refresh_token") || query.get("refresh_token");
+    // The Supabase SDK automatically processes tokens on page load.
+    // We just need to listen for the resulting state change.
 
-        // Validate state parameter against stored value (prevent CSRF)
-        const returnedState = hash.get("state") || query.get("state");
-        const storedState = typeof window !== "undefined" ? localStorage.getItem("oauth_state") : null;
-        if (storedState) {
-          // remove stored state regardless to avoid re-use
-          localStorage.removeItem("oauth_state");
-          if (!returnedState || returnedState !== storedState) {
-            console.error("OAuth state mismatch", { returnedState, storedState });
-            window.location.replace("/divisions/skill/auth?error=state_mismatch");
-            return;
-          }
+    const { data: { subscription } } = lmsSupabaseClient.auth.onAuthStateChange(
+      (event, session) => {
+        // If the session is successfully established, redirect to the dashboard.
+        if (session) {
+          window.location.replace(dashboardUrl);
+        } else if (event === 'SIGNED_OUT' || event === 'AUTH_ERROR') {
+          // If the auth process results in an error, redirect back to the sign-in page.
+          window.location.replace(`${authUrl}?error=auth_failed`);
         }
-
-        if (accessToken) {
-          const { error } = await lmsSupabaseClient.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-          if (error) throw error;
-          window.location.replace("/divisions/skill/dashboard");
-          return;
-        }
-
-        const { data } = await lmsSupabaseClient.auth.getSession();
-        if (data?.session) {
-          window.location.replace("/divisions/skill/dashboard");
-          return;
-        }
-
-        window.location.replace("/divisions/skill/auth?error=no_session");
-      } catch (err) {
-        console.error("OAuth callback error:", err);
-        window.location.replace(
-          `/divisions/skill/auth?error=${encodeURIComponent(err?.message || "unknown")}`
-        );
       }
-    };
+    );
 
-    handleCallback();
+    // Clean up the subscription when the component unmounts
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (
