@@ -29,41 +29,49 @@ export default function SkillAuthPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
 
-  // ✅ Always redirect to live dashboard after login/signup
-  const dashboardUrl = "https://www.focsera.in/divisions/skill/dashboard";
+  // ✅ Environment-aware URLs
+  const isLocal =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
 
+  const baseUrl = isLocal
+    ? "http://localhost:5173"
+    : "https://www.focsera.in";
+
+  const authUrl = `${baseUrl}/divisions/skill/auth`;
+  const dashboardUrl = `${baseUrl}/divisions/skill/dashboard`;
+
+  // 🔄 Handle Google redirect or existing session
   useEffect(() => {
     const handleAuthRedirect = async () => {
       try {
-        // Check if returned from Google OAuth
         if (window.location.hash.includes("access_token")) {
           setLoading(true);
           const { data, error } = await lmsSupabaseClient.auth.getSessionFromUrl({
             storeSession: true,
           });
           if (error) throw error;
-
           if (data?.session) {
             window.location.replace(dashboardUrl);
             return;
           }
         }
 
-        // Check if already logged in
         const { data } = await lmsSupabaseClient.auth.getSession();
         if (data?.session) {
           window.location.replace(dashboardUrl);
         }
       } catch (err) {
-        console.error("⚠️ Auth redirect failed:", err);
+        console.error("Auth redirect error:", err);
       } finally {
         setLoading(false);
       }
     };
 
     handleAuthRedirect();
-  }, []);
+  }, [dashboardUrl]);
 
+  // 📩 Email/Password Auth
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -82,9 +90,7 @@ export default function SkillAuthPage() {
             setMessageType("info");
             setError("This email is already registered. Please log in instead.");
             setTimeout(() => setMode("login"), 2500);
-          } else {
-            throw error;
-          }
+          } else throw error;
         } else if (data?.user) {
           await lmsSupabaseClient.from("users").insert([
             {
@@ -112,28 +118,41 @@ export default function SkillAuthPage() {
       }
     } catch (err) {
       setMessageType("error");
-      setError(err.message || "An error occurred");
+      setError(err.message || "An unknown error occurred");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setLoading(true);
-      const redirectTo = window.location.origin + "/divisions/skill/auth"; // same page redirect
-      const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo },
-      });
-      if (error) throw error;
-    } catch (err) {
-      setMessageType("error");
-      setError(err.message || "Google sign-in failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // 🔑 Google OAuth login
+  // 🔑 Google OAuth login
+const handleGoogleSignIn = async () => {
+  try {
+    setLoading(true);
+
+    // ✅ Always redirect back to /auth (never dashboard)
+    const isLocal =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+
+    const redirectTo = isLocal
+      ? "http://localhost:5173/divisions/skill/auth"
+      : "https://www.focsera.in/divisions/skill/auth";
+
+    const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo },
+    });
+
+    if (error) throw error;
+  } catch (err) {
+    setMessageType("error");
+    setError(err.message || "Google sign-in failed");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
@@ -153,7 +172,7 @@ export default function SkillAuthPage() {
           </div>
         ) : (
           <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Info */}
+            {/* Left side info */}
             <div className="hidden lg:block space-y-8 px-8">
               <h1 className="text-6xl font-extrabold leading-tight text-slate-800">
                 Welcome to{" "}
@@ -162,7 +181,7 @@ export default function SkillAuthPage() {
                 </span>
               </h1>
               <p className="text-lg text-slate-600">
-                Unlock creativity, attend live sessions, and master your craft.
+                Unlock creativity, attend live sessions, and grow your skills.
               </p>
 
               <div className="space-y-4">
@@ -171,7 +190,7 @@ export default function SkillAuthPage() {
                   <div>
                     <h3 className="font-bold text-slate-800">Creative Learning</h3>
                     <p className="text-slate-600">
-                      Gain hands-on experience with real-world projects.
+                      Hands-on experience with real-world projects.
                     </p>
                   </div>
                 </div>
@@ -180,21 +199,21 @@ export default function SkillAuthPage() {
                   <div>
                     <h3 className="font-bold text-slate-800">Secure Access</h3>
                     <p className="text-slate-600">
-                      Your data and identity are protected with Supabase Auth.
+                      Your credentials are protected with Supabase Auth.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 p-5 bg-white/80 rounded-2xl border hover:shadow-xl transition-all">
                   <Zap className="text-blue-500" size={28} />
                   <div>
-                    <h3 className="font-bold text-slate-800">Instant Access</h3>
-                    <p className="text-slate-600">Sign in easily with Google or Email.</p>
+                    <h3 className="font-bold text-slate-800">Instant Login</h3>
+                    <p className="text-slate-600">Sign in quickly with Google or Email.</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Form */}
+            {/* Right side auth form */}
             <div className="w-full max-w-md mx-auto">
               <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border p-8">
                 <h2 className="text-4xl font-extrabold text-center bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent mb-8">
@@ -276,7 +295,6 @@ export default function SkillAuthPage() {
                         className="w-full pl-12 pr-12 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 outline-none"
                         placeholder="••••••••"
                         required
-                        minLength={6}
                       />
                       <button
                         type="button"
