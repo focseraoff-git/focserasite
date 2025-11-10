@@ -1,17 +1,27 @@
 // @ts-nocheck
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Loader2, LogIn, UserPlus, Chrome } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function AuthPage() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState("login");
   const [fullName, setFullName] = useState("");
+  const [mode, setMode] = useState("login");
+  const [loading, setLoading] = useState(false);
 
+  /* ✅ Redirect if already logged in */
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await lmsSupabaseClient.auth.getSession();
+      if (data?.session) {
+        window.location.href = "/divisions/skill/dashboard";
+      }
+    };
+    checkSession();
+  }, []);
+
+  /* ✅ Email/Password Login or Signup */
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -26,22 +36,32 @@ export default function AuthPage() {
       if (result.error) throw result.error;
       const userId = result.data?.user?.id || result.user?.id;
 
-      let { data: userData } = await lmsSupabaseClient.from("users").select("*").eq("id", userId).single();
+      let { data: userData } = await lmsSupabaseClient
+        .from("users")
+        .select("*")
+        .eq("id", userId)
+        .single();
 
+      // Create user if new signup
       if (!userData && mode === "signup") {
         const { data: newUser } = await lmsSupabaseClient
           .from("users")
-          .insert([{ id: userId, email, full_name: fullName || email.split("@")[0], role: "user" }])
+          .insert([
+            {
+              id: userId,
+              email,
+              full_name: fullName || email.split("@")[0],
+              role: "user",
+            },
+          ])
           .select()
           .single();
         userData = newUser;
       }
 
-      const role = userData?.role || "user";
-      localStorage.setItem("user_role", role);
-
-      alert(`✅ Logged in as ${role === "admin" ? "Admin" : "User"}`);
-      navigate(role === "admin" ? "/divisions/skill/admin/dashboard" : "/divisions/skill/dashboard");
+      localStorage.setItem("user_role", userData?.role || "user");
+      alert("✅ Login successful!");
+      window.location.href = "/divisions/skill/dashboard";
     } catch (err) {
       alert("❌ " + err.message);
     } finally {
@@ -49,13 +69,15 @@ export default function AuthPage() {
     }
   };
 
+  /* ✅ Google OAuth */
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
       const redirectUrl =
         window.location.hostname === "localhost"
           ? "http://localhost:5173/divisions/skill/auth/callback"
-          : "https://focsera.in/divisions/skill/auth/callback";
+          : "https://www.focsera.in/divisions/skill/auth/callback";
+
       const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: redirectUrl },

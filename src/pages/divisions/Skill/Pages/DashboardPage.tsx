@@ -13,7 +13,6 @@ import {
   Edit3,
   Rocket,
   PenTool,
-  ArrowRight,
   Play,
   Loader2,
 } from "lucide-react";
@@ -23,6 +22,9 @@ import MonacoEditor from "react-monaco-editor";
 import axios from "axios";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
+/* ===========================================================
+   📊 Dashboard Page
+=========================================================== */
 export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
@@ -64,72 +66,55 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   }, [user]);
 
   /* ===========================================================
-     🔹 Fetch all dashboard data
+     🔹 Fetch Programs (always) + User Data (if logged in)
   =========================================================== */
   useEffect(() => {
     const fetchAll = async () => {
       try {
         setLoading(true);
-        const { data: programsData } = await supabase
+
+        // ✅ Always fetch available programs
+        const { data: programsData, error: progErr } = await supabase
           .from("programs")
-          .select("*")
+          .select("id, slug, title, description, created_at")
           .order("created_at", { ascending: true });
+        if (progErr) console.error("Error fetching programs:", progErr.message);
         setPrograms(programsData || []);
 
+        // ✅ Fetch profile, stats, and submissions only if logged in
         if (user) {
-          const cached = JSON.parse(localStorage.getItem("user_profile"));
-          if (cached) {
-            setProfile(cached);
-            setNewName(cached.full_name || "");
-          }
-
           const { data: freshProfile } = await supabase
             .from("users")
             .select("full_name, avatar_url, email")
             .eq("id", user.id)
             .single();
-
           if (freshProfile) {
             setProfile(freshProfile);
             setNewName(freshProfile.full_name || "");
-            localStorage.setItem("user_profile", JSON.stringify(freshProfile));
           }
 
-          let statsData = { total_modules: 0, daily_streak: 0, badges: [], total_score: 0 };
-          let submissionsData = [];
+          const { data: statsRes } = await supabase
+            .from("user_stats")
+            .select("*")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          if (statsRes) setStats(statsRes);
 
-          try {
-            const statsRes = await supabase
-              .from("user_stats")
-              .select("*")
-              .eq("user_id", user.id)
-              .single();
-            if (statsRes?.data) statsData = statsRes.data;
-          } catch {
-            console.warn("user_stats missing");
-          }
-
-          try {
-            const subsRes = await supabase
-              .from("submissions")
-              .select("*")
-              .eq("user_id", user.id)
-              .order("submitted_at", { ascending: false })
-              .limit(5);
-            if (subsRes?.data) submissionsData = subsRes.data;
-          } catch {
-            console.warn("submissions fetch error");
-          }
-
-          setStats(statsData);
-          setRecentSubs(submissionsData);
+          const { data: subsRes } = await supabase
+            .from("submissions")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("submitted_at", { ascending: false })
+            .limit(5);
+          setRecentSubs(subsRes || []);
         }
       } catch (err) {
-        console.error("Dashboard error:", err.message);
+        console.error("Dashboard fetch error:", err.message);
       } finally {
         setLoading(false);
       }
     };
+
     fetchAll();
   }, [user]);
 
@@ -186,11 +171,12 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   };
 
   /* ===========================================================
-     🔹 Before Login View
+     🔹 Guest View (Before Login)
   =========================================================== */
   if (!user)
     return (
       <div className="min-h-screen bg-gray-50 text-gray-800">
+        {/* Hero */}
         <section className="relative overflow-hidden text-center py-32 bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
           <motion.div
             animate={{ y: [0, -10, 0] }}
@@ -199,7 +185,6 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           >
             <Rocket className="w-10 h-10 text-yellow-300 opacity-70" />
           </motion.div>
-
           <motion.div
             animate={{ y: [0, -12, 0] }}
             transition={{ repeat: Infinity, duration: 2.5 }}
@@ -207,13 +192,11 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           >
             <PenTool className="w-9 h-9 text-pink-300 opacity-70" />
           </motion.div>
-
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4">Learn. Create. Grow.</h1>
           <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
             Master coding, design, and creative skills through 30-day challenges — powered by{" "}
             <strong>Focsera SkillVerse</strong>.
           </p>
-
           <motion.button
             whileHover={{ scale: 1.05 }}
             onClick={() => navigate("/divisions/skill/auth")}
@@ -222,9 +205,41 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
             Start Learning Free →
           </motion.button>
         </section>
+
+        {/* Public Courses */}
+        <section className="max-w-6xl mx-auto px-6 py-20">
+          <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">Available Courses</h2>
+          {loading ? (
+            <p className="text-center text-gray-500">Loading courses...</p>
+          ) : programs.length === 0 ? (
+            <p className="text-center text-gray-500">Courses will be available soon!</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {programs.map((p) => (
+                <motion.div
+                  key={p.id}
+                  whileHover={{ y: -5 }}
+                  className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition"
+                >
+                  <h3 className="font-semibold text-lg text-gray-800 mb-2">{p.title}</h3>
+                  <p className="text-gray-600 text-sm mb-4">{p.description}</p>
+                  <button
+                    onClick={() => navigate("/divisions/skill/auth")}
+                    className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+                  >
+                    Join Free →
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     );
 
+  /* ===========================================================
+     🔹 Dashboard After Login
+  =========================================================== */
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-screen text-blue-600 text-lg font-semibold">
@@ -240,7 +255,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 pt-24 pb-10 px-4">
       <div className="max-w-6xl mx-auto">
 
-        {/* 👤 Profile Header */}
+        {/* Profile Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -295,7 +310,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           </motion.div>
         </motion.div>
 
-        {/* 📊 Stats */}
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
           <StatCard icon={BookOpen} title="Modules Completed" value={stats?.total_modules || 0} color="bg-blue-500" />
           <StatCard icon={Flame} title="Daily Streak" value={streak} color="bg-orange-500" />
@@ -303,22 +318,26 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           <StatCard icon={CheckCircle} title="XP Points" value={`${totalScore} XP`} color="bg-green-500" />
         </div>
 
-        {/* 📘 Continue Learning */}
+        {/* Continue Learning */}
         <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 mb-10">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Continue Learning</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {programs.map((p) => (
-              <CourseCard
-                key={p.id}
-                title={p.title}
-                desc={p.description}
-                onClick={() => navigate(`/divisions/skill/syllabus/${p.id}`)}
-              />
-            ))}
-          </div>
+          {programs.length === 0 ? (
+            <p className="text-gray-500 text-sm">No courses available yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {programs.map((p) => (
+                <CourseCard
+                  key={p.id}
+                  title={p.title}
+                  desc={p.description}
+                  onClick={() => navigate(`/divisions/skill/syllabus/${p.id}`)}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* 🧩 Recent Submissions */}
+        {/* Recent Submissions */}
         <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 mb-10">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
             <FileText className="text-blue-500" /> Recent Submissions
@@ -363,7 +382,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           )}
         </div>
 
-        {/* 🧠 Online Compiler */}
+        {/* Online Compiler */}
         <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <PenTool className="text-blue-500" /> Try Code Online
@@ -372,7 +391,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
         </div>
       </div>
 
-      {/* ✏️ Edit Modal */}
+      {/* Edit Modal */}
       <AnimatePresence>
         {showModal && (
           <motion.div
@@ -453,9 +472,7 @@ function OnlineCompiler({ user, supabase, setRecentSubs }) {
       );
       const { stdout, stderr, compile_output, time } = res.data;
       const resultOutput =
-        stdout
-          ? `${stdout}\n\nExecution Time: ${time}s`
-          : stderr || compile_output || "No output";
+        stdout ? `${stdout}\n\nExecution Time: ${time}s` : stderr || compile_output || "No output";
 
       setOutput(resultOutput);
 
