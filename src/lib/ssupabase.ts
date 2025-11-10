@@ -14,11 +14,10 @@ if (!lmsSupabaseAnonKey) {
 }
 
 // ✅ Prevent multiple instances (singleton pattern)
-let clientInstance = null;
+let clientInstance: ReturnType<typeof createClient> | null = null;
 
-export const lmsSupabaseClient =
-  clientInstance ??
-  (() => {
+export const lmsSupabaseClient = (() => {
+  if (!clientInstance) {
     clientInstance = createClient(lmsSupabaseUrl, lmsSupabaseAnonKey, {
       auth: {
         persistSession: true,
@@ -29,5 +28,6 @@ export const lmsSupabaseClient =
         headers: { 'x-application-name': 'Focsera SkillVerse' },
       },
     });
-    return clientInstance;
-  })();
+  }
+  return clientInstance;
+})();
