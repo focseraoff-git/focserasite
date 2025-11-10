@@ -1,8 +1,10 @@
 // @ts-nocheck
+import React from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { lmsSupabaseClient } from "../../../lib/ssupabase";
 import ScrollToTop from "./components/ScrollToTop";
+
 
 // ✅ User Pages
 import HomePage from "./Pages/HomePage";
@@ -14,7 +16,7 @@ import AuthPage from "./Pages/AuthPage";
 import CertificatePage from "./Pages/CertificatePage";
 import AuthCallback from "./Pages/AuthCallback";
 import AssignmentPage from "./Pages/AssignmentPage";
-import OnlineCompilerPage from "./Pages/OnlineCompilerPage.";
+import OnlineCompilerPage from "./Pages/OnlineCompilerPage";
 
 // ✅ Admin Pages
 import AdminLayout from "./Pages/Admin/AdminLayout";
@@ -28,34 +30,87 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import FullPageLoader from "./components/FullPageLoader";
 
+/* ============================================================
+   🧠 Error Boundary (prevents blank screen on crash)
+============================================================ */
+function ErrorBoundary({ children }) {
+  const [error, setError] = useState(null);
+
+  return error ? (
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-50 text-gray-700">
+      <h2 className="text-2xl font-semibold mb-2">Something went wrong</h2>
+      <p className="mb-4">{error?.message || "Unknown error occurred."}</p>
+      <button
+        onClick={() => window.location.reload()}
+        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        Refresh Page
+      </button>
+    </div>
+  ) : (
+    <ErrorBoundaryHandler setError={setError}>{children}</ErrorBoundaryHandler>
+  );
+}
+
+class ErrorBoundaryHandler extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+  componentDidCatch(error) {
+    this.props.setError(error);
+  }
+  render() {
+    return this.state.hasError ? null : this.props.children;
+  }
+}
+
+/* ============================================================
+   🚀 Main SkillApp
+============================================================ */
 export default function SkillApp() {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const navigate = useNavigate();
 
-  /* ===========================================================
-     🔹 Initialize Authentication (Optional)
-  =========================================================== */
+  /* ============================================================
+     🔹 Initialize Authentication
+  ============================================================ */
   useEffect(() => {
     const initAuth = async () => {
-      const { data } = await lmsSupabaseClient.auth.getSession();
-      const sessionUser = data?.session?.user || null;
-      setUser(sessionUser);
+      try {
+        const { data, error } = await lmsSupabaseClient.auth.getSession();
+        if (error) throw error;
 
-      if (sessionUser) {
-        const { data: profile } = await lmsSupabaseClient
-          .from("users")
-          .select("role")
-          .eq("email", sessionUser.email)
-          .single();
+        const sessionUser = data?.session?.user || null;
+        setUser(sessionUser);
 
-        const userRole = profile?.role || "user";
-        setRole(userRole);
-        localStorage.setItem("user_role", userRole);
+        if (sessionUser) {
+          const { data: profile, error: profileError } = await lmsSupabaseClient
+            .from("users")
+            .select("role")
+            .eq("email", sessionUser.email)
+            .maybeSingle();
+
+          // Handle "no rows" safely
+          if (profileError && !["PGRST116", "PGRST404"].includes(profileError.code))
+            throw profileError;
+
+          const userRole = profile?.role || "user";
+          setRole(userRole);
+          localStorage.setItem("user_role", userRole);
+        }
+      } catch (error) {
+        console.warn("⚠️ Auth initialization issue:", error.message);
+        setUser(null);
+        setRole(null);
+      } finally {
+        setAuthLoading(false);
       }
-
-      setAuthLoading(false);
     };
 
     const { data: listener } = lmsSupabaseClient.auth.onAuthStateChange(
@@ -68,7 +123,7 @@ export default function SkillApp() {
             .from("users")
             .select("role")
             .eq("email", newUser.email)
-            .single();
+            .maybeSingle();
 
           const userRole = profile?.role || "user";
           setRole(userRole);
@@ -86,53 +141,57 @@ export default function SkillApp() {
 
   if (authLoading) return <FullPageLoader />;
 
-  /* ===========================================================
-     🚀 Render
-  =========================================================== */
+  /* ============================================================
+     ⚙️ Routes Rendering
+  ============================================================ */
   return (
-    <div className="min-h-screen bg-gray-50 font-inter">
-      <ScrollToTop />
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gray-50 font-inter">
+        <ScrollToTop />
 
-      {role !== "admin" && (
-        <Header
-          user={user}
-          onLogout={async () => {
-            await lmsSupabaseClient.auth.signOut();
-            navigate("/divisions/skill/auth");
-          }}
-        />
-      )}
+        {/* Header (Hide in admin) */}
+        {role !== "admin" && (
+          <Header
+            user={user}
+            onLogout={async () => {
+              await lmsSupabaseClient.auth.signOut();
+              navigate("/divisions/skill/auth");
+            }}
+          />
+        )}
 
-      <main className={role !== "admin" ? "pt-20" : ""}>
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<HomePage user={user} />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
+        <main className={role !== "admin" ? "pt-20" : ""}>
+          <Routes>
+            {/* 🔹 Public Routes */}
+            <Route path="/" element={<HomePage user={user} />} />
+            <Route path="auth" element={<AuthPage />} />
+            <Route path="auth/callback" element={<AuthCallback />} />
 
-          {/* User */}
-          <Route path="/dashboard" element={<DashboardPage user={user} />} />
-          <Route path="/syllabus/:programId" element={<SyllabusPage />} />
-          <Route path="/module/:moduleId" element={<ModulePage />} />
-          <Route path="/code/:challengeId" element={<CodeEditorPage />} />
-          <Route path="/assignment/:contentId" element={<AssignmentPage />} />
-          <Route path="/certificate/:programName" element={<CertificatePage />} />
-          <Route path="/online-compiler" element={<OnlineCompilerPage />} />
+            {/* 🔹 User Routes */}
+            <Route path="dashboard" element={<DashboardPage user={user} />} />
+            <Route path="syllabus/:programId" element={<SyllabusPage />} />
+            <Route path="module/:moduleId" element={<ModulePage />} />
+            <Route path="code/:challengeId" element={<CodeEditorPage />} />
+            <Route path="assignment/:contentId" element={<AssignmentPage />} />
+            <Route path="certificate/:programName" element={<CertificatePage />} />
+            <Route path="online-compiler" element={<OnlineCompilerPage />} />
 
-          {/* Admin */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="add-program" element={<AddProgramPage />} />
-            <Route path="add-challenge" element={<AddChallengePage />} />
-            <Route path="edit/:table/:id" element={<AdminEditPage />} />
-          </Route>
+            {/* 🔹 Admin Routes */}
+            <Route path="admin" element={<AdminLayout />}>
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="add-program" element={<AddProgramPage />} />
+              <Route path="add-challenge" element={<AddChallengePage />} />
+              <Route path="edit/:table/:id" element={<AdminEditPage />} />
+            </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </main>
+            {/* 🔹 Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
 
-      {role !== "admin" && <Footer />}
-    </div>
+        {/* Footer (Hide in admin) */}
+        {role !== "admin" && <Footer />}
+      </div>
+    </ErrorBoundary>
   );
 }

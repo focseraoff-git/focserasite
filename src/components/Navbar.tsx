@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "../lib/supabase";
+import { lmsSupabaseClient } from "../lib/ssupabase";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -39,12 +39,12 @@ const Navbar = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await lmsSupabaseClient.auth.getSession();
       setUser(session?.user || null);
     };
     getUser();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
+    const { data: authListener } = lmsSupabaseClient.auth.onAuthStateChange((_, session) => {
       setUser(session?.user || null);
     });
 
@@ -199,7 +199,7 @@ const Navbar = () => {
           to="/divisions/skill/dashboard"
           className="ml-3 px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-semibold shadow-md hover:scale-105 transition-transform duration-300"
         >
-          Skill Portal
+          SkillPortal
         </Link>
 
         {/* ACCOUNT BUTTON */}

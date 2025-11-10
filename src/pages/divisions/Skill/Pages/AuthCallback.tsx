@@ -1,83 +1,48 @@
 // @ts-nocheck
 import { useEffect } from "react";
-import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 import { Loader2 } from "lucide-react";
+import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function SkillAuthCallback() {
   useEffect(() => {
-    const handleAuthCallback = async () => {
+    const handleCallback = async () => {
       try {
-        console.log("🔄 Processing Supabase OAuth callback...");
+        const hash = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hash.get("access_token");
+        const refreshToken = hash.get("refresh_token");
 
-        // Generate and verify state parameter to prevent CSRF
-        const urlParams = new URLSearchParams(window.location.hash.substring(1));
-        const stateParam = urlParams.get("state");
-        const storedState = sessionStorage.getItem("oauth_state");
-        
-        if (!stateParam || !storedState || stateParam !== storedState) {
-          throw new Error("Invalid state parameter - possible CSRF attack");
+        if (accessToken) {
+          const { error } = await lmsSupabaseClient.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          if (error) throw error;
+          window.location.replace("/divisions/skill/dashboard");
+          return;
         }
 
-        // Clear state after verification
-        sessionStorage.removeItem("oauth_state");
-
-        // Supabase will parse the access token from URL hash automatically
-        const { data, error } = await lmsSupabaseClient.auth.getSessionFromUrl({
-          storeSession: true,
-        });
-
-        if (error) {
-          console.error("❌ Supabase auth error:", error);
-          throw error;
-        }
-
-        // ✅ Determine environment and build URLs
-        const baseUrl = window.location.origin;
-        const dashboardUrl = `${baseUrl}/divisions/skill/dashboard`;
-        const authUrl = `${baseUrl}/divisions/skill/auth`;
-
-        // ✅ Verify session and handle redirect
+        const { data } = await lmsSupabaseClient.auth.getSession();
         if (data?.session) {
-          // Store refresh token securely
-          if (data.session.refresh_token) {
-            sessionStorage.setItem("skill_refresh_token", data.session.refresh_token);
-          }
-
-          console.log("✅ Session established:", data.session.user?.email);
-          
-          // Clean URL hash before redirect
-          window.location.hash = "";
-          window.location.replace(dashboardUrl);
-        } else {
-          console.warn("⚠️ No session found. Redirecting to login...");
-          window.location.replace(authUrl);
+          window.location.replace("/divisions/skill/dashboard");
+          return;
         }
+
+        window.location.replace("/divisions/skill/auth?error=no_session");
       } catch (err) {
-        console.error("⚠️ Auth callback failed:", err);
-
-        // Clear any sensitive data on error
-        sessionStorage.removeItem("oauth_state");
-        sessionStorage.removeItem("skill_refresh_token");
-
-        const baseUrl = window.location.origin;
-        const fallbackUrl = `${baseUrl}/divisions/skill/auth`;
-
-        window.location.replace(fallbackUrl);
+        console.error("OAuth callback error:", err);
+        window.location.replace(
+          `/divisions/skill/auth?error=${encodeURIComponent(err.message)}`
+        );
       }
     };
 
-    handleAuthCallback();
+    handleCallback();
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-700">
-      <div className="bg-white px-8 py-6 rounded-2xl shadow-md border border-blue-100 flex flex-col items-center">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-3" />
-        <h1 className="text-lg font-semibold">Completing sign-in...</h1>
-        <p className="text-sm text-gray-500 mt-1 text-center max-w-sm">
-          Please wait while we securely connect your FOCSERA Skill Portal account.
-        </p>
-      </div>
+    <div className="flex flex-col justify-center items-center h-screen">
+      <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <p className="text-gray-600 mt-3">Completing sign-in...</p>
     </div>
   );
 }

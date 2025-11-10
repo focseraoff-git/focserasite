@@ -15,12 +15,15 @@ import {
   PenTool,
   Play,
   Loader2,
+  BrainCircuit,
+  Lightbulb,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
+import AIAssistant from "../Pages/AIAssistant";
 
 /* ===========================================================
    📊 Dashboard Page
@@ -43,54 +46,32 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   const fileInputRef = useRef(null);
 
   /* ===========================================================
-     🔹 Auto Redirect if Admin
+     🔹 Fetch Programs (Always) + Profile Data (If Logged In)
   =========================================================== */
   useEffect(() => {
-    const checkAdminRole = async () => {
-      if (!user) return;
-      try {
-        const { data } = await supabase
-          .from("users")
-          .select("role")
-          .eq("email", user.email)
-          .single();
-
-        if (data?.role === "admin") {
-          navigate("/divisions/skill/admin/dashboard");
-        }
-      } catch (err) {
-        console.warn("Error checking admin role:", err.message);
-      }
-    };
-    checkAdminRole();
-  }, [user]);
-
-  /* ===========================================================
-     🔹 Fetch Programs (always) + User Data (if logged in)
-  =========================================================== */
-  useEffect(() => {
-    const fetchAll = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
 
-        // ✅ Always fetch available programs
-        const { data: programsData, error: progErr } = await supabase
+        // ✅ Always fetch public programs (even before login)
+        const { data: allPrograms, error: progErr } = await supabase
           .from("programs")
           .select("id, slug, title, description, created_at")
           .order("created_at", { ascending: true });
-        if (progErr) console.error("Error fetching programs:", progErr.message);
-        setPrograms(programsData || []);
 
-        // ✅ Fetch profile, stats, and submissions only if logged in
+        if (progErr) console.error("Program fetch error:", progErr.message);
+        setPrograms(allPrograms || []);
+
+        // ✅ Fetch profile, stats, submissions only if logged in
         if (user) {
-          const { data: freshProfile } = await supabase
+          const { data: profile } = await supabase
             .from("users")
             .select("full_name, avatar_url, email")
             .eq("id", user.id)
             .single();
-          if (freshProfile) {
-            setProfile(freshProfile);
-            setNewName(freshProfile.full_name || "");
+          if (profile) {
+            setProfile(profile);
+            setNewName(profile.full_name || "");
           }
 
           const { data: statsRes } = await supabase
@@ -115,59 +96,38 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
       }
     };
 
-    fetchAll();
+    fetchData();
   }, [user]);
 
   /* ===========================================================
-     🔹 Avatar Upload
+     🔹 Avatar Upload + Name Edit
   =========================================================== */
   const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
     try {
-      const file = e.target.files?.[0];
-      if (!file) return;
       setUploading(true);
       const ext = file.name.split(".").pop();
-      const fileName = `${user.id}_${Date.now()}.${ext}`;
-      const filePath = `avatars/${fileName}`;
-
+      const path = `avatars/${user.id}_${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from("avatars")
-        .upload(filePath, file, { upsert: true });
+        .upload(path, file, { upsert: true });
       if (uploadError) throw uploadError;
-
-      const { data: publicUrlData } = supabase.storage
-        .from("avatars")
-        .getPublicUrl(filePath);
-      const avatarUrl = publicUrlData.publicUrl;
-
-      await supabase.from("users").update({ avatar_url: avatarUrl }).eq("id", user.id);
-
-      const updated = { ...profile, avatar_url: avatarUrl };
-      setProfile(updated);
-      localStorage.setItem("user_profile", JSON.stringify(updated));
-      alert("✅ Avatar updated!");
+      const { data: publicUrl } = supabase.storage.from("avatars").getPublicUrl(path);
+      await supabase.from("users").update({ avatar_url: publicUrl.publicUrl }).eq("id", user.id);
+      setProfile({ ...profile, avatar_url: publicUrl.publicUrl });
     } catch (err) {
-      alert("❌ " + err.message);
+      alert("Upload failed: " + err.message);
     } finally {
       setUploading(false);
     }
   };
 
-  /* ===========================================================
-     🔹 Update Name
-  =========================================================== */
   const handleSaveProfile = async () => {
-    if (!newName.trim()) return alert("Enter a valid name!");
-    try {
-      await supabase.from("users").update({ full_name: newName.trim() }).eq("id", user.id);
-      const updated = { ...profile, full_name: newName.trim() };
-      setProfile(updated);
-      localStorage.setItem("user_profile", JSON.stringify(updated));
-      setShowModal(false);
-      alert("✅ Name updated!");
-    } catch (err) {
-      alert("❌ " + err.message);
-    }
+    if (!newName.trim()) return alert("Enter a valid name");
+    await supabase.from("users").update({ full_name: newName }).eq("id", user.id);
+    setProfile({ ...profile, full_name: newName });
+    setShowModal(false);
   };
 
   /* ===========================================================
@@ -194,8 +154,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           </motion.div>
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4">Learn. Create. Grow.</h1>
           <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
-            Master coding, design, and creative skills through 30-day challenges — powered by{" "}
-            <strong>Focsera SkillVerse</strong>.
+            Master coding, design, and creative skills through <strong>Focsera SkillVerse</strong>.
           </p>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -206,9 +165,12 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           </motion.button>
         </section>
 
-        {/* Public Courses */}
+        {/* Courses Section (Now Visible Before Login) */}
         <section className="max-w-6xl mx-auto px-6 py-20">
-          <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">Available Courses</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">
+            Explore Our Courses
+          </h2>
+
           {loading ? (
             <p className="text-center text-gray-500">Loading courses...</p>
           ) : programs.length === 0 ? (
@@ -254,56 +216,40 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 pt-24 pb-10 px-4">
       <div className="max-w-6xl mx-auto">
-
         {/* Profile Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col md:flex-row items-center md:items-end justify-between bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-12"
+          className="flex flex-col md:flex-row items-center justify-between bg-white rounded-2xl shadow-lg border p-8 mb-12"
         >
           <div className="flex items-center gap-5">
             <div className="relative group">
               <img
                 src={profile?.avatar_url || "https://i.pravatar.cc/100"}
-                alt="Profile"
-                className="w-24 h-24 rounded-full shadow-md object-cover"
+                className="w-24 h-24 rounded-full object-cover shadow-md"
               />
               <button
                 onClick={() => fileInputRef.current.click()}
-                disabled={uploading}
                 className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition"
-                title="Change avatar"
               >
                 {uploading ? <Upload size={14} className="animate-spin" /> : <Camera size={14} />}
               </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleAvatarChange}
-              />
+              <input ref={fileInputRef} type="file" className="hidden" onChange={handleAvatarChange} />
             </div>
-
             <div>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-                Welcome back,{" "}
-                <span className="text-blue-600">{profile?.full_name || "Learner"}</span> 👋
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="p-1 rounded hover:bg-blue-100 text-blue-600 transition"
-                >
+                Welcome, <span className="text-blue-600">{profile?.full_name}</span>
+                <button onClick={() => setShowModal(true)} className="p-1 hover:bg-blue-100 rounded">
                   <Edit3 size={18} />
                 </button>
               </h1>
-              <p className="text-gray-500 text-sm">{profile?.email}</p>
+              <p className="text-gray-500">{profile?.email}</p>
             </div>
           </div>
-
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="mt-6 md:mt-0 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full cursor-pointer shadow-md"
+            className="mt-6 md:mt-0 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full cursor-pointer"
             onClick={() => navigate("/divisions/skill/certificate/Java")}
           >
             <Award size={18} /> View Certificates
@@ -312,128 +258,26 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-          <StatCard icon={BookOpen} title="Modules Completed" value={stats?.total_modules || 0} color="bg-blue-500" />
+          <StatCard icon={BookOpen} title="Modules Completed" value={stats.total_modules} color="bg-blue-500" />
           <StatCard icon={Flame} title="Daily Streak" value={streak} color="bg-orange-500" />
           <StatCard icon={Trophy} title="Badges" value={badges} color="bg-yellow-500" />
           <StatCard icon={CheckCircle} title="XP Points" value={`${totalScore} XP`} color="bg-green-500" />
         </div>
 
-        {/* Continue Learning */}
-        <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 mb-10">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Continue Learning</h2>
-          {programs.length === 0 ? (
-            <p className="text-gray-500 text-sm">No courses available yet.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {programs.map((p) => (
-                <CourseCard
-                  key={p.id}
-                  title={p.title}
-                  desc={p.description}
-                  onClick={() => navigate(`/divisions/skill/syllabus/${p.id}`)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Recent Submissions */}
-        <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 mb-10">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
-            <FileText className="text-blue-500" /> Recent Submissions
-          </h2>
-          {recentSubs.length === 0 ? (
-            <p className="text-gray-500 text-sm">You haven’t submitted any assignments yet.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm text-gray-700 border-t border-gray-200">
-                <thead>
-                  <tr className="bg-gray-50 text-gray-600 text-left">
-                    <th className="p-3">Challenge</th>
-                    <th className="p-3">Status</th>
-                    <th className="p-3">Score</th>
-                    <th className="p-3">Submitted On</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentSubs.map((sub) => (
-                    <tr key={sub.id} className="border-b hover:bg-gray-50 transition">
-                      <td className="p-3 font-medium">{sub.title || "Untitled Task"}</td>
-                      <td
-                        className={`p-3 font-semibold ${
-                          sub.status === "success"
-                            ? "text-green-600"
-                            : sub.status === "error"
-                            ? "text-red-600"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        {sub.status}
-                      </td>
-                      <td className="p-3">{sub.score ?? "—"}</td>
-                      <td className="p-3">
-                        {sub.submitted_at ? new Date(sub.submitted_at).toLocaleDateString() : "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
         {/* Online Compiler */}
-        <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-sm p-8 border">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <PenTool className="text-blue-500" /> Try Code Online
+            <PenTool className="text-blue-500" /> Online Code Editor
           </h2>
           <OnlineCompiler user={user} supabase={supabase} setRecentSubs={setRecentSubs} />
         </div>
       </div>
-
-      {/* Edit Modal */}
-      <AnimatePresence>
-        {showModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm text-center relative"
-            >
-              <button
-                onClick={() => setShowModal(false)}
-                className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-              >
-                <X size={18} />
-              </button>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Edit Name</h3>
-              <input
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-              <button
-                onClick={handleSaveProfile}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg font-medium transition"
-              >
-                Save
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
 
 /* ===========================================================
-   🧠 Online Compiler Component
+   🧠 Online Compiler with AI
 =========================================================== */
 function OnlineCompiler({ user, supabase, setRecentSubs }) {
   const [language, setLanguage] = useState("cpp");
@@ -441,70 +285,29 @@ function OnlineCompiler({ user, supabase, setRecentSubs }) {
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const getLanguageId = (lang) => {
-    switch (lang) {
-      case "cpp": return 54;
-      case "c": return 50;
-      case "java": return 62;
-      case "python": return 71;
-      case "javascript": return 63;
-      default: return 63;
-    }
-  };
+  const getLanguageId = (lang) => ({ cpp: 54, c: 50, java: 62, python: 71, javascript: 63 }[lang] || 63);
 
-  const handleRun = async () => {
+  const runCode = async () => {
     setLoading(true);
-    setOutput("Running...");
+    setOutput("⏳ Running code...");
     try {
       const res = await axios.post(
         "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
-        {
-          source_code: code,
-          language_id: getLanguageId(language),
-        },
+        { source_code: code, language_id: getLanguageId(language) },
         {
           headers: {
             "Content-Type": "application/json",
             "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
-            "X-RapidAPI-Key": "ddad48de98mshcfa84bd23318ed6p1f81e1jsnbc11733943a9",
+            "X-RapidAPI-Key": import.meta.env.VITE_JUDGE0_API_KEY,
           },
         }
       );
       const { stdout, stderr, compile_output, time } = res.data;
-      const resultOutput =
-        stdout ? `${stdout}\n\nExecution Time: ${time}s` : stderr || compile_output || "No output";
-
-      setOutput(resultOutput);
-
-      // Save to Supabase
-      if (user) {
-        await supabase.from("submissions").insert([
-          {
-            user_id: user.id,
-            title: "Online Code Run",
-            language,
-            code,
-            output: resultOutput,
-            status: stderr || compile_output ? "error" : "success",
-            execution_time: time || null,
-            submitted_at: new Date().toISOString(),
-          },
-        ]);
-
-        setRecentSubs((prev) => [
-          {
-            id: Math.random().toString(36),
-            title: "Online Code Run",
-            status: stderr || compile_output ? "error" : "success",
-            score: null,
-            submitted_at: new Date().toISOString(),
-          },
-          ...prev.slice(0, 4),
-        ]);
-      }
+      const result =
+        stdout ? `${stdout}\n\nExecution Time: ${time}s` : stderr || compile_output || "⚠️ No output";
+      setOutput(result);
     } catch (err) {
-      console.error(err);
-      setOutput("⚠️ Error executing code");
+      setOutput("❌ Error executing code.");
     } finally {
       setLoading(false);
     }
@@ -525,41 +328,59 @@ function OnlineCompiler({ user, supabase, setRecentSubs }) {
           <option value="javascript">JavaScript</option>
         </select>
 
-        <button
-          onClick={handleRun}
-          disabled={loading}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
-        >
-          {loading ? <Loader2 className="animate-spin" size={16} /> : <Play size={16} />}
-          {loading ? "Running..." : "Run Code"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={runCode}
+            disabled={loading}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+          >
+            {loading ? <Loader2 className="animate-spin" size={16} /> : <Play size={16} />}
+            {loading ? "Running..." : "Run Code"}
+          </button>
+          <button
+            onClick={() => document.querySelector("#ai_explain").click()}
+            className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg"
+          >
+            <Lightbulb size={16} /> Explain
+          </button>
+          <button
+            onClick={() => document.querySelector("#ai_fix").click()}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg"
+          >
+            <BrainCircuit size={16} /> Fix
+          </button>
+        </div>
       </div>
 
-      <MonacoEditor
-        height="320"
+      <Editor
+        height="320px"
         language={language === "cpp" ? "cpp" : language}
-        value={code}
         theme="vs-dark"
-        onChange={setCode}
-        options={{ fontSize: 14, automaticLayout: true }}
+        value={code}
+        onChange={(v) => setCode(v || "")}
+        options={{ fontSize: 14, minimap: { enabled: false }, automaticLayout: true }}
       />
 
-      <div className="bg-gray-900 text-green-400 p-3 text-sm overflow-auto min-h-[120px]">
+      <div className="bg-black text-green-400 p-3 text-sm overflow-auto min-h-[120px] font-mono">
         <pre>{output}</pre>
       </div>
+
+      {/* Hidden triggers for AI Assistant */}
+      <button id="ai_explain" className="hidden" onClick={() => window.askAI("Explain my code", code)} />
+      <button id="ai_fix" className="hidden" onClick={() => window.askAI("Fix errors in my code", code)} />
+
+      {/* AI Assistant */}
+      <AIAssistant getCode={() => code} />
     </div>
   );
 }
 
 /* ===========================================================
-   📊 Stats & Course Cards
+   📊 Stat Card
 =========================================================== */
 function StatCard({ icon: Icon, title, value, color }) {
   return (
-    <motion.div
-      whileHover={{ scale: 1.03 }}
-      className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition"
-    >
+    <motion.div whileHover={{ scale: 1.03 }} className="bg-white rounded-2xl p-6 shadow-sm flex items-center gap-4">
       <div className={`p-4 rounded-full text-white ${color}`}>
         <Icon size={24} />
       </div>
@@ -567,22 +388,6 @@ function StatCard({ icon: Icon, title, value, color }) {
         <p className="text-gray-600 text-sm">{title}</p>
         <h3 className="text-xl font-bold text-gray-800">{value}</h3>
       </div>
-    </motion.div>
-  );
-}
-
-function CourseCard({ title, desc, onClick }) {
-  return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      onClick={onClick}
-      className="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm cursor-pointer hover:shadow-md hover:bg-gray-100 transition"
-    >
-      <h3 className="font-semibold text-lg text-gray-800 mb-2">{title}</h3>
-      <p className="text-gray-600 text-sm mb-4">{desc}</p>
-      <button className="text-blue-600 font-semibold hover:text-blue-800 text-sm">
-        View Program →
-      </button>
     </motion.div>
   );
 }
