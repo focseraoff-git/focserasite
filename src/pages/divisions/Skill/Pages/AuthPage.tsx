@@ -20,19 +20,14 @@ export default function SkillAuthPage() {
   const [message, setMessage] = useState({ type: "", text: "" });
 
   const baseUrl = window.location.origin;
+
+  // ✅ Use exact URLs (Supabase redirect must match this)
   const dashboardUrl = `${baseUrl}/divisions/skill/dashboard`;
   const authPageRedirect = `${baseUrl}/divisions/skill/auth`;
 
-  // ✅ 0. Clean up OAuth hash if present
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash.includes("access_token")) {
-      const cleanUrl = `${baseUrl}/divisions/skill/dashboard`;
-      window.history.replaceState(null, "", cleanUrl);
-    }
-  }, []);
-
-  // ✅ 1. Session handler — detects login or OAuth completion
+  /* ===========================================================
+     ✅ 1. Session Watcher — Redirect if already logged in
+  =========================================================== */
   useEffect(() => {
     const {
       data: { subscription },
@@ -45,16 +40,23 @@ export default function SkillAuthPage() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // ✅ 2. Google OAuth login
+  /* ===========================================================
+     ✅ 2. Google OAuth Login (works on localhost + focsera.in)
+  =========================================================== */
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ type: "", text: "" });
 
+    const redirectUrl =
+      window.location.hostname === "localhost"
+        ? "http://localhost:5173/divisions/skill/dashboard"
+        : "https://www.focsera.in/divisions/skill/dashboard";
+
     const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: dashboardUrl,
+        redirectTo: redirectUrl,
         access_type: "offline",
         prompt: "consent",
       },
@@ -70,7 +72,9 @@ export default function SkillAuthPage() {
     }
   };
 
-  // ✅ 3. Email/password login or signup
+  /* ===========================================================
+     ✅ 3. Email + Password Login / Signup
+  =========================================================== */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ type: "", text: "" });
@@ -107,6 +111,9 @@ export default function SkillAuthPage() {
     }
   };
 
+  /* ===========================================================
+     🧠 4. Auth UI
+  =========================================================== */
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-50">
       <div className="bg-white p-8 shadow-md rounded-xl w-[400px]">
@@ -187,6 +194,7 @@ export default function SkillAuthPage() {
           </button>
         </form>
 
+        {/* Google OAuth Button */}
         <div className="mt-4">
           <button
             onClick={handleGoogleSignIn}
@@ -202,6 +210,7 @@ export default function SkillAuthPage() {
           </button>
         </div>
 
+        {/* Toggle Sign In / Sign Up */}
         <div className="text-center mt-4 text-sm">
           {mode === "signin" ? (
             <>
