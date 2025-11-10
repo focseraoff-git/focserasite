@@ -43,8 +43,11 @@ export default function SkillAuthPage() {
 
   // 🔄 Handle Google redirect or existing session
   useEffect(() => {
-  const handleAuthRedirect = async () => {
+  const handleOAuthRedirect = async () => {
     try {
+      setLoading(true);
+
+      // Detect environment
       const isLocal =
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1";
@@ -53,40 +56,38 @@ export default function SkillAuthPage() {
         ? "http://localhost:5173/divisions/skill/dashboard"
         : "https://www.focsera.in/divisions/skill/dashboard";
 
-      // ✅ 1. If redirected from Google with access_token
+      // ✅ Step 1: Handle Google OAuth redirect
       if (window.location.hash.includes("access_token")) {
-        setLoading(true);
-
-        // Store session in Supabase (important)
         const { data, error } = await lmsSupabaseClient.auth.getSessionFromUrl({
           storeSession: true,
         });
         if (error) throw error;
 
-        // ✅ 2. Remove #access_token from URL for a clean look
+        // ✅ Step 2: Clean the URL — remove access_token fragment
         window.history.replaceState({}, document.title, window.location.pathname);
 
-        // ✅ 3. Redirect to dashboard
+        // ✅ Step 3: Redirect to dashboard
         if (data?.session) {
           window.location.replace(dashboardUrl);
           return;
         }
       }
 
-      // ✅ 4. Already logged-in users go straight to dashboard
+      // ✅ Step 4: Already logged in → send to dashboard
       const { data } = await lmsSupabaseClient.auth.getSession();
       if (data?.session) {
         window.location.replace(dashboardUrl);
       }
     } catch (err) {
-      console.error("Auth redirect failed:", err);
+      console.error("OAuth redirect error:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  handleAuthRedirect();
+  handleOAuthRedirect();
 }, []);
+
 
 
   // 📩 Email/Password Auth
