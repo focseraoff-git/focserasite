@@ -4,34 +4,38 @@ import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function AuthCallback() {
   useEffect(() => {
-    const finalizeLogin = async () => {
+    const handleAuthCallback = async () => {
       try {
-        // ✅ Exchange the access_token from URL hash for a session
+        // ✅ Exchange the access token from the URL for a Supabase session
         const { data, error } = await lmsSupabaseClient.auth.getSessionFromUrl({
           storeSession: true,
         });
 
         if (error) {
-          console.error("Error saving session:", error);
+          console.error("Auth exchange error:", error.message);
           window.location.replace("/divisions/skill/auth");
           return;
         }
 
         if (data?.session) {
-          // ✅ Clean the URL (remove #access_token) and redirect to dashboard
+          console.log("✅ Session stored successfully:", data.session.user.email);
+
+          // ✅ Clean up the URL (remove access_token hash)
           window.history.replaceState({}, document.title, "/divisions/skill/dashboard");
+
+          // ✅ Redirect to the dashboard
           window.location.replace("/divisions/skill/dashboard");
         } else {
-          // ❌ No session — redirect to login
+          console.warn("⚠️ No session found after exchange");
           window.location.replace("/divisions/skill/auth");
         }
       } catch (err) {
-        console.error("Auth callback failed:", err);
+        console.error("Callback error:", err);
         window.location.replace("/divisions/skill/auth");
       }
     };
 
-    finalizeLogin();
+    handleAuthCallback();
   }, []);
 
   return (
