@@ -12,10 +12,11 @@ export default function AuthCallback() {
         const { data, error } = await lmsSupabaseClient.auth.getSessionFromUrl({
           storeSession: true,
         });
+
         if (error) throw error;
 
         if (data?.session) {
-          // ✅ Redirect to Skill Dashboard
+          // ✅ Redirect to dashboard
           window.location.href = "/divisions/skill/dashboard";
         } else {
           navigate("/divisions/skill/auth", { replace: true });
@@ -25,6 +26,7 @@ export default function AuthCallback() {
         navigate("/divisions/skill/auth", { replace: true });
       }
     };
+
     handleAuth();
   }, [navigate]);
 

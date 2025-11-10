@@ -70,25 +70,28 @@ export default function AuthPage() {
   };
 
   /* ✅ Google OAuth */
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    try {
-      const redirectUrl =
-        window.location.hostname === "localhost"
-          ? "http://localhost:5173/divisions/skill/auth/callback"
-          : "https://www.focsera.in/divisions/skill/auth/callback";
+ const handleGoogleLogin = async () => {
+  setLoading(true);
+  try {
+    // 🧩 Determine the proper redirect URL
+    const redirectUrl =
+      window.location.hostname === "localhost"
+        ? "http://localhost:5173/divisions/skill/auth/callback"
+        : "https://www.focsera.in/divisions/skill/auth/callback"; // <-- use your live domain here
 
-      const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: redirectUrl },
-      });
-      if (error) throw error;
-    } catch (err) {
-      alert("❌ Google login failed: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: redirectUrl },
+    });
+
+    if (error) throw error;
+  } catch (err) {
+    alert("❌ Google login failed: " + err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center p-4">
