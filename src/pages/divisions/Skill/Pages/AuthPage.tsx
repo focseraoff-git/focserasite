@@ -7,8 +7,7 @@ import {
   Eye,
   EyeOff,
   Loader2,
-  CheckCircle,
-  AlertCircle,
+  // CheckCircle and AlertCircle removed as they aren't used in this file's logic
 } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
@@ -22,34 +21,48 @@ export default function SkillAuthPage() {
   const [message, setMessage] = useState({ type: "", text: "" });
 
   const baseUrl = window.location.origin;
-  const redirectTo = `${baseUrl}/divisions/skill/auth/callback`;
+  
+  // NOTE: This variable is no longer needed as the dashboard path is used directly.
+  // const redirectTo = `${baseUrl}/divisions/skill/auth/callback`; 
+  
   const dashboardUrl = `${baseUrl}/divisions/skill/dashboard`;
+  const dashboardRedirectPath = `${baseUrl}/divisions/skill/dashboard`;
+  
+  // The path for this authentication page (needed for email sign-up redirect)
+  const authPageRedirect = `${baseUrl}/divisions/skill/auth`;
 
-  // ✅ Check existing session
-  // ✅ Check existing session
-useEffect(() => {
-  (async () => {
-    const { data } = await lmsSupabaseClient.auth.getSession();
-    if (data?.session) {
-      window.location.replace(dashboardUrl);
-    }
-  })();
-}, []);
-  // ✅ Google Sign-In (NO manual state)
- // The new desired final URL path for the redirect
-const dashboardRedirectPath = `${baseUrl}/divisions/skill/dashboard`;
+  // ✅ 1. Session Handler (Checks for existing session AND handles OAuth callback redirect)
+  useEffect(() => {
+    // Use onAuthStateChange for reliability in detecting sessions (including from URL hash)
+    const { data: { subscription } } = lmsSupabaseClient.auth.onAuthStateChange(
+      (event, session) => {
+        // If a session is found (either existing or just set by the OAuth token), redirect.
+        if (session) {
+          window.location.replace(dashboardUrl);
+        }
+      }
+    );
 
-// ✅ Update handleGoogleSignIn to use the final dashboard path
-const handleGoogleSignIn = async (e) => {
-    // ...
+    // Clean up the subscription
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // ✅ 2. Google Sign-In
+  const handleGoogleSignIn = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: "", text: "" });
+
     const { data, error } = await lmsSupabaseClient.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-            // Tell Supabase to send the user *directly* to the dashboard after OAuth completes.
-            redirectTo: dashboardRedirectPath, 
-            access_type: "offline",
-            prompt: "consent",
-        },
+      provider: "google",
+      options: {
+        // Tell Supabase to send the user directly to the clean dashboard URL after auth
+        redirectTo: dashboardRedirectPath, 
+        access_type: "offline",
+        prompt: "consent",
+      },
     });
 
     if (error) {
@@ -59,7 +72,7 @@ const handleGoogleSignIn = async (e) => {
     }
   };
 
-  // ✅ Email/Password Login
+  // ✅ 3. Email/Password Login/Sign-up
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ type: "", text: "" });
@@ -78,7 +91,8 @@ const handleGoogleSignIn = async (e) => {
           email,
           password,
           options: {
-            emailRedirectTo: redirectTo,
+            // Email verification redirect points to the auth page
+            emailRedirectTo: authPageRedirect,
             data: { full_name: fullName },
           },
         });
