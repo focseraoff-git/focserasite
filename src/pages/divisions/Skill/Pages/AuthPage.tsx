@@ -36,18 +36,20 @@ useEffect(() => {
   })();
 }, []);
   // ✅ Google Sign-In (NO manual state)
-  const handleGoogleSignIn = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({ type: "", text: "" });
+ // The new desired final URL path for the redirect
+const dashboardRedirectPath = `${baseUrl}/divisions/skill/dashboard`;
 
+// ✅ Update handleGoogleSignIn to use the final dashboard path
+const handleGoogleSignIn = async (e) => {
+    // ...
     const { data, error } = await lmsSupabaseClient.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo,
-        access_type: "offline",
-        prompt: "consent",
-      },
+        provider: "google",
+        options: {
+            // Tell Supabase to send the user *directly* to the dashboard after OAuth completes.
+            redirectTo: dashboardRedirectPath, 
+            access_type: "offline",
+            prompt: "consent",
+        },
     });
 
     if (error) {
