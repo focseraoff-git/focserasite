@@ -11,8 +11,6 @@ import {
   RotateCcw,
   RotateCw,
   Trash2,
-  Palette,
-  X,
   Brush,
 } from "lucide-react";
 
@@ -26,7 +24,7 @@ export default function OnlineCompilerPage() {
   const [drawMode, setDrawMode] = useState(false);
   const terminalRef = useRef(null);
 
-  // 🎨 Canvas states
+  // 🎨 Canvas Drawing
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -36,7 +34,7 @@ export default function OnlineCompilerPage() {
   const [drawingHistory, setDrawingHistory] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
 
-  // 🧠 Code templates
+  // 🧠 Code Templates
   const templates = {
     cpp: `#include <iostream>
 using namespace std;
@@ -71,23 +69,20 @@ print("Hello,", name)`,
 console.log("Hello, " + name);`,
   };
 
-  // 🧠 Load default template
   useEffect(() => {
     setCode(templates[language]);
     setOutput("");
   }, [language]);
 
-  // Auto-scroll terminal
   useEffect(() => {
     if (terminalRef.current)
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
   }, [output]);
 
-  // 🎨 Initialize canvas
+  // 🎨 Initialize and fix ctx on load and parameter change
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
@@ -102,26 +97,29 @@ console.log("Hello, " + name);`,
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     return () => window.removeEventListener("resize", resizeCanvas);
-  }, [strokeColor, strokeWidth]);
+  }, [strokeColor, strokeWidth, drawMode]);
 
-  // ✏️ Drawing (stylus / pen / touch support)
-  const startDrawing = (e) => {
+  // 🎨 Drawing Handlers (Full Stylus Support)
+  const pointerDown = (e) => {
     if (!drawMode) return;
+    e.preventDefault();
     const ctx = ctxRef.current;
+    if (!ctx) return;
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX || e.touches?.[0]?.clientX;
-    const y = e.clientY || e.touches?.[0]?.clientY;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
     ctx.beginPath();
-    ctx.moveTo(x - rect.left, y - rect.top);
+    ctx.moveTo(x, y);
+    canvasRef.current.setPointerCapture(e.pointerId);
     setIsDrawing(true);
   };
 
-  const draw = (e) => {
+  const pointerMove = (e) => {
     if (!isDrawing || !drawMode) return;
     const ctx = ctxRef.current;
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX || e.touches?.[0]?.clientX;
-    const y = e.clientY || e.touches?.[0]?.clientY;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
     if (tool === "erase") {
       ctx.globalCompositeOperation = "destination-out";
@@ -132,14 +130,16 @@ console.log("Hello, " + name);`,
       ctx.lineWidth = strokeWidth;
     }
 
-    ctx.lineTo(x - rect.left, y - rect.top);
+    ctx.lineTo(x, y);
     ctx.stroke();
   };
 
-  const stopDrawing = () => {
+  const pointerUp = (e) => {
     if (!isDrawing) return;
-    ctxRef.current.closePath();
+    const ctx = ctxRef.current;
+    ctx.closePath();
     setIsDrawing(false);
+    canvasRef.current.releasePointerCapture(e.pointerId);
     setDrawingHistory((prev) => [...prev, canvasRef.current.toDataURL()]);
     setRedoStack([]);
   };
@@ -249,11 +249,7 @@ console.log("Hello, " + name);`,
             disabled={loading}
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-md text-sm font-medium transition"
           >
-            {loading ? (
-              <Loader2 className="animate-spin" size={16} />
-            ) : (
-              <Play size={16} />
-            )}
+            {loading ? <Loader2 className="animate-spin" size={16} /> : <Play size={16} />}
             {loading ? "Running..." : "Run"}
           </button>
 
@@ -293,33 +289,28 @@ console.log("Hello, " + name);`,
           }}
         />
 
-        {/* 🎨 Drawing Canvas Overlay */}
         {drawMode && (
           <>
             <canvas
               ref={canvasRef}
-              onPointerDown={startDrawing}
-              onPointerMove={draw}
-              onPointerUp={stopDrawing}
-              onPointerLeave={stopDrawing}
-              className="absolute top-0 left-0 w-full h-full z-10 cursor-crosshair"
+              onPointerDown={pointerDown}
+              onPointerMove={pointerMove}
+              onPointerUp={pointerUp}
+              onPointerCancel={pointerUp}
+              className="absolute top-0 left-0 w-full h-full z-10 cursor-crosshair touch-none"
             />
 
-            {/* 🧰 Floating Toolbar */}
+            {/* 🧰 Toolbar */}
             <div className="absolute top-3 right-3 flex items-center gap-2 bg-[#252526]/90 backdrop-blur-md border border-[#333] rounded-lg p-2 z-20 shadow-lg">
               <button
                 onClick={() => setTool("draw")}
-                className={`p-2 rounded ${
-                  tool === "draw" ? "bg-blue-600" : "hover:bg-[#333]"
-                }`}
+                className={`p-2 rounded ${tool === "draw" ? "bg-blue-600" : "hover:bg-[#333]"}`}
               >
                 <Pencil size={16} />
               </button>
               <button
                 onClick={() => setTool("erase")}
-                className={`p-2 rounded ${
-                  tool === "erase" ? "bg-orange-600" : "hover:bg-[#333]"
-                }`}
+                className={`p-2 rounded ${tool === "erase" ? "bg-orange-600" : "hover:bg-[#333]"}`}
               >
                 <Eraser size={16} />
               </button>
