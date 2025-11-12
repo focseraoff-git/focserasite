@@ -1,135 +1,145 @@
 // @ts-nocheck
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
-import { lmsSupabaseClient } from "../../../../lib/ssupabase";
-import { Loader2, Play, Sparkles, Terminal, Settings, FileText } from "lucide-react";
-import AIAssistant from "../Pages/AIAssistant";
+import { Play, Loader2, Terminal } from "lucide-react";
 
-/**
- * DashboardPage
- * - Monaco Editor (code editor)
- * - Run Code via Judge0 API
- * - Integrated AI Assistant
- * - Terminal-style output
- * - Supabase User Session
- */
-
-export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
-  const [code, setCode] = useState(
-    localStorage.getItem("focsera_code") ||
-      `#include <iostream>
-using namespace std;
-int main() {
-  int n;
-  cin >> n;
-  cout << "You entered: " << n << endl;
-  return 0;
-}`
-  );
-  const [language, setLanguage] = useState(
-    localStorage.getItem("focsera_lang") || "cpp"
-  );
-  const [input, setInput] = useState("");
+export default function OnlineCompilerPage() {
+  const [language, setLanguage] = useState("java");
+  const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [fontSize, setFontSize] = useState(14);
-
+  const [terminalOpen, setTerminalOpen] = useState(true);
   const terminalRef = useRef(null);
 
+  // 🧠 Sample code templates
   const templates = {
-    cpp: `#include <iostream>\nusing namespace std;\nint main(){\n  int a; cin >> a; cout << "You entered: " << a; return 0;\n}`,
-    java: `import java.util.*;\npublic class Main {\n  public static void main(String[] args){\n    Scanner sc = new Scanner(System.in);\n    int a = sc.nextInt();\n    System.out.println("You entered: " + a);\n  }\n}`,
-    python: `n = input()\nprint("You entered:", n)`,
-    c: `#include <stdio.h>\nint main(){\n  int a; scanf("%d", &a); printf("You entered: %d", a); return 0;\n}`,
-    javascript: `const fs = require("fs");\nconst input = fs.readFileSync(0, "utf8").trim();\nconsole.log("You entered:", input);`,
+    cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Enter a number: ";
+    int n;
+    cin >> n;
+    cout << "You entered: " << n << endl;
+    return 0;
+}`,
+    c: `#include <stdio.h>
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("You entered: %d\\n", n);
+    return 0;
+}`,
+    java: `import java.util.*;
+class Hello {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter your name: ");
+        String name = sc.nextLine();
+        System.out.println("Hello, " + name + "!");
+    }
+}`,
+    python: `name = input("Enter your name: ")
+print("Hello,", name)`,
+    javascript: `let name = prompt("Enter your name:");
+console.log("Hello, " + name);`,
   };
 
-  // Save code and language to localStorage
+  // 🧠 Load default template on language change
   useEffect(() => {
-    localStorage.setItem("focsera_code", code);
-    localStorage.setItem("focsera_lang", language);
-  }, [code, language]);
+    setCode(templates[language]);
+    setOutput("");
+  }, [language]);
 
-  // Scroll output to bottom automatically
+  // Auto-scroll terminal
   useEffect(() => {
-    if (terminalRef.current) {
+    if (terminalRef.current)
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
   }, [output]);
 
   const getLanguageId = (lang) =>
     ({ cpp: 54, c: 50, java: 62, python: 71, javascript: 63 }[lang] || 63);
 
-  /** 🧠 Run code using Judge0 API */
+  /* ===========================================================
+     🧩 Run Code (Java dynamic class support)
+  =========================================================== */
   const runCode = async () => {
-    setOutput("⏳ Running code...\n");
     setLoading(true);
+    setTerminalOpen(true);
+    setOutput("⏳ Compiling and running your code...");
+
     try {
-      const response = await axios.post(
-        "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
-        {
+      let payload = {
+        language_id: getLanguageId(language),
+        stdin: input,
+      };
+
+      // 🧠 For Java — detect class name and compile accordingly
+      if (language === "java") {
+        const match = code.match(/class\s+([A-Za-z_]\w*)/);
+        const className = match ? match[1] : "Main"; // Default fallback
+        payload = {
+          ...payload,
           source_code: code,
-          language_id: getLanguageId(language),
-          stdin: input,
-        },
+          command: `javac ${className}.java && java ${className}`,
+          files: [
+            {
+              name: `${className}.java`,
+              content: code,
+            },
+          ],
+        };
+      } else {
+        // Other languages (C, C++, Python, JS)
+        payload.source_code = code;
+      }
+
+      const res = await axios.post(
+        "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
+        payload,
         {
           headers: {
             "Content-Type": "application/json",
-            "x-rapidapi-key": import.meta.env.VITE_JUDGE0_API_KEY,
-            "x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+            "X-RapidAPI-Key": import.meta.env.VITE_JUDGE0_API_KEY,
           },
         }
       );
 
-      const data = response.data;
-      let result = "";
-
-      if (data.stdout) result = data.stdout;
-      else if (data.stderr) result = data.stderr;
-      else if (data.compile_output) result = data.compile_output;
-      else result = "⚠️ No output";
+      const { stdout, stderr, compile_output, message, time } = res.data;
+      const result =
+        stdout
+          ? `🟢 Output:\n${stdout}\n\n⏱ Execution Time: ${time}s`
+          : stderr || compile_output || message || "⚠️ No output.";
 
       setOutput(result);
     } catch (err) {
-      console.error(err);
-      setOutput("❌ Error running code. Check API key or network.");
+      console.error("Execution error:", err);
+      setOutput("❌ Error executing code. Check console for details.");
     } finally {
       setLoading(false);
     }
   };
 
-  /** 🧩 Auto-detect input requirement */
-  const detectInputRequirement = () => {
-    const needsInput =
-      code.includes("cin >>") ||
-      code.includes("Scanner") ||
-      code.includes("input(") ||
-      code.includes("scanf(");
-    if (needsInput && !input.trim()) {
-      setOutput(
-        "⚠️ Detected code that expects input.\n💡 Enter input below before running."
-      );
-      return true;
-    }
-    return false;
-  };
-
+  /* ===========================================================
+     💻 VS Code UI
+  =========================================================== */
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-black text-gray-200 flex flex-col items-center p-6 pt-24">
-      {/* Header */}
-      <div className="flex items-center justify-between w-full max-w-6xl mb-6">
-        <div className="flex items-center gap-2">
-          <Sparkles className="text-blue-400" />
-          <h1 className="text-xl font-semibold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-            SkillVerse Playground
-          </h1>
-        </div>
+    <div className="min-h-screen bg-[#1e1e1e] text-gray-200 flex flex-col">
+      {/* 🧭 Top Bar */}
+      <div className="flex justify-between items-center px-4 py-2 bg-[#252526] border-b border-[#333]">
         <div className="flex items-center gap-3">
+          <h1 className="text-sm font-semibold text-gray-300 flex items-center gap-2">
+            <Terminal size={16} className="text-blue-400" />
+            PlayGround
+          </h1>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm"
+            className="bg-[#2d2d2d] text-gray-200 px-2 py-1 rounded text-sm border border-[#3c3c3c] focus:outline-none"
           >
             <option value="cpp">C++</option>
             <option value="c">C</option>
@@ -137,95 +147,61 @@ int main() {
             <option value="python">Python</option>
             <option value="javascript">JavaScript</option>
           </select>
+        </div>
+
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => setCode(templates[language])}
-            className="bg-blue-600 hover:bg-blue-700 px-3 py-2 text-sm rounded-lg text-white"
+            onClick={runCode}
+            disabled={loading}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-md text-sm font-medium transition"
           >
-            Load Template
+            {loading ? <Loader2 className="animate-spin" size={16} /> : <Play size={16} />}
+            {loading ? "Running..." : "Run"}
+          </button>
+          <button
+            onClick={() => setTerminalOpen(!terminalOpen)}
+            className="text-gray-300 hover:text-gray-100 px-2 text-sm"
+          >
+            {terminalOpen ? "▾ Terminal" : "▸ Terminal"}
           </button>
         </div>
       </div>
 
-      {/* Editor */}
-      <div className="w-full max-w-6xl rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-slate-950/80 mb-4">
+      {/* 🧠 Editor */}
+      <div className="flex-1">
         <Editor
-          height="60vh"
-          language={language}
+          height={terminalOpen ? "70vh" : "85vh"}
+          language={language === "cpp" ? "cpp" : language}
           theme="vs-dark"
           value={code}
-          onChange={(value) => setCode(value || "")}
+          onChange={(v) => setCode(v || "")}
           options={{
-            fontSize,
+            fontSize: 15,
             minimap: { enabled: false },
             automaticLayout: true,
-            fontFamily: "'Fira Code', Consolas, monospace",
+            wordWrap: "on",
           }}
         />
       </div>
 
-      {/* Input Section */}
-      <div className="w-full max-w-6xl bg-slate-900/60 rounded-xl p-4 border border-white/10 mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <label className="font-medium text-sm flex items-center gap-2 text-cyan-300">
-            <Terminal size={14} /> Input
-          </label>
-          <button
-            onClick={() => setInput("")}
-            className="text-xs text-gray-400 hover:text-red-400"
-          >
-            Clear
-          </button>
-        </div>
-        <textarea
-          className="w-full h-24 bg-black/50 rounded-md p-2 text-sm outline-none font-mono text-gray-200 resize-none"
-          placeholder="Enter custom input (if program expects it)"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-      </div>
-
-      {/* Buttons */}
-      <div className="flex items-center gap-4 mb-4">
-        <button
-          onClick={() => {
-            if (!detectInputRequirement()) runCode();
-          }}
-          disabled={loading}
-          className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-400 px-6 py-2 rounded-lg text-white font-medium hover:opacity-90 transition"
-        >
-          {loading ? <Loader2 className="animate-spin w-4 h-4" /> : <Play size={16} />}
-          {loading ? "Running..." : "Run Code"}
-        </button>
-
-        <button
-          onClick={() => setFontSize((s) => Math.min(s + 1, 30))}
-          className="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg text-sm"
-        >
-          + Font
-        </button>
-        <button
-          onClick={() => setFontSize((s) => Math.max(s - 1, 8))}
-          className="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg text-sm"
-        >
-          - Font
-        </button>
-      </div>
-
-      {/* Output Terminal */}
-      <div className="w-full max-w-6xl bg-black/80 rounded-xl p-4 border border-white/10 font-mono text-sm text-green-400">
-        <div className="flex items-center gap-2 mb-2 text-cyan-300">
-          <FileText size={14} /> Output
-        </div>
+      {/* 🖥 Terminal */}
+      {terminalOpen && (
         <div
           ref={terminalRef}
-          className="max-h-[300px] overflow-y-auto whitespace-pre-wrap"
+          className="bg-[#1e1e1e] border-t border-[#333] p-3 text-sm font-mono text-[#c6c6c6] max-h-[35vh] overflow-auto"
         >
-          {output || "💡 Output will appear here after you run your code."}
+          <div className="text-xs text-gray-400 mb-1">TERMINAL</div>
+          <pre className="whitespace-pre-wrap text-gray-100 mb-3">{output}</pre>
+          <div className="text-gray-400 text-xs mb-1"> Enter your input below (stdin):</div>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type input here and press Run..."
+            rows={3}
+            className="w-full bg-[#252526] text-gray-100 p-2 rounded border border-[#333] focus:outline-none resize-none"
+          />
         </div>
-      </div>
-
-      {/* AI Assistant */}
-      <AIAssistant getCode={() => code} />
+      )}
     </div>
   );
 }

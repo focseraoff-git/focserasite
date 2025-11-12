@@ -1,10 +1,8 @@
 // @ts-nocheck
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { lmsSupabaseClient } from "../../../lib/ssupabase";
 import ScrollToTop from "./components/ScrollToTop";
-
 
 // ✅ User Pages
 import HomePage from "./Pages/HomePage";
@@ -28,10 +26,9 @@ import AdminEditPage from "./Pages/Admin/AdminEditPage";
 // ✅ Shared
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import FullPageLoader from "./components/FullPageLoader";
 
 /* ============================================================
-   🧠 Error Boundary (prevents blank screen on crash)
+   🧠 Error Boundary (kept same for crash safety)
 ============================================================ */
 function ErrorBoundary({ children }) {
   const [error, setError] = useState(null);
@@ -69,47 +66,30 @@ class ErrorBoundaryHandler extends React.Component {
 }
 
 /* ============================================================
-   🚀 Main SkillApp
+   🚀 Main SkillApp (No Protected Routes)
 ============================================================ */
 export default function SkillApp() {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true);
   const navigate = useNavigate();
 
-  /* ============================================================
-     🔹 Initialize Authentication
-  ============================================================ */
+  // 🧠 Keep auth listener for optional user state (not for restriction)
   useEffect(() => {
     const initAuth = async () => {
-      try {
-        const { data, error } = await lmsSupabaseClient.auth.getSession();
-        if (error) throw error;
+      const { data } = await lmsSupabaseClient.auth.getSession();
+      const sessionUser = data?.session?.user || null;
+      setUser(sessionUser);
 
-        const sessionUser = data?.session?.user || null;
-        setUser(sessionUser);
+      if (sessionUser) {
+        const { data: profile } = await lmsSupabaseClient
+          .from("users")
+          .select("role")
+          .eq("email", sessionUser.email)
+          .maybeSingle();
 
-        if (sessionUser) {
-          const { data: profile, error: profileError } = await lmsSupabaseClient
-            .from("users")
-            .select("role")
-            .eq("email", sessionUser.email)
-            .maybeSingle();
-
-          // Handle "no rows" safely
-          if (profileError && !["PGRST116", "PGRST404"].includes(profileError.code))
-            throw profileError;
-
-          const userRole = profile?.role || "user";
-          setRole(userRole);
-          localStorage.setItem("user_role", userRole);
-        }
-      } catch (error) {
-        console.warn("⚠️ Auth initialization issue:", error.message);
-        setUser(null);
-        setRole(null);
-      } finally {
-        setAuthLoading(false);
+        const userRole = profile?.role || "user";
+        setRole(userRole);
+        localStorage.setItem("user_role", userRole);
       }
     };
 
@@ -139,17 +119,15 @@ export default function SkillApp() {
     return () => listener?.subscription.unsubscribe();
   }, []);
 
-  if (authLoading) return <FullPageLoader />;
-
   /* ============================================================
-     ⚙️ Routes Rendering
+     ⚙️ Routes (all public now)
   ============================================================ */
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-50 font-inter">
         <ScrollToTop />
 
-        {/* Header (Hide in admin) */}
+        {/* Header (Hide only for admin pages if you want) */}
         {role !== "admin" && (
           <Header
             user={user}
@@ -162,12 +140,12 @@ export default function SkillApp() {
 
         <main className={role !== "admin" ? "pt-20" : ""}>
           <Routes>
-            {/* 🔹 Public Routes */}
+            {/* 🔹 Public Pages */}
             <Route path="/" element={<HomePage user={user} />} />
             <Route path="auth" element={<AuthPage />} />
             <Route path="auth/callback" element={<AuthCallback />} />
 
-            {/* 🔹 User Routes */}
+            {/* 🔹 User Pages (no protection) */}
             <Route path="dashboard" element={<DashboardPage user={user} />} />
             <Route path="syllabus/:programId" element={<SyllabusPage />} />
             <Route path="module/:moduleId" element={<ModulePage />} />
@@ -176,7 +154,7 @@ export default function SkillApp() {
             <Route path="certificate/:programName" element={<CertificatePage />} />
             <Route path="online-compiler" element={<OnlineCompilerPage />} />
 
-            {/* 🔹 Admin Routes */}
+            {/* 🔹 Admin Pages (also public now) */}
             <Route path="admin" element={<AdminLayout />}>
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="add-program" element={<AddProgramPage />} />
@@ -189,7 +167,7 @@ export default function SkillApp() {
           </Routes>
         </main>
 
-        {/* Footer (Hide in admin) */}
+        {/* Footer */}
         {role !== "admin" && <Footer />}
       </div>
     </ErrorBoundary>

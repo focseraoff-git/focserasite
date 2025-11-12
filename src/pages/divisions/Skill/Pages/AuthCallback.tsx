@@ -16,10 +16,12 @@ export default function SkillAuthCallback() {
       (event, session) => {
         // If the session is successfully established, redirect to the dashboard.
         if (session) {
-          window.location.replace(dashboardUrl);
+         window.location.replace("/divisions/skill/dashboard");
+
         } else if (event === 'SIGNED_OUT' || event === 'AUTH_ERROR') {
           // If the auth process results in an error, redirect back to the sign-in page.
-          window.location.replace(`${authUrl}?error=auth_failed`);
+          window.location.replace("/divisions/skill/dashboard");
+
         }
       }
     );

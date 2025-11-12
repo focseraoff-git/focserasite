@@ -5,11 +5,9 @@ import {
   CheckCircle,
   Trophy,
   Flame,
-  FileText,
   Award,
   Camera,
   Upload,
-  X,
   Edit3,
   Rocket,
   PenTool,
@@ -19,7 +17,7 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
@@ -44,31 +42,60 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   const [showModal, setShowModal] = useState(false);
   const [newName, setNewName] = useState("");
   const fileInputRef = useRef(null);
+  const hasNavigated = useRef(false);
 
   /* ===========================================================
-     🔹 Fetch Programs (Always) + Profile Data (If Logged In)
+     🔹 Role Check (NO redirect to /auth)
+  =========================================================== */
+  useEffect(() => {
+    const checkRole = async () => {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const currentUser = sessionData?.session?.user || null;
+        if (!currentUser) return; // guest handled below
+
+        const { data: dbUser } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", currentUser.id)
+          .single();
+
+        // ✅ Optional: redirect admin users only once
+        if (dbUser?.role === "admin" && !hasNavigated.current) {
+          hasNavigated.current = true;
+          navigate("/divisions/skill/admin/dashboard");
+        }
+      } catch (err) {
+        console.warn("Auth role check failed:", err.message);
+      }
+    };
+    checkRole();
+  }, [navigate, supabase]);
+
+  /* ===========================================================
+     🔹 Fetch Programs + Profile Data
   =========================================================== */
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        // ✅ Always fetch public programs (even before login)
+        // Fetch programs (public)
         const { data: allPrograms, error: progErr } = await supabase
           .from("programs")
           .select("id, slug, title, description, created_at")
           .order("created_at", { ascending: true });
-
         if (progErr) console.error("Program fetch error:", progErr.message);
         setPrograms(allPrograms || []);
 
-        // ✅ Fetch profile, stats, submissions only if logged in
+        // Fetch user-specific data if logged in
         if (user) {
           const { data: profile } = await supabase
             .from("users")
             .select("full_name, avatar_url, email")
             .eq("id", user.id)
             .single();
+
           if (profile) {
             setProfile(profile);
             setNewName(profile.full_name || "");
@@ -79,6 +106,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
             .select("*")
             .eq("user_id", user.id)
             .maybeSingle();
+
           if (statsRes) setStats(statsRes);
 
           const { data: subsRes } = await supabase
@@ -87,6 +115,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
             .eq("user_id", user.id)
             .order("submitted_at", { ascending: false })
             .limit(5);
+
           setRecentSubs(subsRes || []);
         }
       } catch (err) {
@@ -97,7 +126,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
     };
 
     fetchData();
-  }, [user]);
+  }, [user, supabase]);
 
   /* ===========================================================
      🔹 Avatar Upload + Name Edit
@@ -113,8 +142,16 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
         .from("avatars")
         .upload(path, file, { upsert: true });
       if (uploadError) throw uploadError;
-      const { data: publicUrl } = supabase.storage.from("avatars").getPublicUrl(path);
-      await supabase.from("users").update({ avatar_url: publicUrl.publicUrl }).eq("id", user.id);
+
+      const { data: publicUrl } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(path);
+
+      await supabase
+        .from("users")
+        .update({ avatar_url: publicUrl.publicUrl })
+        .eq("id", user.id);
+
       setProfile({ ...profile, avatar_url: publicUrl.publicUrl });
     } catch (err) {
       alert("Upload failed: " + err.message);
@@ -136,7 +173,6 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   if (!user)
     return (
       <div className="min-h-screen bg-gray-50 text-gray-800">
-        {/* Hero */}
         <section className="relative overflow-hidden text-center py-32 bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
           <motion.div
             animate={{ y: [0, -10, 0] }}
@@ -152,9 +188,12 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           >
             <PenTool className="w-9 h-9 text-pink-300 opacity-70" />
           </motion.div>
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-4">Learn. Create. Grow.</h1>
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4">
+            Learn. Create. Grow.
+          </h1>
           <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
-            Master coding, design, and creative skills through <strong>Focsera SkillVerse</strong>.
+            Master coding, design, and creative skills through{" "}
+            <strong>Focsera SkillVerse</strong>.
           </p>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -165,16 +204,17 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           </motion.button>
         </section>
 
-        {/* Courses Section (Now Visible Before Login) */}
+        {/* Public Courses */}
         <section className="max-w-6xl mx-auto px-6 py-20">
           <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">
             Explore Our Courses
           </h2>
-
           {loading ? (
             <p className="text-center text-gray-500">Loading courses...</p>
           ) : programs.length === 0 ? (
-            <p className="text-center text-gray-500">Courses will be available soon!</p>
+            <p className="text-center text-gray-500">
+              Courses will be available soon!
+            </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {programs.map((p) => (
@@ -183,7 +223,9 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
                   whileHover={{ y: -5 }}
                   className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition"
                 >
-                  <h3 className="font-semibold text-lg text-gray-800 mb-2">{p.title}</h3>
+                  <h3 className="font-semibold text-lg text-gray-800 mb-2">
+                    {p.title}
+                  </h3>
                   <p className="text-gray-600 text-sm mb-4">{p.description}</p>
                   <button
                     onClick={() => navigate("/divisions/skill/auth")}
@@ -233,14 +275,27 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
                 onClick={() => fileInputRef.current.click()}
                 className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition"
               >
-                {uploading ? <Upload size={14} className="animate-spin" /> : <Camera size={14} />}
+                {uploading ? (
+                  <Upload size={14} className="animate-spin" />
+                ) : (
+                  <Camera size={14} />
+                )}
               </button>
-              <input ref={fileInputRef} type="file" className="hidden" onChange={handleAvatarChange} />
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-                Welcome, <span className="text-blue-600">{profile?.full_name}</span>
-                <button onClick={() => setShowModal(true)} className="p-1 hover:bg-blue-100 rounded">
+                Welcome,{" "}
+                <span className="text-blue-600">{profile?.full_name}</span>
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="p-1 hover:bg-blue-100 rounded"
+                >
                   <Edit3 size={18} />
                 </button>
               </h1>
@@ -277,7 +332,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
 }
 
 /* ===========================================================
-   🧠 Online Compiler with AI
+   🧠 Online Compiler
 =========================================================== */
 function OnlineCompiler({ user, supabase, setRecentSubs }) {
   const [language, setLanguage] = useState("cpp");
@@ -285,7 +340,8 @@ function OnlineCompiler({ user, supabase, setRecentSubs }) {
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const getLanguageId = (lang) => ({ cpp: 54, c: 50, java: 62, python: 71, javascript: 63 }[lang] || 63);
+  const getLanguageId = (lang) =>
+    ({ cpp: 54, c: 50, java: 62, python: 71, javascript: 63 }[lang] || 63);
 
   const runCode = async () => {
     setLoading(true);
@@ -306,7 +362,7 @@ function OnlineCompiler({ user, supabase, setRecentSubs }) {
       const result =
         stdout ? `${stdout}\n\nExecution Time: ${time}s` : stderr || compile_output || "⚠️ No output";
       setOutput(result);
-    } catch (err) {
+    } catch {
       setOutput("❌ Error executing code.");
     } finally {
       setLoading(false);
@@ -365,11 +421,8 @@ function OnlineCompiler({ user, supabase, setRecentSubs }) {
         <pre>{output}</pre>
       </div>
 
-      {/* Hidden triggers for AI Assistant */}
       <button id="ai_explain" className="hidden" onClick={() => window.askAI("Explain my code", code)} />
       <button id="ai_fix" className="hidden" onClick={() => window.askAI("Fix errors in my code", code)} />
-
-      {/* AI Assistant */}
       <AIAssistant getCode={() => code} />
     </div>
   );

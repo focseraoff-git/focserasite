@@ -1,7 +1,9 @@
+// @ts-ignore
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import PromptXPopup from '../components/PromptXPopup';
 import { Camera, Megaphone, PartyPopper, Globe, Package, GraduationCap, ArrowRight, Sparkles } from 'lucide-react';
+import DashboardPage from './divisions/Skill/Pages/OnlineCompilerPage';
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
@@ -53,7 +55,7 @@ export default function Home() {
     {
       icon: GraduationCap,
       name: 'Focsera Skill',
-      path: '/skill',
+      path: '/divisions/skill/dashboard',
       description: 'Professional training in creative and digital technologies to empower the next generation.',
       gradient: 'from-blue-500 to-[#0052CC]'
     }
