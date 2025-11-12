@@ -12,6 +12,8 @@ import {
   RotateCw,
   Trash2,
   Palette,
+  X,
+  Brush,
 } from "lucide-react";
 
 export default function OnlineCompilerPage() {
@@ -21,9 +23,10 @@ export default function OnlineCompilerPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [terminalOpen, setTerminalOpen] = useState(true);
+  const [drawMode, setDrawMode] = useState(false);
   const terminalRef = useRef(null);
 
-  // 🎨 Drawing state
+  // 🎨 Canvas states
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -68,7 +71,7 @@ print("Hello,", name)`,
 console.log("Hello, " + name);`,
   };
 
-  // 🧠 Load default template on language change
+  // 🧠 Load default template
   useEffect(() => {
     setCode(templates[language]);
     setOutput("");
@@ -80,7 +83,7 @@ console.log("Hello, " + name);`,
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
   }, [output]);
 
-  // 🎨 Initialize canvas overlay
+  // 🎨 Initialize canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -96,34 +99,40 @@ console.log("Hello, " + name);`,
       canvas.width = canvas.parentElement.offsetWidth;
       canvas.height = canvas.parentElement.offsetHeight;
     };
-
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     return () => window.removeEventListener("resize", resizeCanvas);
   }, [strokeColor, strokeWidth]);
 
+  // ✏️ Drawing (stylus / pen / touch support)
   const startDrawing = (e) => {
+    if (!drawMode) return;
     const ctx = ctxRef.current;
-    if (!ctx) return;
-    ctx.beginPath();
     const rect = canvasRef.current.getBoundingClientRect();
-    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    const x = e.clientX || e.touches?.[0]?.clientX;
+    const y = e.clientY || e.touches?.[0]?.clientY;
+    ctx.beginPath();
+    ctx.moveTo(x - rect.left, y - rect.top);
     setIsDrawing(true);
   };
 
   const draw = (e) => {
-    if (!isDrawing) return;
+    if (!isDrawing || !drawMode) return;
     const ctx = ctxRef.current;
     const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX || e.touches?.[0]?.clientX;
+    const y = e.clientY || e.touches?.[0]?.clientY;
+
     if (tool === "erase") {
       ctx.globalCompositeOperation = "destination-out";
       ctx.lineWidth = 20;
     } else {
       ctx.globalCompositeOperation = "source-over";
-      ctx.lineWidth = strokeWidth;
       ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = strokeWidth;
     }
-    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+
+    ctx.lineTo(x - rect.left, y - rect.top);
     ctx.stroke();
   };
 
@@ -210,10 +219,10 @@ console.log("Hello, " + name);`,
   };
 
   /* ===========================================================
-     💻 VS Code UI with Canvas Overlay
+     💻 UI
   =========================================================== */
   return (
-    <div className="min-h-screen bg-[#1e1e1e] text-gray-200 flex flex-col relative">
+    <div className="min-h-screen bg-[#1e1e1e] text-gray-200 flex flex-col relative select-none">
       {/* 🧭 Top Bar */}
       <div className="flex justify-between items-center px-4 py-2 bg-[#252526] border-b border-[#333]">
         <div className="flex items-center gap-3">
@@ -247,6 +256,18 @@ console.log("Hello, " + name);`,
             )}
             {loading ? "Running..." : "Run"}
           </button>
+
+          <button
+            onClick={() => setDrawMode(!drawMode)}
+            className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-md ${
+              drawMode
+                ? "bg-green-600 hover:bg-green-700 text-white"
+                : "bg-[#333] hover:bg-[#444] text-gray-200"
+            }`}
+          >
+            <Brush size={16} /> {drawMode ? "Close Draw" : "Draw"}
+          </button>
+
           <button
             onClick={() => setTerminalOpen(!terminalOpen)}
             className="text-gray-300 hover:text-gray-100 px-2 text-sm"
@@ -256,8 +277,8 @@ console.log("Hello, " + name);`,
         </div>
       </div>
 
-      {/* 🧠 Editor + Canvas overlay */}
-      <div className="relative flex-1">
+      {/* 🧠 Editor + Canvas */}
+      <div className="relative flex-1 overflow-hidden">
         <Editor
           height={terminalOpen ? "70vh" : "85vh"}
           language={language === "cpp" ? "cpp" : language}
@@ -271,54 +292,66 @@ console.log("Hello, " + name);`,
             wordWrap: "on",
           }}
         />
-        {/* 🎨 Canvas Overlay */}
-        <canvas
-          ref={canvasRef}
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={stopDrawing}
-          onMouseLeave={stopDrawing}
-          className="absolute top-0 left-0 w-full h-full cursor-crosshair z-10 pointer-events-auto"
-        />
 
-        {/* 🧰 Floating Toolbar */}
-        <div className="absolute top-3 right-3 flex items-center gap-2 bg-[#252526]/80 backdrop-blur-sm border border-[#333] rounded-lg p-2 z-20">
-          <button
-            onClick={() => setTool("draw")}
-            className={`p-2 rounded ${tool === "draw" ? "bg-blue-600" : "hover:bg-[#333]"}`}
-          >
-            <Pencil size={16} />
-          </button>
-          <button
-            onClick={() => setTool("erase")}
-            className={`p-2 rounded ${tool === "erase" ? "bg-orange-600" : "hover:bg-[#333]"}`}
-          >
-            <Eraser size={16} />
-          </button>
-          <button onClick={undo} className="p-2 rounded hover:bg-[#333]">
-            <RotateCcw size={16} />
-          </button>
-          <button onClick={redo} className="p-2 rounded hover:bg-[#333]">
-            <RotateCw size={16} />
-          </button>
-          <button onClick={clearCanvas} className="p-2 rounded hover:bg-[#333] text-red-400">
-            <Trash2 size={16} />
-          </button>
-          <input
-            type="color"
-            value={strokeColor}
-            onChange={(e) => setStrokeColor(e.target.value)}
-            className="w-7 h-7 rounded cursor-pointer bg-transparent border-none"
-          />
-          <input
-            type="range"
-            min="1"
-            max="10"
-            value={strokeWidth}
-            onChange={(e) => setStrokeWidth(parseInt(e.target.value))}
-            className="w-20 accent-blue-500"
-          />
-        </div>
+        {/* 🎨 Drawing Canvas Overlay */}
+        {drawMode && (
+          <>
+            <canvas
+              ref={canvasRef}
+              onPointerDown={startDrawing}
+              onPointerMove={draw}
+              onPointerUp={stopDrawing}
+              onPointerLeave={stopDrawing}
+              className="absolute top-0 left-0 w-full h-full z-10 cursor-crosshair"
+            />
+
+            {/* 🧰 Floating Toolbar */}
+            <div className="absolute top-3 right-3 flex items-center gap-2 bg-[#252526]/90 backdrop-blur-md border border-[#333] rounded-lg p-2 z-20 shadow-lg">
+              <button
+                onClick={() => setTool("draw")}
+                className={`p-2 rounded ${
+                  tool === "draw" ? "bg-blue-600" : "hover:bg-[#333]"
+                }`}
+              >
+                <Pencil size={16} />
+              </button>
+              <button
+                onClick={() => setTool("erase")}
+                className={`p-2 rounded ${
+                  tool === "erase" ? "bg-orange-600" : "hover:bg-[#333]"
+                }`}
+              >
+                <Eraser size={16} />
+              </button>
+              <button onClick={undo} className="p-2 rounded hover:bg-[#333]">
+                <RotateCcw size={16} />
+              </button>
+              <button onClick={redo} className="p-2 rounded hover:bg-[#333]">
+                <RotateCw size={16} />
+              </button>
+              <button
+                onClick={clearCanvas}
+                className="p-2 rounded hover:bg-[#333] text-red-400"
+              >
+                <Trash2 size={16} />
+              </button>
+              <input
+                type="color"
+                value={strokeColor}
+                onChange={(e) => setStrokeColor(e.target.value)}
+                className="w-7 h-7 rounded cursor-pointer bg-transparent border-none"
+              />
+              <input
+                type="range"
+                min="1"
+                max="10"
+                value={strokeWidth}
+                onChange={(e) => setStrokeWidth(parseInt(e.target.value))}
+                className="w-20 accent-blue-500"
+              />
+            </div>
+          </>
+        )}
       </div>
 
       {/* 🖥 Terminal */}
