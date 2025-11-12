@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/divisions/skill/(.*)", "destination": "/divisions/skill/index.html" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }

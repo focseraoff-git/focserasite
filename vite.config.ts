@@ -1,10 +1,11 @@
+// vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: './',
-  build: { 
+  base: '/',
+  build: {
     outDir: 'dist',
     rollupOptions: {
       output: {
@@ -21,4 +22,3 @@ export default defineConfig({
     include: ['@monaco-editor/react']
   }
 });
-3
