@@ -1,6 +1,13 @@
 // @ts-nocheck
-import { useState } from "react";
-import { Lock, Mail, UserIcon, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import {
+  Lock,
+  Mail,
+  UserIcon,
+  Eye,
+  EyeOff,
+  Loader2,
+} from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function SkillAuthPage() {
@@ -13,86 +20,90 @@ export default function SkillAuthPage() {
   const [message, setMessage] = useState({ type: "", text: "" });
 
   const baseUrl = window.location.origin;
-  const redirectCallback =
-    window.location.hostname === "localhost"
-      ? "http://localhost:5173/divisions/skill/auth/callback"
-      : "https://www.focsera.in/divisions/skill/auth/callback";
+  const dashboardUrl = `${baseUrl}/divisions/skill/dashboard`;
+  const authPageRedirect = `${baseUrl}/divisions/skill/auth`;
 
   /* ===========================================================
-     🔹 Google OAuth Sign In
+     ✅ 1. Session Watcher — Auto redirect if logged in
+  =========================================================== */
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = lmsSupabaseClient.auth.onAuthStateChange((event, session) => {
+      if (session && !window.location.href.includes("/dashboard")) {
+        window.location.replace(dashboardUrl);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  /* ===========================================================
+     ✅ 2. Google OAuth Sign-in
+     - Works for localhost & focsera.in
   =========================================================== */
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ type: "", text: "" });
 
-    try {
-      const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: redirectCallback,
-          access_type: "offline",
-          prompt: "consent",
-        },
-      });
+    const redirectUrl =
+      window.location.hostname === "localhost"
+        ? "http://localhost:5173/divisions/skill/auth/callback"
+        : "https://www.focsera.in/divisions/skill/auth/callback";
 
-      if (error) throw error;
-    } catch (err) {
-      console.error("Google Sign-in Error:", err.message);
-      setMessage({ type: "error", text: "Google sign-in failed. Try again." });
-    } finally {
+    const { error } = await lmsSupabaseClient.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: redirectUrl,
+        access_type: "offline",
+        prompt: "consent",
+      },
+    });
+
+    if (error) {
+      console.error("OAuth error:", error);
+      setMessage({
+        type: "error",
+        text: "Failed to start Google sign-in. Try again.",
+      });
       setLoading(false);
     }
   };
 
   /* ===========================================================
-     🔹 Email Sign In / Sign Up
+     ✅ 3. Email + Password Login / Signup
   =========================================================== */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setMessage({ type: "", text: "" });
+    setLoading(true);
 
     try {
       if (mode === "signin") {
-        // ✅ Sign In
-        const { data, error } = await lmsSupabaseClient.auth.signInWithPassword({
+        const { error } = await lmsSupabaseClient.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
-
-        // After login, redirect manually to callback to handle role
-        window.location.replace(redirectCallback);
+        window.location.replace(dashboardUrl);
       } else {
-        // ✅ Sign Up
-        const { data, error } = await lmsSupabaseClient.auth.signUp({
+        const { error } = await lmsSupabaseClient.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: redirectCallback,
+            emailRedirectTo: authPageRedirect,
             data: { full_name: fullName },
           },
         });
         if (error) throw error;
-
-        // ✅ Insert into 'users' table (default role = user)
-        await lmsSupabaseClient.from("users").insert([
-          {
-            email,
-            full_name: fullName,
-            role: "user",
-          },
-        ]);
-
         setMessage({
           type: "success",
-          text: "Account created! Please verify your email before login.",
+          text: "Account created! Verify your email before login.",
         });
         setMode("signin");
       }
     } catch (err) {
-      console.error("Auth error:", err.message);
       setMessage({ type: "error", text: err.message });
     } finally {
       setLoading(false);
@@ -100,7 +111,7 @@ export default function SkillAuthPage() {
   };
 
   /* ===========================================================
-     🧠 Auth UI
+     🧠 4. Auth UI
   =========================================================== */
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-50">
@@ -182,7 +193,7 @@ export default function SkillAuthPage() {
           </button>
         </form>
 
-        {/* Google OAuth */}
+        {/* Google OAuth Button */}
         <div className="mt-4">
           <button
             onClick={handleGoogleSignIn}
