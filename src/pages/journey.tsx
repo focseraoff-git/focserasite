@@ -100,7 +100,7 @@ const TiltableCard = ({ children, className = "" }) => {
     const x = e.clientX - left - width / 2;
     const y = e.clientY - top - height / 2;
     const rotateX = (y / height) * -8; // Max tilt 4 degrees
-    const rotateY = (x / width) * 8;  // Max tilt 4 degrees
+    const rotateY = (x / width) * 8;   // Max tilt 4 degrees
     cardRef.current.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
   };
 
@@ -125,20 +125,20 @@ const TiltableCard = ({ children, className = "" }) => {
 
 // --- SVG Icon Components (Styled for the new design) ---
 const IconWrapper = ({ children }) => (
-  // [THEME] Updated to light theme
-  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-blue-100 backdrop-blur-sm border border-blue-200/50 shadow-lg">
+  // [THEME] Updated for dark theme
+  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-blue-900/50 backdrop-blur-sm border border-blue-500/50 shadow-lg">
     {children}
   </div>
 );
 
 const LightbulbIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
     <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 9 2c-3.1 0-5.5 2.2-6 5.1.1 1.6.6 3 1.5 4.2.9 1.2 1.5 2.5 1.5 3.8V18a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1z" /><path d="M9 18v2h6v-2" />
   </svg>
 );
 
 const CameraIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-500">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400">
     <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" /><circle cx="12" cy="13" r="3" />
   </svg>
 );
@@ -155,8 +155,8 @@ const XIcon = () => (
   </svg>
 );
 
-// --- Stylish Media Gallery Component ---
-const MediaGallery = ({ items = [] }) => {
+// --- [NEW] Stylish Media Slideshow Component ---
+const MediaSlideshow = ({ items = [] }) => {
   const [activeItem, setActiveItem] = useState(null);
 
   useEffect(() => {
@@ -169,12 +169,20 @@ const MediaGallery = ({ items = [] }) => {
 
   return (
     <>
-      {/* Grid supports both images and videos */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+      {/* [NEW] Swiper.js Slideshow */}
+      <swiper-container
+        effect="coverflow"
+        grab-cursor="true"
+        centered-slides="true"
+        slides-per-view="auto"
+        loop="true"
+        pagination='{"clickable": true}'
+        navigation="true"
+        coverflow-effect='{"rotate": 50, "stretch": 0, "depth": 100, "modifier": 1, "slideShadows": true}'
+      >
         {items.map((item, index) => (
-          <div key={index} className="w-full max-w-[360px]">
+          <swiper-slide key={index} class="swiper-slide-coverflow">
             <button onClick={() => setActiveItem(item)} className="block w-full text-left group">
-              {/* [THEME] Updated to use neon-card-border for frosted glass */}
               <div className={`relative ${item.type === 'video' ? 'aspect-[9/16] rounded-3xl' : 'aspect-[16/10] rounded-2xl'} overflow-hidden shadow-2xl neon-card-border transform transition-all duration-300 hover:scale-105 hover:shadow-blue-500/20`}>
                 {item.type === 'video' ? (
                   <video src={item.src} muted playsInline loop preload="auto" autoPlay className="w-full h-full object-cover" />
@@ -182,44 +190,39 @@ const MediaGallery = ({ items = [] }) => {
                   <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
                 )}
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  {/* [THEME] Updated hover icon bg */}
-                  <div className="w-20 h-20 rounded-full bg-black/20 backdrop-blur-lg flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-full bg-black/30 backdrop-blur-lg flex items-center justify-center">
                     <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="currentColor"><path d={item.type === 'video' ? 'M8 5v14l11-7z' : 'M21 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8'} /></svg>
                   </div>
                 </div>
 
-                {/* [THEME] Updated tag style */}
                 <div className="absolute top-4 left-4 bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">{item.type === 'video' ? 'REEL' : 'PHOTO'}</div>
                 <div className="absolute bottom-4 left-4 right-4">
-                  {/* [THEME] Updated text color (shadow for readability) */}
                   <p className="text-white font-bold text-lg truncate [text-shadow:_0_1px_3px_rgb(0_0_0_/_0.5)]">{item.title}</p>
                   <p className="text-slate-100 text-sm [text-shadow:_0_1px_3px_rgb(0_0_0_/_0.5)]">{item.caption}</p>
                 </div>
               </div>
             </button>
-          </div>
+          </swiper-slide>
         ))}
-      </div>
+      </swiper-container>
 
       {/* Modal viewer for both image and video */}
       {activeItem && (
-        // [THEME] Updated backdrop
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setActiveItem(null)}>
-          {/* [THEME] Updated modal to use frosted glass */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setActiveItem(null)}>
+          {/* [THEME] Updated modal for dark theme */}
           <div className="relative w-full max-w-3xl neon-card-border rounded-3xl shadow-2xl flex flex-col overflow-hidden m-4" onClick={(e) => e.stopPropagation()}>
-            <div className="p-4 border-b border-gray-200/50 flex justify-between items-center">
+            <div className="p-4 border-b border-gray-200/20 flex justify-between items-center">
               <div>
-                {/* [THEME] Updated modal text colors */}
-                <p className="text-gray-900 font-bold text-lg">{activeItem.title}</p>
-                <p className="text-sm text-gray-600 mt-1">{activeItem.caption}</p>
+                <p className="text-gray-100 font-bold text-lg">{activeItem.title}</p>
+                <p className="text-sm text-gray-400 mt-1">{activeItem.caption}</p>
               </div>
-              <button onClick={() => setActiveItem(null)} className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-500/10 transition-colors">
+              <button onClick={() => setActiveItem(null)} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
                 <XIcon />
               </button>
             </div>
-            <div className="flex-1 flex items-center justify-center bg-black p-6">
+            <div className="flex-1 flex items-center justify-center bg-black/50 p-6">
               {activeItem.type === 'video' ? (
                 <video src={activeItem.src} controls autoPlay className="w-full h-auto rounded-lg max-h-[70vh]" />
               ) : (
@@ -243,12 +246,11 @@ const TimelineItem = ({ year, title, description, icon, isLeft, url }) => (
         <div className={`absolute top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center ${isLeft ? 'right-[-20px]' : 'left-[-20px]'}`}>
           {icon}
         </div>
-        {/* [THEME] Updated text colors */}
-        <p className="text-lg font-bold text-blue-600 mb-2">{year}</p>
-        <h3 className="text-2xl font-semibold text-gray-900 mb-3">{title}</h3>
-        <p className="text-gray-700 leading-relaxed">{description}</p>
+        <p className="text-lg font-bold text-blue-400 mb-2">{year}</p>
+        <h3 className="text-2xl font-semibold text-white mb-3">{title}</h3>
+        <p className="text-gray-300 leading-relaxed">{description}</p>
         {url && (
-          <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 group mt-4">
+          <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-400 hover:text-blue-300 group mt-4">
             Visit Website <ArrowRightIcon />
           </a>
         )}
@@ -256,6 +258,101 @@ const TimelineItem = ({ year, title, description, icon, isLeft, url }) => (
     </div>
   </div>
 );
+
+// --- [NEW] Division Card Component ---
+const DivisionCard = ({ icon, title, description }) => (
+  <TiltableCard className="w-full neon-card-border rounded-2xl p-6 flex flex-col items-start">
+    <div className="mb-4">
+      <IconWrapper>{icon}</IconWrapper>
+    </div>
+    <h3 className="text-2xl font-semibold text-white mb-2">{title}</h3>
+    <p className="text-gray-300 leading-relaxed">{description}</p>
+  </TiltableCard>
+);
+
+// --- [NEW] Portfolio Card Component (for Web & Media) ---
+const PortfolioCard = ({ title, description, url, children, icon }) => (
+  <TiltableCard className="w-full neon-card-border rounded-2xl p-6">
+    {icon && <div className="mb-4"><IconWrapper>{icon}</IconWrapper></div>}
+    <h3 className="text-2xl font-semibold text-white mb-2">{title}</h3>
+    <p className="text-gray-300 leading-relaxed mb-4">{description}</p>
+    {url && (
+      <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-400 hover:text-blue-300 group">
+        Visit Website <ArrowRightIcon />
+      </a>
+    )}
+    {children}
+  </TiltableCard>
+);
+
+// --- [NEW] Tabbed Portfolio Component ---
+const TabbedPortfolio = ({ webData, mediaData }) => {
+  const [activeTab, setActiveTab] = useState('web');
+  const tabs = [
+    { id: 'web', label: 'Web Portfolio', icon: <IconRocket className="text-indigo-400" /> },
+    { id: 'media', label: 'Media Portfolio', icon: <IconSparkles className="text-rose-400" /> }
+  ];
+
+  return (
+    <div>
+      <div className="flex justify-center mb-8 gap-4">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 px-6 py-3 font-semibold rounded-full transition-all duration-300 ${
+              activeTab === tab.id
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/70'
+            }`}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <div className="mt-8">
+        {activeTab === 'web' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in">
+            {webData.map((item, i) => (
+              <PortfolioCard
+                key={i}
+                title={item.title}
+                description={item.description}
+                url={item.url}
+              />
+            ))}
+          </div>
+        )}
+        {activeTab === 'media' && (
+          <div className="max-w-3xl mx-auto animate-fade-in">
+            <PortfolioCard
+              icon={<IconUsers className="text-rose-400" />}
+              title="Clients & Services"
+              description="We partner with creators and brands to grow their presence."
+            >
+              <div className="mt-4">
+                <h4 className="font-semibold text-gray-200 mb-2">Services Include</h4>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {mediaData.services.map((service, i) => (
+                    <span key={i} className="text-sm bg-gray-700 text-gray-200 px-3 py-1 rounded-full">{service}</span>
+                  ))}
+                </div>
+                <h4 className="font-semibold text-gray-200 mb-2">Selected Clients</h4>
+                <ul className="list-disc list-inside text-gray-300">
+                  {mediaData.clients.map((client, i) => (
+                    <li key={i}>{client}</li>
+                  ))}
+                </ul>
+              </div>
+            </PortfolioCard>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 
 // --- Main Journey Page Component ---
 export default function App() {
@@ -281,6 +378,28 @@ export default function App() {
     return () => elements.forEach((el) => observer.unobserve(el));
   }, []);
 
+  // [NEW] Load Swiper.js script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  // =================================================================
+  //
+  // DATA DEFINITIONS
+  // This is the new section to edit your content.
+  // Replace placeholder URLs (placehold.co, flower.mp4) with your
+  // Google Drive preview links or other public URLs.
+  //
+  // =================================================================
+
+  // --- 1. Timeline Milestones ---
   const journeyData = [
     {
       year: '2025',
@@ -288,59 +407,142 @@ export default function App() {
       description: 'Hosted our flagship tech and creativity conference, InnovateX25, bringing together industry leaders and visionaries from around the globe in October.',
       icon: <IconWrapper><LightbulbIcon /></IconWrapper>,
       url: 'https://innovatex25-1nfy.vercel.app/',
-    }
+    },
   ];
+
+  // --- 2. Studios Gallery ---
+  // (Teluginti Deepavali Reel, Youth Speaks Event, Agentic Ai, Nature Reel)
+  const studiosMediaData = [
+    {
+      type: 'video',
+      // Ensure this video path is correct in your /public folder
+      src: '/videos/journey/Adobe Express - IMG_5861.mp4',
+      title: 'Teluginti Deepavali',
+      caption: 'Let the lights inspire you! 🪔'
+    },
+    {
+      type: 'image',
+      // REPLACE THIS PLACEHOLDER
+      src: 'https://placehold.co/800x600/003366/FFFFFF?text=Youth+Speaks',
+      title: 'Youth Speaks Event',
+      caption: 'Capturing the voices of tomorrow.'
+    },
+    {
+      type: 'image',
+      // REPLACE THIS PLACEHOLDER
+      src: 'https://placehold.co/800x600/330066/FFFFFF?text=Agentic+AI',
+      title: 'Agentic AI',
+      caption: 'Visuals for cutting-edge tech.'
+    },
+    {
+      type: 'video',
+      // REPLACE THIS PLACEHOLDER
+      src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+      title: 'Nature Reel',
+      caption: 'The beauty of the outdoors.'
+    },
+  ];
+
+  // --- 3. Events Gallery (InnovateX Highlights) ---
+  // (photo highlights|poster highlights|reel highlights|Raw highlights)
+  const innovatexMediaData = [
+    {
+      type: 'image',
+      // REPLACE THIS PLACEHOLDER
+      src: 'https://placehold.co/800x600/660033/FFFFFF?text=Photo+Highlights',
+      title: 'Photo Highlights',
+      caption: 'Keynotes and community moments.'
+    },
+    {
+      type: 'image',
+      // REPLACE THIS PLACEHOLDER
+      src: 'https://placehold.co/800x600/006633/FFFFFF?text=Poster+Highlights',
+      title: 'Poster Highlights',
+      caption: 'Event branding and design.'
+    },
+    {
+      type: 'video',
+      // REPLACE THIS PLACEHOLDER
+      src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+      title: 'Reel Highlights',
+      caption: 'The official event aftermovie.'
+    },
+    {
+      type: 'video',
+      // REPLACE THIS PLACEHOLDER
+      src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+      title: 'Raw Highlights',
+      caption: 'Behind-the-scenes.'
+    },
+  ];
+  
+  // --- 4. Web Portfolio ---
+  const webPortfolioData = [
+    { 
+      title: 'Focsera.in', 
+      description: 'Digital learning platform.', 
+      // REPLACE THIS LINK if needed
+      url: 'https://focsera.in' 
+    },
+    { 
+      title: 'InnovateX Website', 
+      description: 'Conference and event hub.', 
+      // REPLACE THIS LINK if needed
+      url: 'https://innovatex25-1nfy.vercel.app/' 
+    },
+    { 
+      title: 'IPL Auction Website', 
+      description: 'Interactive auction simulator.', 
+      // REPLACE THIS PLACEHOLDER LINK
+      url: '#' 
+    },
+    { 
+      title: 'Reelhaus Website', 
+      description: 'Portfolio site for creatives.', 
+      // REPLACE THIS PLACEHOLDER LINK
+      url: '#' 
+    },
+    { 
+      title: 'Template Demos', 
+      description: 'Customizable websites for clients.', 
+      // REPLACE THIS PLACEHOLDER LINK
+      url: '#' 
+    },
+  ];
+  
+  // --- 5. Media Portfolio ---
+  const mediaPortfolioData = {
+    services: ['Thumbnails', 'Youtube Videos', 'Content Strategy', 'Ad Campaigns'],
+    clients: ['Dr.mithun s jakkan', 'Figuring out by jay', 'Sahara yt']
+  };
 
   // =================================================================
-  // THIS IS THE SECTION TO EDIT
-  //
-  // 1. Make sure your video files (e.g., 'teluginti-deepavali.mp4')
-  //    are in the 'public/videos/journey/' folder.
-  // 2. Use .mp4 for web compatibility, not .MOV.
-  // 3. The 'src' path must start with '/' to point to the public folder.
-  //
-  const mediaData = [
-    { 
-      type: 'video', 
-      src: '/videos/journey/Adobe Express - IMG_5861.mp4', 
-      title: 'Teluginti Deepavali', 
-      caption: 'Let the lights inspire you! 🪔' 
-    },
-    
-  ];
-
-  // InnovateX gallery data (external links)
-  const innovatexData = [
-    { type: 'image', src: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80', title: 'InnovateX Day 1', caption: 'Keynote and opening' },
-    { type: 'image', src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80', title: 'Workshops', caption: 'Hands-on sessions' },
-    { type: 'image', src: 'https://images.unsplash.com/photo-1532619187605-1c7a8b6b7a3b?auto=format&fit=crop&w=1200&q=80', title: 'Hackathon', caption: 'Team projects in action' },
-    { type: 'video', src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4', title: 'Highlights Reel', caption: 'InnovateX highlights' },
-  ];
+  // END OF DATA DEFINITIONS
   // =================================================================
 
 
   return (
-    // [THEME] Changed to bg-white, text-gray-900
-    <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-blue-100 selection:text-blue-900">
+    // [THEME] Changed to bg-gray-950, text-gray-200
+    <div className="min-h-screen bg-gray-950 text-gray-200 font-sans selection:bg-blue-500 selection:text-white">
       
-      {/* [NEW] Style tag from PromptXDark.jsx (light theme) */}
+      {/* [NEW] Style tag from PromptXDark.jsx (dark theme) */}
       <style>{`
-        /* [ULTIMATE] Frosted glass card style */
+        /* [ULTIMATE] Frosted glass card style (Dark Theme) */
         .neon-card-border {
-          background: rgba(255, 255, 255, 0.75);
-          backdrop-filter: blur(12px) saturate(150%);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+          background: rgba(22, 28, 45, 0.75); /* Dark, semi-transparent bg */
+          backdrop-filter: blur(20px) saturate(150%); /* More blur */
+          border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle light border */
+          box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2); /* Deeper shadow */
           will-change: transform; /* Hint for animations */
         }
         .grid-background {
           position: fixed;
           inset: 0;
           z-index: -10;
-          /* [THEME] Light grid on white */
+          /* [THEME] Light grid on dark */
           background-image:
-            linear-gradient(to right, rgba(59, 130, 246, 0.07) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(59, 130, 246, 0.07) 1px, transparent 1px);
+            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
           background-size: 40px 40px;
           mask-image: radial-gradient(100% 100% at top center, white, transparent);
         }
@@ -352,8 +554,8 @@ export default function App() {
         .aurora-blob {
           position: absolute;
           filter: blur(3xl);
-          /* [THEME] Lighter opacity for light bg */
-          opacity: 0.1;
+          /* [THEME] Brighter opacity for dark bg */
+          opacity: 0.2;
           will-change: transform;
           animation: aurora-slide 25s infinite ease-in-out;
           z-index: -5;
@@ -374,7 +576,7 @@ export default function App() {
           filter: blur(0);
         }
         
-        /* Fade-in for modal */
+        /* Fade-in for modal and tabs */
         @keyframes fade-in {
           from { opacity: 0; }
           to { opacity: 1; }
@@ -382,56 +584,142 @@ export default function App() {
         .animate-fade-in {
           animation: fade-in 0.3s ease-out forwards;
         }
+        
+        /* [NEW] Gradient text style */
+        .gradient-text {
+          background-image: linear-gradient(to right, #3b82f6, #9333ea); /* Blue to Purple */
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+
+        /* [NEW] Swiper.js Coverflow slide styles */
+        .swiper-slide-coverflow {
+          width: 60% !important;
+          max-width: 400px;
+        }
+        @media (min-width: 768px) {
+          .swiper-slide-coverflow {
+            width: 40% !important;
+            max-width: 500px;
+          }
+        }
+        
+        /* [NEW] Swiper.js Navigation/Pagination styles (Dark Theme) */
+        .swiper-pagination-bullet {
+          background-color: rgba(255, 255, 255, 0.5) !important;
+        }
+        .swiper-pagination-bullet-active {
+          background-color: #3b82f6 !important;
+        }
+        .swiper-button-next, .swiper-button-prev {
+          color: #ffffff !important;
+          background-color: rgba(0, 0, 0, 0.3);
+          border-radius: 50%;
+          width: 44px;
+          height: 44px;
+          transition: all 0.3s ease;
+        }
+        .swiper-button-next:hover, .swiper-button-prev:hover {
+          background-color: rgba(0, 0, 0, 0.6);
+        }
+        .swiper-button-next::after, .swiper-button-prev::after {
+          font-size: 20px !important;
+          font-weight: 900;
+        }
       `}</style>
       
       {/* [THEME] Background Effects */}
       <div className="grid-background" />
-      <div className="aurora-blob top-[-20%] left-[-20%] w-[800px] h-[800px] bg-blue-400 rounded-full" />
-      <div className="aurora-blob bottom-[-30%] right-[-30%] w-[1000px] h-[1000px] bg-indigo-400 rounded-full" style={{ animationDelay: '8s' }} />
+      <div className="aurora-blob top-[-20%] left-[-20%] w-[800px] h-[800px] bg-blue-600 rounded-full" />
+      <div className="aurora-blob bottom-[-30%] right-[-30%] w-[1000px] h-[1000px] bg-purple-600 rounded-full" style={{ animationDelay: '8s' }} />
       
       <main className="relative z-10 pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Page Header */}
           <header className="text-center mb-20 animate-on-scroll">
-            {/* [THEME] Updated header text colors */}
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-4">
-              Our <span className="text-blue-600">Journey</span>
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-4">
+              Our <span className="gradient-text">Journey</span>
             </h1>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               From a simple idea to a multi-divisional powerhouse. Follow our story of growth, innovation, and passion.
             </p>
           </header>
 
-          {/* Gallery Section */}
-          <section className="mb-24 animate-on-scroll" id="gallery">
-            <h2 className="text-4xl font-bold text-center mb-10 text-gray-900">
-              <span className="text-blue-600">Reels</span>
+          {/* [NEW] Divisions Section */}
+          <section className="mb-24 animate-on-scroll" id="divisions">
+            <h2 className="text-4xl font-bold text-center mb-10 text-white">
+              Our <span className="gradient-text">Divisions</span>
             </h2>
-            <MediaGallery items={mediaData} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <DivisionCard 
+                icon={<CameraIcon />} 
+                title="Studios"
+                description="Professional Photography & Videography Services. We capture your moments through stunning photos and videos. From weddings to corporate content, we provide professional visual storytelling services."
+              />
+              <DivisionCard 
+                icon={<IconSparkles className="text-rose-400" />} 
+                title="Media"
+                description="Professional Content, Marketing & Growth Services. We build your brand's voice and amplify your reach. From content strategy to ad campaigns, we provide end-to-end media solutions."
+              />
+              <DivisionCard 
+                icon={<IconAward className="text-emerald-400" />} 
+                title="Events"
+                description="Expert Event Planning & Management. We craft your next unforgettable event. From private parties to large corporate functions, we handle every detail to create a seamless and beautiful celebration."
+              />
+              <DivisionCard 
+                icon={<IconRocket className="text-indigo-400" />} 
+                title="Web"
+                description="Building digital experiences that drive results. Modern web solutions for businesses of all sizes, from portfolio sites to complex applications."
+              />
+            </div>
           </section>
 
-          {/* InnovateX Gallery Section */}
+
+          {/* [MODIFIED] Studios Gallery Section */}
+          <section className="mb-24 animate-on-scroll" id="studios-gallery">
+            <h2 className="text-4xl font-bold text-center mb-10 text-white">
+              <span className="gradient-text">Studios</span> Gallery
+            </h2>
+            <MediaSlideshow items={studiosMediaData} />
+          </section>
+
+          {/* [MODIFIED] InnovateX Gallery Section */}
           <section className="mb-24 animate-on-scroll" id="innovatex-gallery">
-            <h2 className="text-4xl font-bold text-center mb-6 text-gray-900">
-              <span className="text-blue-600">InnovateX Gallery</span>
+            <h2 className="text-4xl font-bold text-center mb-6 text-white">
+              <span className="gradient-text">Events</span> Gallery
             </h2>
-            <p className="text-center text-gray-700 max-w-2xl mx-auto mb-10">
-              Highlights from our InnovateX conference — keynotes, workshops and community moments. Use the viewer to enlarge photos or play highlight reels.
+            <p className="text-center text-gray-300 max-w-2xl mx-auto mb-10">
+              Highlights from our InnovateX25 School Summit — photos, posters, and highlight reels from our biggest event.
             </p>
-            <MediaGallery items={innovatexData} />
+            <MediaSlideshow items={innovatexMediaData} />
           </section>
 
-          {/* Timeline Section */}
+          {/* [NEW] Tabbed Portfolio Section */}
+          <section className="mb-24 animate-on-scroll" id="portfolio">
+             <h2 className="text-4xl font-bold text-center mb-10 text-white">
+              Our <span className="gradient-text">Portfolio</span>
+            </h2>
+            <TabbedPortfolio 
+              webData={webPortfolioData} 
+              mediaData={mediaPortfolioData} 
+            />
+          </section>
+
+
+          {/* [MODIFIED] Timeline Section */}
           <section className="relative" style={{ perspective: '1000px' }}>
-            {/* [THEME] Updated timeline bar color */}
-            <div className="absolute top-0 h-full w-0.5 bg-gradient-to-b from-blue-400 via-blue-500 to-transparent left-4 md:left-1/2 md:-translate-x-1/2"></div>
+            <h2 className="text-4xl font-bold text-center mb-16 text-white animate-on-scroll">
+              Our <span className="gradient-text">Milestones</span>
+            </h2>
+            <div className="absolute top-0 h-full w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-transparent left-4 md:left-1/2 md:-translate-x-1/2"></div>
             
             {journeyData.map((item, index) => {
               const isLeft = index % 2 === 0;
               return (
                 <div key={index} className="w-full flex justify-center">
                   {isLeft ? <TimelineItem {...item} isLeft={true} /> : <div className="hidden md:block w-1/2"></div>}
-                  {!isLeft ? <TimelineItem {...item} isLeft={false} /> : <div className="hidden md:block w-1/2"></div>}
+                  {!isLeft ? <TimelineItem {...item} isLeft={false} /> : <div className="hidden md:block w-1A/2"></div>}
                 </div>
               );
             })}
