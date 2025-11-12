@@ -510,8 +510,8 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                         <p className="font-bold text-2xl mb-2">Focsera Studios</p>
                         <p className="text-gray-400">Capturing Moments, Creating Memories.</p>
                         <div className="flex justify-center gap-6 my-8">
-                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Twitter /></a>
-                            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Instagram /></a>
+                            <a href="" className="text-gray-400 hover:text-white transition-colors"><Twitter /></a>
+                            <a href="https://www.instagram.com/focsera.in/" className="text-gray-400 hover:text-white transition-colors"><Instagram /></a>
                             <a href="#" className="text-gray-400 hover:text-white transition-colors"><Facebook /></a>
                         </div>
                         <p className="text-sm text-gray-500 mt-8">© {new Date().getFullYear()} Focsera Studios. All Rights Reserved.</p>

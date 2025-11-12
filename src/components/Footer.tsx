@@ -9,7 +9,7 @@ const divisions = [
   { name: 'Events', path: '/events' },
   { name: 'Web', path: '/web' },
   { name: 'Product Services', path: '/product-services' },
-  { name: 'Skill', path: '/skill/dashboard' },
+  { name: 'Skill', path: '/divisions/skill/dashboard' },
 ];
 
 const companyLinks = [
