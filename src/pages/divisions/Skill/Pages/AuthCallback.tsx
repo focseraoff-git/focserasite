@@ -1,41 +1,59 @@
-// AuthCallback (Simplified and Corrected)
 // @ts-nocheck
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 export default function SkillAuthCallback() {
-  const dashboardUrl = "/divisions/skill/dashboard";
-  const authUrl = "/divisions/skill/auth";
+  // ✅ Dynamic base URLs (works on localhost and focsera.in)
+  const baseUrl = window.location.origin;
+  const dashboardUrl = `${baseUrl}/divisions/skill/dashboard`;
+  const adminUrl = `${baseUrl}/divisions/skill/admin/dashboard`;
+  const authUrl = `${baseUrl}/divisions/skill/auth`;
 
   useEffect(() => {
-    // The Supabase SDK automatically processes tokens on page load.
-    // We just need to listen for the resulting state change.
+    const processLogin = async () => {
+      try {
+        // ✅ Wait for Supabase to hydrate session
+        const { data: sessionData, error } = await lmsSupabaseClient.auth.getSession();
+        if (error) throw error;
 
-    const { data: { subscription } } = lmsSupabaseClient.auth.onAuthStateChange(
-      (event, session) => {
-        // If the session is successfully established, redirect to the dashboard.
-        if (session) {
-         window.location.replace("/divisions/skill/dashboard");
-
-        } else if (event === 'SIGNED_OUT' || event === 'AUTH_ERROR') {
-          // If the auth process results in an error, redirect back to the sign-in page.
-          window.location.replace("/divisions/skill/dashboard");
-
+        const user = sessionData?.session?.user;
+        if (!user) {
+          console.warn("No user found, redirecting to Auth page");
+          window.location.replace(`${authUrl}?error=session_not_found`);
+          return;
         }
-      }
-    );
 
-    // Clean up the subscription when the component unmounts
-    return () => {
-      subscription.unsubscribe();
+        // ✅ Get user's role from your Supabase 'users' table
+        const { data: userRecord, error: userErr } = await lmsSupabaseClient
+          .from("users")
+          .select("role")
+          .eq("email", user.email)
+          .maybeSingle();
+
+        if (userErr) console.error("Role fetch error:", userErr.message);
+
+        const role = userRecord?.role || "user";
+
+        // ✅ Redirect based on role
+        if (role === "admin") {
+          window.location.replace(adminUrl);
+        } else {
+          window.location.replace(dashboardUrl);
+        }
+      } catch (err) {
+        console.error("Auth callback error:", err.message);
+        window.location.replace(`${authUrl}?error=auth_failed`);
+      }
     };
+
+    processLogin();
   }, []);
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      <p className="text-gray-600 mt-3">Completing sign-in...</p>
+    <div className="flex flex-col items-center justify-center h-screen text-center bg-gray-50">
+      <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-3" />
+      <p className="text-gray-600 text-sm">Finalizing login... Please wait.</p>
     </div>
   );
 }
