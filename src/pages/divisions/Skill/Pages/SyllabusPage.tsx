@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Loader2,
   BarChart3,
+  Lock
 } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
@@ -22,17 +23,22 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  /* -----------------------------------------
+        FETCH PROGRAMS + LOCK STATUS
+  ------------------------------------------*/
   useEffect(() => {
     const fetchPrograms = async () => {
       setLoading(true);
       try {
         const { data, error } = await supabase
           .from("programs")
-          .select("*")
+          .select("*")          // include is_locked column
           .order("created_at", { ascending: true });
+
         if (error) throw error;
 
         setPrograms(data || []);
+
         if (programId) {
           const selected = data.find(
             (p) => p.id === programId || p.slug === programId
@@ -54,6 +60,7 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
           .select("*")
           .eq("program_id", progId)
           .order("day", { ascending: true });
+
         if (error) throw error;
         setModules(data || []);
       } catch (err) {
@@ -62,9 +69,10 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
     };
 
     fetchPrograms();
-  }, [programId, supabase]);
+  }, [programId]);
 
   const openProgram = (program) => {
+    if (program.is_locked) return; // prevent navigation if locked
     navigate(`/divisions/skill/syllabus/${program.id}`);
     setSelectedProgram(program);
   };
@@ -76,18 +84,11 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
       </div>
     );
 
-  const difficulties = ["Beginner", "Intermediate", "Advanced"];
-  const getDifficultyColor = (level) => {
-    switch (level) {
-      case "Beginner":
-        return "bg-green-100 text-green-700";
-      case "Intermediate":
-        return "bg-yellow-100 text-yellow-700";
-      case "Advanced":
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
+  const diffColors = {
+    Beginner: "bg-green-100 text-green-700",
+    Intermediate: "bg-yellow-100 text-yellow-700",
+    Advanced: "bg-red-100 text-red-700",
+    Default: "bg-gray-100 text-gray-700",
   };
 
   return (
@@ -104,76 +105,64 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
         </motion.h1>
 
         {/* PROGRAM GRID */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
-        >
-          {programs.map((program, i) => {
-            const diff = difficulties[i % difficulties.length];
-            const progress = Math.floor(Math.random() * 90 + 10);
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          {programs.map((program) => {
+            const difficultyClass =
+              diffColors[program.difficulty] || diffColors.Default;
+
+            const locked = program.is_locked === true;
 
             return (
               <motion.div
                 key={program.id}
-                whileHover={{ y: -6, scale: 1.02 }}
+                whileHover={!locked ? { y: -6, scale: 1.02 } : {}}
                 onClick={() => openProgram(program)}
-                className={`bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition-all p-6 cursor-pointer ${
-                  selectedProgram?.id === program.id ? "ring-2 ring-blue-500" : ""
-                }`}
+                className={`relative bg-white rounded-2xl shadow-md border border-gray-200 p-6 transition cursor-pointer 
+                ${locked ? "opacity-50 grayscale cursor-not-allowed" : ""}
+              `}
               >
-                {/* HEADER */}
+                {/* COMING SOON BADGE */}
+                {locked && (
+                  <div className="absolute top-3 right-3 bg-red-600 text-white text-xs px-2 py-1 rounded-md flex items-center gap-1">
+                    <Lock size={12} /> Coming Soon
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between mb-3">
                   <BookOpen className="text-blue-600 w-6 h-6" />
-                  <span
-                    className={`text-xs font-medium px-2 py-1 rounded-full ${getDifficultyColor(
-                      diff
-                    )}`}
-                  >
-                    {diff}
+                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${difficultyClass}`}>
+                    {program.difficulty || "Beginner"}
                   </span>
                 </div>
 
-                {/* TITLE */}
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   {program.title}
                 </h3>
                 <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                  {program.description ||
-                    "Structured learning through projects and challenges."}
+                  {program.description}
                 </p>
 
                 {/* INFO */}
                 <div className="flex items-center text-gray-500 text-sm mb-4">
-                  <Clock size={15} className="mr-1" /> 30 Days
-                  <Layers size={15} className="ml-4 mr-1" />{" "}
-                  {program.modules_count || 30} Modules
+                  <Clock size={15} className="mr-1" /> {program.duration_days} Days
+                  <Layers size={15} className="ml-4 mr-1" />
+                  {program.modules_count || 0} Modules
                 </div>
-
-                {/* PROGRESS BAR */}
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-3 overflow-hidden">
-                  <div
-                    className="h-full bg-blue-600 rounded-full transition-all duration-500"
-                    style={{ width: `${progress}%` }}
-                  ></div>
-                </div>
-                <p className="text-xs text-gray-500 mb-4">
-                  {progress}% completed by learners
-                </p>
 
                 {/* CTA */}
-                <div className="flex items-center justify-between text-sm font-semibold text-blue-600 hover:text-blue-800">
-                  <span>View Details</span>
-                  <ArrowRight size={14} />
-                </div>
+                {!locked && (
+                  <div className="flex items-center justify-between text-sm font-semibold text-blue-600 hover:text-blue-800">
+                    <span>View Details</span>
+                    <ArrowRight size={14} />
+                  </div>
+                )}
               </motion.div>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* SELECTED PROGRAM DETAIL VIEW */}
-        {selectedProgram && (
+        {selectedProgram && !selectedProgram.is_locked && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -190,52 +179,32 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
             </div>
 
             <p className="text-gray-600 mb-6 leading-relaxed">
-              {selectedProgram.long_description ||
-                "A complete guided 30-day program covering real-world examples, coding practice, and hands-on learning modules."}
+              {selectedProgram.long_description}
             </p>
 
-            <div className="flex items-center text-gray-600 text-sm gap-4 mb-8">
-              <span className="flex items-center gap-1">
-                <Clock size={15} /> 30 Days
-              </span>
-              <span className="flex items-center gap-1">
-                <Award size={15} /> Certificate on Completion
-              </span>
-              <span className="flex items-center gap-1">
-                <BarChart3 size={15} /> Skill Level:{" "}
-                <span className="font-semibold text-gray-800">Intermediate</span>
-              </span>
-            </div>
-
-            {/* MODULE LIST */}
+            {/* MODULES LIST */}
             <div className="space-y-3">
-              {modules.length > 0 ? (
-                modules.map((mod, index) => (
-                  <motion.div
-                    key={mod.id}
-                    whileHover={{ scale: 1.01 }}
-                    className="p-4 border border-gray-200 rounded-xl flex items-center justify-between hover:bg-gray-50 transition"
+              {modules.map((mod, index) => (
+                <motion.div
+                  key={mod.id}
+                  whileHover={{ scale: 1.01 }}
+                  className="p-4 border border-gray-200 rounded-xl flex items-center justify-between hover:bg-gray-50 transition"
+                >
+                  <div>
+                    <p className="font-medium text-gray-800">
+                      Day {index + 1}: {mod.title}
+                    </p>
+                    <p className="text-gray-500 text-sm">{mod.description}</p>
+                  </div>
+
+                  <button
+                    onClick={() => navigate(`../module/${mod.id}`)}
+                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
                   >
-                    <div>
-                      <p className="font-medium text-gray-800">
-                        Day {index + 1}: {mod.title}
-                      </p>
-                      <p className="text-gray-500 text-sm">{mod.description}</p>
-                    </div>
-                    {/* ✅ FIXED NAVIGATION */}
-                    <button
-                      onClick={() => navigate(`../module/${mod.id}`)}
-                      className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
-                    >
-                      Open →
-                    </button>
-                  </motion.div>
-                ))
-              ) : (
-                <p className="text-gray-500 text-sm">
-                  No modules found for this program.
-                </p>
-              )}
+                    Open →
+                  </button>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         )}
