@@ -12,6 +12,7 @@ import {
   Star,
   Layers,
   Zap,
+  User,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -54,23 +55,42 @@ function LandingVariant({ navigate, programs, loading }) {
           <p className="text-center text-gray-200 text-lg">Loading...</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-            {programs?.map((p) => (
-              <motion.div
-                key={p.id}
-                whileHover={{ scale: 1.03 }}
-                className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-xl"
-              >
-                <h3 className="text-2xl font-bold text-white mb-4">{p.title}</h3>
-                <p className="text-gray-200 text-sm mb-6">{p.description}</p>
-
-                <button
-                  onClick={() => navigate("/divisions/skill/auth")}
-                  className="text-yellow-300 font-semibold text-lg hover:text-white"
+            {programs?.map((p) => {
+              const muted = p.role === true || String(p.role) === "true";
+              return (
+                <motion.div
+                  key={p.id}
+                  whileHover={muted ? {} : { scale: 1.03 }}
+                  className={`relative bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-xl ${muted ? 'filter grayscale opacity-70' : ''}`}
                 >
-                  Join Free →
-                </button>
-              </motion.div>
-            ))}
+                  {muted && (
+                    <div className="absolute top-3 right-3 bg-yellow-300 text-slate-900 text-xs px-2 py-1 rounded-md font-semibold">
+                      Coming Soon
+                    </div>
+                  )}
+
+                  <h3 className="text-2xl font-bold text-white mb-4">{p.title}</h3>
+                  <p className="text-gray-200 text-sm mb-6">{p.description}</p>
+
+                  {muted ? (
+                    <button
+                      disabled
+                      className="bg-gray-400 text-white px-4 py-2 rounded-lg text-sm cursor-not-allowed"
+                      title="This program is coming soon"
+                    >
+                      Coming Soon
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => navigate("/divisions/skill/auth")}
+                      className="text-yellow-300 font-semibold text-lg hover:text-white"
+                    >
+                      Join Free →
+                    </button>
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
         )}
       </section>
@@ -299,12 +319,18 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="flex items-center gap-6">
               <div className="relative">
-                <div className="w-40 h-40 rounded-full bg-gradient-to-br from-white to-slate-100 shadow-inner flex items-center justify-center overflow-hidden">
-                  <img
-                    src={profile?.avatar_url || "https://i.pravatar.cc/200?img=12"}
-                    alt="avatar"
-                    className="w-full h-full object-cover"
-                  />
+                  <div className="w-40 h-40 rounded-full bg-gradient-to-br from-white to-slate-100 shadow-inner flex items-center justify-center overflow-hidden">
+                    {profile?.avatar_url ? (
+                      <img
+                        src={profile.avatar_url}
+                        alt="avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center">
+                        <User className="w-10 h-10 text-slate-400" />
+                      </div>
+                    )}
                 </div>
 
                 <button
