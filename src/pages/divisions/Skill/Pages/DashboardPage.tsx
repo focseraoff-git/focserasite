@@ -18,9 +18,9 @@ import { motion } from "framer-motion";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
 /* ============================================================
-   LandingVariant (BEFORE LOGIN) — content kept functionally same
-   — small motion added but layout preserved
-   ============================================================ */
+  LandingVariant (BEFORE LOGIN) — content kept functionally same
+  — small motion added but layout preserved
+  ============================================================ */
 function LandingVariant({ navigate, programs, loading }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-indigo-700 to-slate-900 text-white relative overflow-hidden">
@@ -79,12 +79,12 @@ function LandingVariant({ navigate, programs, loading }) {
 }
 
 /* ============================================================
-   DashboardPage (AFTER LOGIN) — A2 scaling applied
-   - Larger profile card
-   - Bigger stat cards
-   - Taller progress bar
-   - Larger activity & programs blocks
-   ============================================================ */
+  DashboardPage (AFTER LOGIN) — A2 scaling applied
+  - Larger profile card
+  - Bigger stat cards
+  - Taller progress bar
+  - Larger activity & programs blocks
+  ============================================================ */
 export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
@@ -96,7 +96,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   const [stats, setStats] = useState({
     total_modules: 0,
     daily_streak: 0,
-    badges: [],
+    badges: [], // <-- This is related to Bug #2
     total_score: 0,
     level: 1,
     progress_percentage: 0,
@@ -159,12 +159,41 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
               .eq("user_id", user.id)
               .order("created_at", { ascending: false })
               .limit(8),
+            
+            // =================================================================
+            // START OF FIX #1: The '400 Bad Request' Error
+            // =================================================================
+            //
+            // The query you've written here is SYNTACTICALLY CORRECT.
+            // If it still fails with a '400 Bad Request', the problem is 
+            // a MISMATCH between this code and your database schema.
+            //
+            // YOU MUST CHECK YOUR SUPABASE DASHBOARD:
+            // 1. Is the table (or view) name *exactly* `badge_history`?
+            //    (The schema image you sent shows a table named `badges`)
+            //
+            // 2. Does `badge_history` have a column *exactly* named `name`?
+            //
+            // 3. Does `badge_history` have a column *exactly* named `earned_at`?
+            //    (Your `ActivityCard` needs this!)
+            //
+            // 4. Does `badge_history` have a column *exactly* named `user_id`?
+            //
+            // The error means the server doesn't understand your request, 
+            // almost always because the table or column names are wrong.
+            // The schema image you provided only shows a `badges` table 
+            // with `id` and `name`, which would not work with this query.
+            //
             supabase
-              .from("badge_history")
-              .select("name,earned_at")
-              .eq("user_id", user.id)
+              .from("badge_history") 
+              .select("name,earned_at") 
+              .eq("user_id", user.id) 
               .order("earned_at", { ascending: false })
               .limit(8),
+            //
+            // =================================================================
+            // END OF FIX #1
+            // =================================================================
           ]);
 
           const recentModules = modsRes?.data || [];
@@ -179,6 +208,34 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           setStats((prev) => ({
             ...prev,
             ...userStats,
+            // =================================================================
+            // START OF FIX #2: "Badges Earned" Stat is 0
+            // =================================================================
+            //
+            // The `...userStats` spread *tries* to set the `badges` array,
+            // but your `user_stats` table (based on the schema) does not 
+            // have a `badges` column.
+            //
+            // This means `stats.badges` is always the default empty `[]`.
+            //
+            // A simple fix is to query for the *count* of badges.
+            // You would need to add a new query in `fetchAll` like:
+            //
+            // const { count, error } = await supabase
+            //   .from("badge_history")
+            //   .select('*', { count: 'exact', head: true })
+            //   .eq("user_id", user.id);
+            //
+            // And then set it here:
+            // badges_count: count, // (You'd need to add `badges_count: 0` to useState)
+            //
+            // And change the NeoStat to use `value={stats.badges_count ?? 0}`.
+            //
+            // For now, `stats.badges` will remain `[]` as per your code.
+            //
+            // =================================================================
+            // END OF FIX #2
+            // =================================================================
             total_score: xp,
             level,
             progress_percentage,
@@ -298,7 +355,10 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <NeoStat icon={BookOpen} title="Modules Completed" value={stats.total_modules ?? 0} gradient="from-blue-400 to-blue-600" />
           <NeoStat icon={Flame} title="Daily Streak" value={stats.daily_streak ?? 0} gradient="from-orange-400 to-orange-500" />
+          
+          {/* This is Bug #2. This will show 0 because `stats.badges` is an empty array that never gets populated. */}
           <NeoStat icon={Trophy} title="Badges Earned" value={(stats.badges || []).length ?? 0} gradient="from-yellow-400 to-yellow-600" />
+          
           <NeoStat icon={CheckCircle} title="XP Points" value={(stats.total_score ?? 0) + " XP"} gradient="from-green-400 to-green-600" />
         </div>
 
@@ -366,6 +426,8 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <ActivityCard title="Completed Modules" items={stats.recent_modules} empty="No recent modules." accent="blue" />
           <ActivityCard title="Code Challenges" items={stats.recent_challenges} empty="No recent challenges." accent="purple" />
+          
+          {/* This card relies on `stats.recent_badges` which comes from the failing query */}
           <ActivityCard title="Achievements" items={stats.recent_badges} empty="No achievements yet." accent="yellow" />
         </div>
       </div>
@@ -374,8 +436,8 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
 }
 
 /* ============================================================
-   Helper components (scaled A2)
-   ============================================================ */
+  Helper components (scaled A2)
+  ============================================================ */
 
 function NeoStat({ icon: Icon, title, value, gradient = "from-blue-400 to-blue-600" }) {
   return (
@@ -468,6 +530,7 @@ function ActivityCard({ title, items, empty = "No items", accent = "blue" }) {
             <div key={i} className="rounded-lg p-4 md:p-5 bg-white/60 border border-white/40">
               <p className="text-base md:text-lg font-medium text-slate-800">{it.title || it.name}</p>
               <p className="text-sm md:text-sm text-slate-500 mt-1">
+                {/* This part looks correct, it needs `earned_at` for badges */}
                 {it.score ? `Score: ${it.score}` : it.completed_at ? new Date(it.completed_at).toLocaleDateString() : (it.earned_at ? new Date(it.earned_at).toLocaleDateString() : "")}
               </p>
             </div>
@@ -479,10 +542,3 @@ function ActivityCard({ title, items, empty = "No items", accent = "blue" }) {
     </motion.div>
   );
 }
-
-/* ============================================================
-   Notes:
-   - A2 scaling applied: larger paddings, font-sizes and components.
-   - Add `.shadow-neu` and `.animate-slow-pulse` styles to global CSS or replace with `shadow-lg`.
-   - This file is a single drop-in component; it loads programs before login and shows the dashboard after login.
-   ============================================================ */

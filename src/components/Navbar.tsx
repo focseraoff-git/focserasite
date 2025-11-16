@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+// ⏪ Reverting to original import path from your other files
 import { lmsSupabaseClient } from "../lib/ssupabase";
 
 const Navbar = () => {
@@ -23,7 +24,6 @@ const Navbar = () => {
     { name: "Events", path: "/events" },
     { name: "Web", path: "/web" },
     { name: "Product Services", path: "/product-services" },
-    // ✅ Corrected Skill division path
     { name: "Skill", path: "/divisions/skill/dashboard" },
   ];
 

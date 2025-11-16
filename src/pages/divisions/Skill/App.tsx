@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { lmsSupabaseClient } from "../../../lib/ssupabase";
 import ScrollToTop from "./components/ScrollToTop";
+import SkillAuthGate from "./Pages/Admin/AuthGate";
 
 // ✅ User Pages
 import HomePage from "./Pages/HomePage";
@@ -28,7 +29,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 /* ============================================================
-   🧠 Error Boundary (kept same for crash safety)
+   🧠 Error Boundary
 ============================================================ */
 function ErrorBoundary({ children }) {
   const [error, setError] = useState(null);
@@ -66,14 +67,14 @@ class ErrorBoundaryHandler extends React.Component {
 }
 
 /* ============================================================
-   🚀 Main SkillApp (No Protected Routes)
+   🚀 Main SkillApp (Recommended Final Version)
 ============================================================ */
 export default function SkillApp() {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
 
-  // 🧠 Keep auth listener for optional user state (not for restriction)
+  // 🧠 Keep user + role synced
   useEffect(() => {
     const initAuth = async () => {
       const { data } = await lmsSupabaseClient.auth.getSession();
@@ -86,7 +87,6 @@ export default function SkillApp() {
           .select("role")
           .eq("email", sessionUser.email)
           .maybeSingle();
-
         const userRole = profile?.role || "user";
         setRole(userRole);
         localStorage.setItem("user_role", userRole);
@@ -104,7 +104,6 @@ export default function SkillApp() {
             .select("role")
             .eq("email", newUser.email)
             .maybeSingle();
-
           const userRole = profile?.role || "user";
           setRole(userRole);
           localStorage.setItem("user_role", userRole);
@@ -120,14 +119,14 @@ export default function SkillApp() {
   }, []);
 
   /* ============================================================
-     ⚙️ Routes (all public now)
+     ⚙️ Routes
   ============================================================ */
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-50 font-inter">
         <ScrollToTop />
 
-        {/* Header (Hide only for admin pages if you want) */}
+        {/* Hide Header/Footer on admin routes */}
         {role !== "admin" && (
           <Header
             user={user}
@@ -140,12 +139,12 @@ export default function SkillApp() {
 
         <main className={role !== "admin" ? "pt-20" : ""}>
           <Routes>
-            {/* 🔹 Public Pages */}
+            {/* 🔹 Public Routes */}
             <Route path="/" element={<HomePage user={user} />} />
             <Route path="auth" element={<AuthPage />} />
             <Route path="auth/callback" element={<AuthCallback />} />
 
-            {/* 🔹 User Pages (no protection) */}
+            {/* 🔹 User Routes */}
             <Route path="dashboard" element={<DashboardPage user={user} />} />
             <Route path="syllabus/:programId" element={<SyllabusPage />} />
             <Route path="module/:moduleId" element={<ModulePage />} />
@@ -154,8 +153,16 @@ export default function SkillApp() {
             <Route path="certificate/:programName" element={<CertificatePage />} />
             <Route path="online-compiler" element={<OnlineCompilerPage />} />
 
-            {/* 🔹 Admin Pages (also public now) */}
-            <Route path="admin" element={<AdminLayout />}>
+            {/* 🔹 Admin Routes (Protected with SkillAuthGate) */}
+            <Route
+              path="admin/*"
+              element={
+                <SkillAuthGate>
+                  <AdminLayout />
+                </SkillAuthGate>
+              }
+            >
+              <Route index element={<AdminDashboard />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="add-program" element={<AddProgramPage />} />
               <Route path="add-challenge" element={<AddChallengePage />} />
@@ -167,7 +174,6 @@ export default function SkillApp() {
           </Routes>
         </main>
 
-        {/* Footer */}
         {role !== "admin" && <Footer />}
       </div>
     </ErrorBoundary>

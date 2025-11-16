@@ -1,230 +1,315 @@
 // @ts-nocheck
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
-  Loader2,
-  Code2,
-  Users,
-  BookOpen,
-  Layers,
-  FolderPlus,
-  Database,
-  PenLine,
-  Trash2,
-  PlusCircle,
-  ChevronDown,
-  ChevronUp,
+  Loader2, PlusCircle, Trash2, PenLine, ChevronUp, ChevronDown, X
 } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../../lib/ssupabase";
-import { useNavigate } from "react-router-dom";
 
 export default function AdminDashboard() {
-  const navigate = useNavigate();
+  const [tables, setTables] = useState<string[]>([]);
+  const [selectedTable, setSelectedTable] = useState<string | null>(null);
+  const [columns, setColumns] = useState<string[]>([]);
+  const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    users: 0,
-    programs: 0,
-    modules: 0,
-    challenges: 0,
-    submissions: 0,
-  });
-  const [expanded, setExpanded] = useState(null);
-  const [tableData, setTableData] = useState({});
+  const [editingRow, setEditingRow] = useState<any | null>(null);
+  const [newRow, setNewRow] = useState<any>({});
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [total, setTotal] = useState(0);
+  const [refresh, setRefresh] = useState(0);
 
-  /* ===========================================================
-     Fetch Dashboard Stats
-  =========================================================== */
+  /* ============================================================
+     Fetch all public tables from Supabase
+  ============================================================ */
   useEffect(() => {
-    const fetchStats = async () => {
-      setLoading(true);
-      try {
-        const [users, programs, modules, challenges, submissions] = await Promise.all([
-          lmsSupabaseClient.from("users").select("*", { count: "exact", head: true }),
-          lmsSupabaseClient.from("programs").select("*", { count: "exact", head: true }),
-          lmsSupabaseClient.from("modules").select("*", { count: "exact", head: true }),
-          lmsSupabaseClient.from("code_challenges").select("*", { count: "exact", head: true }),
-          lmsSupabaseClient.from("submissions").select("*", { count: "exact", head: true }),
-        ]);
-
-        setStats({
-          users: users.count || 0,
-          programs: programs.count || 0,
-          modules: modules.count || 0,
-          challenges: challenges.count || 0,
-          submissions: submissions.count || 0,
-        });
-      } catch (err) {
-        console.error("Error fetching stats:", err.message);
-      } finally {
-        setLoading(false);
-      }
+    const loadTables = async () => {
+      const { data, error } = await lmsSupabaseClient.rpc("get_public_tables");
+      if (error) console.error(error);
+      else setTables(data.map((t: any) => t.table_name));
+      setLoading(false);
     };
-    fetchStats();
+    loadTables();
   }, []);
 
-  /* ===========================================================
-     Dynamic Table Fetching
-  =========================================================== */
-  const fetchTable = async (table) => {
-    try {
-      setExpanded(expanded === table ? null : table);
-      if (expanded === table) return; // collapse
+  /* ============================================================
+     Load Table Data
+  ============================================================ */
+  useEffect(() => {
+    if (!selectedTable) return;
+    const loadTable = async () => {
+      setLoading(true);
+      let query = lmsSupabaseClient.from(selectedTable).select("*", { count: "exact" });
+      if (sortBy) query = query.order(sortBy, { ascending: sortDir === "asc" });
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+      const { data, error, count } = await query.range(from, to);
+      if (error) alert(error.message);
+      else {
+        setRows(data || []);
+        setTotal(count || 0);
+        if (data?.length) setColumns(Object.keys(data[0]));
+      }
+      setLoading(false);
+    };
+    loadTable();
+  }, [selectedTable, sortBy, sortDir, page, pageSize, refresh]);
 
-      const { data, error } = await lmsSupabaseClient.from(table).select("*").limit(25);
-      if (error) throw error;
-      setTableData((prev) => ({ ...prev, [table]: data }));
-    } catch (err) {
-      alert(`Failed to fetch ${table}: ${err.message}`);
+  /* ============================================================
+     CRUD OPERATIONS
+  ============================================================ */
+  const addRow = async () => {
+    const { error } = await lmsSupabaseClient.from(selectedTable).insert([newRow]);
+    if (error) alert(error.message);
+    else {
+      alert("Added successfully!");
+      setNewRow({});
+      setRefresh(r => r + 1);
     }
   };
 
-  /* ===========================================================
-     CRUD Actions
-  =========================================================== */
-  const handleDelete = async (table, id) => {
-    if (!confirm(`Delete record ${id} from ${table}?`)) return;
-    try {
-      const { error } = await lmsSupabaseClient.from(table).delete().eq("id", id);
-      if (error) throw error;
+  const updateRow = async () => {
+    const { id, ...data } = editingRow;
+    const { error } = await lmsSupabaseClient.from(selectedTable).update(data).eq("id", id);
+    if (error) alert(error.message);
+    else {
+      alert("Updated successfully!");
+      setEditingRow(null);
+      setRefresh(r => r + 1);
+    }
+  };
+
+  const deleteRow = async (id: any) => {
+    if (!confirm("Are you sure you want to delete this record?")) return;
+    const { error } = await lmsSupabaseClient.from(selectedTable).delete().eq("id", id);
+    if (error) alert(error.message);
+    else {
       alert("Deleted successfully!");
-      fetchTable(table);
-    } catch (err) {
-      alert("Error deleting: " + err.message);
+      setRefresh(r => r + 1);
     }
   };
 
-  const handleEdit = (table, id) => {
-    navigate(`/divisions/skill/admin/edit/${table}/${id}`);
-  };
+  /* ============================================================
+     Real-time Sync
+  ============================================================ */
+  useEffect(() => {
+    if (!selectedTable) return;
+    const channel = lmsSupabaseClient
+      .channel(`realtime-${selectedTable}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: selectedTable }, () => {
+        setRefresh(r => r + 1);
+      })
+      .subscribe();
+    return () => lmsSupabaseClient.removeChannel(channel);
+  }, [selectedTable]);
 
-  const handleAdd = (table) => {
-    navigate(`/divisions/skill/admin/add-${table}`);
-  };
+  /* ============================================================
+     Dynamic Rendering
+  ============================================================ */
+  const filteredRows = useMemo(() => {
+    if (!search.trim()) return rows;
+    return rows.filter(row =>
+      Object.values(row).some(v => String(v).toLowerCase().includes(search.toLowerCase()))
+    );
+  }, [rows, search]);
 
   if (loading)
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="animate-spin text-blue-600 w-8 h-8" />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="animate-spin w-8 h-8 text-blue-600" />
       </div>
     );
 
   return (
-    <div className="space-y-10">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          Admin Dashboard
-        </h1>
-        <p className="text-gray-500 text-sm">
-          Full control panel for managing programs, modules, challenges,
-          and user activities.
-        </p>
-      </div>
+    <div className="p-6 space-y-8">
+      <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-        <StatCard icon={Users} title="Users" value={stats.users} color="bg-blue-500" />
-        <StatCard icon={BookOpen} title="Programs" value={stats.programs} color="bg-purple-500" />
-        <StatCard icon={Layers} title="Modules" value={stats.modules} color="bg-indigo-500" />
-        <StatCard icon={Code2} title="Challenges" value={stats.challenges} color="bg-green-500" />
-        <StatCard icon={Database} title="Submissions" value={stats.submissions} color="bg-orange-500" />
-      </div>
-
-      {/* Expandable Tables */}
-      {[
-        { name: "programs", label: "Programs" },
-        { name: "modules", label: "Modules" },
-        { name: "content", label: "Content" },
-        { name: "code_challenges", label: "Code Challenges" },
-        { name: "test_cases", label: "Test Cases" },
-        { name: "submissions", label: "Submissions" },
-        { name: "user_stats", label: "User Stats" },
-      ].map(({ name, label }) => (
-        <div key={name} className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+      {/* Table Selector */}
+      <div className="flex flex-wrap gap-3">
+        {tables.map((table) => (
           <button
-            onClick={() => fetchTable(name)}
-            className="w-full flex items-center justify-between p-4 font-semibold text-gray-800 hover:bg-gray-50 transition"
+            key={table}
+            onClick={() => {
+              setSelectedTable(table);
+              setPage(1);
+              setSortBy(null);
+            }}
+            className={`px-4 py-2 rounded-lg border ${selectedTable === table
+              ? "bg-blue-600 text-white"
+              : "bg-white hover:bg-gray-50 text-gray-800"
+              }`}
           >
-            <span>{label}</span>
-            {expanded === name ? <ChevronUp /> : <ChevronDown />}
+            {table}
           </button>
+        ))}
+      </div>
 
-          {expanded === name && (
-            <div className="p-4 overflow-x-auto">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-gray-700 font-semibold">{label} Data</h3>
-                <button
-                  onClick={() => handleAdd(name)}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm"
-                >
-                  <PlusCircle size={16} /> Add New
-                </button>
-              </div>
+      {/* Table Content */}
+      {selectedTable && (
+        <div className="bg-white border rounded-xl shadow-sm p-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 mb-4">
+            <h2 className="text-lg font-semibold">{selectedTable} Table</h2>
 
-              {tableData[name]?.length ? (
-                <table className="min-w-full text-sm text-gray-700 border-t border-gray-200">
-                  <thead>
-                    <tr className="bg-gray-50 text-gray-600 text-left">
-                      {Object.keys(tableData[name][0]).slice(0, 6).map((key) => (
-                        <th key={key} className="p-2 capitalize">
-                          {key}
-                        </th>
-                      ))}
-                      <th className="p-2 text-center">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {tableData[name].map((row) => (
-                      <tr key={row.id} className="border-b hover:bg-gray-50">
-                        {Object.values(row)
-                          .slice(0, 6)
-                          .map((val, i) => (
-                            <td key={i} className="p-2 truncate max-w-[160px]">
-                              {typeof val === "string" && val.length > 80
-                                ? val.slice(0, 80) + "..."
-                                : String(val)}
-                            </td>
-                          ))}
-                        <td className="p-2 flex justify-center gap-2">
-                          <button
-                            onClick={() => handleEdit(name, row.id)}
-                            className="text-blue-600 hover:bg-blue-50 p-1.5 rounded"
-                          >
-                            <PenLine size={16} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(name, row.id)}
-                            className="text-red-600 hover:bg-red-50 p-1.5 rounded"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p className="text-sm text-gray-500 mt-3">No records found.</p>
-              )}
+            <div className="flex items-center gap-2">
+              <input
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="border rounded-lg px-3 py-2 text-sm"
+              />
+              <button
+                onClick={() => setNewRow({})}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm"
+              >
+                <PlusCircle size={16} /> Add
+              </button>
             </div>
-          )}
+          </div>
+
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm text-gray-700 border">
+              <thead className="bg-gray-50">
+                <tr>
+                  {columns.map((col) => (
+                    <th
+                      key={col}
+                      className="p-2 border-b cursor-pointer"
+                      onClick={() => {
+                        if (sortBy === col)
+                          setSortDir(sortDir === "asc" ? "desc" : "asc");
+                        else setSortBy(col);
+                      }}
+                    >
+                      {col}{" "}
+                      {sortBy === col && (sortDir === "asc" ? <ChevronUp /> : <ChevronDown />)}
+                    </th>
+                  ))}
+                  <th className="p-2 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRows.map((row, idx) => (
+                  <tr key={idx} className="border-b hover:bg-gray-50">
+                    {columns.map((col) => (
+                      <td key={col} className="p-2 truncate max-w-[200px]">
+                        {String(row[col] ?? "")}
+                      </td>
+                    ))}
+                    <td className="p-2 flex justify-center gap-2">
+                      <button
+                        onClick={() => setEditingRow(row)}
+                        className="text-blue-600 hover:bg-blue-50 p-1.5 rounded"
+                      >
+                        <PenLine size={16} />
+                      </button>
+                      <button
+                        onClick={() => deleteRow(row.id)}
+                        className="text-red-600 hover:bg-red-50 p-1.5 rounded"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-between items-center mt-3 text-sm">
+            <span>
+              Page {page} of {Math.ceil(total / pageSize)}
+            </span>
+            <div className="flex gap-2">
+              <button
+                className="border px-3 py-1 rounded disabled:opacity-50"
+                disabled={page === 1}
+                onClick={() => setPage(p => p - 1)}
+              >
+                Prev
+              </button>
+              <button
+                className="border px-3 py-1 rounded disabled:opacity-50"
+                disabled={page >= Math.ceil(total / pageSize)}
+                onClick={() => setPage(p => p + 1)}
+              >
+                Next
+              </button>
+            </div>
+          </div>
         </div>
-      ))}
+      )}
+
+      {/* ADD MODAL */}
+      {Object.keys(newRow).length > 0 && (
+        <Modal
+          title={`Add Row to ${selectedTable}`}
+          data={newRow}
+          setData={setNewRow}
+          onCancel={() => setNewRow({})}
+          onSave={addRow}
+        />
+      )}
+
+      {/* EDIT MODAL */}
+      {editingRow && (
+        <Modal
+          title={`Edit Row`}
+          data={editingRow}
+          setData={setEditingRow}
+          onCancel={() => setEditingRow(null)}
+          onSave={updateRow}
+        />
+      )}
     </div>
   );
 }
 
-/* ===========================================================
-   Stat Card Component
-=========================================================== */
-function StatCard({ icon: Icon, title, value, color }) {
+/* ============================================================
+   Generic Modal Component
+============================================================ */
+function Modal({ title, data, setData, onCancel, onSave }) {
+  const keys = Object.keys(data);
+
   return (
-    <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition">
-      <div className={`p-4 rounded-full text-white ${color}`}>
-        <Icon size={22} />
-      </div>
-      <div>
-        <p className="text-gray-500 text-sm">{title}</p>
-        <h3 className="text-2xl font-bold text-gray-800">{value}</h3>
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+      <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg overflow-hidden">
+        <div className="flex justify-between items-center border-b p-3">
+          <h3 className="font-semibold">{title}</h3>
+          <button onClick={onCancel} className="p-1 rounded hover:bg-gray-100">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="p-4 max-h-[70vh] overflow-auto space-y-3">
+          {keys.map((key) => (
+            <div key={key} className="grid grid-cols-3 items-center gap-2">
+              <label className="text-sm text-gray-600">{key}</label>
+              <input
+                value={data[key] ?? ""}
+                onChange={(e) =>
+                  setData((d: any) => ({ ...d, [key]: e.target.value }))
+                }
+                className="col-span-2 border rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="p-3 flex justify-end gap-2 border-t">
+          <button onClick={onCancel} className="border px-3 py-2 rounded-lg">
+            Cancel
+          </button>
+          <button
+            onClick={onSave}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg"
+          >
+            Save
+          </button>
+        </div>
       </div>
     </div>
   );
