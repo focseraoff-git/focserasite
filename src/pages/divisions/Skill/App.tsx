@@ -143,6 +143,8 @@ export default function SkillApp() {
             <Route path="/" element={<HomePage user={user} />} />
             <Route path="auth" element={<AuthPage />} />
             <Route path="auth/callback" element={<AuthCallback />} />
+           
+
 
             {/* 🔹 User Routes */}
             <Route path="dashboard" element={<DashboardPage user={user} />} />

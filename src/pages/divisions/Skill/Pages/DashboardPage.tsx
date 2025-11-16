@@ -133,7 +133,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
       try {
         const { data } = await supabase
           .from("programs")
-          .select("id,title,slug,description")
+          .select("id,title,slug,description,is_locked")
           .order("created_at", { ascending: true });
         setPrograms(data || []);
       } catch (err) {
@@ -418,29 +418,76 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
               </div>
             </motion.div>
           </div>
+{/* Active Programs Section */}
+<motion.div className="bg-white shadow-md rounded-2xl p-6 md:p-8 border border-gray-100">
+  <h3 className="text-lg md:text-xl font-semibold text-slate-800 mb-4">
+    Active Programs
+  </h3>
 
-          {/* programs list */}
-          <motion.div className="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-2xl shadow-neu border border-white/50">
-            <h3 className="text-lg md:text-xl font-bold text-slate-800 mb-4">Active Programs</h3>
+  {programs?.length ? (
+    <div className="space-y-4 max-h-64 overflow-auto pr-2">
+      {[...programs]
+        // ✅ Unlocked programs first, locked later
+        .sort((a, b) =>
+          a.is_locked === b.is_locked ? 0 : a.is_locked ? 1 : -1
+        )
+        .slice(0, 6)
+        .map((p) => {
+          const isLocked =
+            p.is_locked === true || String(p.is_locked) === "true";
 
-            {programs?.length ? (
-              <div className="space-y-4 max-h-64 overflow-auto pr-2">
-                {programs.slice(0, 6).map((p) => (
-                  <div key={p.id} className="flex items-center justify-between gap-4 bg-white/50 p-4 md:p-5 rounded-xl border border-white/30">
-                    <div className="flex-1">
-                      <p className="text-sm md:text-base font-semibold text-slate-800">{p.title}</p>
-                      <p className="text-xs md:text-sm text-slate-500 line-clamp-1">{p.description}</p>
-                    </div>
-                    <div className="w-36 md:w-40">
-                      <MiniProg percent={Math.floor(Math.random() * 90)} />
-                    </div>
-                  </div>
-                ))}
+          return (
+            <div
+              key={p.id}
+              className={`relative flex items-center justify-between gap-4 p-4 md:p-5 rounded-xl border border-gray-100 bg-white transition-all ${
+                isLocked
+                  ? "filter grayscale opacity-60"
+                  : "hover:shadow-lg hover:border-blue-200"
+              }`}
+            >
+              {/* 🟡 "Coming Soon" label for locked programs */}
+              {isLocked && (
+                <div className="absolute top-2 right-3 bg-yellow-300 text-slate-900 text-[10px] md:text-xs px-2 py-1 rounded-md font-semibold shadow-sm">
+                  Coming Soon
+                </div>
+              )}
+
+              <div className="flex-1">
+                <p className="text-sm md:text-base font-semibold text-slate-800">
+                  {p.title}
+                </p>
+                <p className="text-xs md:text-sm text-slate-500 line-clamp-1">
+                  {p.description}
+                </p>
               </div>
-            ) : (
-              <p className="text-sm md:text-base text-slate-500">No active programs yet. Join a program to see progress here.</p>
-            )}
-          </motion.div>
+
+              {/* 🟢 Open or Disabled Buttons */}
+              {!isLocked ? (
+                <button
+                  onClick={() => navigate(`/divisions/skill/syllabus/${p.slug}`)}
+                  className="text-xs md:text-sm bg-blue-500 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-600 transition"
+                >
+                  Open
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="text-xs md:text-sm bg-gray-200 text-gray-600 px-4 py-2 rounded-md cursor-not-allowed"
+                >
+                  Coming Soon
+                </button>
+              )}
+            </div>
+          );
+        })}
+    </div>
+  ) : (
+    <p className="text-sm md:text-base text-slate-500">
+      No active programs yet. Join a program to see progress here.
+    </p>
+  )}
+</motion.div>
+
         </div>
 
         {/* recent activity header */}
