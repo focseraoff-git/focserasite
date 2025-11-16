@@ -160,7 +160,42 @@ export default function AdminDashboard() {
                 className="border rounded-lg px-3 py-2 text-sm"
               />
               <button
-                onClick={() => setNewRow({})}
+                onClick={async () => {
+                  // Prepare a newRow template using known columns, or try fetch one row to derive columns
+                  if (!selectedTable) return alert('Select a table first');
+
+                  if (columns?.length) {
+                    const template = Object.fromEntries(columns.map((c) => [c, ""]));
+                    setNewRow(template);
+                    return;
+                  }
+
+                  if (rows?.length) {
+                    const cols = Object.keys(rows[0] || {});
+                    if (cols.length) {
+                      setColumns(cols);
+                      const template = Object.fromEntries(cols.map((c) => [c, ""]));
+                      setNewRow(template);
+                      return;
+                    }
+                  }
+
+                  // try fetching a single row to derive columns
+                  try {
+                    const { data } = await lmsSupabaseClient.from(selectedTable).select("*").limit(1);
+                    const cols = data && data.length ? Object.keys(data[0]) : [];
+                    if (cols.length) {
+                      setColumns(cols);
+                      const template = Object.fromEntries(cols.map((c) => [c, ""]));
+                      setNewRow(template);
+                    } else {
+                      alert('Unable to determine table columns — cannot add a row.');
+                    }
+                  } catch (err) {
+                    console.error('Error fetching table sample:', err);
+                    alert('Error fetching table info — check console for details.');
+                  }
+                }}
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm"
               >
                 <PlusCircle size={16} /> Add
