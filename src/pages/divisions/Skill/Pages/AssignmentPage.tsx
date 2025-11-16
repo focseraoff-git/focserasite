@@ -71,6 +71,21 @@ export default function AssignmentPage({ user, supabase }) {
 
       if (insertError) throw insertError;
 
+      // Mark module as completed for this user (unlock next module)
+      try {
+        if (assignment.module_id) {
+          const { error: compErr } = await supabase.from("completed_modules").insert({
+            user_id: user.id,
+            module_id: assignment.module_id,
+            title: assignment.title,
+            completed_at: new Date().toISOString(),
+          });
+          if (compErr) console.warn("Could not insert completed_modules record:", compErr.message);
+        }
+      } catch (e) {
+        console.warn("Error marking module complete:", e?.message || e);
+      }
+
       setSubmissionSuccess(true);
     } catch (err) {
       console.error("Error submitting assignment:", err.message);

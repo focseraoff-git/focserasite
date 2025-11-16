@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import ModuleItem from "../components/ModuleItem";
 import {
   BookOpen,
   Clock,
@@ -62,7 +63,30 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
           .order("day", { ascending: true });
 
         if (error) throw error;
-        setModules(data || []);
+        const mods = data || [];
+
+        // If user is available, fetch completed modules for this user within the program
+        if (user && user.id) {
+          try {
+            const moduleIds = mods.map((m) => m.id);
+            const { data: completedData } = await supabase
+              .from("completed_modules")
+              .select("module_id")
+              .eq("user_id", user.id)
+              .in("module_id", moduleIds);
+
+            const completedSet = new Set((completedData || []).map((c) => c.module_id));
+
+            // annotate modules with completed flag
+            const annotated = mods.map((m) => ({ ...m, completed: completedSet.has(m.id) }));
+            setModules(annotated);
+          } catch (e) {
+            console.warn("Could not fetch completed modules:", e?.message || e);
+            setModules(mods);
+          }
+        } else {
+          setModules(mods);
+        }
       } catch (err) {
         console.error("Error fetching modules:", err.message);
       }
@@ -184,27 +208,18 @@ export default function SyllabusPage({ user, supabase = lmsSupabaseClient }) {
 
             {/* MODULES LIST */}
             <div className="space-y-3">
-              {modules.map((mod, index) => (
-                <motion.div
-                  key={mod.id}
-                  whileHover={{ scale: 1.01 }}
-                  className="p-4 border border-gray-200 rounded-xl flex items-center justify-between hover:bg-gray-50 transition"
-                >
-                  <div>
-                    <p className="font-medium text-gray-800">
-                      Day {index + 1}: {mod.title}
-                    </p>
-                    <p className="text-gray-500 text-sm">{mod.description}</p>
-                  </div>
-
-                  <button
-                    onClick={() => navigate(`../module/${mod.id}`)}
-                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
-                  >
-                    Open →
-                  </button>
-                </motion.div>
-              ))}
+                {modules.map((mod, index) => {
+                  const prevCompleted = index === 0 ? true : !!(modules[index - 1]?.completed);
+                  const locked = !prevCompleted && !mod.completed;
+                  return (
+                    <ModuleItem
+                      key={mod.id}
+                      module={mod}
+                      onOpen={() => navigate(`../module/${mod.id}`)}
+                      locked={locked}
+                    />
+                  );
+                })}
             </div>
           </motion.div>
         )}
