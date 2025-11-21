@@ -4,14 +4,32 @@ import React, { useEffect, useRef, useState } from "react";
 interface MediaItem {
   title: string;
   caption: string;
-  driveId: string;
+  mediaId: string; // MODIFICATION: Renamed from driveId
   type: "video" | "image";
   aspectRatio?: "16:9" | "9:16";
 }
 
 /* ---------- Helpers ---------- */
-// MODIFICATION: Updated to correctly append autoplay=1 to all URLs
-const DRIVE_PREVIEW = (idOrUrl: string | null | undefined): string => {
+
+/**
+ * Extracts YouTube Video ID from various URL formats.
+ * @param {string} url - The YouTube URL.
+ * @returns {string | null} - The video ID or null if not found.
+ */
+const getYouTubeId = (url: string): string | null => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
+/**
+ * MODIFICATION: Removed DRIVE_PREVIEW_HELPER
+ */
+
+/**
+ * Generates an embeddable URL for media items.
+ * @param {string} mediaId - The media ID or URL.
   if (!idOrUrl) return "";
   let baseUrl = "";
   let originalParams: string | null = null;
@@ -37,10 +55,76 @@ const DRIVE_PREVIEW = (idOrUrl: string | null | undefined): string => {
   }
 
   const params = new URLSearchParams(originalParams || "");
-  params.set("autoplay", "1"); // Add/overwrite autoplay=1
+  if (isVideo) {
+    params.set("autoplay", "1"); // Add/overwrite autoplay=1
+  }
 
   return `${baseUrl}?${params.toString()}`;
 };
+
+
+/**
+ * Generates an embeddable URL for media items.
+ * @param {string} idOrUrl - The media ID or URL.
+ * @param {'video' | 'image'} type - The type of media.
+ * @param {object} options - Options for the embed.
+ * @param {boolean} [options.autoplay=false] - Whether to autoplay (and mute).
+ * @param {boolean} [options.controls=false] - Whether to show controls.
+ * @returns {string} - The embeddable URL.
+ */
+const getEmbedUrl = (
+  mediaId: string | null | undefined, // MODIFICATION: Renamed from idOrUrl
+  type: "video" | "image",
+  options: { autoplay?: boolean; controls?: boolean } = {}
+): string => {
+  if (!mediaId) return ""; // MODIFICATION: Renamed from idOrUrl
+
+  const { autoplay = false, controls = false } = options;
+
+  if (type === "video") {
+    const videoId = getYouTubeId(mediaId); // MODIFICATION: Renamed from idOrUrl
+    if (videoId) {
+      const params = new URLSearchParams({
+        playsinline: '1',
+        rel: '0',
+        modestbranding: '1',
+        showinfo: '0',
+      });
+      
+      if (autoplay) {
+        params.set('autoplay', '1');
+        params.set('mute', '1'); // Autoplay requires mute
+        params.set('loop', '1');
+        params.set('playlist', videoId); // Loop requires playlist
+      }
+      
+      if (controls) {
+        params.set('controls', '1');
+      } else {
+         params.set('controls', '0');
+      }
+
+      return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+    }
+    // MODIFICATION: Removed Google Drive fallback
+    return ""; // Return empty string if not a valid YouTube URL
+  }
+
+  if (type === "image") {
+    // Handle specific placeholders with placehold.co
+    if (mediaId.startsWith("1YOUTH_IMG") || mediaId.startsWith("1INNO_")) { // MODIFICATION: Renamed from idOrUrl
+       const text = mediaId.replace(/_/g, ' '); // MODIFICATION: Renamed from idOrUrl
+       const bgColor = "0a0a0a"; // Dark background
+       const textColor = "555555";
+       return `https://placehold.co/600x400/${bgColor}/${textColor}?text=${encodeURIComponent(text)}`;
+    }
+    // MODIFICATION: Removed Google Drive fallback, return mediaId as-is
+    return mediaId || "";
+  }
+
+  return mediaId || ""; // MODIFICATION: Renamed from idOrUrl
+};
+
 
 const IconPlay = ({ className = "w-5 h-5" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -67,9 +151,11 @@ function Lightbox({ item, onClose }: LightboxProps) {
   }, [onClose]);
 
   if (!item) return null;
-  // MODIFICATION: src now comes from the updated helper
-  const src = DRIVE_PREVIEW(item.driveId);
+  
+  // MODIFICATION: Use getEmbedUrl with autoplay and controls for the lightbox
+  const src = getEmbedUrl(item.mediaId, item.type, { autoplay: true, controls: true }); // MODIFICATION: Renamed from driveId
   const isVideo = item.type === "video";
+
   return (
     <div className="fixed inset-0 z-[4000] flex items-center justify-center bg-black/95 backdrop-blur-md p-4" onClick={onClose}>
       <div
@@ -90,7 +176,8 @@ function Lightbox({ item, onClose }: LightboxProps) {
             <iframe
               src={src}
               title={item.title}
-              allow="autoplay; encrypted-media; fullscreen"
+              // MODIFICATION: Updated allow attribute for YouTube
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
               className="w-full h-[75vh] border-0"
             />
           ) : (
@@ -131,8 +218,13 @@ function Carousel({ items = [], interval = 4000, height = 220, onOpen }: Carouse
     <div className="overflow-hidden py-4">
       <div ref={ref} className="flex gap-6 overflow-x-auto no-scrollbar px-6">
         {items.map((it, i) => {
-          // MODIFICATION: src now comes from the updated helper
-          const src = DRIVE_PREVIEW(it.driveId);
+          // MODIFICATION: Get standard URL for images, autoplay for video previews
+          const imgThumbSrc = (it.type === 'image') 
+            ? getEmbedUrl(it.mediaId, it.type) // MODIFICATION: Renamed from driveId
+            : '';
+          const videoPreviewSrc = (it.type === 'video') 
+            ? getEmbedUrl(it.mediaId, it.type, { autoplay: true, controls: false }) // MODIFICATION: Renamed from driveId
+            : '';
           
           const isPortrait = it.aspectRatio === "9:16";
           const landscapeWidthClass = "w-[min(600px,80vw)]";
@@ -151,7 +243,7 @@ function Carousel({ items = [], interval = 4000, height = 220, onOpen }: Carouse
             >
               {it.type === "image" ? (
                 <img
-                  src={src}
+                  src={imgThumbSrc}
                   alt={it.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   loading="lazy"
@@ -159,8 +251,9 @@ function Carousel({ items = [], interval = 4000, height = 220, onOpen }: Carouse
               ) : (
                 <div className="w-full h-full bg-gray-900 relative">
                   <iframe
-                    src={src}
-                    allow="autoplay"
+                    src={videoPreviewSrc}
+                    // MODIFICATION: Updated allow attribute
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     className="w-full h-full object-cover border-0 pointer-events-none"
                     tabIndex={-1} 
                     loading="lazy"
@@ -182,23 +275,25 @@ function Carousel({ items = [], interval = 4000, height = 220, onOpen }: Carouse
 }
 
 /* ---------- Main ---------- */
-export default function JourneyCinematicPro_Fixed() {
+export default function JourneyCinematicPro_YouTube() {
+  
+  // MODIFICATION: Data updated with YouTube URLs for videos and mediaId field
   const slides: MediaItem[] = [
-    { title: "Teluginti Deepavali", caption: "Lights & storytelling.", driveId: "https://drive.google.com/file/d/1PRndfJOKqx7E0O8ZkdWJRIJCndCUbGab/view", type: "video", aspectRatio: "9:16" },
-    { title: "Agentic AI", caption: "Future visuals & experiments.", driveId: "1Xg44eZdtpWKjOwdSRNG71OeHvT6Bs10w", type: "video" },
-    { title: "Nature Cinematic", caption: "Calm & atmospheric.", driveId: "https://drive.google.com/file/d/1UGgKWWnO-CZmv6KpnSr97AArDcPCrHlg/view?t=2", type: "video" },
+    { title: "Teluginti Deepavali", caption: "Lights & storytelling.", mediaId: "https://youtu.be/embed/I0_951_MPE0", type: "video", aspectRatio: "9:16" },
+    { title: "Agentic AI", caption: "Future visuals & experiments.", mediaId: "https://www.youtube.com/watch?v=B069-0Iofb8", type: "video" },
+    { title: "Nature Cinematic", caption: "Calm & atmospheric.", mediaId: "https://www.youtube.com/watch?v=Cxw3t-8-bk8", type: "video" },
   ];
 
   const youth: MediaItem[] = [
-    { title: "Youth Speaks: Opening", caption: "Keynote", driveId: "1YOUTH_IMG1", type: "image" },
-    { title: "Event Highlights", caption: "Cinematic Reel", driveId: "https://drive.google.com/file/d/1DNrlcFSzYqT0WgeVjJzx2lLMz7iwiGiA/view", type: "video", aspectRatio: "9:16" },
-    { title: "Audience Pulse", caption: "Crowd Moments", driveId: "1YOUTH_IMG2", type: "image" },
+    { title: "Youth Speaks: Opening", caption: "Keynote", mediaId: "1YOUTH_IMG1", type: "image" },
+    { title: "Event Highlights", caption: "Cinematic Reel", mediaId: "https://www.youtube.com/watch?v=S21q-kB-dGk", type: "video", aspectRatio: "9:16" },
+    { title: "Audience Pulse", caption: "Crowd Moments", mediaId: "1YOUTH_IMG2", type: "image" },
   ];
 
   const innovate: MediaItem[] = [
-    { title: "Grand Opening", caption: "Stage Set", driveId: "1INNO_OPEN", type: "image" },
-    { title: "Brand Battles", caption: "Official Poster", driveId: "1INNO_POSTER", type: "image" },
-    { title: "InnovateX Recap", caption: "Aftermovie Reel", driveId: "1INNO_REEL", type: "video" },
+    { title: "Grand Opening", caption: "Stage Set", mediaId: "1INNO_OPEN", type: "image" },
+    { title: "Brand Battles", caption: "Official Poster", mediaId: "1INNO_POSTER", type: "image" },
+    { title: "InnovateX Recap", caption: "Aftermovie Reel", mediaId: "https://www.youtube.com/watch?v=2--j1fth-sE", type: "video" },
   ];
 
   const [lightItem, setLightItem] = useState<MediaItem | null>(null);
@@ -237,9 +332,10 @@ export default function JourneyCinematicPro_Fixed() {
               className="absolute inset-0 will-change-transform flex justify-center items-center overflow-hidden"
             >
               <iframe
-                // MODIFICATION: src now comes from the updated helper
-                src={DRIVE_PREVIEW(s.driveId)}
-                allow="autoplay;fullscreen"
+                // MODIFICATION: Use getEmbedUrl with autoplay and no controls for hero
+                src={getEmbedUrl(s.mediaId, s.type, { autoplay: true, controls: false })} // MODIFICATION: Renamed from driveId
+                // MODIFICATION: Updated allow attribute
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 className={`border-0 opacity-80 ${isPortrait ? "h-full aspect-[9/16]" : "w-full h-full"}`}
                 title={s.title}
                 tabIndex={-1} 
@@ -338,11 +434,12 @@ export default function JourneyCinematicPro_Fixed() {
               className="group relative aspect-video rounded-2xl overflow-hidden border border-white/10 cursor-pointer bg-black"
             >
               <iframe
-                // MODIFICATION: src now comes from the updated helper
-                src={DRIVE_PREVIEW("1INNO_REEL")}
+                // MODIFICATION: Use getEmbedUrl with autoplay and no controls for preview
+                src={getEmbedUrl(innovate[2].mediaId, innovate[2].type, { autoplay: true, controls: false })} // MODIFICATION: Renamed from driveId
                 className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                 tabIndex={-1} 
-                allow="autoplay"
+                // MODIFICATION: Updated allow attribute
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 title="InnovateX Recap"
               />
               <div className="absolute inset-0 flex items-center justify-center">
@@ -355,7 +452,8 @@ export default function JourneyCinematicPro_Fixed() {
               {innovate.slice(0, 2).map((item, i) => (
                 <div key={i} onClick={() => setLightItem(item)} className="flex-1 rounded-xl overflow-hidden border border-white/10 cursor-pointer relative group">
                   <img
-                    src={DRIVE_PREVIEW(item.driveId)}
+                    // MODIFICATION: Use getEmbedUrl (no options needed for image)
+                    src={getEmbedUrl(item.mediaId, item.type)} // MODIFICATION: Renamed from driveId
                     alt={item.title}
                     className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
                     loading="lazy"

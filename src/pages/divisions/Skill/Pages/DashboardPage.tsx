@@ -1,617 +1,480 @@
 // @ts-nocheck
-import { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import Editor from "@monaco-editor/react";
+import axios from "axios";
 import {
-  BookOpen,
-  CheckCircle,
-  Trophy,
-  Flame,
-  Award,
-  Camera,
-  Edit3,
-  Activity,
-  Star,
-  Layers,
-  Zap,
-  User,
+  Play,
+  Loader2,
+  Terminal,
+  Pencil,
+  Eraser,
+  RotateCcw,
+  RotateCw,
+  Trash2,
+  Brush,
+  Send,
+  Bot,
+  MessageSquareX,
+  MessageCircle,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
-/* ============================================================
-  LandingVariant (BEFORE LOGIN) — content kept functionally same
-  — small motion added but layout preserved
-  ============================================================ */
-function LandingVariant({ navigate, programs, loading }) {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-indigo-700 to-slate-900 text-white relative overflow-hidden">
-      <section className="text-center pt-40 md:pt-48 pb-24 relative overflow-hidden">
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-6xl md:text-7xl font-extrabold mb-6 leading-tight"
-        >
-          Learn. Create. Grow.
-        </motion.h1>
+/* ===========================================================
+   Combined Online Compiler + AI Assistant
+   - AIAssistant is embedded below and accepts two props:
+     getCode() -> returns current editor code
+     applyCode(newCode) -> replaces editor code with suggestion
+   - Assistant will try to extract code blocks from the model
+     response and offer an "Apply" button next to each assistant
+     message to replace the editor content automatically.
 
-        <p className="text-lg opacity-90 max-w-2xl mx-auto mb-10">
-          Learn coding, editing, design & filmmaking with
-          <span className="text-yellow-300 font-bold"> Focsera SkillVerse</span>.
-        </p>
+   Usage: drop this file into your React app and ensure .env
+   contains VITE_GEMINI_API_KEY and VITE_JUDGE0_API_KEY.
+   =========================================================== */
 
-        <motion.button
-          whileHover={{ scale: 1.08 }}
-          onClick={() => navigate("/divisions/skill/auth")}
-          className="px-12 py-4 bg-white text-blue-700 rounded-full text-lg font-semibold shadow-xl hover:bg-gray-100 transition"
-        >
-          Start Learning Free →
-        </motion.button>
-      </section>
-
-      <section className="max-w-6xl mx-auto px-6 pb-24">
-        <h2 className="text-4xl font-bold text-center mb-12">Explore Courses</h2>
-
-        {loading ? (
-          <p className="text-center text-gray-200 text-lg">Loading...</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-            {programs?.map((p) => {
-              const muted = p.role === true || String(p.role) === "true";
-              return (
-                <motion.div
-                  key={p.id}
-                  whileHover={muted ? {} : { scale: 1.03 }}
-                  className={`relative bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-xl ${muted ? 'filter grayscale opacity-70' : ''}`}
-                >
-                  {muted && (
-                    <div className="absolute top-3 right-3 bg-yellow-300 text-slate-900 text-xs px-2 py-1 rounded-md font-semibold">
-                      Coming Soon
-                    </div>
-                  )}
-
-                  <h3 className="text-2xl font-bold text-white mb-4">{p.title}</h3>
-                  <p className="text-gray-200 text-sm mb-6">{p.description}</p>
-
-                  {muted ? (
-                    <button
-                      disabled
-                      className="bg-gray-400 text-white px-4 py-2 rounded-lg text-sm cursor-not-allowed"
-                      title="This program is coming soon"
-                    >
-                      Coming Soon
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => navigate("/divisions/skill/auth")}
-                      className="text-yellow-300 font-semibold text-lg hover:text-white"
-                    >
-                      Join Free →
-                    </button>
-                  )}
-                </motion.div>
-              );
-            })}
-          </div>
-        )}
-      </section>
-    </div>
-  );
+/* ======================= AIAssistant ======================= */
+function extractCodeFromText(text) {
+  if (!text) return null;
+  // Try to find ```code fences first
+  const fence = text.match(/```(?:\w+)?\n([\s\S]*?)```/);
+  if (fence && fence[1]) return fence[1].trim();
+  // Try <pre> blocks inserted by assistant formatting
+  const pre = text.match(/<pre[^>]*>([\s\S]*?)<\/pre>/);
+  if (pre && pre[1]) return pre[1].replace(/<br\/?\s*>/g, "\n").trim();
+  // Fallback: If the whole text looks like code (multiple lines with semicolons or braces), return it
+  const lines = text.split(/\r?\n/).slice(0, 200);
+  const codeLike = lines.filter((l) => /[;{}=()<>:\[\]]/.test(l)).length / Math.max(lines.length, 1) > 0.25;
+  return codeLike ? text.trim() : null;
 }
 
-/* ============================================================
-  DashboardPage (AFTER LOGIN) — A2 scaling applied
-  - Larger profile card
-  - Bigger stat cards
-  - Taller progress bar
-  - Larger activity & programs blocks
-  ============================================================ */
-export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
-  const navigate = useNavigate();
-  const fileInputRef = useRef(null);
+function AIAssistant({ getCode, applyCode }) {
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const [profile, setProfile] = useState(null);
-  const [programs, setPrograms] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-  const [stats, setStats] = useState({
-    total_modules: 0,
-    daily_streak: 0,
-    badges: [], // <-- This is related to Bug #2
-    total_score: 0,
-    level: 1,
-    progress_percentage: 0,
-    programs_enrolled: 0,
-    challenges_solved: 0,
-    recent_modules: [],
-    recent_challenges: [],
-    recent_badges: [],
-  });
-
-  /* ---------------- fetch programs always (before + after login) ---------------- */
-  useEffect(() => {
-    const loadPrograms = async () => {
-      try {
-        const { data } = await supabase
-          .from("programs")
-          .select("id,title,slug,description,is_locked")
-          .order("created_at", { ascending: true });
-        setPrograms(data || []);
-      } catch (err) {
-        console.error("Programs fetch error:", err);
-      }
-    };
-    loadPrograms();
-  }, [supabase]);
-
-  /* ---------------- fetch user-specific data ---------------- */
-  useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        setLoading(true);
-
-        if (user) {
-          // profile
-          const { data: profileData } = await supabase
-            .from("users")
-            .select("full_name,avatar_url,email")
-            .eq("id", user.id)
-            .single();
-          setProfile(profileData || { full_name: user.email?.split?.("@")?.[0] || "Learner", email: user.email });
-
-          // user stats
-          const { data: userStats } = await supabase
-            .from("user_stats")
-            .select("*")
-            .eq("user_id", user.id)
-            .maybeSingle();
-
-          // recent activity
-          const [modsRes, chRes, badgesRes] = await Promise.all([
-            supabase
-              .from("completed_modules")
-              .select("title,completed_at")
-              .eq("user_id", user.id)
-              .order("completed_at", { ascending: false })
-              .limit(8),
-            supabase
-              .from("challenge_history")
-              .select("title,score,created_at")
-              .eq("user_id", user.id)
-              .order("created_at", { ascending: false })
-              .limit(8),
-            
-            // =================================================================
-            // START OF FIX #1: The '400 Bad Request' Error
-            // =================================================================
-            //
-            // The query you've written here is SYNTACTICALLY CORRECT.
-            // If it still fails with a '400 Bad Request', the problem is 
-            // a MISMATCH between this code and your database schema.
-            //
-            // YOU MUST CHECK YOUR SUPABASE DASHBOARD:
-            // 1. Is the table (or view) name *exactly* `badge_history`?
-            //    (The schema image you sent shows a table named `badges`)
-            //
-            // 2. Does `badge_history` have a column *exactly* named `name`?
-            //
-            // 3. Does `badge_history` have a column *exactly* named `earned_at`?
-            //    (Your `ActivityCard` needs this!)
-            //
-            // 4. Does `badge_history` have a column *exactly* named `user_id`?
-            //
-            // The error means the server doesn't understand your request, 
-            // almost always because the table or column names are wrong.
-            // The schema image you provided only shows a `badges` table 
-            // with `id` and `name`, which would not work with this query.
-            //
-            supabase
-              .from("badge_history") 
-              .select("name,earned_at") 
-              .eq("user_id", user.id) 
-              .order("earned_at", { ascending: false })
-              .limit(8),
-            //
-            // =================================================================
-            // END OF FIX #1
-            // =================================================================
-          ]);
-
-          const recentModules = modsRes?.data || [];
-          const recentChallenges = chRes?.data || [];
-          const recentBadges = badgesRes?.data || [];
-
-          // compute level/progress (simple example)
-          const xp = (userStats?.total_score ?? 0);
-          const level = Math.floor(Math.sqrt(xp / 100)) + 1;
-          const progress_percentage = Math.min(100, Math.round(((xp - (level - 1) * (level - 1) * 100) / (level * 100)) * 100)) || 0;
-
-          setStats((prev) => ({
-            ...prev,
-            ...userStats,
-            // =================================================================
-            // START OF FIX #2: "Badges Earned" Stat is 0
-            // =================================================================
-            //
-            // The `...userStats` spread *tries* to set the `badges` array,
-            // but your `user_stats` table (based on the schema) does not 
-            // have a `badges` column.
-            //
-            // This means `stats.badges` is always the default empty `[]`.
-            //
-            // A simple fix is to query for the *count* of badges.
-            // You would need to add a new query in `fetchAll` like:
-            //
-            // const { count, error } = await supabase
-            //   .from("badge_history")
-            //   .select('*', { count: 'exact', head: true })
-            //   .eq("user_id", user.id);
-            //
-            // And then set it here:
-            // badges_count: count, // (You'd need to add `badges_count: 0` to useState)
-            //
-            // And change the NeoStat to use `value={stats.badges_count ?? 0}`.
-            //
-            // For now, `stats.badges` will remain `[]` as per your code.
-            //
-            // =================================================================
-            // END OF FIX #2
-            // =================================================================
-            total_score: xp,
-            level,
-            progress_percentage,
-            recent_modules: recentModules,
-            recent_challenges: recentChallenges,
-            recent_badges: recentBadges,
-            programs_enrolled: userStats?.programs_enrolled ?? 0,
-            challenges_solved: userStats?.challenges_solved ?? 0,
-            daily_streak: userStats?.daily_streak ?? 0,
-          }));
-        }
-      } catch (err) {
-        console.error("Dashboard fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, supabase]);
-
-  /* ---------------- avatar upload ---------------- */
-  const handleAvatarChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
+  const fetchWithBackoff = async (url, options, retries = 4, delay = 800) => {
     try {
-      setLoading(true);
-      const ext = file.name.split(".").pop();
-      const path = `avatars/${user.id}_${Date.now()}.${ext}`;
-      const { error } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
-      if (error) throw error;
-      const { data } = await supabase.storage.from("avatars").getPublicUrl(path);
-      await supabase.from("users").update({ avatar_url: data.publicUrl }).eq("id", user.id);
-      setProfile((p) => ({ ...p, avatar_url: data.publicUrl }));
+      const res = await fetch(url, options);
+      if (!res.ok && (res.status === 429 || res.status >= 500) && retries > 0) {
+        await new Promise((r) => setTimeout(r, delay));
+        return fetchWithBackoff(url, options, retries - 1, delay * 2);
+      }
+      return res;
     } catch (err) {
-      console.error("Avatar upload error:", err);
+      if (retries > 0) {
+        await new Promise((r) => setTimeout(r, delay));
+        return fetchWithBackoff(url, options, retries - 1, delay * 2);
+      }
+      throw err;
+    }
+  };
+
+  const formatResponse = (text) => {
+    if (!text) return "";
+    return text
+      .replace(/^#+\s?/gm, "")
+      .replace(/^[\*\-]\s?/gm, "")
+      .replace(/(\d+)\.\s*/g, "<b>$1.</b> ")
+      .replace(/```([\s\S]*?)```/g, "<pre class='code-block'>$1</pre>")
+      .replace(/```/g, "")
+      .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+      .replace(/\*(.*?)\*/g, "$1")
+      .replace(/\n/g, "<br>");
+  };
+
+  const sendMessage = async (overrideText = null) => {
+    const userMsg = (overrideText || input).trim();
+    if (!GEMINI_API_KEY) {
+      setMessages((p) => [
+        ...p,
+        {
+          role: "assistant",
+          content:
+            "⚠️ Missing Gemini API Key. Add `VITE_GEMINI_API_KEY=your_key` to `.env` and restart.",
+        },
+      ]);
+      return;
+    }
+    if (!userMsg) return;
+
+    setMessages((p) => [...p, { role: "user", content: userMsg }]);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const payload = {
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text: `You are a programming tutor and code assistant. Give clear, short suggestions and, when possible, include corrected code inside a code block using triple backticks. Do NOT include long disclaimers.\n\nCurrent code:\n${getCode()}\n\nQuestion:\n${userMsg}`,
+              },
+            ],
+          },
+        ],
+      };
+
+      const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${GEMINI_API_KEY}`;
+
+      const res = await fetchWithBackoff(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        const msg = err.error?.message || `⚠️ API Error: ${res.status} ${res.statusText}`;
+        setMessages((p) => [...p, { role: "assistant", content: msg }]);
+        return;
+      }
+
+      const data = await res.json();
+      const text =
+        data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("\n") ||
+        "⚠️ No response from Gemini.";
+
+      const formatted = formatResponse(text);
+      setMessages((p) => [...p, { role: "assistant", content: formatted, raw: text }]);
+    } catch (e) {
+      console.error("❌ Gemini Error:", e);
+      setMessages((p) => [...p, { role: "assistant", content: "⚠️ Network or API error." }]);
     } finally {
       setLoading(false);
     }
   };
 
-  /* ---------------- show landing if no user ---------------- */
-  if (!user) return <LandingVariant navigate={navigate} programs={programs} loading={loading} />;
+  const applySuggestion = (rawText) => {
+    const code = extractCodeFromText(rawText);
+    if (!code) {
+      // if not code found, put suggestion into editor as comment wrapper
+      const wrapped = `/* AI suggestion:\n${rawText.split('\n').slice(0,200).join('\n')} */\n\n` + getCode();
+      applyCode(wrapped);
+      return;
+    }
+    applyCode(code);
+  };
 
-  /* ---------------- final render ---------------- */
+  if (!open)
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-600 to-cyan-400 hover:from-blue-500 hover:to-cyan-300 text-white p-4 rounded-full shadow-2xl z-50 flex items-center justify-center"
+        title="Open code assistant"
+      >
+        <MessageCircle size={22} />
+      </button>
+    );
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#eef4ff] via-[#f8fbff] to-[#f3f6ff] pt-24 pb-20 relative overflow-x-hidden">
-      {/* decorative blobs (soft) */}
-      <div className="absolute -left-36 -top-24 w-[420px] h-[420px] bg-gradient-to-br from-blue-200 to-indigo-300 opacity-30 rounded-full filter blur-3xl transform rotate-12" />
-      <div className="absolute right-[-80px] bottom-[-60px] w-[420px] h-[420px] bg-gradient-to-br from-purple-200 to-blue-200 opacity-28 rounded-full filter blur-3xl" />
-
-      <div className="max-w-7xl mx-auto px-6">
-        {/* profile header */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45 }}
-          className="relative bg-[rgba(255,255,255,0.86)] backdrop-blur-md rounded-2xl p-8 shadow-neu mb-10 border border-white/60"
-        >
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                  <div className="w-40 h-40 rounded-full bg-gradient-to-br from-white to-slate-100 shadow-inner flex items-center justify-center overflow-hidden">
-                    {profile?.avatar_url ? (
-                      <img
-                        src={profile.avatar_url}
-                        alt="avatar"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center">
-                        <User className="w-10 h-10 text-slate-400" />
-                      </div>
-                    )}
-                </div>
-
-                <button
-                  onClick={() => fileInputRef.current.click()}
-                  className="absolute -right-2 -bottom-2 bg-blue-600 p-3 rounded-full text-white shadow-md border border-white/30"
-                  title="Upload avatar"
-                >
-                  <Camera size={16} />
-                </button>
-
-                <input ref={fileInputRef} type="file" className="hidden" onChange={handleAvatarChange} />
-              </div>
-
-              <div>
-                <div className="flex items-center gap-3">
-                  <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900">{profile?.full_name || "Learner"}</h2>
-                  <button className="text-slate-500 hover:bg-slate-100 p-1 rounded-md"><Edit3 size={18} /></button>
-                </div>
-                <p className="text-sm md:text-base text-slate-500 mt-1">{profile?.email}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => navigate("/divisions/skill/certificate/Java")}
-                className="px-4 py-2 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 text-white font-semibold shadow"
-              >
-                <Award size={16} className="inline mr-2" /> Certificates
-              </button>
-
-              <div className="text-right">
-                <p className="text-xs text-slate-500">Level</p>
-                <div className="flex items-center gap-3">
-                  <div className="relative w-16 h-16">
-                    <CircularXP value={stats.progress_percentage || 0} label={stats.level || 1} />
-                  </div>
-                  <div>
-                    <p className="text-sm md:text-base font-semibold text-slate-700">{(stats.total_score ?? 0) + " XP"}</p>
-                    <p className="text-xs md:text-sm text-slate-500">Streak: <span className="font-medium text-slate-700">{stats.daily_streak ?? 0}d</span></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* stats row */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <NeoStat icon={BookOpen} title="Modules Completed" value={stats.total_modules ?? 0} gradient="from-blue-400 to-blue-600" />
-          <NeoStat icon={Flame} title="Daily Streak" value={stats.daily_streak ?? 0} gradient="from-orange-400 to-orange-500" />
-          
-          {/* This is Bug #2. This will show 0 because `stats.badges` is an empty array that never gets populated. */}
-          <NeoStat icon={Trophy} title="Badges Earned" value={(stats.badges || []).length ?? 0} gradient="from-yellow-400 to-yellow-600" />
-          
-          <NeoStat icon={CheckCircle} title="XP Points" value={(stats.total_score ?? 0) + " XP"} gradient="from-green-400 to-green-600" />
+    <div className="fixed bottom-6 right-6 w-[420px] bg-slate-900/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 flex flex-col">
+      <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-600/30 to-cyan-400/20 border-b border-white/10">
+        <div className="flex items-center gap-2 text-cyan-300 font-semibold text-sm">
+          <Bot size={16} /> FocserAI
         </div>
-
-        {/* mid + programs */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="col-span-2">
-            <motion.div className="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-2xl shadow-neu border border-white/50">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg md:text-xl font-bold text-slate-800">Overall Progress</h3>
-                <div className="text-sm md:text-base text-slate-600 font-medium">{stats.progress_percentage ?? 0}%</div>
-              </div>
-
-              <div className="w-full bg-white/20 rounded-full h-6 md:h-8 overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(100, Math.max(0, stats.progress_percentage || 0))}%` }}
-                  transition={{ duration: 0.9 }}
-                  className="h-full bg-gradient-to-r from-blue-500 to-indigo-500"
-                />
-              </div>
-
-              <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-white/60 border border-white/40 shadow-inner">
-                  <p className="text-xs md:text-sm text-slate-600">Programs Enrolled</p>
-                  <p className="text-2xl md:text-3xl font-bold text-slate-800">{stats.programs_enrolled ?? 0}</p>
-                </div>
-                <div className="p-4 rounded-xl bg-white/60 border border-white/40 shadow-inner">
-                  <p className="text-xs md:text-sm text-slate-600">Challenges Solved</p>
-                  <p className="text-2xl md:text-3xl font-bold text-slate-800">{stats.challenges_solved ?? 0}</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-{/* Active Programs Section */}
-<motion.div className="bg-white shadow-md rounded-2xl p-6 md:p-8 border border-gray-100">
-  <h3 className="text-lg md:text-xl font-semibold text-slate-800 mb-4">
-    Active Programs
-  </h3>
-
-  {programs?.length ? (
-    <div className="space-y-4 max-h-64 overflow-auto pr-2">
-      {[...programs]
-        // ✅ Unlocked programs first, locked later
-        .sort((a, b) =>
-          a.is_locked === b.is_locked ? 0 : a.is_locked ? 1 : -1
-        )
-        .slice(0, 6)
-        .map((p) => {
-          const isLocked =
-            p.is_locked === true || String(p.is_locked) === "true";
-
-          return (
-            <div
-              key={p.id}
-              className={`relative flex items-center justify-between gap-4 p-4 md:p-5 rounded-xl border border-gray-100 bg-white transition-all ${
-                isLocked
-                  ? "filter grayscale opacity-60"
-                  : "hover:shadow-lg hover:border-blue-200"
-              }`}
-            >
-              {/* 🟡 "Coming Soon" label for locked programs */}
-              {isLocked && (
-                <div className="absolute top-2 right-3 bg-yellow-300 text-slate-900 text-[10px] md:text-xs px-2 py-1 rounded-md font-semibold shadow-sm">
-                  Coming Soon
-                </div>
-              )}
-
-              <div className="flex-1">
-                <p className="text-sm md:text-base font-semibold text-slate-800">
-                  {p.title}
-                </p>
-                <p className="text-xs md:text-sm text-slate-500 line-clamp-1">
-                  {p.description}
-                </p>
-              </div>
-
-              {/* 🟢 Open or Disabled Buttons */}
-              {!isLocked ? (
-                <button
-                  onClick={() => navigate(`/divisions/skill/syllabus/${p.slug}`)}
-                  className="text-xs md:text-sm bg-blue-500 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-600 transition"
-                >
-                  Open
-                </button>
-              ) : (
-                <button
-                  disabled
-                  className="text-xs md:text-sm bg-gray-200 text-gray-600 px-4 py-2 rounded-md cursor-not-allowed"
-                >
-                  Coming Soon
-                </button>
-              )}
-            </div>
-          );
-        })}
-    </div>
-  ) : (
-    <p className="text-sm md:text-base text-slate-500">
-      No active programs yet. Join a program to see progress here.
-    </p>
-  )}
-</motion.div>
-
-        </div>
-
-        {/* recent activity header */}
-        <div className="mb-4">
-          <h3 className="text-xl md:text-2xl font-bold text-slate-800">Recent Activity</h3>
-        </div>
-
-        {/* recent activity cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <ActivityCard title="Completed Modules" items={stats.recent_modules} empty="No recent modules." accent="blue" />
-          <ActivityCard title="Code Challenges" items={stats.recent_challenges} empty="No recent challenges." accent="purple" />
-          
-          {/* This card relies on `stats.recent_badges` which comes from the failing query */}
-          <ActivityCard title="Achievements" items={stats.recent_badges} empty="No achievements yet." accent="yellow" />
-        </div>
+        <button onClick={() => setOpen(false)} className="p-1 rounded hover:bg-white/10 text-gray-300">
+          <MessageSquareX size={16} />
+        </button>
       </div>
-    </div>
-  );
-}
 
-/* ============================================================
-  Helper components (scaled A2)
-  ============================================================ */
+      <div className="flex-1 overflow-y-auto max-h-[340px] p-3 space-y-3 text-sm">
+        {messages.length === 0 && <div className="text-gray-400 text-center">💬 Hi! Ask me to explain, fix or optimize your code.</div>}
 
-function NeoStat({ icon: Icon, title, value, gradient = "from-blue-400 to-blue-600" }) {
-  return (
-    <motion.div whileHover={{ y: -6 }} className="p-6 md:p-8 rounded-2xl bg-white/80 backdrop-blur-md border border-white/50 shadow-neu">
-      <div className="flex items-center gap-4">
-        <div className={`p-4 md:p-5 rounded-lg bg-gradient-to-br ${gradient} text-white shadow-sm`}>
-          <Icon size={22} />
-        </div>
-        <div>
-          <p className="text-sm md:text-base text-slate-600">{title}</p>
-          <p className="text-2xl md:text-3xl font-extrabold text-slate-800 mt-1">{value}</p>
-        </div>
+        {messages.map((msg, i) => (
+          <div key={i} className={`p-2 rounded-lg ${msg.role === "user" ? "bg-blue-600/30 text-blue-100 ml-auto w-fit max-w-[85%]" : "bg-gray-800/60 text-gray-100 mr-auto w-fit max-w-[85%]"}`}>
+            <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+            {msg.role === "assistant" && msg.raw && (
+              <div className="mt-2 flex gap-2 justify-end">
+                <button
+                  onClick={() => {
+                    navigator.clipboard?.writeText(msg.raw).catch(() => {});
+                  }}
+                  className="text-xs px-2 py-1 rounded border border-white/10 text-gray-300"
+                >
+                  Copy
+                </button>
+                <button
+                  onClick={() => applySuggestion(msg.raw)}
+                  className="text-xs px-2 py-1 rounded bg-green-600/80 text-white"
+                >
+                  Apply
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+
+        {loading && <div className="text-center text-cyan-300 animate-pulse text-sm">Thinking...</div>}
       </div>
-    </motion.div>
-  );
-}
 
-function CircularXP({ value = 0, label = 1 }) {
-  const safe = Math.min(100, Math.max(0, value));
-  const size = 64; // larger for A2
-  const stroke = 6;
-  const radius = (size - stroke) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (safe / 100) * circumference;
-
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="block">
-      <defs>
-        <linearGradient id="g1" x1="0" x2="1">
-          <stop offset="0%" stopColor="#60a5fa" />
-          <stop offset="100%" stopColor="#7c3aed" />
-        </linearGradient>
-      </defs>
-      <g transform={`translate(${size / 2},${size / 2})`}>
-        <circle r={radius} cx="0" cy="0" stroke="rgba(255,255,255,0.6)" strokeWidth={stroke} fill="none" />
-        <circle
-          r={radius}
-          cx="0"
-          cy="0"
-          stroke="url(#g1)"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          fill="none"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          transform="rotate(-90)"
+      <div className="border-t border-white/10 px-3 py-2 bg-slate-900/70 flex gap-2">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && !loading && sendMessage()}
+          placeholder="Ask: fix errors / explain / optimize"
+          className="flex-1 bg-transparent text-gray-200 outline-none text-sm px-2"
+          disabled={loading}
         />
-        <foreignObject x={-radius} y={-radius} width={size} height={size}>
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-sm md:text-base font-semibold text-slate-900">{label}</div>
-              <div className="text-[10px] text-slate-500 -mt-0.5">Lv</div>
-            </div>
-          </div>
-        </foreignObject>
-      </g>
-    </svg>
-  );
-}
-
-function MiniProg({ percent = 0 }) {
-  const safe = Math.min(100, Math.max(0, percent));
-  return (
-    <div className="w-full">
-      <div className="w-full bg-white/40 h-3 md:h-4 rounded-full overflow-hidden">
-        <div style={{ width: `${safe}%` }} className="h-full bg-gradient-to-r from-indigo-400 to-blue-500" />
+        <button onClick={() => sendMessage()} disabled={loading} className="bg-gradient-to-r from-blue-500 to-cyan-400 px-3 py-2 rounded-lg text-white text-sm flex items-center gap-2 disabled:opacity-60">
+          {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+        </button>
       </div>
-      <div className="text-xs md:text-sm text-slate-600 text-right mt-1">{safe}%</div>
+
+      <style>{`.code-block{background:#0f172a;padding:8px;border-radius:6px;font-family:'Fira Code', monospace;font-size:13px;color:#a5f3fc;border:1px solid rgba(255,255,255,0.06);white-space:pre-wrap}`}</style>
     </div>
   );
 }
 
-function ActivityCard({ title, items, empty = "No items", accent = "blue" }) {
-  const colors = {
-    blue: "from-blue-400 to-blue-600",
-    purple: "from-purple-400 to-purple-600",
-    yellow: "from-yellow-400 to-yellow-600",
+/* =================== OnlineCompilerPage =================== */
+export default function OnlineCompilerPage() {
+  const [language, setLanguage] = useState("java");
+  const [code, setCode] = useState("");
+  const [output, setOutput] = useState("");
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [terminalOpen, setTerminalOpen] = useState(true);
+  const [drawMode, setDrawMode] = useState(false);
+
+  const terminalRef = useRef(null);
+
+  // Canvas refs
+  const canvasRef = useRef(null);
+  const ctxRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [strokeColor, setStrokeColor] = useState("#00b4ff");
+  const [strokeWidth, setStrokeWidth] = useState(2);
+  const [tool, setTool] = useState("draw");
+  const [drawingHistory, setDrawingHistory] = useState([]);
+  const [redoStack, setRedoStack] = useState([]);
+
+  const templates = {
+    cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Enter a number: \";\n    int n;\n    cin >> n;\n    cout << \"You entered: \" << n << endl;\n    return 0;\n}`,
+    c: `#include <stdio.h>\nint main() {\n    int n;\n    printf(\"Enter a number: \" );\n    scanf(\"%d\", &n);\n    printf(\"You entered: %d\\n\", n);\n    return 0;\n}`,
+    java: `import java.util.*;\nclass Hello {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.print(\"Enter your name: \" );\n        String name = sc.nextLine();\n        System.out.println(\"Hello, \" + name + \"!\");\n    }\n}`,
+    python: `name = input(\"Enter your name: \")\nprint(\"Hello,\", name)`,
+    javascript: `let name = prompt(\"Enter your name:\");\nconsole.log(\"Hello, \" + name);`,
+  };
+
+  useEffect(() => {
+    setCode(templates[language]);
+    setOutput("");
+  }, [language]);
+
+  useEffect(() => {
+    if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+  }, [output]);
+
+  // Initialize canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = strokeWidth;
+    ctxRef.current = ctx;
+
+    const resizeCanvas = () => {
+      const parent = canvas.parentElement || document.body;
+      canvas.width = parent.offsetWidth;
+      canvas.height = parent.offsetHeight;
+      // redraw last state if present
+      const last = drawingHistory[drawingHistory.length - 1];
+      if (last) {
+        const img = new Image();
+        img.onload = () => ctx.drawImage(img, 0, 0);
+        img.src = last;
+      }
+    };
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, [strokeColor, strokeWidth, drawMode, drawingHistory]);
+
+  const pointerDown = (e) => {
+    if (!drawMode) return;
+    e.preventDefault();
+    const ctx = ctxRef.current;
+    if (!ctx) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+    const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    setIsDrawing(true);
+    // capture pointer for pointer events
+    if (e.pointerId) canvasRef.current.setPointerCapture(e.pointerId);
+  };
+
+  const pointerMove = (e) => {
+    if (!isDrawing || !drawMode) return;
+    const ctx = ctxRef.current;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+    const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+
+    if (tool === "erase") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.lineWidth = 20;
+    } else {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = strokeWidth;
+    }
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  const pointerUp = (e) => {
+    if (!isDrawing) return;
+    const ctx = ctxRef.current;
+    ctx.closePath();
+    setIsDrawing(false);
+    if (e && e.pointerId && canvasRef.current.releasePointerCapture) canvasRef.current.releasePointerCapture(e.pointerId);
+    setDrawingHistory((prev) => {
+      const newH = [...prev, canvasRef.current.toDataURL()];
+      setRedoStack([]);
+      return newH;
+    });
+  };
+
+  const clearCanvas = () => {
+    const ctx = ctxRef.current;
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    setDrawingHistory([]);
+    setRedoStack([]);
+  };
+
+  const undo = () => {
+    if (drawingHistory.length === 0) return;
+    const newHistory = [...drawingHistory];
+    const last = newHistory.pop();
+    setRedoStack((r) => [...r, last]);
+    const ctx = ctxRef.current;
+    const img = new Image();
+    const prev = newHistory[newHistory.length - 1];
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      ctx.drawImage(img, 0, 0);
+    };
+    if (prev) img.src = prev;
+    else ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    setDrawingHistory(newHistory);
+  };
+
+  const redo = () => {
+    if (redoStack.length === 0) return;
+    const newRedo = [...redoStack];
+    const restore = newRedo.pop();
+    setRedoStack(newRedo);
+    const ctx = ctxRef.current;
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0);
+    img.src = restore;
+    setDrawingHistory((h) => [...h, restore]);
+  };
+
+  const getLanguageId = (lang) => ({ cpp: 54, c: 50, java: 62, python: 71, javascript: 63 }[lang] || 63);
+
+  const runCode = async () => {
+    setLoading(true);
+    setTerminalOpen(true);
+    setOutput("⏳ Compiling and running your code...");
+    try {
+      const payload = {
+        language_id: getLanguageId(language),
+        source_code: code,
+        stdin: input,
+      };
+      const res = await axios.post(
+        "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+            "X-RapidAPI-Key": import.meta.env.VITE_JUDGE0_API_KEY,
+          },
+        }
+      );
+      const { stdout, stderr, compile_output, time } = res.data;
+      const result = stdout ? `🟢 Output:\n${stdout}\n\n⏱ Execution Time: ${time}s` : stderr || compile_output || "⚠️ No output.";
+      setOutput(result);
+    } catch (err) {
+      console.error(err);
+      setOutput("❌ Error executing code.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <motion.div whileHover={{ y: -6 }} className="bg-white/80 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/50 shadow-neu min-h-[320px]">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="text-lg md:text-xl font-semibold text-slate-800">{title}</h4>
-        <div className={`p-2 rounded-md bg-gradient-to-br ${colors[accent]} text-white text-xs md:text-sm`}>{items?.length ?? 0}</div>
+    <div className="min-h-screen bg-[#1e1e1e] text-gray-200 flex flex-col relative select-none">
+      <div className="flex justify-between items-center px-4 py-2 bg-[#252526] border-b border-[#333]">
+        <div className="flex items-center gap-3">
+          <h1 className="text-sm font-semibold text-gray-300 flex items-center gap-2">
+            <Terminal size={16} className="text-blue-400" /> Playground
+          </h1>
+          <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bg-[#2d2d2d] text-gray-200 px-2 py-1 rounded text-sm border border-[#3c3c3c]">
+            <option value="cpp">C++</option>
+            <option value="c">C</option>
+            <option value="java">Java</option>
+            <option value="python">Python</option>
+            <option value="javascript">JavaScript</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button onClick={runCode} disabled={loading} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-md text-sm font-medium transition">
+            {loading ? <Loader2 className="animate-spin" size={16} /> : <Play size={16} />}
+            {loading ? "Running..." : "Run"}
+          </button>
+
+          <button onClick={() => setDrawMode(!drawMode)} className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-md ${drawMode ? "bg-green-600 hover:bg-green-700 text-white" : "bg-[#333] hover:bg-[#444] text-gray-200"}`}>
+            <Brush size={16} /> {drawMode ? "Close Draw" : "Draw"}
+          </button>
+
+          <button onClick={() => setTerminalOpen(!terminalOpen)} className="text-gray-300 hover:text-gray-100 px-2 text-sm">{terminalOpen ? "▾ Terminal" : "▸ Terminal"}</button>
+        </div>
       </div>
 
-      <div className="space-y-3 max-h-72 overflow-auto pr-2">
-        {items && items.length > 0 ? (
-          items.map((it, i) => (
-            <div key={i} className="rounded-lg p-4 md:p-5 bg-white/60 border border-white/40">
-              <p className="text-base md:text-lg font-medium text-slate-800">{it.title || it.name}</p>
-              <p className="text-sm md:text-sm text-slate-500 mt-1">
-                {/* This part looks correct, it needs `earned_at` for badges */}
-                {it.score ? `Score: ${it.score}` : it.completed_at ? new Date(it.completed_at).toLocaleDateString() : (it.earned_at ? new Date(it.earned_at).toLocaleDateString() : "")}
-              </p>
+      <div className="relative flex-1 overflow-hidden">
+        <Editor height={terminalOpen ? "70vh" : "85vh"} language={language === "cpp" ? "cpp" : language} theme="vs-dark" value={code} onChange={(v) => setCode(v || "")} options={{ fontSize: 15, minimap: { enabled: false }, automaticLayout: true, wordWrap: "on" }} />
+
+        {drawMode && (
+          <>
+            <canvas ref={canvasRef} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} className="absolute top-0 left-0 w-full h-full z-10 cursor-crosshair" />
+
+            <div className="absolute top-3 right-3 flex items-center gap-2 bg-[#252526]/90 backdrop-blur-md border border-[#333] rounded-lg p-2 z-20 shadow-lg">
+              <button onClick={() => setTool("draw")} className={`p-2 rounded ${tool === "draw" ? "bg-blue-600" : "hover:bg-[#333]"}`}><Pencil size={16} /></button>
+              <button onClick={() => setTool("erase")} className={`p-2 rounded ${tool === "erase" ? "bg-orange-600" : "hover:bg-[#333]"}`}><Eraser size={16} /></button>
+              <button onClick={undo} className="p-2 rounded hover:bg-[#333]"><RotateCcw size={16} /></button>
+              <button onClick={redo} className="p-2 rounded hover:bg-[#333]"><RotateCw size={16} /></button>
+              <button onClick={clearCanvas} className="p-2 rounded hover:bg-[#333] text-red-400"><Trash2 size={16} /></button>
+              <input type="color" value={strokeColor} onChange={(e) => setStrokeColor(e.target.value)} className="w-7 h-7 rounded cursor-pointer bg-transparent border-none" />
+              <input type="range" min="1" max="10" value={strokeWidth} onChange={(e) => setStrokeWidth(parseInt(e.target.value))} className="w-20 accent-blue-500" />
             </div>
-          ))
-        ) : (
-          <p className="text-base md:text-lg text-slate-500">{empty}</p>
+          </>
         )}
       </div>
-    </motion.div>
+
+      {terminalOpen && (
+        <div ref={terminalRef} className="bg-[#1e1e1e] border-t border-[#333] p-3 text-sm font-mono text-[#c6c6c6] max-h-[35vh] overflow-auto">
+          <div className="text-xs text-gray-400 mb-1">TERMINAL</div>
+          <pre className="whitespace-pre-wrap text-gray-100 mb-3">{output}</pre>
+          <div className="text-gray-400 text-xs mb-1">Enter your input below (stdin):</div>
+          <textarea value={input} onChange={(e) => setInput(e.target.value)} placeholder="Type input here and press Run..." rows={3} className="w-full bg-[#252526] text-gray-100 p-2 rounded border border-[#333] focus:outline-none resize-none" />
+        </div>
+      )}
+
+      {/* Embedded AI assistant */}
+      <AIAssistant getCode={() => code} applyCode={(newCode) => setCode(newCode)} />
+    </div>
   );
 }

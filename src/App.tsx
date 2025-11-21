@@ -14,6 +14,7 @@ const ProductServices = React.lazy(() => import('./pages/divisions/ProductServic
 const SkillApp = React.lazy(() => import("./pages/divisions/Skill/App")); // ✅ Keep ONLY this
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import ArenaX from './pages/ArenaX';
 
 import Journey from './pages/journey';
 import Gallery from './pages/Gallery';
@@ -61,7 +62,7 @@ function AppInner() {
           <Route path="/verify/:userId" element={<VerifyPage />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
-
+          <Route path="/arenax" element={<ArenaX />} />
 
           {/* ✅ Skill Division */}
           <Route path="/divisions/skill/*" element={<SkillApp />} />
