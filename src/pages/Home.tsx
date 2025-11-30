@@ -120,10 +120,10 @@ export default function Home() {
               <div className="absolute inset-0 shimmer"></div>
             </Link>
             <Link
-              to="/journey"
+              to="/arenax"
               className="group px-10 py-5 glass-effect border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-[#0052CC] transition-all duration-300 promptx-cta"
             >
-             <span className="relative z-10">Journey</span>
+             <span className="relative z-10">ArenaX</span>
              <div className="promptx-shimmer" aria-hidden></div>
             </Link>
           </div>

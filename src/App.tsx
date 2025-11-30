@@ -1,3 +1,4 @@
+// src/App.tsx
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import React, { Suspense } from 'react';
 import Navbar from './components/Navbar';
@@ -11,10 +12,10 @@ const Media = React.lazy(() => import('./pages/divisions/Media'));
 const Events = React.lazy(() => import('./pages/divisions/Events'));
 const Web = React.lazy(() => import('./pages/divisions/Web'));
 const ProductServices = React.lazy(() => import('./pages/divisions/ProductServices'));
-const SkillApp = React.lazy(() => import("./pages/divisions/Skill/App")); // ✅ Keep ONLY this
+const SkillApp = React.lazy(() => import("./pages/divisions/Skill/App"));
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
-import ArenaX from './pages/ArenaX';
+import ArenaXAppRoutes from './pages/ArenaX/App';
 
 import Journey from './pages/journey';
 import Gallery from './pages/Gallery';
@@ -23,19 +24,26 @@ import Account from './pages/Account';
 import PromptX from './pages/PromptX';
 import VerifyPage from "./pages/VerifyPage";
 
-
 function AppInner() {
   const location = useLocation();
 
-  // ✅ Hide Navbar for Skill Division only
-  const hideNavbarOn = ['/divisions/skill', '/divisions/skill/'];
-  const shouldHideNavbar = hideNavbarOn.some((path) =>
+  const hideLayoutOn = [
+    "/divisions/skill",
+    "/divisions/skill/",
+    "/arenax",
+    "/arenax/",
+  ];
+
+  
+  const shouldHideLayout = hideLayoutOn.some((path) =>
     location.pathname.startsWith(path)
   );
 
   return (
     <div className="min-h-screen bg-white">
-      {!shouldHideNavbar && <Navbar />}
+      {/* Hide global navbar on ArenaX + Skill */}
+      {!shouldHideLayout && <Navbar />}
+
       <Suspense
         fallback={
           <div className="min-h-screen flex items-center justify-center text-xl font-semibold text-gray-500">
@@ -62,16 +70,23 @@ function AppInner() {
           <Route path="/verify/:userId" element={<VerifyPage />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
-          <Route path="/arenax" element={<ArenaX />} />
 
-          {/* ✅ Skill Division */}
+          {/* ArenaX nested routes */}
+          <Route path="/arenax/*" element={<ArenaXAppRoutes />} />
+
+          {/* Skill App */}
           <Route path="/divisions/skill/*" element={<SkillApp />} />
         </Routes>
       </Suspense>
-      <Footer />
+
+      {/* 🔥 FIX: Hide global footer on ArenaX + Skill */}
+      {!shouldHideLayout && <Footer />}
     </div>
   );
+
+    
 }
+
 
 export default function App() {
   return (
