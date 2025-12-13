@@ -17,6 +17,7 @@ import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import ArenaXAppRoutes from './pages/ArenaX/App';
 import RefundPolicyPage from './pages/Refund';
+import TermsOfUsePage from './pages/TUse';
 
 import Journey from './pages/journey';
 import Gallery from './pages/Gallery';
@@ -24,6 +25,8 @@ import Login from './pages/Login';
 import Account from './pages/Account';
 import PromptX from './pages/PromptX';
 import VerifyPage from "./pages/VerifyPage";
+import RefundCancellationPolicyPage from './pages/RPolicy';
+import PrivacyPolicyPage from './pages/PPolicy';
 
 function AppInner() {
   const location = useLocation();
@@ -72,7 +75,9 @@ function AppInner() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/refund-policy" element={<RefundPolicyPage />} />
-
+          <Route path="/terms-of-use" element={<TermsOfUsePage />} />
+          <Route path="/refund-cancellation-policy" element={<RefundCancellationPolicyPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           {/* ArenaX nested routes */}
           <Route path="/arenax/*" element={<ArenaXAppRoutes />} />
 
