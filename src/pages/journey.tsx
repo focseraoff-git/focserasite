@@ -279,7 +279,7 @@ export default function JourneyCinematicPro_YouTube() {
   
   // MODIFICATION: Data updated with YouTube URLs for videos and mediaId field
   const slides: MediaItem[] = [
-    { title: "Teluginti Deepavali", caption: "Lights & storytelling.", mediaId: "https://youtu.be/embed/I0_951_MPE0", type: "video", aspectRatio: "9:16" },
+    { title: "Teluginti Deepavali", caption: "Lights & storytelling.", mediaId: "", type: "video", aspectRatio: "9:16" },
     { title: "Agentic AI", caption: "Future visuals & experiments.", mediaId: "https://www.youtube.com/watch?v=B069-0Iofb8", type: "video" },
     { title: "Nature Cinematic", caption: "Calm & atmospheric.", mediaId: "https://www.youtube.com/watch?v=Cxw3t-8-bk8", type: "video" },
   ];
