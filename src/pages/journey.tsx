@@ -404,7 +404,7 @@ export default function JourneyCinematicPro_YouTube() {
               Innovate<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">X</span>25
             </h1>
             <p className="text-lg text-gray-300 leading-relaxed mb-8">
-              Two days of relentless creativity. The IPL Auction, Brand Battles, and Echoes coming together for a summit of 350+ participants.
+              Two days of relentless creativity.Brand Battles, and Echoes coming together for a summit of 350+ participants.
             </p>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
