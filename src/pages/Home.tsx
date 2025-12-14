@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Camera, Megaphone, PartyPopper, Globe, Package, GraduationCap, ArrowRight, Sparkles } from 'lucide-react';
-// import DashboardPage from './divisions/Skill/Pages/OnlineCompilerPage';
+
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
 
@@ -61,14 +61,14 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-[#ECECEC]">
-  <style>{` 
-      /* PromptX CTA shimmer effect (badge removed) */
+      <style>{` 
+      /* PromptX CTA shimmer effect */
       .promptx-cta { box-shadow: 0 6px 36px rgba(6,182,212,0.12); position: relative; overflow: visible; }
       .promptx-cta::after { content: ''; position: absolute; inset: -6px; border-radius: 9999px; background: radial-gradient(circle at 30% 20%, rgba(99,102,241,0.12), transparent 10%, transparent 40%), radial-gradient(circle at 70% 80%, rgba(6,182,212,0.08), transparent 10%); z-index: -1; }
       .promptx-shimmer { position: absolute; inset: 0; pointer-events: none; opacity: 0.35; mix-blend-mode: screen; background: linear-gradient(120deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.05) 100%); transform: translateX(-110%); transition: transform .8s ease-in-out; }
       .promptx-cta:hover .promptx-shimmer { transform: translateX(110%); }
     `}</style>
-  {/* PromptX popup removed */}
+      
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0052CC] via-[#0066FF] to-[#0052CC]">
           <div className="absolute inset-0 opacity-20">
@@ -100,9 +100,6 @@ export default function Home() {
             <div className="inline-block px-6 py-2 glass-effect rounded-full text-white text-sm font-medium mb-6">
               Welcome to the Future of Creativity
             </div>
-            {/* PromptX shining badge to indicate nearby event */}
-            <div className="mt-2">
-            </div>
           </div>
           <h1 className="text-5xl sm:text-6xl lg:text-8xl font-bold text-white mb-8 animate-fade-in leading-tight">
             Focus. Create.<br />Celebrate.
@@ -110,7 +107,11 @@ export default function Home() {
           <p className="text-xl sm:text-2xl text-white/95 mb-12 animate-fade-in-delay max-w-3xl mx-auto font-light">
             A global creative, media, and digital solutions group empowering brands and individuals worldwide
           </p>
+          
+          {/* --- BUTTON GROUP SECTION --- */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-delay-2">
+            
+            {/* 1. Explore Divisions Button */}
             <Link
               to="/about"
               className="group relative px-10 py-5 bg-white text-[#0052CC] rounded-full font-semibold hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-2 overflow-hidden"
@@ -119,14 +120,28 @@ export default function Home() {
               <ArrowRight className="relative z-10 group-hover:translate-x-1 transition-transform" size={20} />
               <div className="absolute inset-0 shimmer"></div>
             </Link>
+
+            {/* 2. NEW PromptX Button */}
+            <Link
+              to="/promptx"
+              className="group px-10 py-5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-cyan-500/40 transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
+              <span>PromptX</span>
+            </Link>
+
+            {/* 3. ArenaX Button */}
             <Link
               to="/arenax"
               className="group px-10 py-5 glass-effect border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-[#0052CC] transition-all duration-300 promptx-cta"
             >
-             <span className="relative z-10">ArenaX</span>
-             <div className="promptx-shimmer" aria-hidden></div>
+              <span className="relative z-10">ArenaX</span>
+              <div className="promptx-shimmer" aria-hidden></div>
             </Link>
+
           </div>
+          {/* --- END BUTTON GROUP --- */}
+          
         </div>
 
         <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">
@@ -136,6 +151,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Divisions Grid Section */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white via-[#ECECEC]/30 to-white"></div>
 
@@ -191,6 +207,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Statistics Section */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0052CC] via-[#0066FF] to-[#0052CC]">
           <div className="absolute inset-0 opacity-10">

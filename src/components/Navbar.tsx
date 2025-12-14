@@ -3,13 +3,14 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-// ⏪ Reverting to original import path from your other files
-import { lmsSupabaseClient } from "../lib/ssupabase";
+
+// ✅ FIXED: Using the standard 'supabase' client so it matches your Login page
+import { supabase } from "../lib/supabase"; 
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [divisionsOpen, setDivisionsOpen] = useState(false);
-  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [isDarkBackground, setIsDarkBackground] = useState(false);
   const location = useLocation();
 
@@ -29,7 +30,6 @@ const Navbar = () => {
 
   const mainMenu = [
     { label: "Home", path: "/" },
-    
     { label: "Divisions", type: "dropdown" },
     { label: "About", path: "/about" },
     { label: "Mission", path: "/mission" },
@@ -37,14 +37,18 @@ const Navbar = () => {
     { label: "Contact", path: "/contact" },
   ];
 
+  // ✅ UPDATED: Robust Auth Check
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { session } } = await lmsSupabaseClient.auth.getSession();
+    const checkUser = async () => {
+      // 1. Check immediately
+      const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user || null);
     };
-    getUser();
 
-    const { data: authListener } = lmsSupabaseClient.auth.onAuthStateChange((_, session) => {
+    checkUser();
+
+    // 2. Listen for login/logout events
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
     });
 
@@ -53,14 +57,23 @@ const Navbar = () => {
     };
   }, []);
 
-  // background color brightness detection
+  // ✅ NEW: Force re-check whenever the URL changes (e.g. redirecting from Login -> Home)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user || null);
+    });
+  }, [location.pathname]);
+
+  // --- Background Brightness Logic ---
   useEffect(() => {
     const checkBackgroundColor = () => {
       if (!navRef.current) return;
       const navRect = navRef.current.getBoundingClientRect();
       const centerX = navRect.left + navRect.width / 2;
       const centerY = navRect.top + navRect.height / 2;
+      
       const elementBehind = document.elementFromPoint(centerX, centerY + 100);
+      
       if (elementBehind) {
         const bgColor = window.getComputedStyle(elementBehind).backgroundColor;
         const rgb = bgColor.match(/\d+/g);
@@ -71,6 +84,7 @@ const Navbar = () => {
         }
       }
     };
+
     let ticking = false;
     const onScroll = () => {
       if (!ticking) {
@@ -81,6 +95,7 @@ const Navbar = () => {
         });
       }
     };
+
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     checkBackgroundColor();
@@ -90,7 +105,7 @@ const Navbar = () => {
     };
   }, [location]);
 
-  // close menus when clicking outside
+  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
@@ -112,6 +127,7 @@ const Navbar = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Dynamic Styles
   const textColor = isDarkBackground ? "text-white" : "text-slate-700";
   const hoverTextColor = isDarkBackground ? "hover:text-blue-300" : "hover:text-blue-600";
   const activeTextColor = isDarkBackground ? "text-blue-300" : "text-blue-600";
@@ -194,7 +210,7 @@ const Navbar = () => {
           )
         )}
 
-        {/* ✅ Skill Portal CTA */}
+        {/* Skill Portal CTA */}
         <Link
           to="/divisions/skill/dashboard"
           className="ml-3 px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-semibold shadow-md hover:scale-105 transition-transform duration-300"
@@ -278,7 +294,7 @@ const Navbar = () => {
               )
             )}
 
-            {/* ✅ Add Skill CTA on mobile */}
+            {/* Mobile Skill CTA */}
             <Link
               to="/divisions/skill/dashboard"
               onClick={() => setMobileMenuOpen(false)}
