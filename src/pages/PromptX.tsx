@@ -184,16 +184,15 @@ const handleSubmit = async (e) => {
       throw new Error("Payment session not created");
     }
 
-    // ✅ Load Cashfree correctly
-    const cashfree = await load({
-      mode: "production", // use "sandbox" ONLY if Cashfree told you
-    });
-
-    // ✅ Open checkout
-   cashfree.checkout({
-  paymentSessionId: data.paymentSessionId,
-  redirectMode: "REDIRECT"
+   const cashfree = await load({
+  mode: "production", // sandbox only for testing
 });
+
+await cashfree.checkout({
+  paymentSessionId: data.paymentSessionId,
+  redirectMode: "REDIRECT",
+});
+
 
 
   } catch (err) {
