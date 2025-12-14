@@ -9,17 +9,18 @@ export default function PaymentSuccess() {
   const orderId = params.get("order_id");
 
   const [status, setStatus] = useState<Status>("PROCESSING");
-  const [attempts, setAttempts] = useState(0);
-  const pollRef = useRef<number | null>(null);
+  const attemptsRef = useRef(0);
+  const intervalRef = useRef<number | null>(null);
 
-  // ---- Poll payment status ----
   useEffect(() => {
     if (!orderId) {
       setStatus("FAILED");
       return;
     }
 
-    const checkStatus = async () => {
+    const MAX_ATTEMPTS = 9; // ~45 seconds
+
+    const poll = async () => {
       try {
         const res = await fetch(
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cashfree-status`,
@@ -35,34 +36,40 @@ export default function PaymentSuccess() {
 
         const data = await res.json();
 
-        if (data.status === "SUCCESS" || data.status === "FAILED") {
-          setStatus(data.status);
-          if (pollRef.current) clearInterval(pollRef.current);
-        } else {
-          setStatus("PROCESSING");
+        if (data.status === "SUCCESS") {
+          setStatus("SUCCESS");
+          clearInterval(intervalRef.current!);
+          return;
         }
+
+        if (data.status === "FAILED") {
+          setStatus("FAILED");
+          clearInterval(intervalRef.current!);
+          return;
+        }
+
+        // still processing
+        setStatus("PROCESSING");
       } catch {
-        setStatus("FAILED");
-        if (pollRef.current) clearInterval(pollRef.current);
+        // ignore temporary errors
+        setStatus("PROCESSING");
+      }
+
+      attemptsRef.current++;
+
+      if (attemptsRef.current >= MAX_ATTEMPTS) {
+        clearInterval(intervalRef.current!);
+        setStatus("FAILED"); // ⛔ HARD STOP
       }
     };
 
-    checkStatus();
-
-    pollRef.current = window.setInterval(() => {
-      setAttempts((a) => a + 1);
-      checkStatus();
-    }, 5000);
-
-    // stop polling after ~45 seconds
-    if (attempts > 9 && pollRef.current) {
-      clearInterval(pollRef.current);
-    }
+    poll(); // run immediately
+    intervalRef.current = window.setInterval(poll, 5000);
 
     return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [orderId, attempts]);
+  }, [orderId]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 overflow-hidden">
@@ -116,36 +123,18 @@ export default function PaymentSuccess() {
               Your registration for <strong>PromptX</strong> is confirmed.
             </p>
 
-            <p className="text-sm text-gray-600 mb-4">
-              📧 A confirmation email with your ticket has been sent.
-              <br />
-              Please check Inbox / Spam.
-            </p>
-
             {orderId && (
               <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 mb-6">
                 <span className="font-medium">Order ID:</span> {orderId}
               </div>
             )}
 
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => {
-                  // ready hook for receipt
-                  alert("Receipt download will be available soon.");
-                }}
-                className="w-full py-3 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
-              >
-                📄 Download Receipt
-              </button>
-
-              <button
-                onClick={() => navigate("/")}
-                className="w-full py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-              >
-                Go to Home
-              </button>
-            </div>
+            <button
+              onClick={() => navigate("/")}
+              className="w-full py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+            >
+              Go to Home
+            </button>
           </>
         )}
 
@@ -184,7 +173,6 @@ export default function PaymentSuccess() {
         )}
       </div>
 
-      {/* CONFETTI KEYFRAMES */}
       <style>{`
         @keyframes confetti {
           0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
