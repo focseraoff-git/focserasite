@@ -190,10 +190,11 @@ const handleSubmit = async (e) => {
     });
 
     // ✅ Open checkout
-    cashfree.checkout({
-      paymentSessionId: data.paymentSessionId,
-      redirectTarget: "_self",
-    });
+   cashfree.checkout({
+  paymentSessionId: data.paymentSessionId,
+  redirectMode: "REDIRECT"
+});
+
 
   } catch (err) {
     console.error(err);
