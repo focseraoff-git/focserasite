@@ -58,9 +58,10 @@ export default function PaymentSuccess() {
       attemptsRef.current++;
 
       if (attemptsRef.current >= MAX_ATTEMPTS) {
-        clearInterval(intervalRef.current!);
-        setStatus("FAILED"); // ⛔ HARD STOP
-      }
+  clearInterval(intervalRef.current!);
+  // stay processing — webhook will flip it
+}
+
     };
 
     poll(); // run immediately
