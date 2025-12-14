@@ -1,62 +1,148 @@
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+
+type Status = "PROCESSING" | "SUCCESS" | "FAILED";
 
 export default function PaymentSuccess() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const orderId = params.get("order_id");
 
+  const [status, setStatus] = useState<Status>("PROCESSING");
+
+  const intervalRef = useRef<number | null>(null);
+  const attemptsRef = useRef(0);
+
+  useEffect(() => {
+  if (!orderId) {
+    setStatus("FAILED");
+    return;
+  }
+
+  let attempts = 0;
+  const MAX = 7; // ~21 seconds
+  const INTERVAL = 3000;
+
+  const poll = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cashfree-status`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ orderId }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.status === "SUCCESS") {
+        setStatus("SUCCESS");
+        clearInterval(interval);
+        return;
+      }
+
+      attempts++;
+      if (attempts >= MAX) {
+        clearInterval(interval);
+        setStatus("FAILED"); // soft exit
+      }
+    } catch {
+      attempts++;
+    }
+  };
+
+  poll();
+  const interval = setInterval(poll, INTERVAL);
+
+  return () => clearInterval(interval);
+}, [orderId]);
+
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-blue-50 to-white px-4">
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 text-center overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
 
-        {/* Decorative glow */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-100 rounded-full blur-3xl opacity-70" />
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-100 rounded-full blur-3xl opacity-70" />
-
-        {/* Icon */}
-        <div className="relative z-10 mx-auto mb-6 w-16 h-16 rounded-full bg-green-100 flex items-center justify-center animate-pulse">
-          <span className="text-3xl">🎟️</span>
-        </div>
-
-        {/* Title */}
-        <h2 className="relative z-10 text-2xl font-extrabold text-gray-900 mb-2">
-          Booking Received
-        </h2>
-
-        {/* Message */}
-        <p className="relative z-10 text-gray-700 mb-4 leading-relaxed">
-          Thank you for registering for <strong>PromptX</strong>.
-          <br />
-          Your booking has been recorded successfully.
-        </p>
-
-        {/* What happens next */}
-        <div className="relative z-10 bg-blue-50 rounded-xl p-4 text-sm text-gray-700 mb-6">
-          <p className="font-medium mb-1">What happens next?</p>
-          <ul className="space-y-1 text-left">
-            <li>📧 You will receive your ticket by email</li>
-            <li>⏱️ This may take a few minutes</li>
-            <li>📁 Please check spam/promotions if needed</li>
-          </ul>
-        </div>
-
-        {/* Order ID */}
-        {orderId && (
-          <div className="relative z-10 text-xs text-gray-500 mb-6">
-            Order ID:
-            <div className="mt-1 font-mono text-gray-700 bg-gray-100 rounded-lg px-3 py-1 inline-block">
-              {orderId}
-            </div>
-          </div>
+        {/* PROCESSING */}
+        {status === "PROCESSING" && (
+          <>
+            <div className="mx-auto mb-6 h-14 w-14 rounded-full border-4 border-blue-500 border-t-transparent animate-spin" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Verifying Payment
+            </h2>
+            <p className="text-gray-600">
+              Please wait while we confirm your transaction.
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              This may take up to a minute…
+            </p>
+          </>
         )}
 
-        {/* CTA */}
-        <button
-          onClick={() => navigate("/")}
-          className="relative z-10 w-full py-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:opacity-90 transition"
-        >
-          Back to Home
-        </button>
+        {/* SUCCESS */}
+        {status === "SUCCESS" && (
+          <>
+            <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
+              <span className="text-3xl">✅</span>
+            </div>
+
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
+              Payment Successful
+            </h2>
+
+            <p className="text-gray-700 mb-4">
+              Your registration for <strong>PromptX</strong> is confirmed.
+            </p>
+
+            <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 mb-6">
+              <span className="font-medium">Order ID:</span> {orderId}
+            </div>
+
+            <button
+              onClick={() => navigate("/")}
+              className="w-full py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+            >
+              Go to Home
+            </button>
+          </>
+        )}
+
+        {/* FAILED */}
+        {status === "FAILED" && (
+          <>
+            <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-red-100 flex items-center justify-center">
+              <span className="text-3xl">❌</span>
+            </div>
+
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
+              Payment Failed
+            </h2>
+
+            <p className="text-gray-600 mb-6">
+              If the amount was debited, it will be refunded automatically
+              within 3–5 business days.
+            </p>
+
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                className="w-full py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+              >
+                Try Again
+              </button>
+
+              <button
+                onClick={() => navigate("/")}
+                className="w-full py-3 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+              >
+                Go to Home
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
