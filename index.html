@@ -17,7 +17,19 @@
       blob:
       https://api.cashfree.com
       https://sdk.cashfree.com
-      https://checkout.cashfree.com;
+      https://checkout.cashfree.com
+      https://cdn.jsdelivr.net
+      https://code.jquery.com;
+    script-src-elem
+      'self'
+      'unsafe-inline'
+      'unsafe-eval'
+      blob:
+      https://api.cashfree.com
+      https://sdk.cashfree.com
+      https://checkout.cashfree.com
+      https://cdn.jsdelivr.net
+      https://code.jquery.com;
     frame-src
       https://api.cashfree.com
       https://checkout.cashfree.com;
@@ -26,9 +38,16 @@
       https://api.cashfree.com
       https://sdk.cashfree.com
       https://*.cashfree.com;
-    img-src 'self' data: blob:;
+    img-src
+      'self'
+      data:
+      blob:;
+    style-src
+      'self'
+      'unsafe-inline';
   "
 />
+
 
   </head>
   <body>
