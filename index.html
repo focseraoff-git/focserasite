@@ -10,6 +10,7 @@
   http-equiv="Content-Security-Policy"
   content="
     default-src 'self';
+
     script-src
       'self'
       'unsafe-inline'
@@ -18,8 +19,11 @@
       https://api.cashfree.com
       https://sdk.cashfree.com
       https://checkout.cashfree.com
+      https://www.googletagmanager.com
+      https://www.google-analytics.com
       https://cdn.jsdelivr.net
       https://code.jquery.com;
+
     script-src-elem
       'self'
       'unsafe-inline'
@@ -28,23 +32,42 @@
       https://api.cashfree.com
       https://sdk.cashfree.com
       https://checkout.cashfree.com
+      https://www.googletagmanager.com
+      https://www.google-analytics.com
       https://cdn.jsdelivr.net
       https://code.jquery.com;
-    frame-src
-      https://api.cashfree.com
-      https://checkout.cashfree.com;
+
     connect-src
       'self'
       https://api.cashfree.com
       https://sdk.cashfree.com
-      https://*.cashfree.com;
+      https://*.cashfree.com
+      https://www.google-analytics.com
+      https://analytics.google.com;
+
+    frame-src
+      https://api.cashfree.com
+      https://checkout.cashfree.com;
+
     img-src
       'self'
       data:
-      blob:;
+      blob:
+      https://www.google-analytics.com;
+
     style-src
       'self'
-      'unsafe-inline';
+      'unsafe-inline'
+      https://fonts.googleapis.com;
+
+    style-src-elem
+      'self'
+      'unsafe-inline'
+      https://fonts.googleapis.com;
+
+    font-src
+      'self'
+      https://fonts.gstatic.com;
   "
 />
 
