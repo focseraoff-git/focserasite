@@ -9,18 +9,20 @@ export default function PaymentSuccess() {
   const orderId = params.get("order_id");
 
   const [status, setStatus] = useState<Status>("PROCESSING");
+
   const attemptsRef = useRef(0);
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // ❌ No order ID → immediate fail
     if (!orderId) {
       setStatus("FAILED");
       return;
     }
 
-    const MAX_ATTEMPTS = 9; // ~45 seconds
+    const MAX_ATTEMPTS = 9; // ~45 seconds (9 × 5s)
 
-    const poll = async () => {
+    const pollStatus = async () => {
       try {
         const res = await fetch(
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cashfree-status`,
@@ -36,63 +38,50 @@ export default function PaymentSuccess() {
 
         const data = await res.json();
 
-        if (data.status === "SUCCESS") {
+        if (data?.status === "SUCCESS") {
           setStatus("SUCCESS");
           clearInterval(intervalRef.current!);
           return;
         }
 
-        if (data.status === "FAILED") {
+        if (data?.status === "FAILED") {
           setStatus("FAILED");
           clearInterval(intervalRef.current!);
           return;
         }
 
-        // still processing
+        // still processing → continue polling
         setStatus("PROCESSING");
-      } catch {
-        // ignore temporary errors
+      } catch (err) {
+        // temporary network / server issue → keep processing
         setStatus("PROCESSING");
       }
 
-      attemptsRef.current++;
+      attemptsRef.current += 1;
 
+      // ⛔ HARD STOP — NO INFINITE LOADING
       if (attemptsRef.current >= MAX_ATTEMPTS) {
-  clearInterval(intervalRef.current!);
-  // stay processing — webhook will flip it
-}
-
+        clearInterval(intervalRef.current!);
+        setStatus("FAILED"); // ✅ graceful fallback
+      }
     };
 
-    poll(); // run immediately
-    intervalRef.current = window.setInterval(poll, 5000);
+    // ▶️ Run immediately
+    pollStatus();
 
+    // 🔁 Poll every 5 seconds
+    intervalRef.current = window.setInterval(pollStatus, 5000);
+
+    // 🧹 Cleanup
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [orderId]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 overflow-hidden">
-      {/* CONFETTI */}
-      {status === "SUCCESS" && (
-        <div className="pointer-events-none fixed inset-0 overflow-hidden">
-          {[...Array(30)].map((_, i) => (
-            <span
-              key={i}
-              className="absolute top-0 text-xl animate-confetti"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-              }}
-            >
-              🎉
-            </span>
-          ))}
-        </div>
-      )}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
 
-      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center z-10">
         {/* PROCESSING */}
         {status === "PROCESSING" && (
           <>
@@ -100,10 +89,10 @@ export default function PaymentSuccess() {
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Verifying Payment
             </h2>
-            <p className="text-gray-600 mb-2">
+            <p className="text-gray-600">
               Please wait while we confirm your transaction.
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 mt-1">
               This usually takes a few seconds…
             </p>
           </>
@@ -120,7 +109,7 @@ export default function PaymentSuccess() {
               Payment Successful
             </h2>
 
-            <p className="text-gray-700 mb-3">
+            <p className="text-gray-700 mb-4">
               Your registration for <strong>PromptX</strong> is confirmed.
             </p>
 
@@ -173,16 +162,6 @@ export default function PaymentSuccess() {
           </>
         )}
       </div>
-
-      <style>{`
-        @keyframes confetti {
-          0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-          100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-        }
-        .animate-confetti {
-          animation: confetti 3s linear infinite;
-        }
-      `}</style>
     </div>
   );
 }
