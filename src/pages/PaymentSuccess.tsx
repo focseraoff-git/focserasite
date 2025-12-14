@@ -10,55 +10,66 @@ export default function PaymentSuccess() {
 
   const [status, setStatus] = useState<Status>("PROCESSING");
 
-  const attemptsRef = useRef(0);
   const intervalRef = useRef<number | null>(null);
+  const attemptsRef = useRef(0);
 
   useEffect(() => {
-  if (!orderId) {
-    setStatus("FAILED");
-    return;
-  }
-
-  const poll = async () => {
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cashfree-status`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({ orderId }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (data.status === "SUCCESS") {
-        setStatus("SUCCESS");
-        return;
-      }
-
-      if (data.status === "FAILED") {
-        setStatus("FAILED");
-        return;
-      }
-
-      // ⏳ keep waiting
-      setStatus("PROCESSING");
-    } catch {
-      // NEVER mark failed here
-      setStatus("PROCESSING");
+    if (!orderId) {
+      setStatus("FAILED");
+      return;
     }
-  };
 
-  poll();
-  const interval = setInterval(poll, 5000);
+    const MAX_ATTEMPTS = 12; // 12 × 5s = 60s
 
-  return () => clearInterval(interval);
-}, [orderId]);
+    const poll = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cashfree-status`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({ orderId }),
+          }
+        );
 
+        const data = await res.json();
+
+        if (data.status === "SUCCESS") {
+          setStatus("SUCCESS");
+          clearInterval(intervalRef.current!);
+          return;
+        }
+
+        if (data.status === "FAILED") {
+          setStatus("FAILED");
+          clearInterval(intervalRef.current!);
+          return;
+        }
+
+        // Still processing
+        attemptsRef.current++;
+
+        if (attemptsRef.current >= MAX_ATTEMPTS) {
+          console.warn("⏳ Waiting for webhook confirmation");
+          clearInterval(intervalRef.current!);
+          // stay in PROCESSING
+        }
+      } catch (err) {
+        console.error("Polling error:", err);
+      }
+    };
+
+    // Run immediately
+    poll();
+    intervalRef.current = window.setInterval(poll, 5000);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [orderId]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
@@ -75,7 +86,7 @@ export default function PaymentSuccess() {
               Please wait while we confirm your transaction.
             </p>
             <p className="text-sm text-gray-500 mt-1">
-              This usually takes a few seconds…
+              This may take up to a minute…
             </p>
           </>
         )}
@@ -95,11 +106,9 @@ export default function PaymentSuccess() {
               Your registration for <strong>PromptX</strong> is confirmed.
             </p>
 
-            {orderId && (
-              <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 mb-6">
-                <span className="font-medium">Order ID:</span> {orderId}
-              </div>
-            )}
+            <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 mb-6">
+              <span className="font-medium">Order ID:</span> {orderId}
+            </div>
 
             <button
               onClick={() => navigate("/")}
