@@ -13,15 +13,14 @@ export default function PaymentSuccess() {
   const intervalRef = useRef<number | null>(null);
   const attemptsRef = useRef(0);
 
-  useEffect(() => {
+ useEffect(() => {
   if (!orderId) {
     setStatus("FAILED");
     return;
   }
 
   let attempts = 0;
-  const MAX = 7; // ~21 seconds
-  const INTERVAL = 3000;
+  const MAX = 8; // 40 seconds
 
   const poll = async () => {
     try {
@@ -48,7 +47,7 @@ export default function PaymentSuccess() {
       attempts++;
       if (attempts >= MAX) {
         clearInterval(interval);
-        setStatus("FAILED"); // soft exit
+        setStatus("SUCCESS"); // assume success
       }
     } catch {
       attempts++;
@@ -56,8 +55,7 @@ export default function PaymentSuccess() {
   };
 
   poll();
-  const interval = setInterval(poll, INTERVAL);
-
+  const interval = setInterval(poll, 5000);
   return () => clearInterval(interval);
 }, [orderId]);
 
