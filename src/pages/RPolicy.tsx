@@ -14,16 +14,19 @@ const CancellationRefundPolicyPage: React.FC = () => {
           Focsera – Cancellation & Refund Policy
         </h1>
 
-        
+        <p className="text-sm text-neutral-400 mb-10">
+          Last Updated: 16 November 2025
+        </p>
+
         <div className="space-y-6 text-neutral-300 leading-relaxed">
           <p>
             This Cancellation and Refund Policy outlines the terms and
-            conditions under which cancellations, returns, and refunds are
-            processed for products or services purchased through the Focsera
-            Platform, owned and operated by{" "}
-            <strong>LAGISHETTY UDAY KUMAR</strong>.
+            conditions under which cancellations and refunds are processed for
+            products or services purchased through the Focsera Platform, owned
+            and operated by <strong>LAGISHETTY UDAY KUMAR</strong>.
           </p>
 
+          {/* 1. Cancellation Policy */}
           <section>
             <h2 className="text-xl font-semibold mb-2">
               1. Cancellation Policy
@@ -34,55 +37,42 @@ const CancellationRefundPolicyPage: React.FC = () => {
             </p>
             <p className="mt-2">
               Cancellation requests may not be entertained if the order has
-              already been communicated to the seller or merchant listed on the
-              Platform and they have initiated the shipping process, or if the
-              product is out for delivery. In such cases, you may choose to
-              reject the product at the time of delivery, where applicable.
+              already been communicated to the seller or service provider
+              listed on the Platform and they have initiated the execution or
+              delivery process. In such cases, you may not be eligible for
+              cancellation.
             </p>
           </section>
 
+          {/* 2. Damaged / Defective / Incorrect Service */}
           <section>
             <h2 className="text-xl font-semibold mb-2">
-              2. Non-Cancellable Items
+              2. Damaged, Defective, or Incorrect Deliverables
             </h2>
             <p>
-              Focsera does not accept cancellation requests for perishable
-              goods, including but not limited to flowers, eatables, or similar
-              items.
-            </p>
-            <p className="mt-2">
-              However, a refund or replacement may be considered if the user
-              establishes that the quality of the product delivered is
-              defective or unsatisfactory.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold mb-2">
-              3. Damaged, Defective, or Incorrect Products
-            </h2>
-            <p>
-              If you receive a damaged, defective, or incorrect product, you
-              must report the issue to our customer support team within{" "}
-              <strong>24 hours (1 day)</strong> of receiving the product.
+              If you receive a damaged, defective, or incorrect product or
+              service deliverable, you must report the issue to our customer
+              support team within <strong>24 hours (1 day)</strong> of receipt
+              or delivery.
             </p>
             <p className="mt-2">
               The request will be reviewed and processed only after verification
-              by the respective seller or merchant listed on the Platform. Upon
-              verification, an appropriate resolution, including refund,
-              replacement, or rejection, will be provided.
+              by the respective seller, merchant, or service provider listed on
+              the Platform. Upon verification, an appropriate resolution,
+              including refund, replacement, or correction, will be provided.
             </p>
           </section>
 
+          {/* 3. Product / Service Not as Described */}
           <section>
             <h2 className="text-xl font-semibold mb-2">
-              4. Product Not as Described
+              3. Product or Service Not as Described
             </h2>
             <p>
-              If you believe that the product received is not as described on
-              the Platform or does not meet your expectations, you must notify
-              our customer support team within{" "}
-              <strong>24 hours (1 day)</strong> of receiving the product.
+              If you believe that the product or service received is not as
+              described on the Platform or does not meet the agreed scope, you
+              must notify our customer support team within{" "}
+              <strong>24 hours (1 day)</strong> of delivery.
             </p>
             <p className="mt-2">
               The customer support team will review the complaint and take an
@@ -90,21 +80,23 @@ const CancellationRefundPolicyPage: React.FC = () => {
             </p>
           </section>
 
+          {/* 4. Manufacturer / Third-Party Warranty */}
           <section>
             <h2 className="text-xl font-semibold mb-2">
-              5. Manufacturer Warranty
+              4. Manufacturer or Third-Party Warranty
             </h2>
             <p>
-              For products covered under a manufacturer’s warranty, all
-              warranty-related complaints, repairs, or replacements must be
-              addressed directly with the respective manufacturer in accordance
-              with their warranty terms.
+              For products or tools that come with a manufacturer’s or third-
+              party warranty, all warranty-related complaints, repairs, or
+              replacements must be addressed directly with the respective
+              manufacturer or provider in accordance with their warranty terms.
             </p>
           </section>
 
+          {/* 5. Refund Processing */}
           <section>
             <h2 className="text-xl font-semibold mb-2">
-              6. Refund Processing
+              5. Refund Processing
             </h2>
             <p>
               Once a refund request is approved by{" "}
@@ -118,9 +110,10 @@ const CancellationRefundPolicyPage: React.FC = () => {
             </p>
           </section>
 
+          {/* 6. Contact */}
           <section>
             <h2 className="text-xl font-semibold mb-2">
-              7. Contact Information
+              6. Contact Information
             </h2>
             <p>
               For any cancellation or refund-related queries, please contact us
@@ -129,7 +122,7 @@ const CancellationRefundPolicyPage: React.FC = () => {
             <p className="mt-2">
               <strong>Email:</strong>{" "}
               <a
-                href="mailto:contact@focsera.in"
+                href="mailto:info.focsera@gmail.com"
                 className="underline underline-offset-4"
               >
                 info.focsera@gmail.com
