@@ -1,16 +1,23 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+
+type Status = "PROCESSING" | "SUCCESS" | "FAILED";
 
 export default function PaymentSuccess() {
   const [params] = useSearchParams();
+  const navigate = useNavigate();
   const orderId = params.get("order_id");
 
-  const [status, setStatus] = useState<"PROCESSING" | "SUCCESS" | "FAILED">(
-    "PROCESSING"
-  );
+  const [status, setStatus] = useState<Status>("PROCESSING");
+  const [attempts, setAttempts] = useState(0);
+  const pollRef = useRef<number | null>(null);
 
+  // ---- Poll payment status ----
   useEffect(() => {
-    if (!orderId) return;
+    if (!orderId) {
+      setStatus("FAILED");
+      return;
+    }
 
     const checkStatus = async () => {
       try {
@@ -27,20 +34,166 @@ export default function PaymentSuccess() {
         );
 
         const data = await res.json();
-        setStatus(data.status);
+
+        if (data.status === "SUCCESS" || data.status === "FAILED") {
+          setStatus(data.status);
+          if (pollRef.current) clearInterval(pollRef.current);
+        } else {
+          setStatus("PROCESSING");
+        }
       } catch {
         setStatus("FAILED");
+        if (pollRef.current) clearInterval(pollRef.current);
       }
     };
 
     checkStatus();
-  }, [orderId]);
+
+    pollRef.current = window.setInterval(() => {
+      setAttempts((a) => a + 1);
+      checkStatus();
+    }, 5000);
+
+    // stop polling after ~45 seconds
+    if (attempts > 9 && pollRef.current) {
+      clearInterval(pollRef.current);
+    }
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, [orderId, attempts]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      {status === "PROCESSING" && <h2>Checking payment status...</h2>}
-      {status === "SUCCESS" && <h2>✅ Payment Successful!</h2>}
-      {status === "FAILED" && <h2>❌ Payment Failed</h2>}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 overflow-hidden">
+      {/* CONFETTI */}
+      {status === "SUCCESS" && (
+        <div className="pointer-events-none fixed inset-0 overflow-hidden">
+          {[...Array(30)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute top-0 text-xl animate-confetti"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+              }}
+            >
+              🎉
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center z-10">
+        {/* PROCESSING */}
+        {status === "PROCESSING" && (
+          <>
+            <div className="mx-auto mb-6 h-14 w-14 rounded-full border-4 border-blue-500 border-t-transparent animate-spin" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Verifying Payment
+            </h2>
+            <p className="text-gray-600 mb-2">
+              Please wait while we confirm your transaction.
+            </p>
+            <p className="text-sm text-gray-500">
+              This usually takes a few seconds…
+            </p>
+          </>
+        )}
+
+        {/* SUCCESS */}
+        {status === "SUCCESS" && (
+          <>
+            <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
+              <span className="text-3xl">✅</span>
+            </div>
+
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
+              Payment Successful
+            </h2>
+
+            <p className="text-gray-700 mb-3">
+              Your registration for <strong>PromptX</strong> is confirmed.
+            </p>
+
+            <p className="text-sm text-gray-600 mb-4">
+              📧 A confirmation email with your ticket has been sent.
+              <br />
+              Please check Inbox / Spam.
+            </p>
+
+            {orderId && (
+              <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 mb-6">
+                <span className="font-medium">Order ID:</span> {orderId}
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  // ready hook for receipt
+                  alert("Receipt download will be available soon.");
+                }}
+                className="w-full py-3 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+              >
+                📄 Download Receipt
+              </button>
+
+              <button
+                onClick={() => navigate("/")}
+                className="w-full py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+              >
+                Go to Home
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* FAILED */}
+        {status === "FAILED" && (
+          <>
+            <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-red-100 flex items-center justify-center">
+              <span className="text-3xl">❌</span>
+            </div>
+
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
+              Payment Failed
+            </h2>
+
+            <p className="text-gray-600 mb-6">
+              If the amount was debited, it will be refunded automatically
+              within 3–5 business days.
+            </p>
+
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                className="w-full py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+              >
+                Try Again
+              </button>
+
+              <button
+                onClick={() => navigate("/")}
+                className="w-full py-3 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+              >
+                Go to Home
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* CONFETTI KEYFRAMES */}
+      <style>{`
+        @keyframes confetti {
+          0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+        .animate-confetti {
+          animation: confetti 3s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }
