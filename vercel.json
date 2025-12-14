@@ -1,17 +1,17 @@
 {
-  "rewrites": [
-    { "source": "/divisions/skill/(.*)", "destination": "/divisions/skill/index.html" },
-    { "source": "/(.*)", "destination": "/" }
-  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; connect-src 'self' https://api.cashfree.com https://sdk.cashfree.com https://*.cashfree.com https://gyjedezyhdlpwzeyixwg.supabase.co https://www.google-analytics.com https://analytics.google.com; frame-src https://checkout.cashfree.com https://sdk.cashfree.com https://api.cashfree.com; script-src 'self' https://sdk.cashfree.com https://*.cashfree.com 'unsafe-inline' 'unsafe-eval' blob:; script-src-elem 'self' https://sdk.cashfree.com https://*.cashfree.com 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:;"
+          "value": "default-src 'self'; connect-src 'self' https://api.cashfree.com https://sdk.cashfree.com https://*.cashfree.com https://gyjedezyhdlpwzeyixwg.supabase.co https://www.google-analytics.com https://analytics.google.com; frame-src https://checkout.cashfree.com https://sdk.cashfree.com; script-src 'self' https://sdk.cashfree.com https://*.cashfree.com 'unsafe-inline' 'unsafe-eval' blob:; script-src-elem 'self' https://sdk.cashfree.com https://*.cashfree.com 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
         }
       ]
     }
+  ],
+  "rewrites": [
+    { "source": "/divisions/skill/(.*)", "destination": "/divisions/skill/index.html" },
+    { "source": "/(.*)", "destination": "/" }
   ]
 }
