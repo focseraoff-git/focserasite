@@ -14,69 +14,51 @@ export default function PaymentSuccess() {
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // ❌ No order ID → immediate fail
-    if (!orderId) {
-      setStatus("FAILED");
-      return;
+  if (!orderId) {
+    setStatus("FAILED");
+    return;
+  }
+
+  const poll = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cashfree-status`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ orderId }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.status === "SUCCESS") {
+        setStatus("SUCCESS");
+        return;
+      }
+
+      if (data.status === "FAILED") {
+        setStatus("FAILED");
+        return;
+      }
+
+      // ⏳ keep waiting
+      setStatus("PROCESSING");
+    } catch {
+      // NEVER mark failed here
+      setStatus("PROCESSING");
     }
+  };
 
-    const MAX_ATTEMPTS = 9; // ~45 seconds (9 × 5s)
+  poll();
+  const interval = setInterval(poll, 5000);
 
-    const pollStatus = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cashfree-status`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            },
-            body: JSON.stringify({ orderId }),
-          }
-        );
+  return () => clearInterval(interval);
+}, [orderId]);
 
-        const data = await res.json();
-
-        if (data?.status === "SUCCESS") {
-          setStatus("SUCCESS");
-          clearInterval(intervalRef.current!);
-          return;
-        }
-
-        if (data?.status === "FAILED") {
-          setStatus("FAILED");
-          clearInterval(intervalRef.current!);
-          return;
-        }
-
-        // still processing → continue polling
-        setStatus("PROCESSING");
-      } catch (err) {
-        // temporary network / server issue → keep processing
-        setStatus("PROCESSING");
-      }
-
-      attemptsRef.current += 1;
-
-      // ⛔ HARD STOP — NO INFINITE LOADING
-      if (attemptsRef.current >= MAX_ATTEMPTS) {
-        clearInterval(intervalRef.current!);
-        setStatus("FAILED"); // ✅ graceful fallback
-      }
-    };
-
-    // ▶️ Run immediately
-    pollStatus();
-
-    // 🔁 Poll every 5 seconds
-    intervalRef.current = window.setInterval(pollStatus, 5000);
-
-    // 🧹 Cleanup
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [orderId]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
