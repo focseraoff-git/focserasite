@@ -14,62 +14,53 @@ export default function PaymentSuccess() {
   const attemptsRef = useRef(0);
 
   useEffect(() => {
-    if (!orderId) {
-      setStatus("FAILED");
-      return;
-    }
+  if (!orderId) {
+    setStatus("FAILED");
+    return;
+  }
 
-    const MAX_ATTEMPTS = 12; // 12 × 5s = 60s
+  let attempts = 0;
+  const MAX = 7; // ~21 seconds
+  const INTERVAL = 3000;
 
-    const poll = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cashfree-status`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            },
-            body: JSON.stringify({ orderId }),
-          }
-        );
-
-        const data = await res.json();
-
-        if (data.status === "SUCCESS") {
-          setStatus("SUCCESS");
-          clearInterval(intervalRef.current!);
-          return;
+  const poll = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cashfree-status`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ orderId }),
         }
+      );
 
-        if (data.status === "FAILED") {
-          setStatus("FAILED");
-          clearInterval(intervalRef.current!);
-          return;
-        }
+      const data = await res.json();
 
-        // Still processing
-        attemptsRef.current++;
-
-        if (attemptsRef.current >= MAX_ATTEMPTS) {
-          console.warn("⏳ Waiting for webhook confirmation");
-          clearInterval(intervalRef.current!);
-          // stay in PROCESSING
-        }
-      } catch (err) {
-        console.error("Polling error:", err);
+      if (data.status === "SUCCESS") {
+        setStatus("SUCCESS");
+        clearInterval(interval);
+        return;
       }
-    };
 
-    // Run immediately
-    poll();
-    intervalRef.current = window.setInterval(poll, 5000);
+      attempts++;
+      if (attempts >= MAX) {
+        clearInterval(interval);
+        setStatus("FAILED"); // soft exit
+      }
+    } catch {
+      attempts++;
+    }
+  };
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [orderId]);
+  poll();
+  const interval = setInterval(poll, INTERVAL);
+
+  return () => clearInterval(interval);
+}, [orderId]);
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
