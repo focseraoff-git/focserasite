@@ -1,0 +1,283 @@
+@tailwind base;
+
+/* 3D Card Styles */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ArenaX Dark Brown/Black Theme */
+    --background: 15 30% 4%;
+    --foreground: 40 30% 90%;
+
+    --card: 15 25% 7%;
+    --card-foreground: 40 30% 90%;
+
+    --popover: 15 25% 7%;
+    --popover-foreground: 40 30% 90%;
+
+    /* Gold Primary */
+    --primary: 45 70% 47%;
+    --primary-foreground: 15 30% 4%;
+
+    /* Warm Brown Secondary */
+    --secondary: 20 20% 12%;
+    --secondary-foreground: 40 30% 90%;
+
+    --muted: 20 15% 15%;
+    --muted-foreground: 30 15% 55%;
+
+    /* Gold Accent */
+    --accent: 42 65% 55%;
+    --accent-foreground: 15 30% 4%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 30 20% 18%;
+    --input: 30 20% 18%;
+    --ring: 45 70% 47%;
+
+    --radius: 0.5rem;
+
+    /* Custom ArenaX tokens */
+    --gold: 45 70% 47%;
+    --gold-light: 42 65% 60%;
+    --gold-dark: 43 75% 35%;
+    --brown-dark: 15 30% 4%;
+    --brown-medium: 20 20% 10%;
+    --brown-light: 25 15% 20%;
+
+    /* Glow effects */
+    --glow-gold: 0 0 20px hsl(45 70% 47% / 0.5), 0 0 40px hsl(45 70% 47% / 0.3), 0 0 60px hsl(45 70% 47% / 0.1);
+    --glow-gold-intense: 0 0 30px hsl(45 70% 47% / 0.7), 0 0 60px hsl(45 70% 47% / 0.4), 0 0 100px hsl(45 70% 47% / 0.2);
+
+    /* Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(45 70% 47%) 0%, hsl(42 65% 60%) 50%, hsl(45 70% 47%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(15 30% 4%) 0%, hsl(20 20% 8%) 100%);
+    --gradient-radial: radial-gradient(ellipse at center, hsl(20 20% 10%) 0%, hsl(15 30% 4%) 70%);
+
+    --sidebar-background: 15 30% 4%;
+    --sidebar-foreground: 40 30% 90%;
+    --sidebar-primary: 45 70% 47%;
+    --sidebar-primary-foreground: 15 30% 4%;
+    --sidebar-accent: 20 20% 12%;
+    --sidebar-accent-foreground: 40 30% 90%;
+    --sidebar-border: 30 20% 18%;
+    --sidebar-ring: 45 70% 47%;
+  }
+
+  .dark {
+    --background: 15 30% 4%;
+    --foreground: 40 30% 90%;
+
+    --card: 15 25% 7%;
+    --card-foreground: 40 30% 90%;
+
+    --popover: 15 25% 7%;
+    --popover-foreground: 40 30% 90%;
+
+    --primary: 45 70% 47%;
+    --primary-foreground: 15 30% 4%;
+
+    --secondary: 20 20% 12%;
+    --secondary-foreground: 40 30% 90%;
+
+    --muted: 20 15% 15%;
+    --muted-foreground: 30 15% 55%;
+
+    --accent: 42 65% 55%;
+    --accent-foreground: 15 30% 4%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 30 20% 18%;
+    --input: 30 20% 18%;
+    --ring: 45 70% 47%;
+
+    --sidebar-background: 15 30% 4%;
+    --sidebar-foreground: 40 30% 90%;
+    --sidebar-primary: 45 70% 47%;
+    --sidebar-primary-foreground: 15 30% 4%;
+    --sidebar-accent: 20 20% 12%;
+    --sidebar-accent-foreground: 40 30% 90%;
+    --sidebar-border: 30 20% 18%;
+    --sidebar-ring: 45 70% 47%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  .gold-glow {
+    box-shadow: var(--glow-gold);
+  }
+
+  .gold-glow-intense {
+    box-shadow: var(--glow-gold-intense);
+  }
+
+  .text-gold-gradient {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-dark {
+    background: var(--gradient-dark);
+  }
+
+  .bg-gradient-radial {
+    background: var(--gradient-radial);
+  }
+
+  .border-gold-gradient {
+    border: 2px solid transparent;
+    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+                var(--gradient-gold) border-box;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+  }
+
+  .animate-shimmer {
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Keyframe animations */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: var(--glow-gold);
+  }
+  50% {
+    box-shadow: var(--glow-gold-intense);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--brown-dark));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--gold) / 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--gold) / 0.8);
+}
+
+/* Selection color */
+::selection {
+  background: hsl(var(--gold) / 0.3);
+  color: hsl(var(--foreground));
+}

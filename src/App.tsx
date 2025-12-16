@@ -38,13 +38,21 @@ function AppInner() {
     "/arenax/",
   ];
 
-  
+
   const shouldHideLayout = hideLayoutOn.some((path) =>
     location.pathname.startsWith(path)
   );
 
+  const isArenaX = location.pathname.startsWith("/arenax");
+
   return (
-    <div className="min-h-screen bg-white">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: isArenaX ? '#1a1510' : '#ffffff',
+        color: isArenaX ? '#f3f3f3' : 'inherit'
+      }}
+    >
       {/* Hide global navbar on ArenaX + Skill */}
       {!shouldHideLayout && <Navbar />}
 
@@ -91,7 +99,7 @@ function AppInner() {
     </div>
   );
 
-    
+
 }
 
 

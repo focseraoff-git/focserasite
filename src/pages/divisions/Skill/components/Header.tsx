@@ -39,6 +39,14 @@ export default function Header({ user, onLogout }) {
           Certificates
         </button>
 
+        {/* ✅ NEW EXAMS BUTTON ADDED HERE */}
+        <button
+          onClick={() => handleNav("exams")}
+          className="hover:text-blue-200 transition"
+        >
+          Exams
+        </button>
+
         {/* 🧠 Unique Compiler Button */}
         <button
           onClick={() => handleNav("online-compiler")}

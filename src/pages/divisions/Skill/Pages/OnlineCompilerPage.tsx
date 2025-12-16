@@ -74,6 +74,49 @@ console.log("Hello, " + name);`,
     setOutput("");
   }, [language]);
 
+  // Anti-Cheat State
+  const [tabSwitchCount, setTabSwitchCount] = useState(0);
+  const [isCheating, setIsCheating] = useState(false);
+
+  // ==========================================
+  // ANTI-CHEAT PROTECTION
+  // ==========================================
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setTabSwitchCount(prev => {
+          const newCount = prev + 1;
+          if (newCount >= 3) setIsCheating(true);
+          return newCount;
+        });
+        alert("⚠️ WARNING: Tab switching is strictly prohibited! You have left the exam environment.");
+      }
+    };
+
+    const preventCopyPaste = (e) => {
+      e.preventDefault();
+      alert("⚠️ Copying and Pasting is disabled during the exam.");
+    };
+
+    const preventContextMenu = (e) => {
+      e.preventDefault();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("copy", preventCopyPaste);
+    document.addEventListener("cut", preventCopyPaste);
+    document.addEventListener("paste", preventCopyPaste);
+    document.addEventListener("contextmenu", preventContextMenu);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("copy", preventCopyPaste);
+      document.removeEventListener("cut", preventCopyPaste);
+      document.removeEventListener("paste", preventCopyPaste);
+      document.removeEventListener("contextmenu", preventContextMenu);
+    };
+  }, []);
+
   useEffect(() => {
     if (terminalRef.current)
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
@@ -221,6 +264,19 @@ console.log("Hello, " + name);`,
   /* ===========================================================
      💻 UI
   =========================================================== */
+  if (isCheating) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-red-900 text-white p-6 text-center select-none">
+        <h1 className="text-4xl font-bold mb-4">🚫 Exam Locked</h1>
+        <p className="text-xl mb-6">You have violated the anti-cheat policy (Alt-Tab/Tab Switch) multiple times.</p>
+        <p className="text-lg opacity-80 mb-8">Your session has been terminated.</p>
+        <button onClick={() => window.history.back()} className="px-6 py-3 bg-red-700 hover:bg-red-600 rounded-xl font-bold transition">
+          Return to Exams
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#1e1e1e] text-gray-200 flex flex-col relative select-none">
       {/* 🧭 Top Bar */}
@@ -255,11 +311,10 @@ console.log("Hello, " + name);`,
 
           <button
             onClick={() => setDrawMode(!drawMode)}
-            className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-md ${
-              drawMode
-                ? "bg-green-600 hover:bg-green-700 text-white"
-                : "bg-[#333] hover:bg-[#444] text-gray-200"
-            }`}
+            className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-md ${drawMode
+              ? "bg-green-600 hover:bg-green-700 text-white"
+              : "bg-[#333] hover:bg-[#444] text-gray-200"
+              }`}
           >
             <Brush size={16} /> {drawMode ? "Close Draw" : "Draw"}
           </button>

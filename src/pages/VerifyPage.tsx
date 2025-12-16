@@ -91,7 +91,7 @@ export default function VerifyPage() {
           />
 
           {/* Border Overlay */}
-          <div className="absolute inset-0 pointer-events-none rounded-3xl border-[1px] border-blue-200"></div>
+          <div className="bg-card rounded-xl p-8 shadow-sm pointer-events-none rounded-3xl border-[1px] border-blue-200"></div>
 
           {/* Header */}
           <h2 className="text-2xl font-semibold text-blue-700 mb-3">

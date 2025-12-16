@@ -16,6 +16,9 @@ import CertificatePage from "./Pages/CertificatePage";
 import AuthCallback from "./Pages/AuthCallback";
 import AssignmentPage from "./Pages/AssignmentPage";
 import OnlineCompilerPage from "./Pages/OnlineCompilerPage";
+import ExamsPage from "./Pages/ExamsPage";
+import ExamEnvironmentPage from "./Pages/ExamEnvironmentPage";
+import SubmissionHistoryPage from "./Pages/SubmissionHistoryPage"; // 👈 NEW IMPORT
 
 // ✅ Admin Pages
 import AdminLayout from "./Pages/Admin/AdminLayout";
@@ -119,7 +122,7 @@ export default function SkillApp() {
   }, []);
 
   /* ============================================================
-     ⚙️ Routes
+      ⚙️ Routes
   ============================================================ */
   return (
     <ErrorBoundary>
@@ -141,19 +144,27 @@ export default function SkillApp() {
           <Routes>
             {/* 🔹 Public Routes */}
             <Route path="/" element={<HomePage user={user} />} />
+            {/* 🆕 History Route */}
+            <Route path="/history/:challengeId" element={<SubmissionHistoryPage />} />
+
             <Route path="auth" element={<AuthPage />} />
             <Route path="auth/callback" element={<AuthCallback />} />
-           
 
 
             {/* 🔹 User Routes */}
             <Route path="dashboard" element={<DashboardPage user={user} />} />
             <Route path="syllabus/:programId" element={<SyllabusPage />} />
             <Route path="module/:moduleId" element={<ModulePage />} />
-            <Route path="code/:challengeId" element={<CodeEditorPage />} />
+            <Route path="code/:challengeId" element={<CodeEditorPage user={user} />} />
             <Route path="assignment/:contentId" element={<AssignmentPage />} />
             <Route path="certificate/:programName" element={<CertificatePage />} />
             <Route path="online-compiler" element={<OnlineCompilerPage />} />
+
+            <Route path="exams" element={<ExamsPage />} />
+
+            {/* 👈 2. THIS IS THE MISSING ROUTE THAT FIXES THE REDIRECT */}
+            <Route path="exam/:examId" element={<ExamEnvironmentPage />} />
+
 
             {/* 🔹 Admin Routes (Protected with SkillAuthGate) */}
             <Route

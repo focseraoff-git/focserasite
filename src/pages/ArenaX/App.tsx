@@ -1,40 +1,53 @@
-// src/pages/ArenaX/App.tsx
-import React from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import GamesPage from "./pages/GamesPage";
+import GameDetailPage from "./pages/GameDetailPage";
+import AboutPage from "./pages/AboutPage";
+import SchedulePage from "./pages/SchedulePage";
+import RegisterPage from "./pages/RegisterPage";
+import VolunteersPage from "./pages/VolunteersPage";
+import ContactPage from "./pages/ContactPage";
+import AdminPage from "./pages/AdminPage";
+import NotFound from "./pages/NotFound";
 
-/** ArenaX Pages (relative imports) */
-import ArenaXHome from "./index";
-import Games from "./Games";
-import Schedule from "./Schedule";
-import Register from "./Register";
-import Volunteers from "./Volunteers";
-import FAQ from "./FAQ";
-import Gallery from "./Gallery";
-import PrizeRedemption from "./PrizeRedemption";
-import MurderMystery from "./MurderMystery";
-import Venue from "./Venue";
+const queryClient = new QueryClient();
 
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <div className="min-h-screen bg-brown-900 text-gray-100 relative">
+        {/* Gilded shine overlay - ArenaX only */}
+        <div
+          className="fixed inset-0 pointer-events-none z-[9998] opacity-100"
+          style={{
+            background: 'radial-gradient(800px circle at 10% 20%, rgba(212, 175, 55, 0.15), transparent 8%), radial-gradient(600px circle at 80% 80%, rgba(184, 134, 11, 0.15), transparent 12%), linear-gradient(90deg, rgba(212, 175, 55, 0.09), rgba(184, 134, 11, 0.06))',
+            mixBlendMode: 'screen',
+            transform: 'translateZ(0)',
+            animation: 'gradient-shift 10s ease-in-out infinite'
+          }}
+        />
+        <Toaster />
+        <Sonner />
+        <Routes>
+          <Route index element={<Index />} />
+          <Route path="games" element={<GamesPage />} />
+          <Route path="games/:gameId" element={<GameDetailPage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="schedule" element={<SchedulePage />} />
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="volunteers" element={<VolunteersPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="admin" element={<AdminPage />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
-/**
- * ArenaX sub-router component — DO NOT include a BrowserRouter here.
- * This will be mounted by the top-level router at /arenax/*
- */
-export default function ArenaXAppRoutes() {
-  return (
-    <Routes>
-      <Route path="/" element={<ArenaXHome />} />
-      <Route path="games" element={<Games />} />
-      <Route path="schedule" element={<Schedule />} />
-      <Route path="register" element={<Register />} />
-      <Route path="volunteers" element={<Volunteers />} />
-      <Route path="faq" element={<FAQ />} />
-      <Route path="gallery" element={<Gallery />} />
-      <Route path="prizes" element={<PrizeRedemption />} />
-      <Route path="murder-mystery" element={<MurderMystery />} />
-      <Route path="venue" element={<Venue />} />
-
-      {/* optional fallback — redirect unknown subpaths to home */}
-      <Route path="*" element={<ArenaXHome />} />
-    </Routes>
-  );
-}
+export default App;
