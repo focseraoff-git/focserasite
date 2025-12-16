@@ -18,6 +18,7 @@ import Privacy from './pages/Privacy';
 import ArenaXAppRoutes from './pages/ArenaX/App';
 import RefundPolicyPage from './pages/Refund';
 import TermsOfUsePage from './pages/TUse';
+import PaymentSuccess from './pages/PaymentSuccess';
 
 import Journey from './pages/journey';
 import Gallery from './pages/Gallery';
@@ -88,6 +89,7 @@ function AppInner() {
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           {/* ArenaX nested routes */}
           <Route path="/arenax/*" element={<ArenaXAppRoutes />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
 
           {/* Skill App */}
           <Route path="/divisions/skill/*" element={<SkillApp />} />
