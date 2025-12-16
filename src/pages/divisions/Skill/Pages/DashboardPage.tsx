@@ -15,7 +15,8 @@ import {
   Target,
   BrainCircuit,
   ShieldCheck,
-  GraduationCap
+  GraduationCap,
+  User as UserIcon
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -37,52 +38,52 @@ const itemVar = {
    ============================================================ */
 function LandingVariant({ navigate, programs, loading }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white text-slate-800 relative overflow-hidden font-sans">
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-400/20 rounded-full blur-[120px]" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-400/20 rounded-full blur-[120px]" />
+    <div className="min-h-screen bg-gradient-to-br from-[#1a237e] via-[#283593] to-[#3949ab] text-white relative overflow-hidden font-sans">
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-indigo-500/20 rounded-full blur-[120px]" />
 
       <section className="text-center pt-40 md:pt-48 pb-24 relative z-10 px-6">
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-6xl md:text-7xl font-extrabold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600"
+          className="text-6xl md:text-7xl font-extrabold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-blue-200"
         >
           Learn. Create. Grow.
         </motion.h1>
 
-        <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-10">
+        <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
           Master coding and design with
-          <span className="text-blue-600 font-bold"> Focsera SkillVerse</span>.
+          <span className="text-white font-bold"> Focsera SkillVerse</span>.
         </p>
 
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => navigate("/divisions/skill/auth")}
-          className="px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full text-lg font-bold shadow-xl shadow-blue-200 hover:shadow-2xl transition-all"
+          className="px-12 py-4 bg-white text-blue-900 rounded-full text-lg font-bold shadow-xl shadow-blue-900/50 hover:shadow-2xl hover:bg-blue-50 transition-all"
         >
           Start Learning Free →
         </motion.button>
       </section>
 
       <section className="max-w-7xl mx-auto px-6 pb-24 relative z-10">
-        <h2 className="text-3xl font-bold text-center mb-12 text-slate-800">Explore Programs</h2>
+        <h2 className="text-3xl font-bold text-center mb-12 text-white">Explore Programs</h2>
         {loading ? (
-          <p className="text-center text-slate-400">Loading ecosystem...</p>
+          <p className="text-center text-blue-200">Loading ecosystem...</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {programs?.map((p) => (
               <motion.div
                 key={p.id}
                 whileHover={{ y: -8 }}
-                className="bg-white/80 backdrop-blur-md border border-white p-8 rounded-3xl shadow-lg shadow-slate-200/50 hover:border-blue-200 transition-all"
+                className="bg-slate-900/40 backdrop-blur-3xl border border-white/5 p-8 rounded-3xl shadow-2xl shadow-black/50 hover:border-blue-400/30 transition-all"
               >
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 mb-6 flex items-center justify-center text-white font-bold text-xl shadow-md">
                   {p.title.charAt(0)}
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-3">{p.title}</h3>
-                <p className="text-slate-500 text-sm mb-6 leading-relaxed line-clamp-3">{p.description}</p>
-                <button onClick={() => navigate("/divisions/skill/auth")} className="text-blue-600 font-bold text-sm flex items-center gap-2 group">
+                <h3 className="text-xl font-bold text-white mb-3">{p.title}</h3>
+                <p className="text-blue-100 text-sm mb-6 leading-relaxed line-clamp-3">{p.description}</p>
+                <button onClick={() => navigate("/divisions/skill/auth")} className="text-blue-300 font-bold text-sm flex items-center gap-2 group hover:text-white">
                   Join Now <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </button>
               </motion.div>
@@ -257,11 +258,11 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
   if (!user) return <LandingVariant navigate={navigate} programs={programs} loading={loading} />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-indigo-50/50 to-white pt-24 pb-20 relative overflow-x-hidden font-sans text-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-[#1a237e] via-[#283593] to-[#3949ab] pt-24 pb-20 relative overflow-x-hidden font-sans text-white">
 
       {/* Decorative Blobs */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-200/40 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-violet-200/30 rounded-full blur-[120px] -z-10 -translate-x-1/2 translate-y-1/2" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/20 rounded-full blur-[120px] -z-10 -translate-x-1/2 translate-y-1/2" />
 
       <motion.div
         variants={containerVar}
@@ -272,7 +273,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
 
         {/* 1. HERO PROFILE SECTION */}
         <motion.div variants={itemVar} className="mb-12">
-          <div className="relative bg-white/70 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white shadow-xl shadow-blue-900/5 flex flex-col md:flex-row items-center justify-between gap-8 group overflow-hidden">
+          <div className="relative bg-slate-900/40 backdrop-blur-2xl rounded-[2.5rem] p-8 border border-white/5 shadow-2xl shadow-black/50 flex flex-col md:flex-row items-center justify-between gap-8 group overflow-hidden">
             {/* Glossy Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-transparent opacity-50 pointer-events-none" />
 
@@ -281,7 +282,13 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
               <div className="relative">
                 <div className="w-32 h-32 rounded-full p-1.5 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 animate-gradient-xy">
                   <div className="w-full h-full rounded-full border-[4px] border-white overflow-hidden bg-white">
-                    <img src={profile?.avatar_url || "https://i.pravatar.cc/200?img=12"} alt="avatar" className="w-full h-full object-cover" />
+                    {profile?.avatar_url ? (
+                      <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-slate-800 text-blue-300">
+                        <UserIcon size={64} />
+                      </div>
+                    )}
                   </div>
                 </div>
                 <button onClick={() => fileInputRef.current.click()} className="absolute bottom-1 right-1 bg-white p-2.5 rounded-full text-blue-600 shadow-lg border border-blue-50 hover:bg-blue-50 transition-colors">
@@ -291,20 +298,20 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
               </div>
 
               <div>
-                <h2 className="text-4xl font-extrabold text-slate-800 mb-1 tracking-tight">{profile?.full_name}</h2>
-                <p className="text-slate-500 font-medium mb-4 flex items-center gap-2"><GraduationCap size={16} /> Student Developer</p>
+                <h2 className="text-4xl font-extrabold text-white mb-1 tracking-tight">{profile?.full_name}</h2>
+                <p className="text-blue-100 font-medium mb-4 flex items-center gap-2"><GraduationCap size={16} /> Student Developer</p>
                 <div className="flex gap-3">
-                  <BadgePill icon={Star} label={`Level ${stats.level}`} color="bg-yellow-100 text-yellow-700 border-yellow-200" />
-                  <BadgePill icon={Zap} label={`${stats.total_score} XP`} color="bg-blue-100 text-blue-700 border-blue-200" />
+                  <BadgePill icon={Star} label={`Level ${stats.level}`} color="bg-yellow-500/20 text-yellow-300 border-yellow-500/30" />
+                  <BadgePill icon={Zap} label={`${stats.total_score} XP`} color="bg-blue-400/20 text-blue-300 border-blue-400/30" />
                 </div>
               </div>
             </div>
 
             {/* Level Progress Circle */}
-            <div className="relative z-10 flex items-center gap-6 bg-white/60 p-4 rounded-3xl border border-white/50">
+            <div className="relative z-10 flex items-center gap-6 bg-black/20 p-4 rounded-3xl border border-white/5">
               <div className="text-right">
-                <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Current Level</p>
-                <p className="text-3xl font-black text-slate-800">{stats.progress_percentage}%</p>
+                <p className="text-sm font-bold text-blue-200 uppercase tracking-wider mb-1">Current Level</p>
+                <p className="text-3xl font-black text-white">{stats.progress_percentage}%</p>
               </div>
               <CircularXP percent={stats.progress_percentage} level={stats.level} />
             </div>
@@ -318,23 +325,23 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
             value={stats.exams_attempted}
             icon={ShieldCheck}
             color="from-rose-500 to-pink-500"
-            shadow="shadow-rose-200"
+            shadow="shadow-rose-500/30"
             trend="Strict Mode"
           />
           <StatCard
             title="Total Submissions"
             value={stats.problems_solved}
             icon={BrainCircuit}
-            color="from-blue-500 to-cyan-500"
-            shadow="shadow-blue-200"
+            color="from-blue-400 to-cyan-400"
+            shadow="shadow-blue-500/30"
             trend={`${stats.passed_count || 0} Passed`}
           />
           <StatCard
             title="Quizzes Attempted"
             value={stats.quizzes_attempted}
             icon={BookOpen}
-            color="from-amber-500 to-orange-500"
-            shadow="shadow-amber-200"
+            color="from-amber-400 to-orange-400"
+            shadow="shadow-amber-500/30"
             trend="Knowledge Check"
           />
           <StatCard
@@ -342,7 +349,7 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
             value={stats.daily_streak}
             icon={Flame}
             color="from-violet-500 to-purple-500"
-            shadow="shadow-violet-200"
+            shadow="shadow-violet-500/30"
             trend="Days Active"
           />
         </motion.div>
@@ -353,11 +360,11 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           {/* Left: Recent Activity */}
           <motion.div variants={itemVar} className="lg:col-span-2 space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-slate-800">Recent Activity</h3>
-              <button onClick={() => navigate("/divisions/skill/exams")} className="text-sm font-bold text-blue-600 hover:text-blue-700">View All Challenges →</button>
+              <h3 className="text-2xl font-bold text-white">Recent Activity</h3>
+              <button onClick={() => navigate("/divisions/skill/exams")} className="text-sm font-bold text-blue-300 hover:text-white transition-colors">View All Challenges →</button>
             </div>
 
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white p-6 shadow-xl shadow-slate-200/40 min-h-[400px]">
+            <div className="bg-slate-900/40 backdrop-blur-3xl rounded-3xl border border-white/5 p-6 shadow-2xl shadow-black/50 min-h-[400px]">
               {stats.recent_challenges.length > 0 ? (
                 <div className="space-y-4">
                   {stats.recent_challenges.map((item, idx) => (
@@ -366,22 +373,22 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="group flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all cursor-pointer"
+                      className="group flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/30 hover:bg-white/5 hover:shadow-lg transition-all cursor-pointer"
                     >
                       <div className="flex items-center gap-4">
                         <div className={`p-4 rounded-xl text-white shadow-md ${item.type === 'exam' ? 'bg-gradient-to-br from-rose-500 to-pink-500' : 'bg-gradient-to-br from-blue-500 to-indigo-500'}`}>
                           {item.type === 'exam' ? <ShieldCheck size={20} /> : <BrainCircuit size={20} />}
                         </div>
                         <div>
-                          <h4 className="font-bold text-slate-800 text-lg group-hover:text-blue-600 transition-colors">{item.title}</h4>
-                          <p className="text-xs font-semibold text-slate-400 capitalize">{item.type || "Practice"} • {new Date(item.created_at).toLocaleDateString()}</p>
+                          <h4 className="font-bold text-white text-lg group-hover:text-blue-300 transition-colors">{item.title}</h4>
+                          <p className="text-xs font-semibold text-blue-200/70 capitalize">{item.type || "Practice"} • {new Date(item.created_at).toLocaleDateString()}</p>
                         </div>
                       </div>
                       <div className="flex flex-col items-end">
                         <span className={`text-2xl font-black ${item.points_earned >= 80 ? "text-green-500" : item.points_earned >= 50 ? "text-amber-500" : "text-red-500"}`}>
                           {item.points_earned}%
                         </span>
-                        <span className={`text-[10px] uppercase font-bold ${item.points_earned >= 80 ? "text-green-600 bg-green-50 px-2 py-0.5 rounded-full" : "text-slate-400"}`}>
+                        <span className={`text-[10px] uppercase font-bold ${item.points_earned >= 80 ? "text-green-300 bg-green-500/20 px-2 py-0.5 rounded-full" : "text-slate-400"}`}>
                           {item.points_earned >= 80 ? "Passed" : "Score"}
                         </span>
                       </div>
@@ -402,18 +409,18 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
           <motion.div variants={itemVar} className="space-y-8">
 
             {/* My Programs */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white p-6 shadow-xl shadow-slate-200/40">
-              <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-                <Layers className="text-indigo-500" size={20} /> Active Programs
+            <div className="bg-slate-900/40 backdrop-blur-3xl rounded-3xl border border-white/5 p-6 shadow-2xl shadow-black/50">
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <Layers className="text-indigo-300" size={20} /> Active Programs
               </h3>
               <div className="space-y-4">
                 {programs.slice(0, 3).map((p, i) => (
-                  <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-white border border-slate-100 hover:border-indigo-100 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold border border-indigo-100">
+                  <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-colors">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold border border-indigo-500/20">
                       {p.title.charAt(0)}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-bold text-sm text-slate-700">{p.title}</h4>
+                      <h4 className="font-bold text-sm text-gray-100">{p.title}</h4>
                       <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
                         <div className="h-full bg-indigo-500 w-[15%] rounded-full" />
                       </div>
@@ -421,23 +428,23 @@ export default function DashboardPage({ user, supabase = lmsSupabaseClient }) {
                   </div>
                 ))}
               </div>
-              <button className="w-full mt-5 py-3 rounded-xl bg-indigo-50 text-indigo-600 font-bold text-sm hover:bg-indigo-100 transition-colors">View All Programs</button>
+              <button className="w-full mt-5 py-3 rounded-xl bg-indigo-500/20 text-indigo-300 font-bold text-sm hover:bg-indigo-500/30 transition-colors">View All Programs</button>
             </div>
 
             {/* Achievements */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white p-6 shadow-xl shadow-slate-200/40">
-              <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-                <Trophy className="text-amber-500" size={20} /> Achievements
+            <div className="bg-slate-900/40 backdrop-blur-3xl rounded-3xl border border-white/5 p-6 shadow-2xl shadow-black/50">
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <Trophy className="text-amber-400" size={20} /> Achievements
               </h3>
               <div className="grid grid-cols-4 gap-3">
                 {stats.recent_badges.length > 0 ? stats.recent_badges.map((b, i) => (
-                  <div key={i} className="aspect-square rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 flex flex-col items-center justify-center text-center p-2" title={b.name}>
-                    <Award size={24} className="text-amber-500 mb-1 drop-shadow-sm" />
+                  <div key={i} className="aspect-square rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 flex flex-col items-center justify-center text-center p-2" title={b.name}>
+                    <Award size={24} className="text-amber-400 mb-1 drop-shadow-sm" />
                   </div>
                 )) : (
                   [1, 2, 3, 4].map((_, i) => (
-                    <div key={i} className="aspect-square rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center opacity-50">
-                      <div className="w-8 h-8 rounded-full bg-slate-200/50" />
+                    <div key={i} className="aspect-square rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center opacity-50">
+                      <div className="w-8 h-8 rounded-full bg-white/10" />
                     </div>
                   ))
                 )}
@@ -458,7 +465,7 @@ function StatCard({ title, value, icon: Icon, color, shadow, trend }) {
     <motion.div
       variants={itemVar}
       whileHover={{ y: -5 }}
-      className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-xl shadow-slate-200/60 relative overflow-hidden group"
+      className="bg-slate-900/40 rounded-[2rem] p-6 border border-white/5 shadow-2xl shadow-black/40 relative overflow-hidden group"
     >
       <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full bg-gradient-to-br ${color} opacity-10 group-hover:opacity-20 transition-opacity`} />
 
@@ -466,12 +473,12 @@ function StatCard({ title, value, icon: Icon, color, shadow, trend }) {
         <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg ${shadow}`}>
           <Icon size={22} />
         </div>
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">{trend}</span>
+        <span className="text-xs font-bold uppercase tracking-wider text-blue-200 bg-black/20 px-2 py-1 rounded-md border border-white/5">{trend}</span>
       </div>
 
       <div>
-        <p className="text-slate-500 font-medium text-sm mb-1">{title}</p>
-        <h3 className="text-4xl font-black text-slate-800 tracking-tight">{value}</h3>
+        <p className="text-blue-200 font-medium text-sm mb-1">{title}</p>
+        <h3 className="text-4xl font-black text-white tracking-tight">{value}</h3>
       </div>
     </motion.div>
   );
@@ -494,7 +501,7 @@ function CircularXP({ percent = 0, level }) {
     <div className="relative w-20 h-20 flex items-center justify-center">
       {/* Background Circle */}
       <svg className="w-full h-full rotate-[-90deg]">
-        <circle cx="50%" cy="50%" r={r} fill="none" stroke="#f1f5f9" strokeWidth="8" />
+        <circle cx="50%" cy="50%" r={r} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="8" />
         <circle
           cx="50%"
           cy="50%"
@@ -514,8 +521,8 @@ function CircularXP({ percent = 0, level }) {
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-[10px] font-bold text-slate-400 uppercase leading-none">Lvl</span>
-        <span className="text-xl font-black text-slate-800 leading-none mt-0.5">{level}</span>
+        <span className="text-[10px] font-bold text-blue-200 uppercase leading-none">Lvl</span>
+        <span className="text-xl font-black text-white leading-none mt-0.5">{level}</span>
       </div>
     </div>
   );

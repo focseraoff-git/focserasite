@@ -21,7 +21,10 @@ import {
   Sun,
   Sparkles,
   Zap,
-  Target
+
+  Target,
+  Lock,
+  User
 } from "lucide-react";
 import { lmsSupabaseClient } from "../../../../lib/ssupabase";
 
@@ -44,6 +47,7 @@ export default function ExamsPage() {
   const navigate = useNavigate();
   const [history, setHistory] = useState({}); // { challengeId: { count: 0, last: null, solved: false } }
   const [totalScore, setTotalScore] = useState(0); // [NEW] User Global Score
+  const [user, setUser] = useState(null);
 
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,6 +73,7 @@ export default function ExamsPage() {
   const fetchUserHistory = async () => {
     try {
       const { data: { user } } = await lmsSupabaseClient.auth.getUser();
+      setUser(user);
       if (!user) return;
 
       // 2. Fetch History & Calculate Score
@@ -317,177 +322,215 @@ export default function ExamsPage() {
                 ))}
               </div>
 
-              {errorMsg && (
-                <div className="bg-red-500/5 text-red-500 p-6 rounded-2xl mb-8 border border-red-500/10 flex items-center gap-4">
-                  <ShieldCheck size={24} /> {errorMsg}
-                </div>
-              )}
-
-              {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {[1, 2, 3].map(i => <div key={i} className={`h-72 rounded-3xl animate-pulse ${isDark ? "bg-blue-900/20" : "bg-blue-50"}`} />)}
+              {!user && !loading ? (
+                <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
+                  <div className={`p-6 rounded-full mb-6 ${isDark ? "bg-blue-900/20 text-blue-400" : "bg-blue-50 text-blue-600"}`}>
+                    <Lock size={48} />
+                  </div>
+                  <h2 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-slate-900"}`}>Login to Access</h2>
+                  <p className={`text-lg max-w-md mb-8 ${isDark ? "text-blue-200" : "text-blue-700"}`}>
+                    Please login to access all challenges, track your progress, and practice questions.
+                  </p>
+                  <button
+                    onClick={() => navigate("/divisions/skill/auth")}
+                    className="px-8 py-4 rounded-full font-bold text-lg bg-blue-600 text-white shadow-lg shadow-blue-600/30 hover:bg-blue-500 transition-all hover:scale-105"
+                  >
+                    Login to Start Practicing
+                  </button>
                 </div>
               ) : (
-                <div className="flex flex-col gap-16">
-                  {/* GROUPED RENDERING */}
-                  {["easy", "medium", "hard"].map((level) => {
-                    const levelChallenges = grouped[level];
-                    if (difficultyFilter !== "all" && difficultyFilter !== level) return null; // Hide if specific filter active
-                    if (!levelChallenges || levelChallenges.length === 0) return null;
-
-                    return (
-                      <div key={level}>
-                        {/* Section Header */}
-                        {difficultyFilter === "all" && ( // Only show header if showing all
-                          <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center gap-4 mb-6">
-                            <div className={`p-2 rounded-lg ${isDark ? "bg-blue-900/30 text-blue-300" : "bg-blue-100 text-blue-800"}`}>
-                              {level === "easy" && <Sparkles size={18} />}
-                              {level === "medium" && <Zap size={18} />}
-                              {level === "hard" && <Target size={18} />}
-                            </div>
-                            <h2 className={`text-2xl font-black capitalize tracking-tight ${isDark ? "text-blue-50" : "text-blue-950"}`}>{level} Challenges</h2>
-                            <div className={`h-px flex-1 ${isDark ? "bg-blue-900/50" : "bg-blue-100"}`} />
-                          </motion.div>
-                        )}
-
-                        {/* Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                          {levelChallenges.map((challenge) => {
-                            const stat = history[challenge.id];
-                            return (
-                              <motion.div
-                                layout
-                                key={challenge.id}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                whileHover={{ y: -6 }}
-                                className={`rounded-3xl p-[1px] relative group transition-all duration-500 ${isDark ? "hover:shadow-2xl hover:shadow-blue-900/20" : "hover:shadow-2xl hover:shadow-blue-200/50"}`}
-                              >
-                                <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br from-transparent via-transparent to-transparent group-hover:via-blue-500/30 transition-all duration-500 opacity-0 group-hover:opacity-100 pointer-events-none`} />
-                                <div className={`relative h-full rounded-[23px] p-7 flex flex-col backdrop-blur-md transition-all duration-300 ${cardBg} ${cardBorder} border`}>
-                                  <div className="flex justify-between items-start mb-5">
-                                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm ${getDifficultyColor(challenge.difficulty)}`}>
-                                      {challenge.difficulty || "Medium"}
-                                    </span>
-                                    <div className="flex gap-2">
-                                      {stat?.solved && <div className="bg-green-500/20 text-green-500 p-1 rounded-full"><ShieldCheck size={16} /></div>}
-                                      <span className={`w-8 h-8 flex items-center justify-center rounded-full border ${isDark ? "bg-blue-950 border-blue-900 text-blue-400" : "bg-white border-blue-100 text-blue-600"}`}>
-                                        <Code2 size={14} />
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="mb-4">
-                                    <h3 className={`text-2xl font-bold mb-2 group-hover:text-blue-500 transition-colors leading-tight ${isDark ? "text-blue-50" : "text-blue-950"}`}>
-                                      {challenge.title}
-                                    </h3>
-                                    <div className={`w-10 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-50`} />
-                                  </div>
-                                  <div className={`text-sm mb-6 leading-7 line-clamp-2 ${isDark ? "text-blue-200/60" : "text-blue-900/60"}`}>
-                                    {challenge.description ? challenge.description.replace(/<[^>]*>/g, '') : "Test your skills with this algorithmic challenge."}
-                                  </div>
-
-                                  {/* NEW HISTORY SECTION */}
-                                  {stat ? (
-                                    <div className={`mb-6 p-3 rounded-xl border flex items-center justify-between text-xs font-mono
-                                        ${isDark ? "bg-blue-950/40 border-blue-900/50 text-blue-300" : "bg-blue-50 border-blue-100 text-blue-800"}`}>
-                                      <div>
-                                        <div className="opacity-60 uppercase text-[10px] font-bold">Submissions</div>
-                                        <div className="font-bold text-lg">{stat.count}</div>
-                                      </div>
-                                      <div className="text-right">
-                                        <div className="opacity-60 uppercase text-[10px] font-bold">Last Attempt</div>
-                                        <div>{new Date(stat.last).toLocaleDateString()}</div>
-                                        <div className="opacity-70 text-[10px]">{new Date(stat.last).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <div className={`mb-6 text-xs italic ${isDark ? "text-blue-500/40" : "text-blue-400"}`}>No submissions yet</div>
-                                  )}
-
-                                  <div className={`mt-auto pt-6 border-t flex items-center justify-between ${isDark ? "border-blue-900/30" : "border-blue-50"}`}>
-                                    <div className="flex items-center gap-2">
-                                      <Trophy size={18} className="text-amber-500 mb-0.5" />
-                                      <span className={`font-black text-lg ${isDark ? "text-blue-100" : "text-blue-900"}`}>{challenge.points || 50}</span>
-                                    </div>
-                                    <div className="flex gap-3">
-                                      <button
-                                        onClick={() => navigate(`/divisions/skill/history/${challenge.id}`)}
-                                        className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border transition-colors flex items-center gap-2 ${isDark
-                                          ? "border-blue-800 text-blue-400 hover:bg-blue-900/50 hover:text-blue-200"
-                                          : "border-blue-200 text-blue-600 hover:bg-blue-50"
-                                          }`}
-                                      >
-                                        Submissions
-                                        {stat?.count > 0 && <span className="bg-blue-500/20 px-1.5 py-0.5 rounded text-[10px]">{stat.count}</span>}
-                                      </button>
-                                      {stat?.solved ? (
-                                        <button
-                                          onClick={() => navigate(`/divisions/skill/code/${challenge.id}?mode=exam`)}
-                                          className="px-6 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center gap-2 bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 cursor-default"
-                                        >
-                                          <span>Completed</span> <ShieldCheck size={16} />
-                                        </button>
-                                      ) : (
-                                        <button onClick={() => navigate(`/divisions/skill/code/${challenge.id}?mode=exam`)} className={`group/btn px-6 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center gap-3 transition-all ${isDark ? "bg-blue-600 text-white hover:bg-blue-500" : "bg-[#172554] text-white hover:bg-blue-800"}`}>
-                                          <span>Solve</span> <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-                                        </button>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                              </motion.div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {filteredChallenges.length === 0 && (
-                    <div className={`col-span-full flex flex-col items-center justify-center py-24 rounded-3xl border border-dashed ${isDark ? "border-blue-900/30 text-blue-500/50" : "border-blue-200 text-blue-300"}`}>
-                      <div className={`p-4 rounded-full mb-4 ${isDark ? "bg-blue-900/20" : "bg-blue-50"}`}><Search size={32} /></div>
-                      <p className="font-semibold text-lg">No challenges found</p>
-                      <button onClick={() => { setSearchQuery(""); setDifficultyFilter("all") }} className="mt-2 text-blue-500 font-bold hover:underline text-sm">Clear search filters</button>
+                <>
+                  {errorMsg && (
+                    <div className="bg-red-500/5 text-red-500 p-6 rounded-2xl mb-8 border border-red-500/10 flex items-center gap-4">
+                      <ShieldCheck size={24} /> {errorMsg}
                     </div>
                   )}
-                </div>
+
+                  {loading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      {[1, 2, 3].map(i => <div key={i} className={`h-72 rounded-3xl animate-pulse ${isDark ? "bg-blue-900/20" : "bg-blue-50"}`} />)}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-16">
+                      {/* GROUPED RENDERING */}
+                      {["easy", "medium", "hard"].map((level) => {
+                        const levelChallenges = grouped[level];
+                        if (difficultyFilter !== "all" && difficultyFilter !== level) return null; // Hide if specific filter active
+                        if (!levelChallenges || levelChallenges.length === 0) return null;
+
+                        return (
+                          <div key={level}>
+                            {/* Section Header */}
+                            {difficultyFilter === "all" && ( // Only show header if showing all
+                              <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center gap-4 mb-6">
+                                <div className={`p-2 rounded-lg ${isDark ? "bg-blue-900/30 text-blue-300" : "bg-blue-100 text-blue-800"}`}>
+                                  {level === "easy" && <Sparkles size={18} />}
+                                  {level === "medium" && <Zap size={18} />}
+                                  {level === "hard" && <Target size={18} />}
+                                </div>
+                                <h2 className={`text-2xl font-black capitalize tracking-tight ${isDark ? "text-blue-50" : "text-blue-950"}`}>{level} Challenges</h2>
+                                <div className={`h-px flex-1 ${isDark ? "bg-blue-900/50" : "bg-blue-100"}`} />
+                              </motion.div>
+                            )}
+
+                            {/* Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                              {levelChallenges.map((challenge) => {
+                                const stat = history[challenge.id];
+                                return (
+                                  <motion.div
+                                    layout
+                                    key={challenge.id}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    whileHover={{ y: -6 }}
+                                    className={`rounded-3xl p-[1px] relative group transition-all duration-500 ${isDark ? "hover:shadow-2xl hover:shadow-blue-900/20" : "hover:shadow-2xl hover:shadow-blue-200/50"}`}
+                                  >
+                                    <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br from-transparent via-transparent to-transparent group-hover:via-blue-500/30 transition-all duration-500 opacity-0 group-hover:opacity-100 pointer-events-none`} />
+                                    <div className={`relative h-full rounded-[23px] p-7 flex flex-col backdrop-blur-md transition-all duration-300 ${cardBg} ${cardBorder} border`}>
+                                      <div className="flex justify-between items-start mb-5">
+                                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm ${getDifficultyColor(challenge.difficulty)}`}>
+                                          {challenge.difficulty || "Medium"}
+                                        </span>
+                                        <div className="flex gap-2">
+                                          {stat?.solved && <div className="bg-green-500/20 text-green-500 p-1 rounded-full"><ShieldCheck size={16} /></div>}
+                                          <span className={`w-8 h-8 flex items-center justify-center rounded-full border ${isDark ? "bg-blue-950 border-blue-900 text-blue-400" : "bg-white border-blue-100 text-blue-600"}`}>
+                                            <Code2 size={14} />
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <div className="mb-4">
+                                        <h3 className={`text-2xl font-bold mb-2 group-hover:text-blue-500 transition-colors leading-tight ${isDark ? "text-blue-50" : "text-blue-950"}`}>
+                                          {challenge.title}
+                                        </h3>
+                                        <div className={`w-10 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-50`} />
+                                      </div>
+                                      <div className={`text-sm mb-6 leading-7 line-clamp-2 ${isDark ? "text-blue-200/60" : "text-blue-900/60"}`}>
+                                        {challenge.description ? challenge.description.replace(/<[^>]*>/g, '') : "Test your skills with this algorithmic challenge."}
+                                      </div>
+
+                                      {/* NEW HISTORY SECTION */}
+                                      {stat ? (
+                                        <div className={`mb-6 p-3 rounded-xl border flex items-center justify-between text-xs font-mono
+                                        ${isDark ? "bg-blue-950/40 border-blue-900/50 text-blue-300" : "bg-blue-50 border-blue-100 text-blue-800"}`}>
+                                          <div>
+                                            <div className="opacity-60 uppercase text-[10px] font-bold">Submissions</div>
+                                            <div className="font-bold text-lg">{stat.count}</div>
+                                          </div>
+                                          <div className="text-right">
+                                            <div className="opacity-60 uppercase text-[10px] font-bold">Last Attempt</div>
+                                            <div>{new Date(stat.last).toLocaleDateString()}</div>
+                                            <div className="opacity-70 text-[10px]">{new Date(stat.last).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className={`mb-6 text-xs italic ${isDark ? "text-blue-500/40" : "text-blue-400"}`}>No submissions yet</div>
+                                      )}
+
+                                      <div className={`mt-auto pt-6 border-t flex items-center justify-between ${isDark ? "border-blue-900/30" : "border-blue-50"}`}>
+                                        <div className="flex items-center gap-2">
+                                          <Trophy size={18} className="text-amber-500 mb-0.5" />
+                                          <span className={`font-black text-lg ${isDark ? "text-blue-100" : "text-blue-900"}`}>{challenge.points || 50}</span>
+                                        </div>
+                                        <div className="flex gap-3">
+                                          <button
+                                            onClick={() => navigate(`/divisions/skill/history/${challenge.id}`)}
+                                            className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border transition-colors flex items-center gap-2 ${isDark
+                                              ? "border-blue-800 text-blue-400 hover:bg-blue-900/50 hover:text-blue-200"
+                                              : "border-blue-200 text-blue-600 hover:bg-blue-50"
+                                              }`}
+                                          >
+                                            Submissions
+                                            {stat?.count > 0 && <span className="bg-blue-500/20 px-1.5 py-0.5 rounded text-[10px]">{stat.count}</span>}
+                                          </button>
+                                          {stat?.solved ? (
+                                            <button
+                                              onClick={() => navigate(`/divisions/skill/code/${challenge.id}?mode=exam`)}
+                                              className="px-6 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center gap-2 bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 cursor-default"
+                                            >
+                                              <span>Completed</span> <ShieldCheck size={16} />
+                                            </button>
+                                          ) : (
+                                            <button onClick={() => navigate(`/divisions/skill/code/${challenge.id}?mode=exam`)} className={`group/btn px-6 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center gap-3 transition-all ${isDark ? "bg-blue-600 text-white hover:bg-blue-500" : "bg-[#172554] text-white hover:bg-blue-800"}`}>
+                                              <span>Solve</span> <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                                            </button>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </motion.div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {filteredChallenges.length === 0 && (
+                        <div className={`col-span-full flex flex-col items-center justify-center py-24 rounded-3xl border border-dashed ${isDark ? "border-blue-900/30 text-blue-500/50" : "border-blue-200 text-blue-300"}`}>
+                          <div className={`p-4 rounded-full mb-4 ${isDark ? "bg-blue-900/20" : "bg-blue-50"}`}><Search size={32} /></div>
+                          <p className="font-semibold text-lg">No challenges found</p>
+                          <button onClick={() => { setSearchQuery(""); setDifficultyFilter("all") }} className="mt-2 text-blue-500 font-bold hover:underline text-sm">Clear search filters</button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
               )}
             </motion.div>
           )}
 
           {activeTab === "mcq" && (
-            <motion.div
-              key="mcq"
-              initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            >
-              {MCQ_TOPICS.filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase())).map((topic, i) => (
-                <motion.div
-                  layout
-                  key={topic.id}
-                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                  whileHover={{ y: -8 }}
-                  className={`p-8 rounded-[24px] border backdrop-blur-md cursor-pointer group relative overflow-hidden transition-all duration-300
-                        ${isDark ? "bg-[#0f172a]/40 border-blue-900/30 hover:border-blue-500/30" : "bg-white/80 border-white hover:border-blue-200 shadow-xl shadow-blue-900/5"}`}
-                  onClick={() => navigate(`/divisions/skill/exam/${topic.id}`)}
+            !user && !loading ? (
+              <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
+                <div className={`p-6 rounded-full mb-6 ${isDark ? "bg-purple-900/20 text-purple-400" : "bg-purple-50 text-purple-600"}`}>
+                  <Lock size={48} />
+                </div>
+                <h2 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-slate-900"}`}>Login to Access Quizzes</h2>
+                <p className={`text-lg max-w-md mb-8 ${isDark ? "text-blue-200" : "text-purple-700"}`}>
+                  Sign in to attempt quizzes and earn badges.
+                </p>
+                <button
+                  onClick={() => navigate("/divisions/skill/auth")}
+                  className="px-8 py-4 rounded-full font-bold text-lg bg-purple-600 text-white shadow-lg shadow-purple-600/30 hover:bg-purple-500 transition-all hover:scale-105"
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${topic.grad} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                  <div className="relative z-10">
-                    <div className={`w-16 h-16 rounded-2xl mb-6 flex items-center justify-center text-3xl shadow-sm transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3
+                  Login to Start Quizzes
+                </button>
+              </div>
+            ) : (
+              <motion.div
+                key="mcq"
+                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4 }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              >
+                {MCQ_TOPICS.filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase())).map((topic, i) => (
+                  <motion.div
+                    layout
+                    key={topic.id}
+                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                    whileHover={{ y: -8 }}
+                    className={`p-8 rounded-[24px] border backdrop-blur-md cursor-pointer group relative overflow-hidden transition-all duration-300
+                        ${isDark ? "bg-[#0f172a]/40 border-blue-900/30 hover:border-blue-500/30" : "bg-white/80 border-white hover:border-blue-200 shadow-xl shadow-blue-900/5"}`}
+                    onClick={() => navigate(`/divisions/skill/exam/${topic.id}`)}
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-br ${topic.grad} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                    <div className="relative z-10">
+                      <div className={`w-16 h-16 rounded-2xl mb-6 flex items-center justify-center text-3xl shadow-sm transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3
                             ${isDark ? "bg-blue-900/30 text-white" : "bg-white text-blue-950"}`}>
-                      <span className={topic.color.replace('text-', 'text-opacity-80 text-')}>{topic.icon}</span>
+                        <span className={topic.color.replace('text-', 'text-opacity-80 text-')}>{topic.icon}</span>
+                      </div>
+                      <h3 className={`text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform ${isDark ? "text-blue-50" : "text-blue-950"}`}>{topic.title}</h3>
+                      <p className={`text-xs font-bold uppercase tracking-widest mb-6 opacity-60 ${isDark ? "text-blue-300" : "text-blue-800"}`}>{topic.count}+ Questions</p>
+                      <div className="flex items-center justify-between pt-4 border-t border-dashed border-current border-opacity-10">
+                        <span className={`text-xs font-black uppercase ${topic.color}`}>Start Quiz</span>
+                        <div className={`p-2 rounded-full ${isDark ? "bg-white/5" : "bg-blue-50"} group-hover:bg-blue-500 group-hover:text-white transition-colors`}><ArrowRight size={14} /></div>
+                      </div>
                     </div>
-                    <h3 className={`text-xl font-bold mb-2 group-hover:translate-x-1 transition-transform ${isDark ? "text-blue-50" : "text-blue-950"}`}>{topic.title}</h3>
-                    <p className={`text-xs font-bold uppercase tracking-widest mb-6 opacity-60 ${isDark ? "text-blue-300" : "text-blue-800"}`}>{topic.count}+ Questions</p>
-                    <div className="flex items-center justify-between pt-4 border-t border-dashed border-current border-opacity-10">
-                      <span className={`text-xs font-black uppercase ${topic.color}`}>Start Quiz</span>
-                      <div className={`p-2 rounded-full ${isDark ? "bg-white/5" : "bg-blue-50"} group-hover:bg-blue-500 group-hover:text-white transition-colors`}><ArrowRight size={14} /></div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )
           )}
         </AnimatePresence>
 
