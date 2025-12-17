@@ -106,29 +106,22 @@ serve(async (req) => {
     if (!booking.ticket_sent) {
        console.log("Triggering send-ticket for", booking.email);
        
-       const ticketRes = await fetch(
-        `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-ticket`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
-          },
-          body: JSON.stringify({
+       const { data: funcData, error: funcError } = await supabase.functions.invoke('send-ticket', {
+         body: {
             orderId,
             email: booking.email,
             studentName: booking.student_name,
             amount: order.order_amount,
             class_level: booking.class_level 
-          }),
-        }
-      );
-      
-      if (ticketRes.ok) {
-        await supabase.from("promptx_bookings").update({ ticket_sent: true }).eq("order_id", orderId);
-      } else {
-        console.error("Failed to call send-ticket:", await ticketRes.text());
-      }
+         }
+       });
+
+       if (funcError) {
+          console.error("Failed to invoke send-ticket:", funcError);
+       } else {
+          console.log("Ticket function invoked successfully:", funcData);
+          await supabase.from("promptx_bookings").update({ ticket_sent: true }).eq("order_id", orderId);
+       }
     }
 
     return new Response(JSON.stringify({ status: "SUCCESS", _v: "strict-v3" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
