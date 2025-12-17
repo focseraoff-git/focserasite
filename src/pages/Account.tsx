@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { User, LogOut, Package, Calendar, MapPin, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { User, LogOut, Package, Calendar, MapPin, Clock, CheckCircle, XCircle, Ticket, X, Download } from 'lucide-react';
 
 const RupeeIcon = ({ size = 18, className = '' }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -12,9 +12,104 @@ const RupeeIcon = ({ size = 18, className = '' }) => (
     </svg>
 );
 
+const TicketModal = ({ booking, onClose }: { booking: any; onClose: () => void }) => {
+    if (!booking) return null;
+
+    const qrData = JSON.stringify({
+        id: booking.id,
+        name: booking.package_details.description.split("(")[0].replace("Attendee: ", "").trim(),
+        class: booking.package_details.description.split("(")[1]?.replace(")", "").trim() || "7-10",
+        status: "Verified"
+    });
+
+    const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(qrData)}&size=300&dark=0f172a&light=ffffff`;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="relative w-full max-w-sm bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-700 animate-in zoom-in-95 duration-200">
+
+                {/* Close Button */}
+                <button onClick={onClose} className="absolute top-4 right-4 z-10 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full backdrop-blur-md transition-colors">
+                    <X size={20} />
+                </button>
+
+                {/* Header Image */}
+                <div className="relative h-48 bg-black">
+                    <img src="https://focsera.in/images/logos/PromptX.jpg" alt="PromptX" className="w-full h-full object-cover opacity-90" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-6">
+                        <div className="inline-flex items-center px-3 py-1 mb-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-md">
+                            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Confirmed Entry</span>
+                        </div>
+                        <h2 className="text-3xl font-black text-white leading-none">PromptX</h2>
+                        <p className="text-slate-300 font-medium">AI Workshop Pass</p>
+                    </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 pt-2 space-y-6">
+
+                    {/* Attendee Info */}
+                    <div className="text-center">
+                        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Attendee</p>
+                        <h3 className="text-xl font-bold text-white mb-2">{booking.package_details.description.split("(")[0].replace("Attendee: ", "").trim()}</h3>
+                        <span className="inline-block px-4 py-1 bg-slate-800 text-blue-400 text-sm font-bold rounded-full border border-slate-700">
+                            Class {booking.package_details.description.split("(")[1]?.replace(")", "").trim() || "7-10"}
+                        </span>
+                    </div>
+
+                    {/* Details Grid */}
+                    <div className="grid grid-cols-2 gap-px bg-slate-800 rounded-xl overflow-hidden border border-slate-700">
+                        <div className="bg-slate-900/50 p-3">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase">Date</p>
+                            <p className="text-sm font-semibold text-slate-200">Jan 25, 2026</p>
+                        </div>
+                        <div className="bg-slate-900/50 p-3 text-right">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase">Time</p>
+                            <p className="text-sm font-semibold text-slate-200">10am - 4pm</p>
+                        </div>
+                        <div className="bg-slate-900/50 p-3 text-right">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase">Order ID</p>
+                            <p className="text-xs font-mono text-slate-400">{booking.id.toString().substring(0, 8)}</p>
+                        </div>
+                    </div>
+
+                    {/* QR Code */}
+                    <div className="relative pt-6 border-t-2 border-dashed border-slate-800 text-center group">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-slate-900 rounded-full border-b border-slate-800" />
+
+                        <p className="text-xs text-slate-500 mb-4 uppercase tracking-widest">Scan at Entrance</p>
+                        <div className="inline-block p-4 bg-white rounded-2xl shadow-lg relative overflow-hidden">
+                            <img src={qrUrl} alt="QR Code" className="w-40 h-40 mix-blend-multiply" />
+                            {/* Scanning line animation */}
+                            <div className="absolute top-0 left-0 w-full h-1 bg-blue-500/50 blur-sm animate-[scan_2s_ease-in-out_infinite]" />
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="text-center">
+                        <p className="text-[10px] text-slate-600">Powered by Focsera Events</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <style>{`
+                @keyframes scan {
+                    0%, 100% { top: 0%; opacity: 0; }
+                    10% { opacity: 1; }
+                    90% { opacity: 1; }
+                    100% { top: 100%; opacity: 0; }
+                }
+            `}</style>
+        </div>
+    );
+};
+
 const Account = () => {
     const [user, setUser] = useState<any>(null);
     const [bookings, setBookings] = useState<any[]>([]);
+    const [selectedTicket, setSelectedTicket] = useState<any>(null); // New State
     const [showAll, setShowAll] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -77,7 +172,7 @@ const Account = () => {
                     serviceName: 'PromptX AI Workshop',
                     service: { name: 'PromptX AI Workshop' }, // fallback for display logic
                     description: `Attendee: ${b.student_name} (${b.class_level})`,
-                    addOns: ['Certificate', 'Swag Kit']
+                    addOns: ['Certificate', 'Ai Kit']
                 },
                 is_promptx: true
             }));
@@ -313,7 +408,7 @@ const Account = () => {
                                             );
                                         })()}
 
-                                        <div className="mt-4 pt-4 border-t border-gray-200">
+                                        <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-between">
                                             <p className="text-xs text-gray-500">
                                                 Booked on {booking?.created_at ? new Date(booking.created_at).toLocaleDateString('en-IN', {
                                                     year: 'numeric',
@@ -323,6 +418,17 @@ const Account = () => {
                                                     minute: '2-digit'
                                                 }) : 'Unknown'}
                                             </p>
+
+                                            {/* View Ticket Button for PromptX Bookings */}
+                                            {booking.is_promptx && booking.status === 'SUCCESS' && (
+                                                <button
+                                                    onClick={() => setSelectedTicket(booking)}
+                                                    className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg shadow-md hover:bg-slate-800 hover:shadow-lg transition-all"
+                                                >
+                                                    <Ticket size={16} />
+                                                    View Ticket
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -331,6 +437,11 @@ const Account = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Ticket Modal Render */}
+            {selectedTicket && (
+                <TicketModal booking={selectedTicket} onClose={() => setSelectedTicket(null)} />
+            )}
         </div>
     );
 };
