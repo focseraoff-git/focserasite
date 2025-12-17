@@ -73,12 +73,11 @@ const Account = () => {
                 total_price: b.amount,
                 created_at: b.created_at, // Assumes created_at exists, if not it will be undefined/null
                 event_date: '2026-01-25', // Hardcoded for this specific workshop
-                event_venue: 'Focsera Tech Hub',
                 package_details: {
                     serviceName: 'PromptX AI Workshop',
                     service: { name: 'PromptX AI Workshop' }, // fallback for display logic
                     description: `Attendee: ${b.student_name} (${b.class_level})`,
-                    addOns: ['Certificate', 'Lunch', 'Swag Kit']
+                    addOns: ['Certificate', 'Swag Kit']
                 },
                 is_promptx: true
             }));
