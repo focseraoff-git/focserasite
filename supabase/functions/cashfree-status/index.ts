@@ -106,113 +106,150 @@ serve(async (req) => {
     }
 
     // Trigger Email if not sent
-    if (!booking.ticket_sent) {
-       console.log("Triggering send-ticket DIRECT INLINE for", booking.email);
+    // Trigger Email if not sent (Concurrency/Dedup Check)
+    // We attempt to set ticket_sent = true. If it was already true, this update returns 0 rows.
+    const { data: flagData, error: flagError } = await supabase
+      .from("promptx_bookings")
+      .update({ ticket_sent: true })
+      .eq("order_id", orderId)
+      .eq("ticket_sent", false) // Atomic check
+      .select();
+
+    if (flagError) {
+       console.error("DB Error flagging ticket_sent:", flagError);
+    } else if (flagData && flagData.length > 0) {
+       // We successfully claimed the "send" lock. Proceed to send.
+       console.log("Claimed ticket_send lock. Sending email to", booking.email);
        
        const resendKey = Deno.env.get("RESEND_API_KEY");
        if (!resendKey) {
            console.error("Configuration Error: RESEND_API_KEY is missing in cashfree-status");
+           // Revert flag so we can try again later? Or just fail?
+           // Probably revert so an admin can retry or next webhook retry works.
+           await supabase.from("promptx_bookings").update({ ticket_sent: false }).eq("order_id", orderId);
        } else {
-           const emailRes = await fetch("https://api.resend.com/emails", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${resendKey}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                from: Deno.env.get("FROM_EMAIL") || "PromptX <hello@focsera.in>",
-                to: [booking.email],
-                subject: "🎟️ Your PromptX Workshop Ticket",
-                html: `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                  <meta charset="utf-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <title>PromptX Workshop Ticket</title>
-                </head>
-                <body style="margin: 0; padding: 0; background-color: #0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-font-smoothing: antialiased;">
-                  
-                  <div style="width: 100%; padding: 40px 0; background-color: #0f172a;">
-                    <!-- Main Ticket Container -->
-                    <div style="max-width: 400px; margin: 0 auto; background-color: #1e293b; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid #334155;">
+           try {
+               const emailRes = await fetch("https://api.resend.com/emails", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${resendKey}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    from: Deno.env.get("FROM_EMAIL") || "PromptX <hello@focsera.in>",
+                    to: [booking.email],
+                    subject: "🎟️ You're In! PromptX Workshop Ticket",
+                    html: `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                      <meta charset="utf-8">
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                      <title>PromptX Workshop Ticket</title>
+                    </head>
+                    <body style="margin: 0; padding: 0; background-color: #0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
                       
-                      <!-- Header Section -->
-                      <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px 20px; text-align: center; position: relative;">
-                        <!-- Glow Effect -->
-                        <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); pointer-events: none;"></div>
+                      <!-- Outer Container (Deep Blue Gradient) -->
+                      <div style="width: 100%; padding: 40px 0; background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);">
                         
-                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase;">PromptX</h1>
-                        <p style="color: #d1fae5; margin: 5px 0 0 0; font-size: 14px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;">AI Workshop Pass</p>
-                      </div>
-
-                      <!-- Ticket Body -->
-                      <div style="padding: 30px; color: #e2e8f0;">
-                        <div style="margin-bottom: 25px; text-align: center;">
-                          <p style="margin: 0; color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Attendee</p>
-                          <h2 style="margin: 5px 0 0 0; color: #ffffff; font-size: 24px; font-weight: 700;">${booking.student_name}</h2>
-                          <div style="margin-top: 5px; display: inline-block; background-color: #334155; padding: 4px 12px; border-radius: 100px;">
-                            <span style="color: #10b981; font-size: 12px; font-weight: 600;">Class ${booking.class_level || "7-10"}</span>
+                        <!-- Ticket Card -->
+                        <div style="max-width: 400px; margin: 0 auto; background-color: #1e293b; border-radius: 24px; overflow: hidden; box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.1);">
+                          
+                          <!-- Hero Image Section -->
+                          <div style="position: relative; width: 100%; height: 200px; background-color: #000; overflow: hidden;">
+                            <img src="https://focsera.in/images/logos/PromptX.jpg" alt="PromptX" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;">
+                            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, #1e293b 0%, transparent 100%);"></div>
+                            
+                            <div style="position: absolute; bottom: 20px; left: 20px;">
+                                <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-shadow: 0 4px 12px rgba(0,0,0,0.5);">PromptX</h1>
+                                <p style="color: #d1fae5; margin: 4px 0 0 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">AI Workshop Pass</p>
+                            </div>
                           </div>
+    
+                          <!-- Ticket Body -->
+                          <div style="padding: 30px; color: #e2e8f0; background-color: #1e293b;">
+                            
+                            <div style="margin-bottom: 30px; text-align: center;">
+                              <p style="margin: 0; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;">Attendee</p>
+                              <h2 style="margin: 8px 0 0 0; color: #ffffff; font-size: 26px; font-weight: 700;">${booking.student_name}</h2>
+                              <div style="margin-top: 10px; display: inline-block; background: rgba(59, 130, 246, 0.15); padding: 6px 16px; border-radius: 100px; border: 1px solid rgba(59, 130, 246, 0.3);">
+                                <span style="color: #60a5fa; font-size: 13px; font-weight: 600;">Class ${booking.class_level || "7-10"}</span>
+                              </div>
+                            </div>
+    
+                            <!-- Info Grid -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background-color: #334155; border: 1px solid #334155; border-radius: 16px; overflow: hidden;">
+                              <div style="background-color: #0f172a; padding: 15px;">
+                                <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700;">Date</p>
+                                <p style="margin: 2px 0 0 0; color: #f1f5f9; font-size: 13px;">Jan 25, 2026</p>
+                              </div>
+                              <div style="background-color: #0f172a; padding: 15px; text-align: right;">
+                                <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700;">Status</p>
+                                <p style="margin: 2px 0 0 0; color: #10b981; font-weight: 700; font-size: 13px;">CONFIRMED</p>
+                              </div>
+                              <div style="background-color: #0f172a; padding: 15px;">
+                                <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700;">Order ID</p>
+                                <p style="margin: 2px 0 0 0; color: #94a3b8; font-family: monospace; font-size: 12px;">${orderId.substring(0, 8)}</p>
+                              </div>
+                              <div style="background-color: #0f172a; padding: 15px; text-align: right;">
+                                 <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700;">Amount</p>
+                                 <p style="margin: 2px 0 0 0; color: #f1f5f9; font-size: 13px;">₹${order.order_amount}</p>
+                              </div>
+                            </div>
+    
+                            <!-- QR Section -->
+                            <div style="text-align: center; margin-top: 35px; position: relative;">
+                              <div style="position: absolute; height: 1px; background: #334155; top: 50%; left: 0; width: 100%;"></div>
+                              <div style="position: relative; display: inline-block; background-color: #1e293b; padding: 0 15px;">
+                                <p style="margin: 0; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Entry Pass</p>
+                              </div>
+                              
+                              <div style="margin-top: 20px; display: inline-block; background-color: #ffffff; padding: 12px; border-radius: 16px;">
+                                <img src="https://quickchart.io/qr?text=${encodeURIComponent(JSON.stringify({
+                                    id: orderId,
+                                    name: booking.student_name,
+                                    class: booking.class_level,
+                                    status: "Verified"
+                                }))}&size=200&dark=0f172a&light=ffffff" alt="Ticket QR" width="150" height="150" style="display: block;">
+                              </div>
+                            </div>
+    
+                          </div>
+                          
+                          <!-- Footer -->
+                          <div style="background-color: #0f172a; padding: 20px; text-align: center; border-top: 1px solid #334155;">
+                            <p style="margin: 0; color: #475569; font-size: 11px;">Powered by Focsera SkillVerse</p>
+                          </div>
+    
                         </div>
-
-                        <!-- Info Grid -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background-color: #0f172a; padding: 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 30px;">
-                          <div>
-                            <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 600;">Order ID</p>
-                            <p style="margin: 4px 0 0 0; color: #f1f5f9; font-family: monospace; font-size: 14px;">${orderId.substring(0, 12)}...</p>
-                          </div>
-                          <div style="text-align: right;">
-                            <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 600;">Status</p>
-                            <p style="margin: 4px 0 0 0; color: #10b981; font-weight: 700; font-size: 14px;">CONFIRMED</p>
-                          </div>
-                          <div>
-                            <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 600;">Date</p>
-                            <p style="margin: 4px 0 0 0; color: #f1f5f9; font-size: 14px;">Jan 25, 2026</p>
-                          </div>
-                          <div style="text-align: right;">
-                             <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 600;">Amount</p>
-                             <p style="margin: 4px 0 0 0; color: #f1f5f9; font-size: 14px;">₹${order.order_amount}</p>
-                          </div>
-                        </div>
-
-                        <!-- QR Section -->
-                        <div style="text-align: center; padding-top: 10px; border-top: 2px dashed #334155;">
-                          <p style="margin: 0 0 15px 0; color: #94a3b8; font-size: 12px;">Scan at Entrance</p>
-                          <div style="display: inline-block; background-color: #ffffff; padding: 15px; border-radius: 12px;">
-                            <img src="https://quickchart.io/qr?text=${encodeURIComponent(JSON.stringify({
-                                id: orderId,
-                                name: booking.student_name,
-                                class: booking.class_level,
-                                status: "PAID"
-                            }))}&size=200&dark=0f172a&light=ffffff" alt="Ticket QR" width="160" height="160" style="display: block;">
-                          </div>
-                        </div>
-
                       </div>
-                      
-                      <!-- Footer -->
-                      <div style="background-color: #0f172a; padding: 15px; text-align: center; border-top: 1px solid #334155;">
-                        <p style="margin: 0; color: #475569; font-size: 11px;">Powered by Focsera • Ticket #${orderId}</p>
-                      </div>
-
-                    </div>
-                  </div>
-                </body>
-                </html>
-                `,
-            }),
-            });
-
-            if (!emailRes.ok) {
-                const errText = await emailRes.text();
-                console.error(`Resend API Failed (${emailRes.status}):`, errText);
-            } else {
-                const emailData = await emailRes.json();
-                console.log("Email sent successfully via Inline:", emailData.id);
-                await supabase.from("promptx_bookings").update({ ticket_sent: true }).eq("order_id", orderId);
-            }
+                    </body>
+                    </html>
+                    `,
+                }),
+               });
+    
+               if (!emailRes.ok) {
+                   const errText = await emailRes.text();
+                   console.error(`Resend API Failed (${emailRes.status}):`, errText);
+                   // Revert flag on API failure so we can retry?
+                   // If we revert, we risk double sending if it actually went through but timed out.
+                   // Safest is to NOT revert if status is 2xx, but here it is not ok.
+                   // If it failed (4xx, 5xx), it probably didn't send. Revert.
+                   await supabase.from("promptx_bookings").update({ ticket_sent: false }).eq("order_id", orderId);
+               } else {
+                   const emailData = await emailRes.json();
+                   console.log("Email sent successfully via Inline:", emailData.id);
+                   // Already flag=true in DB.
+               }
+           } catch (e) {
+               console.error("Email network error:", e);
+               // Network failed? Revert flag.
+               await supabase.from("promptx_bookings").update({ ticket_sent: false }).eq("order_id", orderId);
+           }
        }
+    } else {
+        console.log("Ticket already sent (or booking not found), skipping email.");
     }
 
     return new Response(JSON.stringify({ status: "SUCCESS", _v: "strict-v3" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
