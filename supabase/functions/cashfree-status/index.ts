@@ -54,6 +54,19 @@ serve(async (req) => {
 
     // 3. Handle Failure
     if (isFailed && !isPaid) {
+       // UPDATE DB as FAILED 
+       try {
+         const supabase = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+         );
+         await supabase.from("promptx_bookings")
+           .update({ payment_status: "FAILED" })
+           .eq("order_id", orderId);
+       } catch (err) {
+         console.error("Failed status update error:", err);
+       }
+
        return new Response(JSON.stringify({ status: "FAILED", _v: "strict-v3" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
@@ -99,14 +112,14 @@ serve(async (req) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+            Authorization: `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
           },
           body: JSON.stringify({
             orderId,
             email: booking.email,
             studentName: booking.student_name,
             amount: order.order_amount,
-            class_level: booking.class_level // Note: missing in select above, need to add it or pass it safely
+            class_level: booking.class_level 
           }),
         }
       );
