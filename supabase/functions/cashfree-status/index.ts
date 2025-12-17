@@ -54,25 +54,30 @@ serve(async (req) => {
 
     // 3. Handle Failure
     if (isFailed && !isPaid) {
-       // UPDATE DB as FAILED 
+       console.log(`[Status Check] Detected FAILURE for ${orderId}. Updating DB...`);
        try {
          const supabase = createClient(
           Deno.env.get("SUPABASE_URL")!,
           Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
          );
-         await supabase.from("promptx_bookings")
+         const { error: updateError } = await supabase.from("promptx_bookings")
            .update({ payment_status: "FAILED" })
            .eq("order_id", orderId);
+           
+         if (updateError) console.error("DB Update Failed:", updateError);
+         else console.log("DB Updated to FAILED");
+         
        } catch (err) {
          console.error("Failed status update error:", err);
        }
 
-       return new Response(JSON.stringify({ status: "FAILED", _v: "strict-v3" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+       return new Response(JSON.stringify({ status: "FAILED", _v: "strict-v4" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // 4. Handle Pending/Processing
     if (!isPaid) {
-      return new Response(JSON.stringify({ status: "PROCESSING", _v: "strict-v3" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      console.log(`[Status Check] Still PROCESSING. OrderStatus: ${order?.order_status}`);
+      return new Response(JSON.stringify({ status: "PROCESSING", _v: "strict-v4" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // 5. Handle Success (isPaid === true)
@@ -86,14 +91,12 @@ serve(async (req) => {
     // Fetch booking
     const { data: booking, error: bookingError } = await supabase
       .from("promptx_bookings")
-      .select("payment_status, ticket_sent, email, student_name")
+      .select("payment_status, ticket_sent, email, student_name, class_level")
       .eq("order_id", orderId)
       .single();
 
     if (bookingError || !booking) {
       console.error("Booking not found in DB but Paid at Cashfree:", orderId);
-      // Even if DB is missing, return SUCCESS to frontend so user isn't stuck.
-      // We can't send email if we don't have the email though.
       return new Response(JSON.stringify({ status: "SUCCESS", warn: "booking_missing" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
@@ -104,24 +107,34 @@ serve(async (req) => {
 
     // Trigger Email if not sent
     if (!booking.ticket_sent) {
-       console.log("Triggering send-ticket for", booking.email);
+       console.log("Triggering send-ticket via FETCH for", booking.email);
        
-       const { data: funcData, error: funcError } = await supabase.functions.invoke('send-ticket', {
-         body: {
+       // Using direct fetch with Service Role Key to bypass Auth issues
+       const ticketRes = await fetch(
+        `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-ticket`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`, 
+          },
+          body: JSON.stringify({
             orderId,
             email: booking.email,
             studentName: booking.student_name,
             amount: order.order_amount,
             class_level: booking.class_level 
-         }
-       });
-
-       if (funcError) {
-          console.error("Failed to invoke send-ticket:", funcError);
-       } else {
-          console.log("Ticket function invoked successfully:", funcData);
-          await supabase.from("promptx_bookings").update({ ticket_sent: true }).eq("order_id", orderId);
-       }
+          }),
+        }
+      );
+      
+      const ticketText = await ticketRes.text();
+      if (!ticketRes.ok) {
+         console.error(`ticket-send failed (${ticketRes.status}):`, ticketText);
+      } else {
+         console.log("ticket-send success:", ticketText);
+         await supabase.from("promptx_bookings").update({ ticket_sent: true }).eq("order_id", orderId);
+      }
     }
 
     return new Response(JSON.stringify({ status: "SUCCESS", _v: "strict-v3" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
