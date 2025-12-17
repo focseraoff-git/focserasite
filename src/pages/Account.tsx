@@ -29,25 +29,68 @@ const Account = () => {
                 return;
             }
             setUser(session.user);
-            await fetchBookings(session.user.id, 5); // default: show latest 5
+            setUser(session.user);
+            await fetchBookings(session.user.id, session.user.email || '', 5); // default: show latest 5
         };
         getUser();
     }, [navigate]);
 
-    const fetchBookings = async (userId: string, limit?: number) => {
+    const fetchBookings = async (userId: string, email: string, limit?: number) => {
         try {
             setError(null);
-            let query = supabase
+
+            // 1. Fetch Event Bookings (Standard)
+            let eventQuery = supabase
                 .from('event_bookings')
                 .select('*')
                 .eq('user_id', userId)
                 .order('created_at', { ascending: false });
-            if (limit && Number(limit) > 0) query = query.limit(Number(limit));
 
-            const { data, error } = await query;
+            // 2. Fetch PromptX Bookings (By Email)
+            let promptxQuery = supabase
+                .from('promptx_bookings')
+                .select('*')
+                .eq('email', email)
+                .order('created_at', { ascending: false });
 
-            if (error) throw error;
-            setBookings(data || []);
+            // Apply limit loosely to both (we'll slice after merge)
+            if (limit && Number(limit) > 0) {
+                eventQuery = eventQuery.limit(Number(limit));
+                promptxQuery = promptxQuery.limit(Number(limit));
+            }
+
+            const [eventRes, promptxRes] = await Promise.all([eventQuery, promptxQuery]);
+
+            if (eventRes.error) throw eventRes.error;
+            if (promptxRes.error) console.warn("PromptX fetch error (non-fatal):", promptxRes.error);
+
+            const events = eventRes.data || [];
+
+            // Normalize PromptX bookings to match Event Booking structure
+            const promptx = (promptxRes.data || []).map((b: any) => ({
+                id: b.order_id,
+                status: b.payment_status,
+                total_price: b.amount,
+                created_at: b.created_at, // Assumes created_at exists, if not it will be undefined/null
+                event_date: '2026-01-25', // Hardcoded for this specific workshop
+                event_venue: 'Focsera Tech Hub',
+                package_details: {
+                    serviceName: 'PromptX AI Workshop',
+                    service: { name: 'PromptX AI Workshop' }, // fallback for display logic
+                    description: `Attendee: ${b.student_name} (${b.class_level})`,
+                    addOns: ['Certificate', 'Lunch', 'Swag Kit']
+                },
+                is_promptx: true
+            }));
+
+            // Merge and Sort by Date
+            const allBookings = [...events, ...promptx].sort((a, b) => {
+                const dateA = new Date(a.created_at || 0).getTime();
+                const dateB = new Date(b.created_at || 0).getTime();
+                return dateB - dateA;
+            });
+
+            setBookings(limit ? allBookings.slice(0, Number(limit)) : allBookings);
         } catch (err) {
             console.error('Error fetching bookings:', err);
             setError((err as Error)?.message || 'Failed to load your bookings.');
@@ -100,8 +143,8 @@ const Account = () => {
             <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center">
                 <div className="text-center">
                     <svg className="animate-spin text-[#0052CC] mx-auto mb-4" width="48" height="48" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="25" cy="25" r="20" stroke="#E5E7EB" strokeWidth="6"/>
-                        <path d="M45 25c0-11.046-8.954-20-20-20" stroke="#0052CC" strokeWidth="6" strokeLinecap="round"/>
+                        <circle cx="25" cy="25" r="20" stroke="#E5E7EB" strokeWidth="6" />
+                        <path d="M45 25c0-11.046-8.954-20-20-20" stroke="#0052CC" strokeWidth="6" strokeLinecap="round" />
                     </svg>
                     <p className="text-gray-600">Loading your account...</p>
                 </div>
@@ -126,7 +169,7 @@ const Account = () => {
                                 return;
                             }
                             setUser(session.user);
-                            await fetchBookings(session.user.id);
+                            await fetchBookings(session.user.id, session.user.email || '');
                         }} className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl font-semibold">Retry</button>
                         <button onClick={async () => { await supabase.auth.signOut(); navigate('/'); }} className="px-6 py-3 border rounded-xl font-semibold">Sign out</button>
                     </div>
@@ -172,7 +215,7 @@ const Account = () => {
                                     const { data: { session } } = await supabase.auth.getSession();
                                     if (!session) { navigate('/login'); return; }
                                     setUser(session.user);
-                                    await fetchBookings(session.user.id, newShowAll ? undefined : 5);
+                                    await fetchBookings(session.user.id, session.user.email || '', newShowAll ? undefined : 5);
                                     setLoading(false);
                                 }} className="px-4 py-2 bg-white border rounded-lg shadow-sm text-sm">
                                     {showAll ? 'Show recent' : 'View all bookings'}
@@ -203,9 +246,9 @@ const Account = () => {
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-3 mb-2">
                                                     <h3 className="text-xl font-bold text-gray-900">
-                                                            {booking.package_details?.service?.name || booking.package_details?.serviceName || 'Service Booking'}
-                                                        </h3>
-                                                        {getStatusBadge(booking.status)}
+                                                        {booking.package_details?.service?.name || booking.package_details?.serviceName || 'Service Booking'}
+                                                    </h3>
+                                                    {getStatusBadge(booking.status)}
                                                 </div>
                                                 <p className="text-sm text-gray-500">
                                                     Booking ID: {booking?.id ? String(booking.id).slice(0, 8).toUpperCase() : 'N/A'}

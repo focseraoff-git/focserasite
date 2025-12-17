@@ -128,6 +128,7 @@ serve(async (req) => {
            // Probably revert so an admin can retry or next webhook retry works.
            await supabase.from("promptx_bookings").update({ ticket_sent: false }).eq("order_id", orderId);
        } else {
+
            try {
                const emailRes = await fetch("https://api.resend.com/emails", {
                 method: "POST",
@@ -147,78 +148,120 @@ serve(async (req) => {
                       <meta name="viewport" content="width=device-width, initial-scale=1.0">
                       <title>PromptX Workshop Ticket</title>
                     </head>
-                    <body style="margin: 0; padding: 0; background-color: #0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                    <body style="margin: 0; padding: 0; background-color: #020617; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
                       
-                      <!-- Outer Container (Deep Blue Gradient) -->
-                      <div style="width: 100%; padding: 40px 0; background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);">
+                      <!-- Outer Container -->
+                      <div style="width: 100%; min-height: 100vh; padding: 40px 0; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);">
                         
                         <!-- Ticket Card -->
-                        <div style="max-width: 400px; margin: 0 auto; background-color: #1e293b; border-radius: 24px; overflow: hidden; box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="max-width: 600px; margin: 0 auto; background-color: #1e293b; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255,255,255,0.1);">
                           
-                          <!-- Hero Image Section -->
-                          <div style="position: relative; width: 100%; height: 200px; background-color: #000; overflow: hidden;">
+                          <!-- Hero Image -->
+                          <div style="position: relative; width: 100%; height: 240px; background-color: #000;">
                             <img src="https://focsera.in/images/logos/PromptX.jpg" alt="PromptX" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;">
-                            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, #1e293b 0%, transparent 100%);"></div>
+                            <div style="position: absolute; inset: 0; background: linear-gradient(to top, #1e293b 0%, transparent 80%);"></div>
                             
-                            <div style="position: absolute; bottom: 20px; left: 20px;">
-                                <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-shadow: 0 4px 12px rgba(0,0,0,0.5);">PromptX</h1>
-                                <p style="color: #d1fae5; margin: 4px 0 0 0; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">AI Workshop Pass</p>
+                            <div style="position: absolute; bottom: 25px; left: 30px;">
+                                <div style="display: inline-block; padding: 6px 12px; background: rgba(16, 185, 129, 0.2); border-radius: 100px; border: 1px solid rgba(16, 185, 129, 0.3); margin-bottom: 10px;">
+                                    <span style="color: #34d399; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">Confirmed Entry</span>
+                                </div>
+                                <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; line-height: 1;">PromptX</h1>
+                                <p style="color: #cbd5e1; margin: 6px 0 0 0; font-size: 16px; font-weight: 500;">Generative AI Workshop</p>
                             </div>
                           </div>
     
-                          <!-- Ticket Body -->
-                          <div style="padding: 30px; color: #e2e8f0; background-color: #1e293b;">
+                          <!-- Body Content -->
+                          <div style="padding: 40px 30px; background-color: #1e293b;">
                             
-                            <div style="margin-bottom: 30px; text-align: center;">
-                              <p style="margin: 0; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;">Attendee</p>
-                              <h2 style="margin: 8px 0 0 0; color: #ffffff; font-size: 26px; font-weight: 700;">${booking.student_name}</h2>
-                              <div style="margin-top: 10px; display: inline-block; background: rgba(59, 130, 246, 0.15); padding: 6px 16px; border-radius: 100px; border: 1px solid rgba(59, 130, 246, 0.3);">
-                                <span style="color: #60a5fa; font-size: 13px; font-weight: 600;">Class ${booking.class_level || "7-10"}</span>
-                              </div>
+                            <!-- Welcome -->
+                            <div style="margin-bottom: 35px;">
+                                <h2 style="color: #ffffff; font-size: 24px; font-weight: 700; margin: 0 0 8px 0;">Hi ${booking.student_name.split(' ')[0]},</h2>
+                                <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; margin: 0;">
+                                    Get ready to master AI! Your spot is secured for the PromptX Workshop. 
+                                    Bring up your Energy and Curiosity.
+                                </p>
                             </div>
-    
-                            <!-- Info Grid -->
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background-color: #334155; border: 1px solid #334155; border-radius: 16px; overflow: hidden;">
-                              <div style="background-color: #0f172a; padding: 15px;">
-                                <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700;">Date</p>
-                                <p style="margin: 2px 0 0 0; color: #f1f5f9; font-size: 13px;">Jan 25, 2026</p>
-                              </div>
-                              <div style="background-color: #0f172a; padding: 15px; text-align: right;">
-                                <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700;">Status</p>
-                                <p style="margin: 2px 0 0 0; color: #10b981; font-weight: 700; font-size: 13px;">CONFIRMED</p>
-                              </div>
-                              <div style="background-color: #0f172a; padding: 15px;">
-                                <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700;">Order ID</p>
-                                <p style="margin: 2px 0 0 0; color: #94a3b8; font-family: monospace; font-size: 12px;">${orderId.substring(0, 8)}</p>
-                              </div>
-                              <div style="background-color: #0f172a; padding: 15px; text-align: right;">
-                                 <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700;">Amount</p>
-                                 <p style="margin: 2px 0 0 0; color: #f1f5f9; font-size: 13px;">₹${order.order_amount}</p>
-                              </div>
+
+                            <!-- Event Details Grid -->
+                            <div style="background-color: #0f172a; border-radius: 16px; border: 1px solid #334155; overflow: hidden; margin-bottom: 35px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid #334155;">
+                                    <div style="padding: 20px; border-right: 1px solid #334155;">
+                                        <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">Date</p>
+                                        <p style="margin: 4px 0 0 0; color: #f1f5f9; font-size: 15px; font-weight: 600;">Jan 25, 2026</p>
+                                    </div>
+                                    <div style="padding: 20px;">
+                                        <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">Time</p>
+                                        <p style="margin: 4px 0 0 0; color: #f1f5f9; font-size: 15px; font-weight: 600;">10:00 AM - 4:00 PM</p>
+                                    </div>
+                                </div>
+                                <div style="padding: 20px;">
+                                    <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">About</p>
+                                    <p style="margin: 4px 0 0 0; color: #f1f5f9; font-size: 15px; font-weight: 600;">A hands-on workshop for students in Classes 7–10 to boost academic creativity & productivity using AI.
+
+</p>
+                                </div>
+                            </div>
+
+                            <!-- Perks Section -->
+                            <div style="margin-bottom: 35px;">
+                                <h3 style="color: #f8fafc; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin: 0 0 20px 0;">What's Included</h3>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    
+                                    <!-- Perk 1 -->
+                                    <div style="background-color: #334155; padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 32px; height: 32px; background-color: rgba(99, 102, 241, 0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <span style="font-size: 16px;">📜</span>
+                                        </div>
+                                        <span style="color: #e2e8f0; font-size: 13px; font-weight: 600;">Certificate</span>
+                                    </div>
+
+                                    <!-- Perk 2 -->
+                                    <div style="background-color: #334155; padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 32px; height: 32px; background-color: rgba(244, 63, 94, 0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <span style="font-size: 16px;">🍱</span>
+                                        </div>
+                                        <span style="color: #e2e8f0; font-size: 13px; font-weight: 600;">Hands-On Experience</span>
+                                    </div>
+
+                                    <!-- Perk 3 -->
+                                    <div style="background-color: #334155; padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 32px; height: 32px; background-color: rgba(16, 185, 129, 0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <span style="font-size: 16px;">🎒</span>
+                                        </div>
+                                        <span style="color: #e2e8f0; font-size: 13px; font-weight: 600;">Community Access</span>
+                                    </div>
+
+                                    <!-- Perk 4 -->
+                                    <div style="background-color: #334155; padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 32px; height: 32px; background-color: rgba(234, 179, 8, 0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <span style="font-size: 16px;">⚡</span>
+                                        </div>
+                                        <span style="color: #e2e8f0; font-size: 13px; font-weight: 600;">AI Tools Access</span>
+                                    </div>
+                                </div>
                             </div>
     
                             <!-- QR Section -->
-                            <div style="text-align: center; margin-top: 35px; position: relative;">
-                              <div style="position: absolute; height: 1px; background: #334155; top: 50%; left: 0; width: 100%;"></div>
-                              <div style="position: relative; display: inline-block; background-color: #1e293b; padding: 0 15px;">
-                                <p style="margin: 0; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Entry Pass</p>
-                              </div>
-                              
-                              <div style="margin-top: 20px; display: inline-block; background-color: #ffffff; padding: 12px; border-radius: 16px;">
+                            <div style="text-align: center; padding-top: 30px; border-top: 1px dashed #475569;">
+                              <p style="margin: 0 0 15px 0; color: #94a3b8; font-size: 12px; letter-spacing: 0.5px;">SCAN AT ENTRANCE</p>
+                              <div style="display: inline-block; background-color: #ffffff; padding: 12px; border-radius: 16px;">
                                 <img src="https://quickchart.io/qr?text=${encodeURIComponent(JSON.stringify({
                                     id: orderId,
                                     name: booking.student_name,
                                     class: booking.class_level,
                                     status: "Verified"
-                                }))}&size=200&dark=0f172a&light=ffffff" alt="Ticket QR" width="150" height="150" style="display: block;">
+                                }))}&size=200&dark=020617&light=ffffff" alt="Ticket QR" width="160" height="160" style="display: block;">
                               </div>
+                              <p style="margin: 15px 0 0 0; color: #64748b; font-family: monospace; font-size: 13px;">OID: ${orderId.substring(0, 12)}</p>
                             </div>
     
                           </div>
                           
                           <!-- Footer -->
-                          <div style="background-color: #0f172a; padding: 20px; text-align: center; border-top: 1px solid #334155;">
-                            <p style="margin: 0; color: #475569; font-size: 11px;">Powered by Focsera SkillVerse</p>
+                          <div style="background-color: #020617; padding: 25px; text-align: center; border-top: 1px solid #1e293b;">
+                            <p style="margin: 0 0 10px 0; color: #94a3b8; font-size: 14px; font-weight: 600;">Need Help?</p>
+                            <p style="margin: 0; color: #475569; font-size: 12px;">Contact us at <a href="mailto:info.focsera@gmail.com" style="color: #6366f1; text-decoration: none;">hello@focsera.in</a></p>
+                            <p style="margin: 20px 0 0 0; color: #334155; font-size: 11px;">© 2026 Focsera Ecosystem. All rights reserved.</p>
                           </div>
     
                         </div>

@@ -214,10 +214,10 @@ export default function PaymentSuccess() {
               {/* Top Accent Line */}
               <div
                 className={`absolute left-0 right-0 top-0 h-1.5 w-full bg-gradient-to-r ${status === "SUCCESS"
-                    ? "from-emerald-400 via-teal-500 to-emerald-400"
-                    : status === "FAILED"
-                      ? "from-rose-400 via-red-500 to-rose-400"
-                      : "from-gray-300 via-gray-400 to-gray-300"
+                  ? "from-emerald-400 via-teal-500 to-emerald-400"
+                  : status === "FAILED"
+                    ? "from-rose-400 via-red-500 to-rose-400"
+                    : "from-gray-300 via-gray-400 to-gray-300"
                   }`}
               />
 
@@ -275,7 +275,7 @@ export default function PaymentSuccess() {
                     Next Steps
                   </h3>
                   <p className="text-[15px] leading-relaxed text-emerald-900/80">
-                    A confirmation email with your ticket and workshop details has been sent to your registered address.
+                    A confirmation email with your ticket and workshop details has been sent to your registered mail address.Ticket contains entry pass which must be carried to the event.
                   </p>
                 </motion.div>
               )}
@@ -296,10 +296,10 @@ export default function PaymentSuccess() {
                 <button
                   onClick={() => navigate("/")}
                   className={`group relative w-full overflow-hidden rounded-full py-4 text-center font-bold text-white shadow-lg transition-transform active:scale-[0.98] ${status === "SUCCESS"
-                      ? "bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/25 hover:shadow-emerald-500/40"
-                      : status === "FAILED"
-                        ? "bg-gray-900 hover:bg-black"
-                        : "cursor-not-allowed bg-gray-300"
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/25 hover:shadow-emerald-500/40"
+                    : status === "FAILED"
+                      ? "bg-gray-900 hover:bg-black"
+                      : "cursor-not-allowed bg-gray-300"
                     }`}
                   disabled={status === "PROCESSING"}
                 >
