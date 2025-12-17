@@ -70,7 +70,7 @@ const TicketModal = ({ booking, onClose }: { booking: any; onClose: () => void }
                         </div>
                         <div className="bg-slate-900/50 p-3 text-right">
                             <p className="text-[10px] text-slate-500 font-bold uppercase">Order ID</p>
-                            <p className="text-xs font-mono text-slate-400">{booking.id.toString().substring(0, 8)}</p>
+                            <p className="text-xs font-mono text-slate-400">{booking.id ? String(booking.id).substring(0, 8) : 'N/A'}</p>
                         </div>
                     </div>
 
