@@ -17,8 +17,8 @@ const TicketModal = ({ booking, onClose }: { booking: any; onClose: () => void }
 
     const qrData = JSON.stringify({
         id: booking.id,
-        name: booking.package_details.description.split("(")[0].replace("Attendee: ", "").trim(),
-        class: booking.package_details.description.split("(")[1]?.replace(")", "").trim() || "7-10",
+        name: booking.student_name || booking.package_details?.description || "Attendee",
+        class: booking.class_level || "7-10",
         status: "Verified"
     });
 
@@ -52,9 +52,9 @@ const TicketModal = ({ booking, onClose }: { booking: any; onClose: () => void }
                     {/* Attendee Info */}
                     <div className="text-center">
                         <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Attendee</p>
-                        <h3 className="text-xl font-bold text-white mb-2">{booking.package_details.description.split("(")[0].replace("Attendee: ", "").trim()}</h3>
+                        <h3 className="text-xl font-bold text-white mb-2">{booking.student_name || booking.package_details?.description || "Guest"}</h3>
                         <span className="inline-block px-4 py-1 bg-slate-800 text-blue-400 text-sm font-bold rounded-full border border-slate-700">
-                            Class {booking.package_details.description.split("(")[1]?.replace(")", "").trim() || "7-10"}
+                            Class {booking.class_level || "7-10"}
                         </span>
                     </div>
 
@@ -124,7 +124,6 @@ const Account = () => {
                 return;
             }
             setUser(session.user);
-            setUser(session.user);
             await fetchBookings(session.user.id, session.user.email || '', 5); // default: show latest 5
         };
         getUser();
@@ -174,7 +173,9 @@ const Account = () => {
                     description: `Attendee: ${b.student_name} (${b.class_level})`,
                     addOns: ['Certificate', 'Ai Kit']
                 },
-                is_promptx: true
+                is_promptx: true,
+                student_name: b.student_name,
+                class_level: b.class_level
             }));
 
             // Merge and Sort by Date
@@ -420,7 +421,7 @@ const Account = () => {
                                             </p>
 
                                             {/* View Ticket Button for PromptX Bookings */}
-                                            {booking.is_promptx && booking.status === 'SUCCESS' && (
+                                            {booking.is_promptx && (typeof booking.status === 'string' && ['SUCCESS', 'PAID', 'CONFIRMED'].includes(booking.status.toUpperCase())) && (
                                                 <button
                                                     onClick={() => setSelectedTicket(booking)}
                                                     className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg shadow-md hover:bg-slate-800 hover:shadow-lg transition-all"
