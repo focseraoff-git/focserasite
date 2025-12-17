@@ -124,35 +124,82 @@ serve(async (req) => {
                 to: [booking.email],
                 subject: "🎟️ Your PromptX Workshop Ticket",
                 html: `
-                <div style="font-family:Arial, sans-serif; max-width:600px; margin:auto; background-color:#ffffff; color:#333;">
-                    <div style="text-align:center; padding: 24px 0; border-bottom: 3px solid #10b981;">
-                    <h1 style="color:#10b981; margin:0;">Registration Confirmed!</h1>
-                    </div>
-                    
-                    <div style="padding: 24px;">
-                    <p style="font-size:16px;">Hello <strong>${booking.student_name}</strong>,</p>
-                    <p style="font-size:16px; line-height:1.5;">
-                        You have successfully secured your seat for <strong>PromptX – AI Workshop</strong>.
-                        We are excited to see you there!
-                    </p>
-                    
-                    <div style="background-color:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:20px; margin: 24px 0;">
-                        <h3 style="margin-top:0; color:#166534;">Ticket Details</h3>
-                        <p style="margin:8px 0;"><strong>Order ID:</strong> <span style="font-family:monospace;">${orderId}</span></p>
-                        <p style="margin:8px 0;"><strong>Student:</strong> ${booking.student_name}</p>
-                        <p style="margin:8px 0;"><strong>Class:</strong> ${booking.class_level || "7-10"}</p>
-                        <p style="margin:8px 0;"><strong>Amount Paid:</strong> ₹${order.order_amount}</p>
-                    </div>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <meta charset="utf-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>PromptX Workshop Ticket</title>
+                </head>
+                <body style="margin: 0; padding: 0; background-color: #0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-font-smoothing: antialiased;">
+                  
+                  <div style="width: 100%; padding: 40px 0; background-color: #0f172a;">
+                    <!-- Main Ticket Container -->
+                    <div style="max-width: 400px; margin: 0 auto; background-color: #1e293b; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid #334155;">
+                      
+                      <!-- Header Section -->
+                      <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px 20px; text-align: center; position: relative;">
+                        <!-- Glow Effect -->
+                        <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); pointer-events: none;"></div>
+                        
+                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase;">PromptX</h1>
+                        <p style="color: #d1fae5; margin: 5px 0 0 0; font-size: 14px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;">AI Workshop Pass</p>
+                      </div>
 
-                    <p style="font-size:14px; color:#666;">
-                        📍 <strong>Important:</strong> Please present this email (digitally or printed) at the venue entrance.
-                    </p>
-                    </div>
+                      <!-- Ticket Body -->
+                      <div style="padding: 30px; color: #e2e8f0;">
+                        <div style="margin-bottom: 25px; text-align: center;">
+                          <p style="margin: 0; color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Attendee</p>
+                          <h2 style="margin: 5px 0 0 0; color: #ffffff; font-size: 24px; font-weight: 700;">${booking.student_name}</h2>
+                          <div style="margin-top: 5px; display: inline-block; background-color: #334155; padding: 4px 12px; border-radius: 100px;">
+                            <span style="color: #10b981; font-size: 12px; font-weight: 600;">Class ${booking.class_level || "7-10"}</span>
+                          </div>
+                        </div>
 
-                    <div style="background-color:#f9fafb; padding:20px; text-align:center; border-top:1px solid #e5e7eb; font-size:12px; color:#999;">
-                    <p>Sent by PromptX Team • <a href="mailto:support@focsera.in" style="color:#10b981;">support@focsera.in</a></p>
+                        <!-- Info Grid -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background-color: #0f172a; padding: 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 30px;">
+                          <div>
+                            <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 600;">Order ID</p>
+                            <p style="margin: 4px 0 0 0; color: #f1f5f9; font-family: monospace; font-size: 14px;">${orderId.substring(0, 12)}...</p>
+                          </div>
+                          <div style="text-align: right;">
+                            <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 600;">Status</p>
+                            <p style="margin: 4px 0 0 0; color: #10b981; font-weight: 700; font-size: 14px;">CONFIRMED</p>
+                          </div>
+                          <div>
+                            <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 600;">Date</p>
+                            <p style="margin: 4px 0 0 0; color: #f1f5f9; font-size: 14px;">Jan 25, 2026</p>
+                          </div>
+                          <div style="text-align: right;">
+                             <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 600;">Amount</p>
+                             <p style="margin: 4px 0 0 0; color: #f1f5f9; font-size: 14px;">₹${order.order_amount}</p>
+                          </div>
+                        </div>
+
+                        <!-- QR Section -->
+                        <div style="text-align: center; padding-top: 10px; border-top: 2px dashed #334155;">
+                          <p style="margin: 0 0 15px 0; color: #94a3b8; font-size: 12px;">Scan at Entrance</p>
+                          <div style="display: inline-block; background-color: #ffffff; padding: 15px; border-radius: 12px;">
+                            <img src="https://quickchart.io/qr?text=${encodeURIComponent(JSON.stringify({
+                                id: orderId,
+                                name: booking.student_name,
+                                class: booking.class_level,
+                                status: "PAID"
+                            }))}&size=200&dark=0f172a&light=ffffff" alt="Ticket QR" width="160" height="160" style="display: block;">
+                          </div>
+                        </div>
+
+                      </div>
+                      
+                      <!-- Footer -->
+                      <div style="background-color: #0f172a; padding: 15px; text-align: center; border-top: 1px solid #334155;">
+                        <p style="margin: 0; color: #475569; font-size: 11px;">Powered by Focsera • Ticket #${orderId}</p>
+                      </div>
+
                     </div>
-                </div>
+                  </div>
+                </body>
+                </html>
                 `,
             }),
             });
@@ -176,7 +223,7 @@ serve(async (req) => {
     // Or keep PROCESSING? If it's a code bug, PROCESSING hangs the user.
     // Let's return PROCESSING with error details so we can debug, but maybe FAILED is safer for user experience if it persists?
     // User requested: "make it updated if failed make failed if success turn it success"
-    return new Response(JSON.stringify({ status: "PROCESSING", error: err.message }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ status: "PROCESSING", error: (err as Error).message }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
 
