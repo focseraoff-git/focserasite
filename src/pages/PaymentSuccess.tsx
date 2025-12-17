@@ -11,6 +11,13 @@ export default function PaymentSuccess() {
   const [status, setStatus] = useState<Status>("PROCESSING");
 
   useEffect(() => {
+    // 1. Immediate Failure Check from URL Params (Fast Path)
+    const urlStatus = params.get("order_status");
+    if (urlStatus === "FAILED" || urlStatus === "USER_DROPPED" || urlStatus === "CANCELLED" || urlStatus === "TXN_FAILED") {
+      setStatus("FAILED");
+      return;
+    }
+
     if (!orderId) {
       setStatus("FAILED");
       return;
@@ -37,20 +44,35 @@ export default function PaymentSuccess() {
         if (data.status === "SUCCESS") {
           resolved = true;
           setStatus("SUCCESS");
+        } else if (data.status === "FAILED") {
+          resolved = true;
+          setStatus("FAILED");
         }
       } catch {
-        // silent
+        // network error, keep processing or set failed
       }
     };
 
+    // Poll every 2 seconds, max 5 attempts (10 seconds)
+    let attempts = 0;
+    const interval = setInterval(() => {
+      if (resolved) {
+        clearInterval(interval);
+        return;
+      }
+      if (attempts >= 5) {
+        clearInterval(interval);
+        if (!resolved) setStatus("FAILED"); // Timeout = Failed per user request
+        return;
+      }
+      verify();
+      attempts++;
+    }, 2000);
+
+    // Initial check
     verify();
 
-    // UX-first fallback — never trap the user
-    const timeout = setTimeout(() => {
-      if (!resolved) setStatus("SUCCESS");
-    }, 2800);
-
-    return () => clearTimeout(timeout);
+    return () => clearInterval(interval);
   }, [orderId]);
 
   return (
@@ -149,11 +171,11 @@ export default function PaymentSuccess() {
             </div>
 
             <h2 className="text-[20px] font-bold text-red-600 mb-2">
-              Invalid payment session
+              Payment Failed
             </h2>
 
             <p className="text-gray-600 mb-6 text-[15px]">
-              This page was accessed without a valid transaction.
+              The payment could not be verified or failed. Please try again or contact support.
             </p>
 
             <button
@@ -166,6 +188,9 @@ export default function PaymentSuccess() {
           </div>
         )}
       </div>
+
     </div>
+
+
   );
 }

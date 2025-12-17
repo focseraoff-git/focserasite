@@ -1,157 +1,146 @@
-// @ts-nocheck
-// [EDIT] Updated imports to use deno.json
-import { serve } from 'std/http/server.ts';
-import { Resend } from 'resend';
-import qrcode from 'qrcode';
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { Resend } from "https://esm.sh/resend@2.0.0";
+import qrcode from "https://esm.sh/qrcode@1.5.3";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { Base64 } from "https://esm.sh/js-base64@3.7.5";
 
-console.log('Function cold start: index.ts loaded.');
+console.log("Function cold start: index.ts loaded.");
 
-// Helper function for email HTML
-const createEmailHtml = (name: string, ticketId: string, qrDataUrl: string) => {
-  // ... (HTML code is unchanged) ...
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+interface WebhookPayload {
+  record: {
+    id: number;
+    full_name: string;
+    email: string;
+  };
+}
+
+const createEmailHtml = (
+  name: string,
+  ticketId: string,
+  qrCodeCid: string,
+) => {
+  const eventDate = "November 15, 2025";
+  const eventTime = "10:00 AM - 4:00 PM IST";
+
   return `
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Your PromptX Ticket</title>
-      <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; }
-        .container { width: 90%; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; }
-        .header { background: #0f172a; padding: 40px; text-align: center; }
-        .header h1 { color: #fff; font-size: 36px; margin: 0; filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.7)); }
-        .content { padding: 30px; }
-        .content p { font-size: 16px; color: #333; }
-        .ticket { background: #f4f4f7; border-radius: 8px; padding: 20px; text-align: center; }
-        .ticket-id { font-size: 24px; font-weight: bold; color: #0f172a; margin-bottom: 15px; }
-        .qr-code { margin-top: 20px; }
-        .footer { padding: 30px; text-align: center; font-size: 12px; color: #777; background: #f9fafb; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>PromptX</h1>
-        </div>
-        <div class="content">
-          <p>Hello ${name},</p>
-          <p>Thank you for registering for the <strong>PromptX AI Workshop</strong>! We are excited to have you join us. This email contains your unique ticket ID and QR code for entry.</p>
-          
-          <div class="ticket">
-            <p style="margin:0; color: #555;">Your Unique Ticket ID is:</p>
-            <div class="ticket-id">${ticketId}</div>
-            <p style="margin:0; color: #555;">Please present this QR code at the event entry:</p>
-            <div class="qr-code">
-              <img src="${qrDataUrl}" alt="Your Ticket QR Code" width="200" height="200">
-            </div>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your PromptX Ticket</title>
+    <style>
+      body { font-family: sans-serif; line-height: 1.6; background-color: #f9fafb; margin: 0; padding: 0; }
+      .container { width: 90%; max-width: 500px; margin: 20px auto; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; }
+      .header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; }
+      .header h1 { color: #ffffff; font-size: 40px; font-weight: 800; margin: 0; }
+      .content { padding: 35px 30px; background-color: #ffffff; }
+      .ticket-pass { background-color: #f9fafb; border-radius: 12px; border: 1px solid #e5e7eb; text-align: center; padding: 25px; }
+      .qr-code { margin: 10px auto; padding: 10px; background: #fff; border-radius: 8px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+      .ticket-id { font-size: 26px; font-weight: 700; color: #111827; margin-top: 15px; letter-spacing: 1px; }
+      .footer { padding: 30px; text-align: center; font-size: 12px; color: #6b7280; background-color: #f9fafb; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header"><h1>PromptX</h1></div>
+      <div class="content">
+        <p>Hello ${name},</p>
+        <p>You're all set! Thank you for registering for the <strong>PromptX AI Workshop</strong>.</p>
+        <div class="ticket-pass">
+          <p>Present this QR code for entry:</p>
+          <div class="qr-code"><img src="cid:${qrCodeCid}" alt="Ticket QR" width="220" height="220"></div>
+          <div class="ticket-id">${ticketId}</div>
+          <div style="text-align:left; margin-top:25px;">
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Date:</strong> ${eventDate}</p>
+            <p><strong>Time:</strong> ${eventTime}</p>
           </div>
-          
-          <p style="margin-top: 20px;">We look forward to seeing you there!</p>
-          <p>— The Focsera Events Team</p>
-        </div>
-        <div class="footer">
-          © ${new Date().getFullYear()} PromptX. All rights reserved.
         </div>
       </div>
-    </body>
-    </html>
+      <div class="footer">© ${new Date().getFullYear()} PromptX. All rights reserved.</div>
+    </div>
+  </body>
+  </html>
   `;
 };
 
-// [FIX] Added 'any' type to req for Deno
-serve(async (req: any) => {
-  console.log('Function invoked with a request.'); // <-- NEW LOG
-
-  if (req.method !== 'POST') {
-    console.warn('Request rejected: Not a POST method.');
-    return new Response('Method Not Allowed', { status: 405 });
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    console.log('Inside try block. Checking for API key...'); // <-- NEW LOG
+    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+    if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not set");
     
-    // 1. Get Resend API Key from Supabase Secrets
-    // [FIX] This MUST be the NAME of the secret ('RESEND_API_KEY'), not the key itself.
-    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-    
-    if (!RESEND_API_KEY) {
-      console.error('CRITICAL: RESEND_API_KEY is not set.');
-      throw new Error('RESEND_API_KEY is not set in Supabase Secrets.');
-    }
-    console.log('RESEND_API_KEY found. Initializing Resend...'); // <-- NEW LOG
     const resend = new Resend(RESEND_API_KEY);
-
-    // 2. Parse the new registration data from the webhook
-    console.log('Parsing JSON from request body...'); // <-- NEW LOG
-    const { record } = await req.json();
-    console.log('JSON parsed. Record received with ID:', record?.id); // <-- NEW LOG
-
-    // This is where the email is taken from the custom_contacts table record
+    const { record }: WebhookPayload = await req.json();
     const { id, full_name, email } = record;
 
-    if (!email) {
-      console.warn('Record ' + id + ' has no email. Skipping email send.');
-      return new Response('No email provided for this record.', { status: 400 });
-    }
-    console.log('Email ' + email + ' found. Generating ticket...'); // <-- NEW LOG
+    if (!email) return new Response("No email provided", { status: 400, headers: corsHeaders });
 
-    // 3. Generate Unique Ticket ID
-    const ticketId = `PROMPTX-${id.toString().padStart(6, '0')}`;
-    console.log('Ticket ID ' + ticketId + ' generated.'); // <-- NEW LOG
+    // Generate Ticket ID
+    const seed = `${full_name}${email}${Math.random().toString(36).substring(2, 8)}${Date.now()}`;
+    const enc = new TextEncoder();
+    const hash = await crypto.subtle.digest('SHA-256', enc.encode(seed));
+    const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+    const ticketId = `PROMPTX-${hex.substring(0, 8).toUpperCase()}`;
 
-    // 4. Generate QR Code
-    console.log('Generating QR code...'); // <-- NEW LOG
-    const qrCodeDataURL = await qrcode(ticketId, {
-      size: 200,
-      errorCorrection: 'H',
-    });
-    console.log('QR code generated.'); // <-- NEW LOG
+    // Generate QR
+    const qrDetails = JSON.stringify({ id, fullName: full_name, email, ticketId });
+    const qrCodeDataURL = await qrcode.toDataURL(qrDetails, { size: 220, errorCorrection: "H" });
+    const qrCodeContentId = `qrcode_${ticketId}`;
 
-    // 5. Create the Email
-    const emailHtml = createEmailHtml(full_name, ticketId, qrCodeDataURL);
-    console.log('HTML email created. Sending via Resend...'); // <-- NEW LOG
+    // Email
+    const emailHtml = createEmailHtml(full_name, ticketId, qrCodeContentId);
+    const htmlBase64 = Base64.encode(emailHtml);
 
-    // 6. Send the Email via Resend
-    console.log('Calling resend.emails.send...');
     const sendResult = await resend.emails.send({
-      from: 'PromptX <onboarding@resend.dev>', // IMPORTANT: Use onboarding@resend.dev OR your verified domain
+      from: "PromptX <hello@focsera.in>",
       to: [email],
-      subject: 'Your PromptX Workshop Ticket is Here! 🎟️',
+      subject: "Your PromptX Workshop Ticket is Here! 🎟️",
       html: emailHtml,
       attachments: [
         {
-          filename: `PromptX_Ticket_${ticketId}.png`,
-          content: qrCodeDataURL.includes('base64,') ? qrCodeDataURL.split('base64,')[1] : qrCodeDataURL,
-          encoding: 'base64',
+          filename: `PromptX_Ticket_QR_Inline.png`,
+          content: qrCodeDataURL.split("base64,")[1],
+          encoding: "base64",
+          contentType: "image/png",
+          contentId: qrCodeContentId,
+        },
+        {
+          filename: `PromptX_Ticket_${ticketId}.html`,
+          content: htmlBase64,
+          encoding: "base64",
+          contentType: "text/html",
         },
       ],
     });
 
-    console.log('Resend sendResult:', JSON.stringify(sendResult));
+    if (sendResult.error) throw new Error(JSON.stringify(sendResult.error));
 
-    // Support different response shapes from the Resend SDK
-    const possibleError = (sendResult as any)?.error || (sendResult as any)?.errors;
-    if (possibleError) {
-      console.error('Resend returned an error:', possibleError);
-      throw new Error(JSON.stringify(possibleError));
-    }
+    // Update DB
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
 
-    const messageId = (sendResult as any)?.id || (sendResult as any)?.messageId || (sendResult as any)?.data?.id || null;
-    console.log('Email sent successfully! Message ID:', messageId); // <-- NEW LOG
+    await supabaseAdmin.from('custom_contacts').update({ ticket_id: ticketId }).eq('id', id);
 
-    // 7. Return a success response to the webhook
-    return new Response(JSON.stringify({ success: true, messageId: data?.id }), {
+    return new Response(JSON.stringify({ success: true, messageId: sendResult.data?.id }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
     });
 
-  // [FIX] Kept your improved error handling
-  } catch (err: unknown) { 
-    const msg = (err as any)?.message || String(err);
-    console.error('Function Error:', msg); // <-- THIS IS THE MOST IMPORTANT LOG
-    return new Response(JSON.stringify({ error: msg }), {
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
     });
   }
 });
