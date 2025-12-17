@@ -107,34 +107,65 @@ serve(async (req) => {
 
     // Trigger Email if not sent
     if (!booking.ticket_sent) {
-       console.log("Triggering send-ticket via FETCH for", booking.email);
+       console.log("Triggering send-ticket DIRECT INLINE for", booking.email);
        
-       // Using direct fetch with Service Role Key to bypass Auth issues
-       const ticketRes = await fetch(
-        `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-ticket`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`, 
-          },
-          body: JSON.stringify({
-            orderId,
-            email: booking.email,
-            studentName: booking.student_name,
-            amount: order.order_amount,
-            class_level: booking.class_level 
-          }),
-        }
-      );
-      
-      const ticketText = await ticketRes.text();
-      if (!ticketRes.ok) {
-         console.error(`ticket-send failed (${ticketRes.status}):`, ticketText);
-      } else {
-         console.log("ticket-send success:", ticketText);
-         await supabase.from("promptx_bookings").update({ ticket_sent: true }).eq("order_id", orderId);
-      }
+       const resendKey = Deno.env.get("RESEND_API_KEY");
+       if (!resendKey) {
+           console.error("Configuration Error: RESEND_API_KEY is missing in cashfree-status");
+       } else {
+           const emailRes = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${resendKey}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                from: Deno.env.get("FROM_EMAIL") || "PromptX <hello@focsera.in>",
+                to: [booking.email],
+                subject: "🎟️ Your PromptX Workshop Ticket",
+                html: `
+                <div style="font-family:Arial, sans-serif; max-width:600px; margin:auto; background-color:#ffffff; color:#333;">
+                    <div style="text-align:center; padding: 24px 0; border-bottom: 3px solid #10b981;">
+                    <h1 style="color:#10b981; margin:0;">Registration Confirmed!</h1>
+                    </div>
+                    
+                    <div style="padding: 24px;">
+                    <p style="font-size:16px;">Hello <strong>${booking.student_name}</strong>,</p>
+                    <p style="font-size:16px; line-height:1.5;">
+                        You have successfully secured your seat for <strong>PromptX – AI Workshop</strong>.
+                        We are excited to see you there!
+                    </p>
+                    
+                    <div style="background-color:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:20px; margin: 24px 0;">
+                        <h3 style="margin-top:0; color:#166534;">Ticket Details</h3>
+                        <p style="margin:8px 0;"><strong>Order ID:</strong> <span style="font-family:monospace;">${orderId}</span></p>
+                        <p style="margin:8px 0;"><strong>Student:</strong> ${booking.student_name}</p>
+                        <p style="margin:8px 0;"><strong>Class:</strong> ${booking.class_level || "7-10"}</p>
+                        <p style="margin:8px 0;"><strong>Amount Paid:</strong> ₹${order.order_amount}</p>
+                    </div>
+
+                    <p style="font-size:14px; color:#666;">
+                        📍 <strong>Important:</strong> Please present this email (digitally or printed) at the venue entrance.
+                    </p>
+                    </div>
+
+                    <div style="background-color:#f9fafb; padding:20px; text-align:center; border-top:1px solid #e5e7eb; font-size:12px; color:#999;">
+                    <p>Sent by PromptX Team • <a href="mailto:support@focsera.in" style="color:#10b981;">support@focsera.in</a></p>
+                    </div>
+                </div>
+                `,
+            }),
+            });
+
+            if (!emailRes.ok) {
+                const errText = await emailRes.text();
+                console.error(`Resend API Failed (${emailRes.status}):`, errText);
+            } else {
+                const emailData = await emailRes.json();
+                console.log("Email sent successfully via Inline:", emailData.id);
+                await supabase.from("promptx_bookings").update({ ticket_sent: true }).eq("order_id", orderId);
+            }
+       }
     }
 
     return new Response(JSON.stringify({ status: "SUCCESS", _v: "strict-v3" }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
