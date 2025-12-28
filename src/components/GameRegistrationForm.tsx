@@ -61,23 +61,34 @@ export const GameRegistrationForm = () => {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.from("game_registrations").insert({
-        full_name: formData.full_name,
-        email: formData.email,
-        phone: formData.phone,
-        flat_number: formData.flat_number,
-        age: parseInt(formData.age),
-        game_type: formData.game_type,
-        preferred_day: formData.preferred_day,
-        preferred_time_slot: formData.preferred_time_slot,
+      // Use the new RPC that handles both DB insert and Email sending atomically
+      const { data, error } = await supabase.rpc('submit_game_registration', {
+        p_full_name: formData.full_name,
+        p_email: formData.email,
+        p_phone: formData.phone,
+        p_flat_number: formData.flat_number,
+        p_age: parseInt(formData.age),
+        p_game_type: formData.game_type,
+        p_preferred_day: formData.preferred_day,
+        p_preferred_time_slot: formData.preferred_time_slot
       });
 
       if (error) throw error;
 
-      setIsSubmitted(true);
-      toast.success("Game registration successful! See you at the event.");
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.");
+      // If we get here, both insert and email succeeded (or email failed gracefully within RPC but insert worked)
+      // The RPC returns { success: true/false, id: ... }
+
+      const result = data as any;
+      if (result && result.success) {
+        toast.success("Game registration successful! Check your email.");
+        setIsSubmitted(true);
+      } else {
+        throw new Error(result?.error || "Registration failed");
+      }
+
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      toast.error(`Registration failed: ${error.message || "Something went wrong"}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -109,7 +120,7 @@ export const GameRegistrationForm = () => {
             <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4">
               Register for <span className="text-gold-gradient">Games</span>
             </h2>
-            <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-700 dark:text-foreground/60 max-w-2xl mx-auto">
               Choose your favorite games and book your spot. Limited slots available per game!
             </p>
           </motion.div>
@@ -125,55 +136,55 @@ export const GameRegistrationForm = () => {
             >
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm text-foreground/70">Full Name *</label>
+                  <label className="text-sm text-gray-800 dark:text-foreground/70">Full Name *</label>
                   <input
                     type="text"
                     required
                     value={formData.full_name}
                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground placeholder:text-gray-500 dark:placeholder:text-foreground/30"
                     placeholder="Enter your full name"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm text-foreground/70">Email Address *</label>
+                  <label className="text-sm text-gray-800 dark:text-foreground/70">Email Address *</label>
                   <input
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground placeholder:text-gray-500 dark:placeholder:text-foreground/30"
                     placeholder="your.email@example.com"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm text-foreground/70">Mobile Number *</label>
+                  <label className="text-sm text-gray-800 dark:text-foreground/70">Mobile Number *</label>
                   <input
                     type="tel"
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground placeholder:text-gray-500 dark:placeholder:text-foreground/30"
                     placeholder="Enter your mobile number"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm text-foreground/70">Flat Number *</label>
+                  <label className="text-sm text-gray-800 dark:text-foreground/70">Flat Number *</label>
                   <input
                     type="text"
                     required
                     value={formData.flat_number}
                     onChange={(e) => setFormData({ ...formData, flat_number: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground placeholder:text-gray-500 dark:placeholder:text-foreground/30"
                     placeholder="e.g., A-101"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm text-foreground/70">Age *</label>
+                  <label className="text-sm text-gray-800 dark:text-foreground/70">Age *</label>
                   <input
                     type="number"
                     required
@@ -181,18 +192,18 @@ export const GameRegistrationForm = () => {
                     max="80"
                     value={formData.age}
                     onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground placeholder:text-gray-500 dark:placeholder:text-foreground/30"
                     placeholder="Your age"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm text-foreground/70">Select Game *</label>
+                  <label className="text-sm text-gray-800 dark:text-foreground/70">Select Game *</label>
                   <select
                     required
                     value={formData.game_type}
                     onChange={(e) => setFormData({ ...formData, game_type: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground"
+                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground"
                   >
                     <option value="">Choose a game</option>
                     {gameTypes.map((game) => (
@@ -202,12 +213,12 @@ export const GameRegistrationForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm text-foreground/70">Preferred Day *</label>
+                  <label className="text-sm text-gray-800 dark:text-foreground/70">Preferred Day *</label>
                   <select
                     required
                     value={formData.preferred_day}
                     onChange={(e) => setFormData({ ...formData, preferred_day: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground"
+                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground"
                   >
                     <option value="">Select day</option>
                     <option value="Day 1 (Evening)">Day 1 (Evening - 6 PM to 9 PM)</option>
@@ -218,11 +229,11 @@ export const GameRegistrationForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm text-foreground/70">Preferred Time Slot</label>
+                  <label className="text-sm text-gray-800 dark:text-foreground/70">Preferred Time Slot</label>
                   <select
                     value={formData.preferred_time_slot}
                     onChange={(e) => setFormData({ ...formData, preferred_time_slot: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground"
+                    className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground"
                   >
                     <option value="">Select time slot (optional)</option>
                     {timeSlots.map((slot) => (
@@ -255,7 +266,7 @@ export const GameRegistrationForm = () => {
                 <Check className="w-8 h-8 text-gold" />
               </div>
               <h3 className="text-2xl font-heading font-bold text-foreground mb-2">Registration Complete!</h3>
-              <p className="text-foreground/60 mb-6">You've successfully registered for {formData.game_type}. Get ready for an amazing experience!</p>
+              <p className="text-gray-700 dark:text-foreground/60 mb-6">You've successfully registered for {formData.game_type}. Get ready for an amazing experience!</p>
               <Button variant="goldOutline" onClick={() => {
                 setIsSubmitted(false);
                 setFormData({

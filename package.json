@@ -11,10 +11,11 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.53.2",
-    "@esbuild/linux-x64": "0.25.12"
+    "@esbuild/linux-x64": "0.25.12",
+    "@rollup/rollup-linux-x64-gnu": "4.53.2"
   },
   "dependencies": {
+    "@babel/runtime": "^7.28.4",
     "@capacitor/android": "^8.0.0",
     "@capacitor/cli": "^8.0.0",
     "@capacitor/core": "^8.0.0",
@@ -75,6 +76,7 @@
     "react-hook-form": "^7.68.0",
     "react-lottie-player": "^2.1.0",
     "react-qr-code": "^2.0.18",
+    "react-qr-scanner": "^1.0.0-alpha.11",
     "react-resizable-panels": "^3.0.6",
     "react-router-dom": "^7.9.4",
     "recharts": "^3.6.0",

@@ -63,7 +63,7 @@ export default function GameDetailPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <Link to="/games">
+              <Link to="/arenax/games">
                 <Button variant="ghost" className="mb-8 text-foreground/70 hover:text-gold">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Games
@@ -133,10 +133,10 @@ export default function GameDetailPage() {
                         {game.category}
                       </span>
                       <span className={`px-4 py-2 rounded-full border font-medium ${game.difficulty === "Easy"
-                          ? "bg-green-500/10 border-green-500/30 text-green-400"
-                          : game.difficulty === "Medium"
-                            ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-400"
-                            : "bg-red-500/10 border-red-500/30 text-red-400"
+                        ? "bg-green-500/10 border-green-500/30 text-green-400"
+                        : game.difficulty === "Medium"
+                          ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-400"
+                          : "bg-red-500/10 border-red-500/30 text-red-400"
                         }`}>
                         {game.difficulty}
                       </span>
@@ -203,7 +203,7 @@ export default function GameDetailPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 }}
                 >
-                  <Link to="/register">
+                  <Link to="/arenax/register">
                     <Button variant="gold" size="lg" className="gold-glow">
                       <Sparkles className="w-5 h-5 mr-2" />
                       Register for This Game
@@ -278,7 +278,7 @@ export default function GameDetailPage() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Link to={`/games/${otherGame.id}`}>
+                  <Link to={`/arenax/games/${otherGame.id}`}>
                     <motion.div
                       className="p-4 rounded-xl bg-card/30 border border-border hover:border-gold/30 transition-all duration-300 group"
                       whileHover={{ y: -5 }}

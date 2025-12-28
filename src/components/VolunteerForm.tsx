@@ -136,7 +136,7 @@ export const VolunteerForm = () => {
                 <p className="text-sm text-foreground/60">Spots Remaining</p>
               </div>
             </div>
-            
+
             {/* Progress Bar */}
             <div className="h-3 rounded-full bg-border overflow-hidden">
               <motion.div
@@ -146,7 +146,7 @@ export const VolunteerForm = () => {
                 transition={{ duration: 1, delay: 0.3 }}
               />
             </div>
-            
+
             {remaining <= 5 && remaining > 0 && (
               <div className="mt-3 flex items-center gap-2 text-gold">
                 <AlertCircle className="w-4 h-4" />
@@ -171,7 +171,7 @@ export const VolunteerForm = () => {
                   required
                   value={formData.full_name}
                   onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                  className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-white placeholder:text-zinc-500"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -183,7 +183,7 @@ export const VolunteerForm = () => {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                  className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-white placeholder:text-zinc-500"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -195,7 +195,7 @@ export const VolunteerForm = () => {
                   required
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                  className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-white placeholder:text-zinc-500"
                   placeholder="Enter your phone number"
                 />
               </div>
@@ -209,7 +209,7 @@ export const VolunteerForm = () => {
                   max="70"
                   value={formData.age}
                   onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                  className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-white placeholder:text-zinc-500"
                   placeholder="Your age"
                 />
               </div>
@@ -221,7 +221,7 @@ export const VolunteerForm = () => {
                   required
                   value={formData.flat_number}
                   onChange={(e) => setFormData({ ...formData, flat_number: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                  className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-white placeholder:text-zinc-500"
                   placeholder="e.g., A-101"
                 />
               </div>
@@ -231,7 +231,7 @@ export const VolunteerForm = () => {
                 <select
                   value={formData.preferred_role}
                   onChange={(e) => setFormData({ ...formData, preferred_role: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground"
+                  className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-white"
                 >
                   <option value="">Select a role (optional)</option>
                   {roles.map((role) => (
@@ -246,7 +246,7 @@ export const VolunteerForm = () => {
                   value={formData.experience}
                   onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl bg-card/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30 resize-none"
+                  className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-white placeholder:text-zinc-500 resize-none"
                   placeholder="Tell us about any relevant experience..."
                 />
               </div>

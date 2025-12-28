@@ -3,6 +3,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
+import React from "react";
+// Admin Dashboards (Lazy Loaded)
+const VolunteerDashboard = React.lazy(() => import("../../pages/admin/VolunteerDashboard"));
+const OrganiserDashboard = React.lazy(() => import("../../pages/admin/OrganiserDashboard"));
 import Index from "./pages/Index";
 import GamesPage from "./pages/GamesPage";
 import GameDetailPage from "./pages/GameDetailPage";
@@ -42,6 +46,8 @@ const App = () => (
           <Route path="volunteers" element={<VolunteersPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="admin" element={<AdminPage />} />
+          <Route path="admin/scan" element={<VolunteerDashboard />} />
+          <Route path="admin/reports" element={<OrganiserDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

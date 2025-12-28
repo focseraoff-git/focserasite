@@ -13,6 +13,7 @@ const Events = React.lazy(() => import('./pages/divisions/Events'));
 const Web = React.lazy(() => import('./pages/divisions/Web'));
 const ProductServices = React.lazy(() => import('./pages/divisions/ProductServices'));
 const SkillApp = React.lazy(() => import("./pages/divisions/Skill/App"));
+
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import ArenaXAppRoutes from './pages/ArenaX/App';

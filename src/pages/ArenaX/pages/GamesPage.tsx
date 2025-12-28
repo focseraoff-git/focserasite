@@ -72,8 +72,8 @@ export default function GamesPage() {
                 key={category}
                 onClick={() => setActiveCategory(category)}
                 className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${activeCategory === category
-                    ? "bg-gold text-background gold-glow"
-                    : "bg-card/50 text-foreground/70 border border-border hover:border-gold/50 hover:text-gold"
+                  ? "bg-gold text-background gold-glow"
+                  : "bg-card/50 text-foreground/70 border border-border hover:border-gold/50 hover:text-gold"
                   }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -110,7 +110,7 @@ export default function GamesPage() {
                   onMouseEnter={() => setHoveredGame(game.id)}
                   onMouseLeave={() => setHoveredGame(null)}
                 >
-                  <Link to={`/games/${game.id}`}>
+                  <Link to={game.id}>
                     <motion.div
                       className="relative group h-full"
                       whileHover={{ y: -10 }}
@@ -176,8 +176,8 @@ export default function GamesPage() {
                               <div
                                 key={level}
                                 className={`w-2 h-2 rounded-full ${level <= (game.difficulty === "Easy" ? 1 : game.difficulty === "Medium" ? 2 : 3)
-                                    ? "bg-gold"
-                                    : "bg-foreground/20"
+                                  ? "bg-gold"
+                                  : "bg-foreground/20"
                                   }`}
                               />
                             ))}

@@ -36,55 +36,58 @@ export const GameCardBookingForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Generate card codes for all cards
+      // 1. Generate card codes for all cards
       const codes = Array.from({ length: formData.number_of_cards }, () => generateCardCode());
       setCardCodes(codes);
 
-      // Save to database
-      const { error } = await supabase.from("game_card_bookings").insert({
-        full_name: formData.full_name,
-        email: formData.email,
-        phone: formData.phone,
-        flat_number: formData.flat_number,
-        number_of_cards: formData.number_of_cards,
-        participant_names: formData.participant_names,
-        card_code: codes[0], // Store primary card code
-      });
+      // 2. Prepare complete list of names (Main User + Guests)
+      let allNames: string[] = [];
+      if (formData.number_of_cards === 1) {
+        allNames = [formData.full_name];
+      } else {
+        const guestNames = formData.participant_names.split('\n').filter(name => name.trim().length > 0);
+        allNames = [formData.full_name, ...guestNames];
+        // Ensure we don't exceed the number of cards (truncate if user typed too many lines)
+        allNames = allNames.slice(0, formData.number_of_cards);
 
-      if (error) throw error;
-
-      // Get participant names
-      const names = getParticipantNames();
-
-      // Send email with game cards
-      try {
-        const emailResponse = await supabase.functions.invoke('send-game-card-email', {
-          body: {
-            email: formData.email,
-            name: formData.full_name,
-            flatNumber: formData.flat_number,
-            phone: formData.phone,
-            cardCodes: codes,
-            participantNames: names
-          }
-        });
-
-        if (emailResponse.error) {
-          console.error("Email error:", emailResponse.error);
-          toast.warning("Cards generated but email could not be sent. Please screenshot your cards!");
-        } else {
-          toast.success("Game passes sent to your email!");
+        // Pad with "Guest" if not enough names provided
+        while (allNames.length < formData.number_of_cards) {
+          allNames.push("Guest");
         }
-      } catch (emailError) {
-        console.error("Email sending failed:", emailError);
-        toast.warning("Cards generated! Screenshot them as email service is unavailable.");
       }
 
-      setIsSubmitted(true);
-      toast.success("Game Card booking successful!");
-    } catch (error) {
+      // 3. Call the RPC to handle Insert + Email atomically
+      const { data, error } = await supabase.rpc('submit_game_card_booking', {
+        p_full_name: formData.full_name,
+        p_email: formData.email,
+        p_phone: formData.phone,
+        p_flat_number: formData.flat_number,
+        p_number_of_cards: formData.number_of_cards,
+        p_participant_names: allNames,
+        p_card_codes: codes
+      });
+
+      if (error) {
+        console.error("RPC Error:", error);
+        throw error;
+      }
+
+      // 4. Handle Success
+      const result = data as any;
+      if (result && result.success) {
+        toast.success("Game Card booking successful! 🎉");
+        setIsSubmitted(true);
+      } else {
+        throw new Error(result?.error || "Booking failed");
+      }
+
+    } catch (error: any) {
       console.error("Booking error:", error);
-      toast.error("Something went wrong. Please try again.");
+      if (error.message?.includes("function") && error.message?.includes("does not exist")) {
+        toast.error("System update required. Please contact admin (RPC missing).");
+      } else {
+        toast.error(`Booking failed: ${error.message || "Something went wrong"}`);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -140,49 +143,49 @@ export const GameCardBookingForm = () => {
               <div className="space-y-5">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm text-foreground/70">Full Name *</label>
+                    <label className="text-sm text-gray-800 dark:text-foreground/70">Full Name *</label>
                     <input
                       type="text"
                       required
                       value={formData.full_name}
                       onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                      className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground placeholder:text-gray-500 dark:placeholder:text-foreground/30"
                       placeholder="Enter your name"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm text-foreground/70">Email Address *</label>
+                    <label className="text-sm text-gray-800 dark:text-foreground/70">Email Address *</label>
                     <input
                       type="email"
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                      className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground placeholder:text-gray-500 dark:placeholder:text-foreground/30"
                       placeholder="your.email@example.com"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm text-foreground/70">Mobile Number *</label>
+                    <label className="text-sm text-gray-800 dark:text-foreground/70">Mobile Number *</label>
                     <input
                       type="tel"
                       required
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                      className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground placeholder:text-gray-500 dark:placeholder:text-foreground/30"
                       placeholder="Enter phone number"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm text-foreground/70">Flat Number *</label>
+                    <label className="text-sm text-gray-800 dark:text-foreground/70">Flat Number *</label>
                     <input
                       type="text"
                       required
                       value={formData.flat_number}
                       onChange={(e) => setFormData({ ...formData, flat_number: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30"
+                      className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground placeholder:text-gray-500 dark:placeholder:text-foreground/30"
                       placeholder="e.g., A-101"
                     />
                   </div>
@@ -190,7 +193,7 @@ export const GameCardBookingForm = () => {
 
                 {/* Number of Cards */}
                 <div className="space-y-2">
-                  <label className="text-sm text-foreground/70">Number of Game Cards *</label>
+                  <label className="text-sm text-gray-800 dark:text-foreground/70">Number of Game Cards *</label>
                   <div className="flex items-center gap-4">
                     <button
                       type="button"
@@ -201,7 +204,7 @@ export const GameCardBookingForm = () => {
                     </button>
                     <div className="flex-1 text-center">
                       <span className="text-4xl font-bold text-gold">{formData.number_of_cards}</span>
-                      <p className="text-sm text-foreground/50">Cards</p>
+                      <p className="text-sm text-gray-600 dark:text-foreground/50">Cards</p>
                     </div>
                     <button
                       type="button"
@@ -220,12 +223,12 @@ export const GameCardBookingForm = () => {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                   >
-                    <label className="text-sm text-foreground/70">Other Participant Names (Optional)</label>
+                    <label className="text-sm text-gray-800 dark:text-foreground/70">Other Participant Names (Optional)</label>
                     <textarea
                       value={formData.participant_names}
                       onChange={(e) => setFormData({ ...formData, participant_names: e.target.value })}
                       rows={3}
-                      className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-foreground placeholder:text-foreground/30 resize-none"
+                      className="w-full px-4 py-3 rounded-xl bg-background/50 border border-border focus:border-gold/50 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-gray-900 dark:text-foreground placeholder:text-gray-500 dark:placeholder:text-foreground/30 resize-none"
                       placeholder="Enter names of other participants (one per line)"
                     />
                   </motion.div>
@@ -233,7 +236,7 @@ export const GameCardBookingForm = () => {
 
                 <div className="flex items-center gap-2 p-3 rounded-xl bg-gold/5 border border-gold/20">
                   <Mail className="w-5 h-5 text-gold" />
-                  <p className="text-sm text-foreground/70">
+                  <p className="text-sm text-gray-700 dark:text-foreground/70">
                     Your game passes will be emailed to <span className="text-gold">{formData.email || "your email"}</span>
                   </p>
                 </div>
@@ -268,7 +271,7 @@ export const GameCardBookingForm = () => {
                 <h3 className="text-2xl font-heading font-bold text-foreground mb-2">
                   🎉 Cards Generated & Sent!
                 </h3>
-                <p className="text-foreground/60">
+                <p className="text-gray-700 dark:text-foreground/60">
                   Check your email for your exclusive ArenaX game passes
                 </p>
               </motion.div>
@@ -296,10 +299,10 @@ export const GameCardBookingForm = () => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5 }}
               >
-                <p className="text-sm text-foreground/70">
+                <p className="text-sm text-gray-700 dark:text-foreground/70">
                   📧 Game passes sent to <span className="text-gold font-medium">{formData.email}</span>
                 </p>
-                <p className="text-sm text-foreground/60 mt-2">
+                <p className="text-sm text-gray-600 dark:text-foreground/60 mt-2">
                   📱 Screenshot your cards as backup! Show the QR code at the event for entry.
                 </p>
               </motion.div>
