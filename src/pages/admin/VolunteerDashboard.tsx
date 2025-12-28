@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import QrReader from 'react-qr-scanner'; // We will ask user to install this
-import { supabase } from '@/integrations/supabase/client';
+import { lmsSupabaseClient as supabase } from '@/lib/ssupabase';
 import { toast } from 'sonner';
 
 // Types
@@ -157,7 +157,8 @@ const VolunteerDashboard = () => {
                 p_card_code: cardData.card_code,
                 p_amount: txAmount,
                 p_type: type,
-                p_notes: txNotes
+                p_notes: txNotes,
+                p_admin_id: currentUser?.id
             });
 
             if (error) throw error;

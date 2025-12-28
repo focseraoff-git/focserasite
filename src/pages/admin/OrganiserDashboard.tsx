@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { lmsSupabaseClient as supabase } from '@/lib/ssupabase';
 import { toast } from 'sonner';
 
 interface PlayerReport {
@@ -160,7 +160,8 @@ const OrganiserDashboard = () => {
                 p_full_name: cardFormData.full_name,
                 p_email: cardFormData.email,
                 p_status: cardFormData.status,
-                p_balance: cardFormData.balance
+                p_balance: cardFormData.balance,
+                p_admin_id: currentUser?.id
             });
             if (error) throw error;
             if (!data.success) throw new Error(data.error);
@@ -176,7 +177,10 @@ const OrganiserDashboard = () => {
     const deleteCard = async () => {
         if (!selectedCard || !confirm("Delete this player and all transaction history?")) return;
         try {
-            const { data, error } = await (supabase as any).rpc('admin_delete_player', { p_id: selectedCard.id });
+            const { data, error } = await (supabase as any).rpc('admin_delete_player', {
+                p_id: selectedCard.id,
+                p_admin_id: currentUser?.id
+            });
             if (error) throw error;
             if (!data.success) throw new Error(data.error);
 
@@ -191,7 +195,10 @@ const OrganiserDashboard = () => {
     const deleteTransaction = async (txId: string) => {
         if (!confirm("Remove this activity log?")) return;
         try {
-            const { data, error } = await (supabase as any).rpc('admin_delete_transaction', { p_id: txId });
+            const { data, error } = await (supabase as any).rpc('admin_delete_transaction', {
+                p_id: txId,
+                p_admin_id: currentUser?.id
+            });
             if (error) throw error;
             if (!data.success) throw new Error(data.error);
 
@@ -210,7 +217,8 @@ const OrganiserDashboard = () => {
                 p_card_code: selectedCard.card_code,
                 p_amount: parseInt(newTx.amount),
                 p_type: newTx.type,
-                p_notes: newTx.notes || 'Manual Adjustment'
+                p_notes: newTx.notes || 'Manual Adjustment',
+                p_admin_id: currentUser?.id
             });
 
             if (error) throw error;
@@ -249,7 +257,8 @@ const OrganiserDashboard = () => {
                 p_phone: regFormData.phone,
                 p_game_type: regFormData.game_type,
                 p_preferred_day: regFormData.preferred_day,
-                p_preferred_time_slot: regFormData.preferred_time_slot
+                p_preferred_time_slot: regFormData.preferred_time_slot,
+                p_admin_id: currentUser?.id
             });
             if (error) throw error;
             if (!data.success) throw new Error(data.error);
@@ -265,7 +274,10 @@ const OrganiserDashboard = () => {
     const deleteRegistration = async () => {
         if (!selectedRegistration || !confirm("Delete this registration?")) return;
         try {
-            const { data, error } = await (supabase as any).rpc('admin_delete_game_registration', { p_id: selectedRegistration.id });
+            const { data, error } = await (supabase as any).rpc('admin_delete_game_registration', {
+                p_id: selectedRegistration.id,
+                p_admin_id: currentUser?.id
+            });
             if (error) throw error;
             if (!data.success) throw new Error(data.error);
 
