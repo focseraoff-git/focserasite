@@ -226,9 +226,14 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
     const customizerScrollRef = useRef(null);
     const addOnsScrollRef = useRef(null);
 
+    const sankranthiReel = services.find(s => s.name === 'Sankranthi Reel Special');
+    const sankranthiPhoto = services.find(s => s.name === 'Sankranthi Photo Special');
+    const sankranthiVideo = services.find(s => s.name === 'Sankranthi Video Special');
+    const sankranthiCombo = services.find(s => s.name === 'Sankranthi Combo Pack');
+
     useEffect(() => {
         if (services.length > 0 && !selectedService) {
-            const firstActive = services.find(s => s.is_active);
+            const firstActive = services.find(s => s.is_active && !s.name.toLowerCase().includes('sankranthi'));
             if (firstActive) {
                 setSelectedService(firstActive);
                 setSelectedAddOns(firstActive.default_add_ons || {});
@@ -469,18 +474,11 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                     <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-purple-500/20"><Check className="text-purple-400 w-3 h-3" /></div> Vertical Format</li>
                                 </ul>
                                 <button
-                                    onClick={() => onBookNow({
-                                        id: 'sankranthi-reel',
-                                        name: 'Sankranthi Reel Special',
-                                        description: 'Sankranthi-themed reel (Mobile shoot)',
-                                        price_min: 99,
-                                        is_active: true,
-                                        default_add_ons: {}
-                                    }, {}, 99, true)}
-                                    disabled={new Date() > new Date('2026-10-08')}
+                                    onClick={() => sankranthiReel && onBookNow(sankranthiReel, {}, 99, true)}
+                                    disabled={new Date() > new Date('2026-10-08') || !sankranthiReel}
                                     className="w-full py-4 bg-white/5 hover:bg-purple-600 text-white font-bold rounded-xl border border-white/10 hover:border-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : 'BOOK NOW'}
+                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : (!sankranthiReel ? 'UNAVAILABLE' : 'BOOK NOW')}
                                 </button>
                             </div>
                         </div>
@@ -504,18 +502,11 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                     <li className="flex items-center gap-3 text-gray-300 text-xs italic opacity-70">*No guaranteed photo count</li>
                                 </ul>
                                 <button
-                                    onClick={() => onBookNow({
-                                        id: 'sankranthi-photo',
-                                        name: 'Sankranthi Photo Special',
-                                        description: 'Mini festive photoshoot experience',
-                                        price_min: 99,
-                                        is_active: true,
-                                        default_add_ons: {}
-                                    }, {}, 99, true)}
-                                    disabled={new Date() > new Date('2026-10-08')}
+                                    onClick={() => sankranthiPhoto && onBookNow(sankranthiPhoto, {}, 99, true)}
+                                    disabled={new Date() > new Date('2026-10-08') || !sankranthiPhoto}
                                     className="w-full py-4 bg-white/5 hover:bg-blue-600 text-white font-bold rounded-xl border border-white/10 hover:border-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : 'BOOK NOW'}
+                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : (!sankranthiPhoto ? 'UNAVAILABLE' : 'BOOK NOW')}
                                 </button>
                             </div>
                         </div>
@@ -537,18 +528,11 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                     <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-emerald-500/20"><Check className="text-emerald-400 w-3 h-3" /></div> BGM Included</li>
                                 </ul>
                                 <button
-                                    onClick={() => onBookNow({
-                                        id: 'sankranthi-video',
-                                        name: 'Sankranthi Video Special',
-                                        description: 'Short festive video capture',
-                                        price_min: 99,
-                                        is_active: true,
-                                        default_add_ons: {}
-                                    }, {}, 99, true)}
-                                    disabled={new Date() > new Date('2026-10-08')}
+                                    onClick={() => sankranthiVideo && onBookNow(sankranthiVideo, {}, 99, true)}
+                                    disabled={new Date() > new Date('2026-10-08') || !sankranthiVideo}
                                     className="w-full py-4 bg-white/5 hover:bg-emerald-600 text-white font-bold rounded-xl border border-white/10 hover:border-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : 'BOOK NOW'}
+                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : (!sankranthiVideo ? 'UNAVAILABLE' : 'BOOK NOW')}
                                 </button>
                             </div>
                         </div>
@@ -576,18 +560,11 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                     <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-white/10"><Check className="text-yellow-400 w-3 h-3" /></div> Social-media ready</li>
                                 </ul>
                                 <button
-                                    onClick={() => onBookNow({
-                                        id: 'sankranthi-combo',
-                                        name: 'Sankranthi Combo Pack',
-                                        description: 'All-in-One Festive Experience (Reel + Photos + Video)',
-                                        price_min: 199,
-                                        is_active: true,
-                                        default_add_ons: {}
-                                    }, {}, 199, true)}
-                                    disabled={new Date() > new Date('2026-10-08')}
+                                    onClick={() => sankranthiCombo && onBookNow(sankranthiCombo, {}, 199, true)}
+                                    disabled={new Date() > new Date('2026-10-08') || !sankranthiCombo}
                                     className="w-full py-4 bg-gradient-to-r from-yellow-500 to-red-600 text-white font-black rounded-xl shadow-lg hover:shadow-yellow-500/50 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : 'GRAB DEAL @ ₹199'}
+                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : (!sankranthiCombo ? 'UNAVAILABLE' : 'GRAB DEAL @ ₹199')}
                                 </button>
                             </div>
                         </div>
@@ -732,7 +709,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                         <div className="w-24 h-1.5 bg-gradient-to-r from-yellow-500 to-red-500 mx-auto rounded-full"></div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {services.filter(Boolean).map((service, index) => (
+                        {services.filter(s => s && !s.name.toLowerCase().includes('sankranthi')).map((service, index) => (
                             <PackageCard key={service?.id ?? index} service={service} onBook={() => onBookNow(service, service?.default_add_ons)} index={index} customizerScrollRef={customizerScrollRef} />
                         ))}
                     </div>
@@ -751,7 +728,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                             <div>
                                 <h3 className="text-xl font-bold mb-4">1. Select Your Base Service</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    {services.filter(Boolean).map(service => (
+                                    {services.filter(s => s && !s.name.toLowerCase().includes('sankranthi')).map(service => (
                                         <button key={service?.id ?? service?.name ?? Math.random()} onClick={() => {
                                             if (service.is_active) {
                                                 setSelectedService(service);
@@ -1265,6 +1242,8 @@ const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
 
 const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => {
 
+    const isSankranthi = bookingPackage.service.name.toLowerCase().includes('sankranthi');
+
     const handleConfirmBooking = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -1281,6 +1260,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                 email: clientDetails.email,
                 phone: clientDetails.phone,
                 event_end_date: clientDetails.event_end_date || null,
+                number_of_people: clientDetails.number_of_people || null,
             },
             package_details: {
                 serviceName: bookingPackage.service.name,
@@ -1328,6 +1308,14 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                         <label className="text-sm font-semibold text-gray-700 block mb-2">Phone Number</label>
                                         <input name="phone" type="tel" className="w-full input-field" placeholder="+91 98765 43210" required />
                                     </div>
+                                    {isSankranthi && (
+                                        <>
+                                            <div>
+                                                <label className="text-sm font-semibold text-gray-700 block mb-2">Number of People</label>
+                                                <input name="number_of_people" type="number" min="1" max="10" className="w-full input-field" placeholder="e.g. 4" required />
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
 
@@ -1338,18 +1326,41 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                         <label className="text-sm font-semibold text-gray-700 block mb-2">Event Date(s)</label>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="text-xs text-gray-600 block mb-1">Start Date</label>
-                                                <input name="event_date" type="date" className="w-full input-field" required />
+                                                <label className="text-xs text-gray-600 block mb-1">Start Date {isSankranthi && <span className="text-red-600 font-bold">(Jan 11-14 Only)</span>}</label>
+                                                <input
+                                                    name="event_date"
+                                                    type="date"
+                                                    className="w-full input-field"
+                                                    required
+                                                    min={isSankranthi ? "2026-01-11" : undefined}
+                                                    max={isSankranthi ? "2026-01-14" : undefined}
+                                                />
                                             </div>
-                                            <div>
-                                                <label className="text-xs text-gray-600 block mb-1">End Date (Optional - for multi-day events)</label>
-                                                <input name="event_end_date" type="date" className="w-full input-field" />
-                                            </div>
+                                            {!isSankranthi && (
+                                                <div>
+                                                    <label className="text-xs text-gray-600 block mb-1">End Date (Optional - for multi-day events)</label>
+                                                    <input name="event_end_date" type="date" className="w-full input-field" />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
-                                    {bookingPackage.service.name.toLowerCase().includes('sankranthi') && (
+                                    {isSankranthi && (
                                         <div>
+                                            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4 rounded-r-lg">
+                                                <div className="flex">
+                                                    <div className="flex-shrink-0">
+                                                        <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                    <div className="ml-3">
+                                                        <p className="text-sm text-yellow-700">
+                                                            <strong className="font-bold">Important:</strong> Please be fully ready in your outfits by the start of your slot. We will not be able to wait or extend the slot if you are late.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <label className="text-sm font-semibold text-gray-700 block mb-2">Preferred Time Slot</label>
                                             <select name="time_slot" className="w-full input-field" required>
                                                 <option value="">Select a time slot</option>
