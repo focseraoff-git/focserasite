@@ -187,7 +187,7 @@ serve(async (req) => {
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid #334155;">
                                     <div style="padding: 20px; border-right: 1px solid #334155;">
                                         <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">Date</p>
-                                        <p style="margin: 4px 0 0 0; color: #f1f5f9; font-size: 15px; font-weight: 600;">Jan 25, 2026</p>
+                                        <p style="margin: 4px 0 0 0; color: #f1f5f9; font-size: 15px; font-weight: 600;">Jan 3rd, 2026</p>
                                     </div>
                                     <div style="padding: 20px;">
                                         <p style="margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">Time</p>

@@ -47,7 +47,7 @@ const TicketModal = ({ booking, onClose }: { booking: any; onClose: () => void }
                 </div>
 
                 {/* Content */}
-                <div className="p-6 pt-2 space-y-6">
+                <div className="p-6 pt-6 space-y-6">
 
                     {/* Attendee Info */}
                     <div className="text-center">
@@ -62,7 +62,7 @@ const TicketModal = ({ booking, onClose }: { booking: any; onClose: () => void }
                     <div className="grid grid-cols-2 gap-px bg-slate-800 rounded-xl overflow-hidden border border-slate-700">
                         <div className="bg-slate-900/50 p-3">
                             <p className="text-[10px] text-slate-500 font-bold uppercase">Date</p>
-                            <p className="text-sm font-semibold text-slate-200">Jan 25, 2026</p>
+                            <p className="text-sm font-semibold text-slate-200">Jan 3, 2026</p>
                         </div>
                         <div className="bg-slate-900/50 p-3 text-right">
                             <p className="text-[10px] text-slate-500 font-bold uppercase">Time</p>
@@ -135,14 +135,14 @@ const Account = () => {
 
             // 1. Fetch Event Bookings (Standard)
             let eventQuery = supabase
-                .from('event_bookings')
+                .from('event_bookings' as any)
                 .select('*')
                 .eq('user_id', userId)
                 .order('created_at', { ascending: false });
 
             // 2. Fetch PromptX Bookings (By Email)
             let promptxQuery = supabase
-                .from('promptx_bookings')
+                .from('promptx_bookings' as any)
                 .select('*')
                 .eq('email', email)
                 .order('created_at', { ascending: false });
@@ -166,7 +166,7 @@ const Account = () => {
                 status: b.payment_status,
                 total_price: b.amount,
                 created_at: b.created_at, // Assumes created_at exists, if not it will be undefined/null
-                event_date: '2026-01-25', // Hardcoded for this specific workshop
+                event_date: '2026-01-03', // Hardcoded for this specific workshop
                 package_details: {
                     serviceName: 'PromptX AI Workshop',
                     service: { name: 'PromptX AI Workshop' }, // fallback for display logic
@@ -179,7 +179,7 @@ const Account = () => {
             }));
 
             // Merge and Sort by Date
-            const allBookings = [...events, ...promptx].sort((a, b) => {
+            const allBookings = [...(events as any[]), ...(promptx as any[])].sort((a, b) => {
                 const dateA = new Date(a.created_at || 0).getTime();
                 const dateB = new Date(b.created_at || 0).getTime();
                 return dateB - dateA;
@@ -211,7 +211,7 @@ const Account = () => {
         if (status !== undefined && status !== null) {
             try {
                 actualStatusKey = String(status).toLowerCase();
-            } catch (e) {
+            } catch {
                 actualStatusKey = 'pending';
             }
         }
@@ -351,8 +351,16 @@ const Account = () => {
                                             </div>
                                             <div className="text-right">
                                                 <div className="flex items-center gap-1 text-2xl font-bold text-[#0052CC]">
-                                                    <RupeeIcon size={20} />
-                                                    ₹{Number(booking.total_price || booking.total_price === 0 ? booking.total_price : booking?.package_details?.total_price || booking?.price || 0).toLocaleString('en-IN')}
+                                                    {(() => {
+                                                        const price = Number(booking.total_price || booking.total_price === 0 ? booking.total_price : booking?.package_details?.total_price || booking?.price || 0);
+                                                        if (price === 0) return <span className="text-lg">Custom Quote</span>;
+                                                        return (
+                                                            <>
+                                                                <RupeeIcon size={20} />
+                                                                {price.toLocaleString('en-IN')}
+                                                            </>
+                                                        );
+                                                    })()}
                                                 </div>
                                             </div>
                                         </div>

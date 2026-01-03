@@ -328,8 +328,11 @@ export default function PromptXLight() {
             <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight">
               <span className="text-blue-600">PromptX</span> – AI Workshop
             </h1>
+            <div className="inline-block px-6 py-2 bg-blue-50 text-blue-700 rounded-full font-bold text-lg mb-8 border border-blue-100 shadow-sm">
+              📅 Jan 3rd, 2026
+            </div>
             <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto mb-10">
-              A hands-on workshop for students in Classes 7–10 to boost academic creativity & productivity using AI.
+              A hands-on workshop for students in Classes 6–10 to boost academic creativity & productivity using AI.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a href="#registration" className="w-full sm:w-auto px-8 py-4 rounded-full bg-blue-600 text-white font-semibold text-lg shadow-lg hover:bg-blue-700 transition-all transform hover:-translate-y-0.5">
@@ -381,7 +384,7 @@ export default function PromptXLight() {
                 Who Can Attend
               </h3>
               <p className="text-lg text-gray-700">
-                Classes 7–10<br />
+                Classes 6–10<br />
                 No coding knowledge required.<br />
                 Max batch size as per school hall capacity.
               </p>
@@ -522,8 +525,8 @@ export default function PromptXLight() {
                 <div>
                   <label htmlFor="classLevel" className="block text-sm font-medium text-gray-600 mb-1">Class</label>
                   <select id="classLevel" value={classLevel} onChange={e => setClassLevel(e.target.value)} className="w-full p-4 border border-gray-300 rounded-lg bg-white/50 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none neon-input-focus">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                      <option key={i} value={7 + i}>Class {7 + i}</option>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <option key={i} value={6 + i}>Class {6 + i}</option>
                     ))}
                   </select>
                 </div>
@@ -571,8 +574,8 @@ export default function PromptXLight() {
               {/* --- Success/Error Message --- */}
               {message && (
                 <div className={`mt-6 p-4 rounded-lg text-center font-medium ${isError
-                    ? 'bg-red-100 text-red-700 border border-red-300'
-                    : 'bg-green-100 text-green-700 border border-green-300'
+                  ? 'bg-red-100 text-red-700 border border-red-300'
+                  : 'bg-green-100 text-green-700 border border-green-300'
                   }`}>
                   {message}
                 </div>

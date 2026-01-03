@@ -76,6 +76,7 @@ serve(async (req) => {
                 <p style="margin:8px 0;"><strong>Order ID:</strong> <span style="font-family:monospace;">${data.order_id}</span></p>
                 <p style="margin:8px 0;"><strong>Student:</strong> ${data.student_name}</p>
                 <p style="margin:8px 0;"><strong>Class:</strong> ${data.class_level}</p>
+                <p style="margin:8px 0;"><strong>Date:</strong> Jan 3rd, 2026</p>
                 <p style="margin:8px 0;"><strong>Amount Paid:</strong> ₹${data.amount}</p>
               </div>
 
