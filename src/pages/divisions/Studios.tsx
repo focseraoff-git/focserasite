@@ -1353,9 +1353,17 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                             <label className="text-sm font-semibold text-gray-700 block mb-2">Preferred Time Slot</label>
                                             <select name="time_slot" className="w-full input-field" required>
                                                 <option value="">Select a time slot</option>
-                                                <option value="Morning (9 AM - 12 PM)">Morning (9 AM - 12 PM)</option>
-                                                <option value="Afternoon (12 PM - 4 PM)">Afternoon (12 PM - 4 PM)</option>
-                                                <option value="Evening (4 PM - 8 PM)">Evening (4 PM - 8 PM)</option>
+                                                {Array.from({ length: 13 }).map((_, i) => {
+                                                    const startHour = 8 + i;
+                                                    const endHour = startHour + 1;
+                                                    const formatTime = (h: number) => {
+                                                        const period = h >= 12 ? 'PM' : 'AM';
+                                                        const hour = h > 12 ? h - 12 : h;
+                                                        return `${hour}:00 ${period}`;
+                                                    };
+                                                    const slot = `${formatTime(startHour)} - ${formatTime(endHour)}`;
+                                                    return <option key={slot} value={slot}>{slot}</option>;
+                                                })}
                                             </select>
                                         </div>
                                     )}
