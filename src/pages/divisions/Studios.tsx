@@ -1446,8 +1446,9 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
     );
 };
 
-const SuccessModal = ({ onClose }) => {
+const SuccessModal = ({ onClose, bookingPackage }) => {
     const [confetti, setConfetti] = React.useState(true);
+    const isSankranthi = bookingPackage?.service?.name?.toLowerCase().includes('sankranthi');
 
     React.useEffect(() => {
         const timer = setTimeout(() => setConfetti(false), 3000);
@@ -1467,7 +1468,9 @@ const SuccessModal = ({ onClose }) => {
                                 top: `-${Math.random() * 20}%`,
                                 width: `${Math.random() * 10 + 5}px`,
                                 height: `${Math.random() * 10 + 5}px`,
-                                backgroundColor: ['#0052CC', '#0066FF', '#00C7FF', '#FFD700', '#FF6B6B'][Math.floor(Math.random() * 5)],
+                                backgroundColor: isSankranthi
+                                    ? ['#FFD700', '#FF4500', '#FF6347', '#FFA500', '#FFFF00'][Math.floor(Math.random() * 5)]
+                                    : ['#0052CC', '#0066FF', '#00C7FF', '#FFD700', '#FF6B6B'][Math.floor(Math.random() * 5)],
                                 animationDelay: `${Math.random() * 2}s`,
                                 animationDuration: `${Math.random() * 3 + 2}s`,
                                 borderRadius: Math.random() > 0.5 ? '50%' : '0',
@@ -1478,48 +1481,59 @@ const SuccessModal = ({ onClose }) => {
                 </div>
             )}
 
-            <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl p-6 md:p-12 text-center w-full max-w-2xl mx-auto border-2 border-[#0052CC] relative animate-scaleIn max-h-[90vh] flex flex-col overflow-hidden">
+            <div className={`bg-gradient-to-br ${isSankranthi ? 'from-[#fffbf0] to-[#fff0f0]' : 'from-white to-gray-50'} rounded-3xl shadow-2xl p-6 md:p-12 text-center w-full max-w-2xl mx-auto border-2 ${isSankranthi ? 'border-yellow-500' : 'border-[#0052CC]'} relative animate-scaleIn max-h-[90vh] flex flex-col overflow-hidden`}>
                 <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-20">
-                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-2xl animate-bounce-slow">
-                        <Check className="w-12 h-12 md:w-20 md:h-20 text-white" strokeWidth={4} />
+                    <div className={`w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br ${isSankranthi ? 'from-yellow-400 to-red-600' : 'from-green-400 to-green-600'} flex items-center justify-center shadow-2xl animate-bounce-slow`}>
+                        {isSankranthi ? <span className="text-5xl">🪁</span> : <Check className="w-12 h-12 md:w-20 md:h-20 text-white" strokeWidth={4} />}
                     </div>
                 </div>
 
                 <div className="mt-12 md:mt-20 overflow-y-auto flex-grow px-2">
-                    <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 animate-slideDown">Booking Confirmed!</h2>
-                    <div className="w-24 h-1 bg-gradient-to-r from-[#0052CC] to-[#0066FF] mx-auto mb-6 rounded-full"></div>
+                    <h2 className={`text-3xl md:text-5xl font-bold ${isSankranthi ? 'text-red-800' : 'text-gray-900'} mb-4 animate-slideDown`}>
+                        {isSankranthi ? 'Sankranthi Slot Confirmed!' : 'Booking Confirmed!'}
+                    </h2>
+                    <div className={`w-24 h-1 bg-gradient-to-r ${isSankranthi ? 'from-yellow-500 to-red-500' : 'from-[#0052CC] to-[#0066FF]'} mx-auto mb-6 rounded-full`}></div>
 
-                    <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-8 mb-8">
+                    <div className={`${isSankranthi ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200'} border-2 rounded-2xl p-8 mb-8`}>
                         <p className="text-xl text-gray-700 leading-relaxed mb-6">
-                            Thank you for choosing <span className="font-bold text-[#0052CC]">Focsera Studios</span>!
+                            Thank you for choosing <span className={`font-bold ${isSankranthi ? 'text-red-700' : 'text-[#0052CC]'}`}>Focsera Studios</span>!
                         </p>
                         <p className="text-gray-600 leading-relaxed mb-6">
-                            Your booking request has been successfully received and our team is already reviewing the details.
+                            {isSankranthi
+                                ? "Your festive slot is locked! Get ready to capture your Sankranthi memories."
+                                : "Your booking request has been successfully received and our team is already reviewing the details."}
                         </p>
+
+                        {isSankranthi && (
+                            <div className="mb-6 p-4 bg-yellow-100/50 rounded-xl border border-yellow-200 text-sm text-yellow-800">
+                                <strong>📍 Venue:</strong> Hyderabad Only<br />
+                                <strong>⚠️ Note:</strong> Please be on time. No refunds for delays/cancellations.
+                            </div>
+                        )}
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
                             <div className="bg-white rounded-xl p-6 shadow-md">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
-                                    <span className="text-2xl font-bold text-[#0052CC]">1</span>
+                                <div className={`w-12 h-12 rounded-full ${isSankranthi ? 'bg-red-100' : 'bg-blue-100'} flex items-center justify-center mx-auto mb-3`}>
+                                    <span className={`text-2xl font-bold ${isSankranthi ? 'text-red-600' : 'text-[#0052CC]'}`}>1</span>
                                 </div>
                                 <h4 className="font-bold text-gray-900 mb-2">Confirmation Email</h4>
                                 <p className="text-sm text-gray-600">Sent within 5 minutes</p>
                             </div>
 
                             <div className="bg-white rounded-xl p-6 shadow-md">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
-                                    <span className="text-2xl font-bold text-[#0052CC]">2</span>
+                                <div className={`w-12 h-12 rounded-full ${isSankranthi ? 'bg-red-100' : 'bg-blue-100'} flex items-center justify-center mx-auto mb-3`}>
+                                    <span className={`text-2xl font-bold ${isSankranthi ? 'text-red-600' : 'text-[#0052CC]'}`}>2</span>
                                 </div>
-                                <h4 className="font-bold text-gray-900 mb-2">Team Contact</h4>
-                                <p className="text-sm text-gray-600">Within 24 hours</p>
+                                <h4 className="font-bold text-gray-900 mb-2">{isSankranthi ? 'Be Ready' : 'Team Contact'}</h4>
+                                <p className="text-sm text-gray-600">{isSankranthi ? 'Arrive fully ready' : 'Within 24 hours'}</p>
                             </div>
 
                             <div className="bg-white rounded-xl p-6 shadow-md">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
-                                    <span className="text-2xl font-bold text-[#0052CC]">3</span>
+                                <div className={`w-12 h-12 rounded-full ${isSankranthi ? 'bg-red-100' : 'bg-blue-100'} flex items-center justify-center mx-auto mb-3`}>
+                                    <span className={`text-2xl font-bold ${isSankranthi ? 'text-red-600' : 'text-[#0052CC]'}`}>3</span>
                                 </div>
-                                <h4 className="font-bold text-gray-900 mb-2">Final Details</h4>
-                                <p className="text-sm text-gray-600">Pricing & schedule</p>
+                                <h4 className="font-bold text-gray-900 mb-2">{isSankranthi ? 'Shoot Day' : 'Final Details'}</h4>
+                                <p className="text-sm text-gray-600">{isSankranthi ? 'Enjoy the vibe!' : 'Pricing & schedule'}</p>
                             </div>
                         </div>
 
@@ -1822,7 +1836,7 @@ export default function App() {
             <div className="bg-gray-50 text-gray-800 font-sans antialiased">
                 {['login', 'cart', 'details'].includes(currentView) && <CheckoutHeader currentStep={currentView} />}
                 {renderContent()}
-                {showSuccess && <SuccessModal onClose={resetToLanding} />}
+                {showSuccess && <SuccessModal onClose={resetToLanding} bookingPackage={bookingPackage} />}
             </div>
         </>
     );

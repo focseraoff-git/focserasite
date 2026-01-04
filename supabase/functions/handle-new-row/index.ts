@@ -27,6 +27,51 @@ function formatNewRequirementEmail(record: any, table: string) {
   const serviceType = table.split('_')[0]; 
   const serviceName = serviceType.charAt(0).toUpperCase() + serviceType.slice(1);
 
+  // Check for Sankranthi Special
+  const isSankranthi = record.package_details?.serviceName?.toLowerCase().includes('sankranthi');
+
+  if (isSankranthi) {
+    return {
+      subject: `🪁 Sankranthi Booking Confirmed! - Focsera Studios`,
+      html: `
+        <div style="font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333; max-width: 600px; margin: 20px auto; padding: 0; border: 1px solid #eab308; border-radius: 12px; overflow: hidden; background-color: #fffbf0;">
+          
+          <div style="background: linear-gradient(to right, #b91c1c, #d97706); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">Sankranthi Special 🪁</h1>
+            <p style="color: #fef3c7; margin: 10px 0 0 0; font-size: 14px;">Booking Confirmed</p>
+          </div>
+          
+          <div style="padding: 30px;">
+            <p>Hi ${customerName},</p>
+            
+            <p><strong>Congratulations!</strong> Your slot for the <strong>${record.package_details?.serviceName || 'Sankranthi Special'}</strong> is confirmed.</p>
+            
+            <div style="background-color: #fff7ed; border-left: 4px solid #d97706; padding: 15px; margin: 20px 0;">
+              <p style="margin: 0; color: #9a3412; font-weight: bold;">📍 Venue: Hyderabad Only</p>
+              <p style="margin: 5px 0 0 0; color: #9a3412;">📅 Date: ${record.event_date || 'As selected'}</p>
+            </div>
+
+            <h3 style="color: #b91c1c; margin-top: 25px;">Important Reminders:</h3>
+            <ul style="color: #555; padding-left: 20px;">
+              <li><strong>Be Punctual:</strong> Please arrive fully ready at your slot time.</li>
+              <li><strong>No Refunds:</strong> Cancellations or delays are non-refundable.</li>
+              <li><strong>Deliverables:</strong> Edited output only (No raw files).</li>
+            </ul>
+            
+            <p>We are excited to capture your festive moments!</p>
+            
+            <p style="margin-top: 30px;">Happy Sankranthi,<br><strong>Team Focsera</strong></p>
+          </div>
+          
+          <div style="background-color: #fef3c7; padding: 15px; text-align: center; font-size: 12px; color: #92400e;">
+            © 2025 Focsera Studios | Hyderabad
+          </div>
+        
+        </div>
+      `,
+    };
+  }
+
   return {
     subject: `We've Received Your ${serviceName} Request!`,
     html: `
