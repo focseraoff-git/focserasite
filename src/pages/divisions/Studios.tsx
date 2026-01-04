@@ -142,18 +142,18 @@ const TermsModal = ({ onClose }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
-            <div className="relative bg-[#1a1a1a] rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-white/10 animate-scaleIn overflow-hidden">
+            <div className="relative bg-[#1a1a1a] rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl border border-white/10 animate-scaleIn overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] opacity-30 pointer-events-none mix-blend-overlay"></div>
-                <div className="sticky top-0 bg-[#1a1a1a]/95 backdrop-blur-md p-6 border-b border-white/10 flex justify-between items-center z-10">
-                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                        <span className="text-2xl">📜</span> Strict Terms & Conditions
+                <div className="flex-shrink-0 bg-[#1a1a1a]/95 backdrop-blur-md p-4 md:p-6 border-b border-white/10 flex justify-between items-center z-10">
+                    <h3 className="text-lg md:text-xl font-bold text-white flex items-center gap-2">
+                        <span className="text-xl md:text-2xl">📜</span> Strict Terms & Conditions
                     </h3>
                     <button onClick={onClose} className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
 
-                <div className="p-6 space-y-6">
+                <div className="flex-grow overflow-y-auto p-4 md:p-6 space-y-6">
                     <div className="bg-red-900/20 border border-red-500/20 rounded-xl p-4">
                         <p className="text-red-200 text-sm font-semibold text-center">
                             ⚠️ Please read carefully before booking. These terms are strict and non-negotiable.
@@ -165,7 +165,7 @@ const TermsModal = ({ onClose }) => {
                             <li><strong>One Service per ₹99 Booking:</strong> Each booking covers only one service type.</li>
                             <li><strong>Max 8 bookings per day:</strong> Slots are allotted on a first-come, first-served basis.</li>
                             <li><strong>Equipment:</strong> Shoot conducted using <strong>iPhone or DSLR</strong> at Focsera Studios' sole discretion.</li>
-                            <li><strong>Location:</strong> Valid for a <strong>single location only</strong>. No multiple spots.</li>
+                            <li><strong>Location:</strong> Valid for a <strong>single location in Hyderabad only</strong>. No multiple spots.</li>
                             <li><strong>Deliverables:</strong> <strong>No raw files</strong> provided. Edited output only.</li>
                             <li><strong>Revisions:</strong> <strong>No reshoots allowed</strong>. Only <strong>1 minor revision</strong> permitted.</li>
                             <li><strong>Social Media:</strong> <strong>Repost & tagging</strong> of Focsera Studios is mandatory.</li>
@@ -200,7 +200,7 @@ const TermsModal = ({ onClose }) => {
                     </div>
                 </div>
 
-                <div className="sticky bottom-0 bg-[#1a1a1a]/95 backdrop-blur-md p-6 border-t border-white/10 z-10">
+                <div className="flex-shrink-0 bg-[#1a1a1a]/95 backdrop-blur-md p-4 md:p-6 border-t border-white/10 z-10">
                     <button onClick={onClose} className="w-full py-3 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-bold rounded-xl hover:shadow-lg hover:shadow-yellow-500/20 transition-all">
                         I Understand & Accept
                     </button>
@@ -440,10 +440,15 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                         <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-100 via-yellow-200 to-yellow-600 mb-8 drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] uppercase tracking-tight leading-none font-serif">
                             SANKRANTHI @ ₹99 & ₹199<br /><span className="text-white text-3xl sm:text-4xl md:text-6xl lg:text-7xl drop-shadow-lg">FESTIVE SPECIAL</span>
                         </h2>
-                        <div className="flex items-center justify-center gap-6 mb-10">
+                        <div className="flex items-center justify-center gap-6 mb-6">
                             <div className="h-[2px] w-16 bg-gradient-to-r from-transparent via-yellow-500 to-transparent"></div>
                             <span className="text-2xl md:text-3xl text-yellow-400 font-serif italic tracking-wide">Celebrate. Capture. Experience.</span>
                             <div className="h-[2px] w-16 bg-gradient-to-l from-transparent via-yellow-500 to-transparent"></div>
+                        </div>
+                        <div className="inline-block bg-red-900/50 border border-red-500/30 px-6 py-2 rounded-full mb-8 backdrop-blur-sm">
+                            <p className="text-red-200 font-bold tracking-wide uppercase text-sm flex items-center gap-2">
+                                📍 Valid Only in Hyderabad
+                            </p>
                         </div>
                         <p className="text-xl text-yellow-100/80 font-light max-w-3xl mx-auto leading-relaxed font-sans">
                             A festival trial experience designed for you to experience Focsera Studios' quality.
@@ -639,6 +644,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                     <span>⚠️</span> Important Clarification
                                 </h4>
                                 <ul className="space-y-2 text-gray-300 text-sm list-disc pl-5 marker:text-red-500">
+                                    <li>Offer valid strictly within <strong>Hyderabad city limits</strong>.</li>
                                     <li>Group size must fit within one booked slot.</li>
                                     <li>Large groups or commercial shoots requiring extended time, props, or setups are <strong className="text-red-300">not covered</strong> under this festive offer.</li>
                                     <li>For high-scale commercial or brand shoots, premium packages apply.</li>
@@ -1380,8 +1386,8 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                     )}
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Event Venue / Location</label>
-                                        <textarea name="event_venue" className="w-full input-field h-32 resize-none" placeholder="Enter the full address of your event venue" required></textarea>
+                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Event Venue / Location {isSankranthi && <span className="text-red-600 font-bold">(Hyderabad Only)</span>}</label>
+                                        <textarea name="event_venue" className="w-full input-field h-32 resize-none" placeholder={isSankranthi ? "Enter the full address of your event venue in Hyderabad" : "Enter the full address of your event venue"} required></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -1472,15 +1478,15 @@ const SuccessModal = ({ onClose }) => {
                 </div>
             )}
 
-            <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl p-12 text-center max-w-2xl mx-auto border-2 border-[#0052CC] relative animate-scaleIn">
-                <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-2xl animate-bounce-slow">
-                        <Check className="w-20 h-20 text-white" strokeWidth={4} />
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl p-6 md:p-12 text-center w-full max-w-2xl mx-auto border-2 border-[#0052CC] relative animate-scaleIn max-h-[90vh] flex flex-col overflow-hidden">
+                <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-20">
+                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-2xl animate-bounce-slow">
+                        <Check className="w-12 h-12 md:w-20 md:h-20 text-white" strokeWidth={4} />
                     </div>
                 </div>
 
-                <div className="mt-20">
-                    <h2 className="text-5xl font-bold text-gray-900 mb-4 animate-slideDown">Booking Confirmed!</h2>
+                <div className="mt-12 md:mt-20 overflow-y-auto flex-grow px-2">
+                    <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 animate-slideDown">Booking Confirmed!</h2>
                     <div className="w-24 h-1 bg-gradient-to-r from-[#0052CC] to-[#0066FF] mx-auto mb-6 rounded-full"></div>
 
                     <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-8 mb-8">
