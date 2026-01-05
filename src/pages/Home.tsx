@@ -155,7 +155,9 @@ export default function Home() {
               <span>PromptX</span>
             </Link>
 
-            {/* 3. ArenaX Button */}
+
+
+            {/* 4. ArenaX Button */}
             <Link
               to="/arenax"
               className="group px-6 py-4 sm:px-10 sm:py-5 glass-effect border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-[#0052CC] transition-all duration-300 promptx-cta"
@@ -206,7 +208,7 @@ export default function Home() {
                   className="group glossy-card rounded-3xl p-8 hover-lift border border-gray-100 relative overflow-hidden"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  {division.name === 'Focsera Studios' && (
+                  {(division.name === 'Focsera Studios' || division.name === 'Focsera Web') && (
                     <div className="absolute top-0 right-0 bg-gradient-to-bl from-yellow-400 via-orange-500 to-red-500 text-white text-[10px] font-bold px-4 py-1.5 rounded-bl-2xl z-10 shadow-md flex items-center gap-1">
                       <Sparkles size={10} className="animate-spin-slow" /> FESTIVAL OFFER
                     </div>
