@@ -1332,13 +1332,13 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                         <label className="text-sm font-semibold text-gray-700 block mb-2">Event Date(s)</label>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="text-xs text-gray-600 block mb-1">Start Date {isSankranthi && <span className="text-red-600 font-bold">(Jan 11-14 Only)</span>}</label>
+                                                <label className="text-xs text-gray-600 block mb-1">Start Date {isSankranthi && <span className="text-red-600 font-bold">(Jan 9-14 Only)</span>}</label>
                                                 <input
                                                     name="event_date"
                                                     type="date"
                                                     className="w-full input-field"
                                                     required
-                                                    min={isSankranthi ? "2026-01-11" : undefined}
+                                                    min={isSankranthi ? "2026-01-09" : undefined}
                                                     max={isSankranthi ? "2026-01-14" : undefined}
                                                 />
                                             </div>
