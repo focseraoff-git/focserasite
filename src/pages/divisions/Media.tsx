@@ -26,10 +26,10 @@ const TrendingUp = (props) => (
 );
 
 const ArrowRight = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
 );
 const Check = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="20 6 9 17 4 12"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="20 6 9 17 4 12" /></svg>
 );
 const ChevronDown = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -125,6 +125,7 @@ const packagesData = [
         included_services: ["Performance Analysis", "SEO Optimization", "Content Planning & Strategy"],
         is_active: true,
     },
+
     {
         id: 6,
         name: "Creator's Choice",
@@ -137,6 +138,27 @@ const packagesData = [
         is_active: false, // This ensures it's treated as a promo card
     }
 ];
+
+const CREATOR_BOOST_PACKAGE = {
+    id: 99,
+    name: "CreatorBoost 10X Pack",
+    description: "Focsera Media’s CreatorBoost 10X Pack is designed for influencers, YouTubers, and content creators. This pack provides professional content ready to post, saving time and increasing engagement.",
+    thumbnail: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
+    category: "Limited Offer",
+    standard_price: 999,
+    premium_price: 999, // Single price
+    included_services: [
+        "10 professionally edited reels with captions OR 10 high-CTA thumbnails",
+        "Cinematic cuts and high-quality visuals",
+        "Optimized for social media platforms (Instagram Reels, YouTube Shorts)",
+        "Content planning support",
+        "Caption strategy with CTA",
+        "Brand-consistent visuals",
+        "Platform-optimized formatting",
+        "One revision round included"
+    ],
+    is_active: true,
+};
 
 // Individual services derived from the "Included Services" list in the doc.
 // This is used for the custom package builder.
@@ -259,6 +281,206 @@ const useIntersectionObserver = (options) => {
 
 // --- COMPONENTS ---
 
+const PromotionalNotesSection = () => (
+    <div className="bg-black border-y border-white/10 relative z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row justify-between items-center py-5 gap-6 text-center md:text-left">
+                <div className="flex items-center gap-4 group">
+                    <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center group-hover:bg-yellow-500/10 group-hover:border-yellow-500/50 transition-all duration-500">
+                        <TrendingUp className="text-gray-400 group-hover:text-yellow-400 transition-colors" size={20} />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-base text-gray-200 tracking-wide uppercase text-xs">Immediate Impact</h3>
+                        <p className="text-xs text-gray-500 font-mono mt-0.5">Quick onboarding process</p>
+                    </div>
+                </div>
+                <div className="w-px h-8 bg-white/10 hidden md:block"></div>
+                <div className="flex items-center gap-4 group">
+                    <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center group-hover:bg-yellow-500/10 group-hover:border-yellow-500/50 transition-all duration-500">
+                        <Sparkles className="text-gray-400 group-hover:text-yellow-400 transition-colors" size={20} />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-base text-gray-200 tracking-wide uppercase text-xs">Limited Slots</h3>
+                        <p className="text-xs text-gray-500 font-mono mt-0.5">First 25 users only</p>
+                    </div>
+                </div>
+                <div className="w-px h-8 bg-white/10 hidden md:block"></div>
+                <div className="flex items-center gap-4 group">
+                    <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center group-hover:bg-yellow-500/10 group-hover:border-yellow-500/50 transition-all duration-500">
+                        <Megaphone className="text-gray-400 group-hover:text-yellow-400 transition-colors" size={20} />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-base text-gray-200 tracking-wide uppercase text-xs">Pro Quality</h3>
+                        <p className="text-xs text-gray-500 font-mono mt-0.5">Cinema-grade editing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+const CreatorBoostSection = ({ onBook }) => {
+    const [faqOpen, setFaqOpen] = useState(null);
+
+    const toggleFaq = (idx) => {
+        setFaqOpen(faqOpen === idx ? null : idx);
+    };
+
+    const faqs = [
+        { q: "Can I get both reels and thumbnails?", a: "The pack includes either 10 reels with captions OR 10 thumbnails." },
+        { q: "How long will delivery take?", a: "Delivery time depends on content volume, usually within a week." },
+        { q: "Can I request changes?", a: "Yes, one revision is included." },
+        { q: "How do I submit content samples?", a: "After booking, instructions will be provided." }
+    ];
+
+    return (
+        <section className="relative py-28 bg-[#050505] overflow-hidden">
+            {/* Cinematic Background Layer */}
+            <div className="absolute inset-0 z-0">
+                {/* Noise Texture */}
+                <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat"></div>
+
+                {/* Spotlight Effects */}
+                <div className="absolute top-[-20%] left-[20%] w-[60%] h-[60%] bg-blue-900/10 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"></div>
+                <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-yellow-600/10 rounded-full blur-[100px] mix-blend-screen"></div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="flex flex-col lg:flex-row gap-20 items-center">
+                    {/* Left Content */}
+                    <div className="flex-1 space-y-10">
+                        <div>
+                            <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full mb-8 backdrop-blur-md">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                                </span>
+                                <span className="text-gray-300 font-medium text-[10px] uppercase tracking-[0.2em]">Limited Time Offer</span>
+                            </div>
+
+                            <h2 className="text-6xl md:text-7xl font-black text-white mb-6 leading-[0.9] tracking-tighter">
+                                CREATOR<br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-600 drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                                    BOOST 10X
+                                </span>
+                            </h2>
+                            <p className="text-xl text-gray-400 leading-relaxed max-w-lg font-light tracking-wide">
+                                Use cinema-grade assets to scale your brand. <span className="text-white font-medium">10 Reels. 10 Thumbnails. 10X Growth.</span>
+                            </p>
+                        </div>
+
+                        <div className="space-y-8">
+                            <div>
+                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Package Inclusions</h3>
+                                <div className="grid sm:grid-cols-2 gap-4">
+                                    {[
+                                        "10 Edited Reels OR 10 Thumbnails",
+                                        "Cinematic Color Grading",
+                                        "Hormozi-Style Captions",
+                                        "Viral Hook Strategy",
+                                        "Thumbnail Psychology",
+                                        "1 Revision Round"
+                                    ].map((item, i) => (
+                                        <div key={i} className="flex items-center gap-3 group">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-yellow-500/50 group-hover:bg-yellow-400 group-hover:shadow-[0_0_8px_rgba(234,179,8,0.8)] transition-all"></div>
+                                            <span className="text-sm text-gray-300 group-hover:text-white transition-colors">{item}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* FAQ Minimal */}
+                        <div className="pt-4 border-t border-white/5">
+                            <div className="space-y-1">
+                                {faqs.map((faq, idx) => (
+                                    <div key={idx} className="overflow-hidden">
+                                        <button
+                                            onClick={() => toggleFaq(idx)}
+                                            className="w-full text-left flex justify-between items-center py-3 group"
+                                        >
+                                            <span className="text-xs font-medium text-gray-500 group-hover:text-gray-300 transition-colors uppercase tracking-wider">{faq.q}</span>
+                                            <span className={`text-gray-600 group-hover:text-white transition-all transform ${faqOpen === idx ? 'rotate-45' : ''}`}>+</span>
+                                        </button>
+                                        <div className={`transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${faqOpen === idx ? 'max-h-20 opacity-100 mb-4' : 'max-h-0 opacity-0'}`}>
+                                            <p className="text-sm text-gray-400 pl-4 border-l border-yellow-500/30">{faq.a}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Card - Glassmorphism Refined */}
+                    <div className="w-full max-w-[400px] relative perspective-1000">
+                        {/* Glow Behind */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-gradient-to-tr from-yellow-600/20 via-orange-900/10 to-transparent blur-[80px] rounded-full"></div>
+
+                        <div className="relative bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-1 shadow-2xl overflow-hidden ring-1 ring-white/5">
+                            {/* Inner Border/Highlight */}
+                            <div className="absolute inset-0 rounded-[2rem] border border-white/5 pointer-events-none"></div>
+
+                            <div className="relative bg-gradient-to-b from-white/5 to-transparent rounded-[1.8rem] p-8 overflow-hidden">
+                                {/* Shine Efx */}
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 blur-[50px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+                                <div className="flex justify-between items-start mb-8">
+                                    <div className="bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded text-[10px] font-bold text-yellow-500 tracking-wider">
+                                        LIMITED SLOTS
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-xs text-gray-500 line-through decoration-red-500/50">₹2,999</div>
+                                        <div className="text-green-400 text-xs font-bold">SAVE 66%</div>
+                                    </div>
+                                </div>
+
+                                <div className="mb-8 text-center relative z-10">
+                                    <div className="text-7xl font-black text-white tracking-tighter drop-shadow-lg">
+                                        <sup className="text-2xl text-gray-500 font-light top-[-1.5em] mr-1">₹</sup>999
+                                    </div>
+                                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto my-4"></div>
+                                    <p className="text-gray-400 text-xs uppercase tracking-widest">Monthly Creator Pack</p>
+                                </div>
+
+                                <div className="space-y-3 mb-8">
+                                    <h4 className="text-[10px] font-bold text-gray-600 uppercase tracking-widest text-center mb-4">How it works</h4>
+                                    <div className="flex items-center gap-3 text-sm text-gray-300">
+                                        <span className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-mono text-gray-500">1</span>
+                                        <span>Book & Fill Form</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-sm text-gray-300">
+                                        <span className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-mono text-gray-500">2</span>
+                                        <span>Upload Raw Content</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-sm text-gray-300">
+                                        <span className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-mono text-gray-500">3</span>
+                                        <span>Receive in ~7 Days</span>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => onBook(CREATOR_BOOST_PACKAGE, 'standard')}
+                                    className="group relative w-full py-4 bg-white text-black font-bold text-sm tracking-widest uppercase rounded-xl overflow-hidden hover:bg-gray-100 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
+                                    <span className="relative flex items-center justify-center gap-2">
+                                        Start Now <ArrowRight className="w-4 h-4" />
+                                    </span>
+                                </button>
+
+                                <p className="text-[9px] text-gray-600 text-center mt-4 font-mono">
+                                    SECURE PAYMENT via RAZORPAY
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+
 const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onOpenTerms, customEstimatedPrice = 0, customSelectedCount = 0 }) => {
     const cardRef = useRef(null);
     const [selectedTier, setSelectedTier] = useState('standard'); // 'standard' or 'premium'
@@ -286,7 +508,7 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
             >
                 <div className="p-8 flex flex-col flex-grow items-center justify-center text-center">
                     <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                         <Sparkles className="text-blue-600" size={40} />
+                        <Sparkles className="text-blue-600" size={40} />
                     </div>
                     <h3 className="text-3xl font-black text-gray-900 mb-3">{packageData.name}</h3>
                     <p className="text-gray-600 mb-8 leading-relaxed flex-grow text-sm">{packageData.description}</p>
@@ -313,7 +535,7 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
                     </div>
 
                     <div className="mt-3 text-center">
-                       <button type="button" onClick={() => onOpenTerms && onOpenTerms()} className="text-xs text-gray-600 hover:text-gray-900 underline">View Terms &amp; Conditions</button>
+                        <button type="button" onClick={() => onOpenTerms && onOpenTerms()} className="text-xs text-gray-600 hover:text-gray-900 underline">View Terms &amp; Conditions</button>
                     </div>
                 </div>
             </div>
@@ -340,7 +562,7 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
                     </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <img src={packageData.thumbnail} alt={packageData.name} className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-110"/>
+                <img src={packageData.thumbnail} alt={packageData.name} className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute top-4 left-4 z-20">
                     <span className="px-4 py-1.5 bg-white/90 backdrop-blur-md text-xs font-bold text-gray-900 rounded-full shadow-lg">{packageData.category}</span>
                 </div>
@@ -348,9 +570,9 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
             <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-white/80 to-white backdrop-blur-lg">
                 <h3 className="text-3xl font-black text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-600 group-hover:to-blue-600 transition-all duration-300">{packageData.name}</h3>
                 <p className="text-gray-600 mb-6 leading-relaxed text-sm flex-grow">{packageData.description}</p>
-                
+
                 <div className="mb-6">
-                    <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2"><List className="w-5 h-5 text-blue-600"/> Included Services</h4>
+                    <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2"><List className="w-5 h-5 text-blue-600" /> Included Services</h4>
                     <ul className="space-y-2">
                         {packageData.included_services.map(service => {
                             const highlighted = selectedTier === 'premium';
@@ -394,14 +616,14 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
                         <p className="text-xs text-gray-500 italic mt-2">Default monthly prices shown — final price will be discussed and negotiated during consultation.</p>
                     </div>
 
-                    <button 
-                        onClick={() => onBook(packageData, selectedTier)} 
-                        disabled={!packageData.is_active} 
+                    <button
+                        onClick={() => onBook(packageData, selectedTier)}
+                        disabled={!packageData.is_active}
                         className={`relative w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed group/btn ${selectedTier === 'premium' ? 'shadow-[0_20px_60px_-15px_rgba(255,165,0,0.25)]' : ''}`}
                     >
                         <div className={`absolute inset-0 ${selectedTier === 'premium' ? 'bg-gradient-to-r from-yellow-500 via-orange-400 to-red-500' : 'bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500'} bg-[length:200%_100%] group-hover/btn:bg-right transition-all duration-500`}></div>
                         <span className="relative flex items-center justify-center gap-2">
-                            {selectedTier === 'premium' ? (<><Sparkles className="w-5 h-5 text-white"/> Premium - Book This Package</>) : 'Book This Package'}
+                            {selectedTier === 'premium' ? (<><Sparkles className="w-5 h-5 text-white" /> Premium - Book This Package</>) : 'Book This Package'}
                             <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                         </span>
                     </button>
@@ -414,6 +636,118 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
     );
 };
 
+const CreatorBoostModal = ({ isOpen, onClose }) => {
+    const [loading, setLoading] = useState(false);
+
+    if (!isOpen) return null;
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const formData = new FormData(e.target);
+        const details = Object.fromEntries(formData.entries());
+
+        // 1. Prepare Data for DB
+        const bookingData = {
+            user_id: null, // Guest booking
+            package_id: 99, // CREATOR_BOOST_PACKAGE.id
+            total_price: 999,
+            client_details: {
+                name: details.name,
+                email: details.email,
+                phone: details.phone,
+                sample_link: details.sample_link,
+                notes: details.notes,
+                offer: "CREATORBOOST10X"
+            },
+            package_details: {
+                name: "CreatorBoost 10X Pack",
+                tier: "standard"
+            },
+            status: 'pending'
+        };
+
+        try {
+            // 2. Insert into Supabase
+            const { error } = await supabase.from('media_bookings').insert([bookingData]);
+
+            if (error) throw error;
+
+            // 3. WhatsApp Redirect
+            const message = `Hello Focsera! I just booked the *CreatorBoost 10X Pack* (₹999).\n\n*Name:* ${details.name}\n*Phone:* ${details.phone}\n*Link:* ${details.sample_link}\n\nPlease confirm my slot!`;
+            const whatsappUrl = `https://wa.me/918610266034?text=${encodeURIComponent(message)}`;
+
+            // Show success & redirect
+            alert("Booking Saved! Redirecting to WhatsApp to finalize...");
+            window.open(whatsappUrl, '_blank');
+            onClose();
+
+        } catch (err) {
+            console.error(err);
+            alert("Error saving booking: " + err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+            <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-lg shadow-2xl relative overflow-hidden">
+                {/* Modal Header */}
+                <div className="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                        <Sparkles className="text-yellow-400 w-5 h-5" />
+                        Secure Your Spot
+                    </h3>
+                    <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+                        <X size={24} />
+                    </button>
+                </div>
+
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="col-span-2">
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Full Name</label>
+                            <input name="name" required type="text" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-yellow-500 focus:outline-none transition-colors" placeholder="John Doe" />
+                        </div>
+                        <div className="col-span-1">
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Phone</label>
+                            <input name="phone" required type="tel" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-yellow-500 focus:outline-none transition-colors" placeholder="+91..." />
+                        </div>
+                        <div className="col-span-1">
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email</label>
+                            <input name="email" required type="email" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-yellow-500 focus:outline-none transition-colors" placeholder="john@example.com" />
+                        </div>
+                        <div className="col-span-2">
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sample Footage / Channel Link</label>
+                            <input name="sample_link" required type="url" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-yellow-500 focus:outline-none transition-colors" placeholder="Google Drive / YouTube / Instagram Link" />
+                            <p className="text-[10px] text-gray-500 mt-1">Link to raw footage or your current channel.</p>
+                        </div>
+                        <div className="col-span-2">
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Additional Notes (Optional)</label>
+                            <textarea name="notes" rows="2" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-yellow-500 focus:outline-none transition-colors" placeholder="Any specific requirements?"></textarea>
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-4 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-300 hover:to-orange-400 text-black font-black text-lg rounded-xl shadow-lg transform transition-all active:scale-95 flex items-center justify-center gap-2 mt-4"
+                    >
+                        {loading ? 'Processing...' : 'CONFIRM & PAY ₹999'}
+                    </button>
+                    <p className="text-center text-[10px] text-gray-500">
+                        *Redirects to WhatsApp for final confirmation. Secure booking.
+                    </p>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+// --- MAIN PAGE COMPONENT ---
 const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRetry }) => {
     const [selectedServices, setSelectedServices] = useState({});
     const [totalPrice, setTotalPrice] = useState(0);
@@ -422,10 +756,14 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
     const [fancyModalContent, setFancyModalContent] = useState(null);
     const [showTerms, setShowTerms] = useState(false);
 
+    // New State for CreatorBoost Modal
+    const [showBoostModal, setShowBoostModal] = useState(false);
+
     const [packagesRef, packagesAreVisible] = useIntersectionObserver({ threshold: 0.1 });
     const [customizerSectionRef, customizerIsVisible] = useIntersectionObserver({ threshold: 0.1 });
     const [quoteSectionRef, quoteIsVisible] = useIntersectionObserver({ threshold: 0.1 });
     const customizerScrollRef = useRef(null);
+
 
     useEffect(() => {
         let newTotal = 0;
@@ -466,7 +804,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
             alert('Please provide your name, email, and some details about the project.');
             return;
         }
-        
+
         // Append contextual info (if a custom package was being built)
         let contextualNotes = '';
         const selectedServiceKeys = Object.entries(selectedServices || {}).filter(([_, v]) => v).map(([k]) => k);
@@ -555,7 +893,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
             <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">No packages available right now.</div>
         );
     }
-    
+
     // Group services by category for the customizer
     const servicesByCategory = individualServices.reduce((acc, service) => {
         const category = service.category || 'Other';
@@ -586,6 +924,15 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                     </p>
                 </div>
             </section>
+
+            {/* UPGRADED: CreatorBoost Offer Section (Moved to Top) */}
+            <CreatorBoostSection onBook={() => setShowBoostModal(true)} />
+
+            {/* UPGRADED: Promotional Notes Section (Integrated as a ticker strip) */}
+            <PromotionalNotesSection />
+
+            {/* Booking Modal */}
+            <CreatorBoostModal isOpen={showBoostModal} onClose={() => setShowBoostModal(false)} />
 
             <section className="py-16 bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -636,31 +983,31 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                       {packages.filter(Boolean).filter(p => Number(p.id) !== CREATOR_CHOICE_ID).map((pkg, index) => (
-                           <MediaPackageCard 
-                                key={pkg?.id ?? index} 
-                                packageData={pkg} 
-                                onBook={onBookNow} 
+                        {packages.filter(Boolean).filter(p => Number(p.id) !== CREATOR_CHOICE_ID).map((pkg, index) => (
+                            <MediaPackageCard
+                                key={pkg?.id ?? index}
+                                packageData={pkg}
+                                onBook={onBookNow}
                                 onOpenTerms={() => setShowTerms(true)}
-                                index={index} 
+                                index={index}
                                 customizerScrollRef={customizerScrollRef}
-                           />
-                       ))}
+                            />
+                        ))}
                     </div>
                 </div>
             </section>
 
-             <section ref={customizerScrollRef} className="py-24 bg-gray-50 scroll-mt-24">
-                 <div ref={customizerSectionRef} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${customizerIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                     <div className="text-center mb-16">
-                         <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Build Your Own Package</h2>
-                         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <section ref={customizerScrollRef} className="py-24 bg-gray-50 scroll-mt-24">
+                <div ref={customizerSectionRef} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${customizerIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Build Your Own Package</h2>
+                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                             Select the individual services you need to create a plan that's perfectly tailored to your goals.
-                         </p>
-                     </div>
-                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                         <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-gray-200 shadow-2xl space-y-8">
-                            
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                        <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-gray-200 shadow-2xl space-y-8">
+
                             {Object.entries(servicesByCategory).map(([category, services]) => (
                                 <div key={category}>
                                     <h3 className="text-xl font-bold mb-4">{category} Services</h3>
@@ -697,41 +1044,41 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                                 </div>
                             ))}
 
-                         </div>
-                         <div className="lg:col-span-1 sticky top-8">
-                             <div className="bg-white/70 backdrop-blur-lg p-8 rounded-3xl border-2 border-[#0052CC] shadow-2xl">
-                                 <h3 className="text-2xl font-bold mb-6 text-center">Your Custom Package</h3>
-                                 <div className="space-y-3 mb-6 border-b border-blue-200 pb-4 min-h-[100px]">
+                        </div>
+                        <div className="lg:col-span-1 sticky top-8">
+                            <div className="bg-white/70 backdrop-blur-lg p-8 rounded-3xl border-2 border-[#0052CC] shadow-2xl">
+                                <h3 className="text-2xl font-bold mb-6 text-center">Your Custom Package</h3>
+                                <div className="space-y-3 mb-6 border-b border-blue-200 pb-4 min-h-[100px]">
                                     {Object.entries(selectedServices).filter(([_, value]) => value).length === 0 && (
                                         <p className="text-sm text-gray-500 text-center py-6">Select services to see your total.</p>
                                     )}
-                                    
-                                     {Object.entries(selectedServices).filter(([_, value]) => value).map(([key]) => {
-                                         const service = individualServices.find(a => a.key === key);
-                                         const isPremiumMode = displayPrice > 0 && displayPrice >= 20000; // heuristic: premium-level total
-                                         return service ? (
-                                             <div key={key} className={`flex justify-between items-center text-sm transition-all ${isPremiumMode ? 'bg-yellow-50 border border-yellow-200 rounded-md p-2 shadow-sm' : ''}`}>
-                                                 <p className={`${isPremiumMode ? 'text-gray-900 font-semibold' : 'text-gray-600'}`}>{service.label}</p>
-                                                 <p className={`${isPremiumMode ? 'text-yellow-700 font-bold' : 'text-gray-500 font-medium'}`}>+ ₹{(service.price_min).toLocaleString('en-IN')}</p>
-                                             </div>
-                                         ) : null;
-                                     })}
-                                 </div>
-                                 <div className="flex justify-between items-center mb-6">
-                                     <p className="text-lg font-bold">Estimated Total</p>
-                                     <p className="text-3xl font-bold text-[#0052CC]">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
-                                 </div>
-                                 <p className="text-xs text-gray-500 italic mb-4">These are default estimates — final pricing will be discussed and negotiated after a consultation.</p>
-                                 <button onClick={handleCustomBooking} className="button-primary w-full">
-                                     Book This Package
-                                     <ArrowRight className="button-primary-icon" />
-                                 </button>
-                                 <p className="text-xs text-gray-500 mt-4 text-center">Final price will be confirmed after consultation.</p>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-             </section>
+
+                                    {Object.entries(selectedServices).filter(([_, value]) => value).map(([key]) => {
+                                        const service = individualServices.find(a => a.key === key);
+                                        const isPremiumMode = displayPrice > 0 && displayPrice >= 20000; // heuristic: premium-level total
+                                        return service ? (
+                                            <div key={key} className={`flex justify-between items-center text-sm transition-all ${isPremiumMode ? 'bg-yellow-50 border border-yellow-200 rounded-md p-2 shadow-sm' : ''}`}>
+                                                <p className={`${isPremiumMode ? 'text-gray-900 font-semibold' : 'text-gray-600'}`}>{service.label}</p>
+                                                <p className={`${isPremiumMode ? 'text-yellow-700 font-bold' : 'text-gray-500 font-medium'}`}>+ ₹{(service.price_min).toLocaleString('en-IN')}</p>
+                                            </div>
+                                        ) : null;
+                                    })}
+                                </div>
+                                <div className="flex justify-between items-center mb-6">
+                                    <p className="text-lg font-bold">Estimated Total</p>
+                                    <p className="text-3xl font-bold text-[#0052CC]">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
+                                </div>
+                                <p className="text-xs text-gray-500 italic mb-4">These are default estimates — final pricing will be discussed and negotiated after a consultation.</p>
+                                <button onClick={handleCustomBooking} className="button-primary w-full">
+                                    Book This Package
+                                    <ArrowRight className="button-primary-icon" />
+                                </button>
+                                <p className="text-xs text-gray-500 mt-4 text-center">Final price will be confirmed after consultation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <section ref={quoteSectionRef} className="py-24 bg-white">
                 <div className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ${quoteIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
@@ -747,7 +1094,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                         <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field" placeholder="+91 12345 67890" /></div>
                         <div><label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field" placeholder="Please include as many details as possible: your business, target audience, content goals, etc." required></textarea></div>
                         <button type="submit" className="button-primary w-full">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
-                         <div className="mt-3 text-center">
+                        <div className="mt-3 text-center">
                             <button type="button" onClick={() => setShowTerms(true)} className="text-xs text-gray-600 hover:text-gray-900 underline">View Terms &amp; Conditions</button>
                         </div>
                     </form>
@@ -762,18 +1109,22 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                     <p className="text-sm text-gray-500 mt-8">© {new Date().getFullYear()} Focsera Media. All Rights Reserved.</p>
                 </div>
             </footer>
-            {showFancyModal && fancyModalContent && (
-                <FancyModal
-                    title={fancyModalContent.title}
-                    subtitle={fancyModalContent.subtitle}
-                    details={fancyModalContent.details}
-                    onClose={() => setShowFancyModal(false)}
-                />
-            )}
+            {
+                showFancyModal && fancyModalContent && (
+                    <FancyModal
+                        title={fancyModalContent.title}
+                        subtitle={fancyModalContent.subtitle}
+                        details={fancyModalContent.details}
+                        onClose={() => setShowFancyModal(false)}
+                    />
+                )
+            }
 
-            {showTerms && (
-                <TermsModal onClose={() => setShowTerms(false)} />
-            )}
+            {
+                showTerms && (
+                    <TermsModal onClose={() => setShowTerms(false)} />
+                )
+            }
         </>
     );
 };
@@ -782,9 +1133,9 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
 
 const CheckoutHeader = ({ currentStep }) => {
     const steps = [
-        { id: 'login', name: 'Login', icon: <User className="w-5 h-5"/> },
-        { id: 'cart', name: 'Review Order', icon: <ShoppingCart className="w-5 h-5"/> },
-        { id: 'details', name: 'Checkout', icon: <CreditCard className="w-5 h-5"/> }
+        { id: 'login', name: 'Login', icon: <User className="w-5 h-5" /> },
+        { id: 'cart', name: 'Review Order', icon: <ShoppingCart className="w-5 h-5" /> },
+        { id: 'details', name: 'Checkout', icon: <CreditCard className="w-5 h-5" /> }
     ];
     const currentStepIndex = steps.findIndex(step => step.id === currentStep);
 
@@ -792,10 +1143,10 @@ const CheckoutHeader = ({ currentStep }) => {
         <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
             <nav className="max-w-5xl mx-auto px-4 py-4">
                 <div className="flex justify-between items-center mb-4">
-                       <a href="#" onClick={(e) => { e.preventDefault(); window.location.reload(); }} className="flex items-center gap-2 font-bold text-xl text-gray-800">
-                           <Megaphone className="text-blue-600" />
-                           Focsera Media
-                       </a>
+                    <a href="#" onClick={(e) => { e.preventDefault(); window.location.reload(); }} className="flex items-center gap-2 font-bold text-xl text-gray-800">
+                        <Megaphone className="text-blue-600" />
+                        Focsera Media
+                    </a>
                 </div>
                 <div className="relative">
                     <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200"></div>
@@ -804,7 +1155,7 @@ const CheckoutHeader = ({ currentStep }) => {
                         {steps.map((step, index) => (
                             <div key={step.id} className="flex flex-col items-center">
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${index <= currentStepIndex ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-gray-300 text-gray-400'}`}>
-                                    {index < currentStepIndex ? <Check/> : step.icon}
+                                    {index < currentStepIndex ? <Check /> : step.icon}
                                 </div>
                                 <p className={`mt-2 text-xs font-semibold ${index <= currentStepIndex ? 'text-blue-600' : 'text-gray-500'}`}>{step.name}</p>
                             </div>
@@ -929,7 +1280,7 @@ const LoginPage = ({ onLogin, onBack }) => {
                             <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Email Address</label>
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 7 10 6 10-6" /></svg>
                                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="relative w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="you@example.com" required />
                             </div>
                         </div>
@@ -937,13 +1288,13 @@ const LoginPage = ({ onLogin, onBack }) => {
                             <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Password</label>
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
                                 <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="relative w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="••••••••" required minLength={6} />
                                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10 transition-colors">
                                     {showPassword ? (
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
                                     ) : (
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                                     )}
                                 </button>
                             </div>
@@ -996,7 +1347,7 @@ const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => 
                     <div className="lg:col-span-2">
                         <div className="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
                             <div className="aspect-video w-full overflow-hidden bg-gray-200">
-                                <img src={bookingPackage.package.thumbnail} alt={bookingPackage.package.name} className="w-full h-full object-cover"/>
+                                <img src={bookingPackage.package.thumbnail} alt={bookingPackage.package.name} className="w-full h-full object-cover" />
                             </div>
                             <div className="p-8">
                                 <h2 className="text-3xl font-bold text-gray-900 mb-3">{bookingPackage.package.name}</h2>
@@ -1017,9 +1368,9 @@ const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => 
                                         <span className="font-bold text-gray-900">₹{basePrice.toLocaleString('en-IN')}</span>
                                     )}
                                 </div>
-                                
+
                                 {isCustom ? (
-                                    Object.entries(bookingPackage.services).filter(([_,v]) => v).map(([key]) => {
+                                    Object.entries(bookingPackage.services).filter(([_, v]) => v).map(([key]) => {
                                         const service = individualServices.find(a => a.key === key);
                                         return service ? (
                                             <div key={key} className="flex justify-between items-center">
@@ -1062,11 +1413,11 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, individualSer
         const clientDetails = Object.fromEntries(formData.entries());
 
         let packageDetails = {};
-    if (bookingPackage.package.id === CREATOR_CHOICE_ID) {
+        if (bookingPackage.package.id === CREATOR_CHOICE_ID) {
             packageDetails = {
                 serviceName: "Creator's Choice (Custom)",
                 customServices: Object.entries(bookingPackage.services)
-                    .filter(([_,v]) => v)
+                    .filter(([_, v]) => v)
                     .map(([key]) => {
                         const service = individualServices.find(a => a.key === key);
                         return service ? service.label : null;
@@ -1100,74 +1451,74 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, individualSer
             onConfirm();
         }
     };
-    
+
     const isCustom = bookingPackage.package.id === CREATOR_CHOICE_ID;
 
     return (
-     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 pt-40">
-         <div className="max-w-6xl mx-auto animate-fadeInUp">
-             <div className="mb-8">
-                 <h1 className="text-4xl font-bold text-gray-900 mb-2">Complete Your Booking</h1>
-                 <p className="text-gray-600">Enter your project details to finalize your booking</p>
-             </div>
+        <div className="min-h-screen bg-gray-50 p-4 sm:p-8 pt-40">
+            <div className="max-w-6xl mx-auto animate-fadeInUp">
+                <div className="mb-8">
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Complete Your Booking</h1>
+                    <p className="text-gray-600">Enter your project details to finalize your booking</p>
+                </div>
 
-             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                 <div className="lg:col-span-2">
-                     <form onSubmit={handleConfirmBooking} className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 space-y-6">
-                         <div>
-                             <h3 className="text-xl font-bold mb-6">Contact Information</h3>
-                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                 <div>
-                                     <label className="text-sm font-semibold text-gray-700 block mb-2">Full Name</label>
-                                     <input name="name" type="text" className="w-full input-field" placeholder="John Doe" defaultValue={session?.user?.user_metadata?.full_name || ''} required />
-                                 </div>
-                                 <div>
-                                     <label className="text-sm font-semibold text-gray-700 block mb-2">Email Address</label>
-                                     <input name="email" type="email" className="w-full input-field" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required />
-                                 </div>
-                                 <div>
-                                     <label className="text-sm font-semibold text-gray-700 block mb-2">Phone Number</label>
-                                     <input name="phone" type="tel" className="w-full input-field" placeholder="+91 98765 43210" required />
-                                 </div>
-                                  <div>
-                                     <label className="text-sm font-semibold text-gray-700 block mb-2">Company Name (Optional)</label>
-                                     <input name="company_name" type="text" className="w-full input-field" placeholder="Your Company Inc." />
-                                 </div>
-                             </div>
-                         </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                    <div className="lg:col-span-2">
+                        <form onSubmit={handleConfirmBooking} className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 space-y-6">
+                            <div>
+                                <h3 className="text-xl font-bold mb-6">Contact Information</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Full Name</label>
+                                        <input name="name" type="text" className="w-full input-field" placeholder="John Doe" defaultValue={session?.user?.user_metadata?.full_name || ''} required />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Email Address</label>
+                                        <input name="email" type="email" className="w-full input-field" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Phone Number</label>
+                                        <input name="phone" type="tel" className="w-full input-field" placeholder="+91 98765 43210" required />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Company Name (Optional)</label>
+                                        <input name="company_name" type="text" className="w-full input-field" placeholder="Your Company Inc." />
+                                    </div>
+                                </div>
+                            </div>
 
-                         <div className="pt-6 border-t border-gray-200">
-                             <h3 className="text-xl font-bold mb-6">Project Details</h3>
-                             <div className="space-y-6">
-                                 <div>
-                                     <label className="text-sm font-semibold text-gray-700 block mb-2">Primary Goal</label>
-                                     <textarea name="project_goals" rows="3" className="w-full input-field" placeholder="What is the main goal for this content? (e.g., increase brand awareness, generate leads, grow social media following)" required></textarea>
-                                 </div>
-                             </div>
-                         </div>
+                            <div className="pt-6 border-t border-gray-200">
+                                <h3 className="text-xl font-bold mb-6">Project Details</h3>
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Primary Goal</label>
+                                        <textarea name="project_goals" rows="3" className="w-full input-field" placeholder="What is the main goal for this content? (e.g., increase brand awareness, generate leads, grow social media following)" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
 
-                         <div className="pt-6 flex flex-col-reverse sm:flex-row items-center gap-4">
-                             <button type="button" onClick={onBack} className="w-full sm:w-auto font-semibold text-gray-600 hover:text-gray-900 py-3 px-8 rounded-xl transition-colors">
-                                 &larr; Back
-                             </button>
-                             <button type="submit" className="button-primary w-full sm:flex-1">
-                                 Confirm Booking
-                                 <ArrowRight className="button-primary-icon" />
-                             </button>
-                         </div>
-                     </form>
-                 </div>
+                            <div className="pt-6 flex flex-col-reverse sm:flex-row items-center gap-4">
+                                <button type="button" onClick={onBack} className="w-full sm:w-auto font-semibold text-gray-600 hover:text-gray-900 py-3 px-8 rounded-xl transition-colors">
+                                    &larr; Back
+                                </button>
+                                <button type="submit" className="button-primary w-full sm:flex-1">
+                                    Confirm Booking
+                                    <ArrowRight className="button-primary-icon" />
+                                </button>
+                            </div>
+                        </form>
+                    </div>
 
-                 <div className="lg:col-span-1">
-                     <div className="bg-white rounded-3xl shadow-lg p-8 border-2 border-[#0052CC] sticky top-8">
-                         <h3 className="text-xl font-bold mb-6">Order Summary</h3>
-                         <div className="space-y-4 mb-6">
-                             <div className="flex justify-between items-center pb-4 border-b border-gray-200">
-                                 <span className="font-semibold text-gray-700">{bookingPackage.package.name} {bookingPackage.tier ? `(${bookingPackage.tier})` : ''}</span>
-                             </div>
-                             
-                             {isCustom ? (
-                                    Object.entries(bookingPackage.services).filter(([_,v]) => v).map(([key]) => {
+                    <div className="lg:col-span-1">
+                        <div className="bg-white rounded-3xl shadow-lg p-8 border-2 border-[#0052CC] sticky top-8">
+                            <h3 className="text-xl font-bold mb-6">Order Summary</h3>
+                            <div className="space-y-4 mb-6">
+                                <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                    <span className="font-semibold text-gray-700">{bookingPackage.package.name} {bookingPackage.tier ? `(${bookingPackage.tier})` : ''}</span>
+                                </div>
+
+                                {isCustom ? (
+                                    Object.entries(bookingPackage.services).filter(([_, v]) => v).map(([key]) => {
                                         const service = individualServices.find(a => a.key === key);
                                         return service ? (
                                             <div key={key} className="flex justify-between items-center text-sm">
@@ -1179,19 +1530,19 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, individualSer
                                 ) : (
                                     <p className="text-sm text-gray-500">Includes all services for the {bookingPackage.tier} tier.</p>
                                 )}
-                         </div>
-                         <div className="pt-6 border-t-2 border-gray-200">
-                             <div className="flex justify-between items-center">
-                                 <span className="text-lg font-bold">Total</span>
-                                 <span className="text-3xl font-bold text-[#0052CC]">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</span>
-                             </div>
-                             <p className="text-xs text-gray-500 mt-2">*Final price confirmed after consultation</p>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
+                            </div>
+                            <div className="pt-6 border-t-2 border-gray-200">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-lg font-bold">Total</span>
+                                    <span className="text-3xl font-bold text-[#0052CC]">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</span>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-2">*Final price confirmed after consultation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 
@@ -1230,7 +1581,7 @@ const SuccessModal = ({ onClose }) => {
             <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl p-12 text-center max-w-2xl mx-auto border-2 border-[#0052CC] relative animate-scaleIn">
                 <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
                     <div className="w-32 h-32 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-2xl animate-bounce-slow">
-                        <Check className="w-20 h-20 text-white" strokeWidth={4}/>
+                        <Check className="w-20 h-20 text-white" strokeWidth={4} />
                     </div>
                 </div>
 
@@ -1422,7 +1773,7 @@ export default function App() {
 
     const handleBookNow = (packageData, tierOrServices, price) => {
         if (!packageData.is_active && packageData.id !== CREATOR_CHOICE_ID) return;
-        
+
         let packageToBook = {};
 
         if (typeof tierOrServices === 'string') {
@@ -1464,27 +1815,27 @@ export default function App() {
 
     const renderContent = () => {
         if (!bookingPackage && (currentView === 'cart' || currentView === 'details')) {
-             return <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">Please select a package first.</div>
+            return <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">Please select a package first.</div>
         }
 
         switch (currentView) {
             case 'login':
                 return <LoginPage onLogin={() => setCurrentView('cart')} onBack={resetToLanding} />;
             case 'cart':
-                return <CartPage 
-                            bookingPackage={bookingPackage} 
-                            individualServices={individualServices} 
-                            onProceed={() => setCurrentView('details')} 
-                            onBack={resetToLanding} 
-                       />;
+                return <CartPage
+                    bookingPackage={bookingPackage}
+                    individualServices={individualServices}
+                    onProceed={() => setCurrentView('details')}
+                    onBack={resetToLanding}
+                />;
             case 'details':
-                return <DetailsPage 
-                            bookingPackage={bookingPackage} 
-                            individualServices={individualServices} 
-                            session={session} 
-                            onConfirm={() => setShowSuccess(true)} 
-                            onBack={() => setCurrentView('cart')} 
-                       />;
+                return <DetailsPage
+                    bookingPackage={bookingPackage}
+                    individualServices={individualServices}
+                    session={session}
+                    onConfirm={() => setShowSuccess(true)}
+                    onBack={() => setCurrentView('cart')}
+                />;
             case 'landing':
             default:
                 return <LandingPage
