@@ -429,14 +429,14 @@ const CreatorBoostSection = ({ onBook }) => {
                                         LIMITED SLOTS
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-xs text-gray-500 line-through decoration-red-500/50">₹2,999</div>
-                                        <div className="text-green-400 text-xs font-bold">SAVE 66%</div>
+                                        <div className="text-xs text-gray-500 line-through decoration-red-500/50">₹4,999</div>
+                                        <div className="text-green-400 text-xs font-bold">LIMITED OFFER</div>
                                     </div>
                                 </div>
 
                                 <div className="mb-8 text-center relative z-10">
-                                    <div className="text-7xl font-black text-white tracking-tighter drop-shadow-lg">
-                                        <sup className="text-2xl text-gray-500 font-light top-[-1.5em] mr-1">₹</sup>999
+                                    <div className="text-5xl font-black text-white tracking-tighter drop-shadow-lg">
+                                        ₹999
                                     </div>
                                     <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto my-4"></div>
                                     <p className="text-gray-400 text-xs uppercase tracking-widest">Monthly Creator Pack</p>
@@ -525,8 +525,7 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
                     <div className="mt-6 w-full text-center">
                         {customEstimatedPrice > 0 ? (
                             <>
-                                <div className="text-2xl font-black text-gray-900">₹{Math.round(customEstimatedPrice).toLocaleString('en-IN')}</div>
-                                <div className="text-xs text-gray-500">per month</div>
+                                <div className="text-xl font-black text-gray-900">Contact for Pricing</div>
                             </>
                         ) : (
                             <div className="text-sm text-gray-500">Estimate will appear after you select services below</div>
@@ -611,9 +610,8 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
                     )}
 
                     <div className="mb-6">
-                        <span className={`text-4xl font-black ${selectedTier === 'premium' ? 'bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent' : 'text-white'}`}>₹{price.toLocaleString('en-IN')}</span>
-                        <span className="block text-sm text-gray-500 font-medium mt-1">per month</span>
-                        <p className="text-xs text-gray-600 italic mt-2">Default monthly prices shown — final price will be discussed and negotiated during consultation.</p>
+                        <span className={`text-3xl font-black ${selectedTier === 'premium' ? 'bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent' : 'text-white'}`}>Contact for Pricing</span>
+                        <p className="text-xs text-gray-600 italic mt-2">Final price will be discussed and negotiated during consultation.</p>
                     </div>
 
                     <button
@@ -675,7 +673,7 @@ const CreatorBoostModal = ({ isOpen, onClose }) => {
             if (error) throw error;
 
             // 3. WhatsApp Redirect
-            const message = `Hello Focsera! I just booked the *CreatorBoost 10X Pack* (₹999).\n\n*Name:* ${details.name}\n*Phone:* ${details.phone}\n*Link:* ${details.sample_link}\n\nPlease confirm my slot!`;
+            const message = `Hello Focsera! I just booked the *CreatorBoost 10X Pack*.\n\n*Name:* ${details.name}\n*Phone:* ${details.phone}\n*Link:* ${details.sample_link}\n\nPlease confirm my slot!`;
             const whatsappUrl = `https://wa.me/918610266034?text=${encodeURIComponent(message)}`;
 
             // Show success & redirect
@@ -736,7 +734,7 @@ const CreatorBoostModal = ({ isOpen, onClose }) => {
                         disabled={loading}
                         className="w-full py-4 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-300 hover:to-orange-400 text-black font-black text-lg rounded-xl shadow-lg transform transition-all active:scale-95 flex items-center justify-center gap-2 mt-4"
                     >
-                        {loading ? 'Processing...' : 'CONFIRM & PAY ₹999'}
+                        {loading ? 'Processing...' : 'CONFIRM REQUEST'}
                     </button>
                     <p className="text-center text-[10px] text-gray-500">
                         *Redirects to WhatsApp for final confirmation. Secure booking.
@@ -1036,7 +1034,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                                                         </div>
                                                         <div className="flex flex-col items-end gap-2">
                                                             <span className="text-sm font-bold text-gray-300">
-                                                                ₹{service.price_min.toLocaleString('en-IN')}
+                                                                Select
                                                             </span>
                                                         </div>
                                                     </div>
@@ -1062,14 +1060,14 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                                         return service ? (
                                             <div key={key} className={`flex justify-between items-center text-sm transition-all ${isPremiumMode ? 'bg-yellow-900/10 border border-yellow-500/20 rounded-md p-2 shadow-sm' : ''}`}>
                                                 <p className={`${isPremiumMode ? 'text-gray-200 font-semibold' : 'text-gray-400'}`}>{service.label}</p>
-                                                <p className={`${isPremiumMode ? 'text-yellow-500 font-bold' : 'text-gray-500 font-medium'}`}>+ ₹{(service.price_min).toLocaleString('en-IN')}</p>
+                                                <p className={`${isPremiumMode ? 'text-yellow-500 font-bold' : 'text-gray-500 font-medium'}`}>Included</p>
                                             </div>
                                         ) : null;
                                     })}
                                 </div>
                                 <div className="flex justify-between items-center mb-6">
                                     <p className="text-lg font-bold text-gray-300">Estimated Total</p>
-                                    <p className="text-3xl font-bold text-[#3b82f6]">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
+                                    <p className="text-xl font-bold text-[#3b82f6]">Contact for Pricing</p>
                                 </div>
                                 <p className="text-xs text-gray-500 italic mb-4">These are default estimates — final pricing will be discussed and negotiated after a consultation.</p>
                                 <button onClick={handleCustomBooking} className="button-primary w-full shadow-lg shadow-blue-600/20">
@@ -1367,8 +1365,7 @@ const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => 
                                             </span>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-2xl font-bold text-white">₹{totalPrice.toLocaleString('en-IN')}</p>
-                                            <p className="text-xs text-gray-500">per month</p>
+                                            <p className="text-lg font-bold text-white">Contact for Pricing</p>
                                         </div>
                                     </div>
                                     <p className="text-gray-400 text-sm leading-relaxed mb-6">{bookingPackage.package.description}</p>
@@ -1379,7 +1376,7 @@ const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => 
                                             {services.map((s, i) => (
                                                 <li key={i} className="flex justify-between text-sm text-gray-400 py-1 border-b border-white/5 last:border-0">
                                                     <span className="flex items-center gap-2"><Check size={14} className="text-green-500" /> {s.name}</span>
-                                                    {s.price > 0 && <span className="font-medium text-gray-300">+₹{s.price.toLocaleString()}</span>}
+                                                    {s.price > 0 && <span className="font-medium text-gray-300">Included</span>}
                                                 </li>
                                             ))}
                                         </ul>
@@ -1393,7 +1390,7 @@ const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => 
                                 <h3 className="text-lg font-bold text-white mb-4">Order Total</h3>
                                 <div className="flex justify-between items-center mb-2 text-gray-400">
                                     <span>Subtotal</span>
-                                    <span>₹{totalPrice.toLocaleString('en-IN')}</span>
+                                    <span>Contact for Pricing</span>
                                 </div>
                                 <div className="flex justify-between items-center mb-6 text-green-400 text-sm">
                                     <span>Consultation</span>
@@ -1402,9 +1399,9 @@ const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => 
                                 <div className="border-t border-white/10 pt-4 mb-8">
                                     <div className="flex justify-between items-center">
                                         <span className="font-bold text-white text-lg">Total</span>
-                                        <span className="font-bold text-2xl text-blue-400">₹{totalPrice.toLocaleString('en-IN')}</span>
+                                        <span className="font-bold text-lg text-blue-400">Contact for Pricing</span>
                                     </div>
-                                    <p className="text-[10px] text-gray-500 mt-2 text-right">Excluding applicable taxes</p>
+                                    <p className="text-[10px] text-gray-500 mt-2 text-right">Final price confirmed after consultation</p>
                                 </div>
                                 <div className="space-y-3">
                                     <button onClick={onProceed} className="button-primary w-full shadow-lg shadow-blue-600/20">
@@ -1743,7 +1740,7 @@ export default function App() {
         if (session) {
             setCurrentView('cart');
         } else {
-            setCurrentView('login');
+            setCurrentView('cart');
         }
         window.scrollTo(0, 0);
     };

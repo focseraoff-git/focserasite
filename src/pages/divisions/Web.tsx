@@ -61,11 +61,7 @@ export default function Web() {
 
           {/* Header */}
           <div className="text-center mb-20 relative">
-            <div className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 backdrop-blur-md rounded-full mb-8 shadow-[0_0_30px_-5px_rgba(251,146,60,0.3)] animate-fade-in-up hover:bg-white/10 transition-all duration-500 group cursor-default">
-              <Sparkles size={14} className="text-yellow-400 group-hover:rotate-12 transition-transform" />
-              <span className="text-xs font-bold tracking-[0.2em] text-yellow-500 uppercase">Sankranthi Festival Special</span>
-              <Sparkles size={14} className="text-yellow-400 group-hover:-rotate-12 transition-transform" />
-            </div>
+
 
             <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black text-white mb-8 tracking-tight leading-none">
               Elevate Your <br />

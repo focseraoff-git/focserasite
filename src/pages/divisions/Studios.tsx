@@ -162,7 +162,7 @@ const TermsModal = ({ onClose }) => {
 
                     <div className="grid grid-cols-1 gap-4 text-sm text-gray-300">
                         <ul className="space-y-3 list-disc pl-5 marker:text-yellow-500">
-                            <li><strong>One Service per ₹99 Booking:</strong> Each booking covers only one service type.</li>
+                            <li><strong>One Service per Booking:</strong> Each booking covers only one service type.</li>
                             <li><strong>Max 8 bookings per day:</strong> Slots are allotted on a first-come, first-served basis.</li>
                             <li><strong>Equipment:</strong> Shoot conducted using <strong>iPhone or DSLR</strong> at Focsera Studios' sole discretion.</li>
                             <li><strong>Location:</strong> Valid for a <strong>single location in Hyderabad only</strong>. No multiple spots.</li>
@@ -279,7 +279,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
         // Append contextual info (selected service, add-ons, location, dates, estimated total)
         let contextualNotes = '';
         if (selectedService) {
-            contextualNotes += `\n\nService: ${selectedService.name} (id: ${selectedService.id}, min: ${selectedService.price_min})`;
+            contextualNotes += `\n\nService: ${selectedService.name} (id: ${selectedService.id})`;
         }
         const selectedAddOnKeys = Object.entries(selectedAddOns || {}).filter(([_, v]) => v).map(([k]) => k);
         if (selectedAddOnKeys.length) {
@@ -597,7 +597,6 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
 
 const CheckoutHeader = ({ currentStep }) => {
     const steps = [
-        { id: 'login', name: 'Login', icon: <User className="w-5 h-5" /> },
         { id: 'cart', name: 'Review Order', icon: <ShoppingCart className="w-5 h-5" /> },
         { id: 'details', name: 'Checkout', icon: <CreditCard className="w-5 h-5" /> }
     ];
@@ -1113,7 +1112,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                 <div className="flex justify-between items-center pb-4 border-b border-white/10">
                                     <span className="font-semibold text-gray-300">{bookingPackage.service.name}</span>
                                     <span className="font-bold text-white">
-                                        {bookingPackage.totalPrice > 0 ? `₹${bookingPackage.totalPrice}` : 'Custom Quote'}
+                                        Custom Quote
                                     </span>
                                 </div>
                                 {Object.entries(bookingPackage.addOns).filter(([_, v]) => v).map(([key]) => {
@@ -1130,11 +1129,11 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                 <div className="flex justify-between items-center">
                                     <span className="text-lg font-bold font-sans tracking-tight text-white">Total</span>
                                     <span className="text-xl font-bold text-blue-400">
-                                        {bookingPackage.totalPrice > 0 ? `₹${bookingPackage.totalPrice}` : 'Contact for Pricing'}
+                                        Contact for Pricing
                                     </span>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-2">
-                                    {bookingPackage.totalPrice > 0 ? '*Inclusive of all taxes' : '*Final price confirmed after consultation'}
+                                    *Final price confirmed after consultation
                                 </p>
                             </div>
                             <button onClick={onBack} className="w-full py-4 mt-6 text-center font-semibold text-gray-400 hover:text-white transition-colors flex items-center justify-center gap-2 border border-white/10 rounded-xl hover:bg-white/5">
@@ -1401,11 +1400,7 @@ export default function App() {
             return;
         }
 
-        if (session) {
-            updateView('cart');
-        } else {
-            updateView('login');
-        }
+        updateView('cart');
     };
 
     const resetToLanding = () => {
@@ -1543,4 +1538,3 @@ export default function App() {
         </>
     );
 }
-

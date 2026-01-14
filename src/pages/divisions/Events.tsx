@@ -307,7 +307,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTe
         // so we don't send unknown columns to Supabase.
         let contextualNotes = '';
         if (selectedService) {
-            contextualNotes += `\n\nService: ${selectedService.name} (id: ${selectedService.id}, min: ${selectedService.price_min})`;
+            contextualNotes += `\n\nService: ${selectedService.name} (id: ${selectedService.id})`;
         }
         const selectedAddOnKeys = Object.entries(selectedAddOns || {}).filter(([_, v]) => v).map(([k]) => k);
         if (selectedAddOnKeys.length) {
@@ -315,7 +315,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTe
         }
         if (quoteData.location) contextualNotes += `\nLocation: ${quoteData.location}`;
         if (quoteData.event_end_date) contextualNotes += `\nEnd Date: ${quoteData.event_end_date}`;
-        if (totalPrice) contextualNotes += `\nEstimated Total: ${totalPrice}`;
+        if (totalPrice) contextualNotes += `\nEstimated Total: Contact for Pricing`;
 
         const combinedDetails = details + contextualNotes;
 
