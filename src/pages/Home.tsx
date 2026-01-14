@@ -68,14 +68,13 @@ export default function Home() {
       .promptx-shimmer { position: absolute; inset: 0; pointer-events: none; opacity: 0.35; mix-blend-mode: screen; background: linear-gradient(120deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.05) 100%); transform: translateX(-110%); transition: transform .8s ease-in-out; }
       .promptx-cta:hover .promptx-shimmer { transform: translateX(110%); }
       
-      @keyframes float-kite { 0%, 100% { transform: translateY(0) rotate(5deg); } 50% { transform: translateY(-20px) rotate(10deg); } }
-      .animate-kite { animation: float-kite 6s ease-in-out infinite; }
+
     `}</style>
 
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0052CC] via-[#0066FF] to-[#0052CC]">
           {/* Festive Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-yellow-500/10 to-transparent mix-blend-overlay pointer-events-none"></div>
+
 
           <div className="absolute inset-0 opacity-20">
             <div
@@ -100,34 +99,20 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Floating Kites for Decoration - Enhanced */}
-          <div className="absolute top-20 left-10 opacity-40 animate-kite hidden sm:block">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-yellow-300 drop-shadow-lg"><path d="M12 2L2 12l10 10 10-10L12 2z" /><path d="M12 2v20" /><path d="M2 12h20" /></svg>
-          </div>
-          <div className="absolute top-40 right-10 opacity-30 animate-kite hidden sm:block" style={{ animationDelay: '2s' }}>
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-orange-300 drop-shadow-lg"><path d="M12 2L2 12l10 10 10-10L12 2z" /><path d="M12 2v20" /><path d="M2 12h20" /></svg>
-          </div>
-          <div className="absolute bottom-32 left-20 opacity-20 animate-kite hidden sm:block" style={{ animationDelay: '4s' }}>
-            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-red-300"><path d="M12 2L2 12l10 10 10-10L12 2z" /><path d="M12 2v20" /><path d="M2 12h20" /></svg>
-          </div>
 
-          {/* Corner Rangoli Glows */}
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-yellow-500/20 via-orange-500/10 to-transparent rounded-tl-full blur-3xl pointer-events-none"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-red-500/20 via-pink-500/10 to-transparent rounded-tr-full blur-3xl pointer-events-none"></div>
+
+
         </div>
 
         <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
           <div className="mb-8 animate-scale-in flex flex-col items-center gap-4">
-            <div className="inline-block px-6 py-2 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 text-white border border-yellow-300/50 rounded-full text-sm font-bold tracking-widest uppercase shadow-lg shadow-orange-500/40 animate-pulse">
-              ✨ Happy Sankranthi ✨
-            </div>
             <div className="inline-block px-6 py-2 glass-effect rounded-full text-white text-sm font-medium">
               Welcome to the Future of Creativity
             </div>
           </div>
           <h1 className="text-4xl sm:text-6xl lg:text-8xl font-bold text-white mb-8 animate-fade-in leading-tight">
             Focus. Create.<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-300 drop-shadow-sm">Celebrate.</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-blue-200 drop-shadow-sm">Celebrate.</span>
           </h1>
           <p className="text-lg sm:text-2xl text-white/95 mb-12 animate-fade-in-delay max-w-3xl mx-auto font-light">
             A global creative, media, and digital solutions group empowering brands and individuals worldwide
@@ -208,11 +193,7 @@ export default function Home() {
                   className="group glossy-card rounded-3xl p-8 hover-lift border border-gray-100 relative overflow-hidden"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  {(division.name === 'Focsera Studios' || division.name === 'Focsera Web') && (
-                    <div className="absolute top-0 right-0 bg-gradient-to-bl from-yellow-400 via-orange-500 to-red-500 text-white text-[10px] font-bold px-4 py-1.5 rounded-bl-2xl z-10 shadow-md flex items-center gap-1">
-                      <Sparkles size={10} className="animate-spin-slow" /> FESTIVAL OFFER
-                    </div>
-                  )}
+
                   <div className={`relative w-20 h-20 bg-gradient-to-br ${division.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg`}>
                     <Icon className="text-white" size={36} />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent"></div>

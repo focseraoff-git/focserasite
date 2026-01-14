@@ -78,44 +78,44 @@ const PackageCard = ({ service, onBook, index, customizerScrollRef }) => {
             ref={cardRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className={`group relative bg-[#fffbf0]/90 backdrop-blur-sm border border-orange-200/50 rounded-3xl overflow-hidden shadow-xl flex flex-col transition-all duration-500 ease-out ${!service.is_active ? 'grayscale opacity-70' : 'hover:shadow-[0_20px_60px_-15px_rgba(234,179,8,0.3)] hover:border-yellow-500/30'}`}
+            className={`group relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col transition-all duration-500 ease-out ${!service.is_active ? 'grayscale opacity-70' : 'hover:shadow-[0_20px_60px_-15px_rgba(0,123,255,0.3)] hover:border-blue-500/30'}`}
             style={{ transitionDelay: `${index * 100}ms` }}
         >
             {!service.is_active && (
-                <div className="absolute top-4 right-4 bg-gray-700 text-white text-xs font-bold px-3 py-1.5 rounded-full z-10 shadow-lg">
+                <div className="absolute top-4 right-4 bg-gray-800 text-white text-xs font-bold px-3 py-1.5 rounded-full z-10 shadow-lg border border-white/10">
                     Currently Unavailable
                 </div>
             )}
             <div className="relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <img src={service.thumbnail} alt={service.name} className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute top-4 left-4 z-20">
-                    <span className="px-4 py-1.5 bg-white/95 backdrop-blur-md text-xs font-bold text-red-900 rounded-full shadow-lg border border-red-100">{service.category}</span>
+                    <span className="px-4 py-1.5 bg-black/50 backdrop-blur-md text-xs font-bold text-white rounded-full shadow-lg border border-white/20">{service.category}</span>
                 </div>
             </div>
-            <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-[#fffbf0] to-white backdrop-blur-lg">
-                <h3 className="text-3xl font-black text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-red-600 group-hover:to-yellow-600 transition-all duration-300 font-serif">{service.name}</h3>
-                <p className="text-gray-600 mb-8 leading-relaxed flex-grow text-sm font-sans">{service.description}</p>
+            <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-[#111] to-[#050505]">
+                <h3 className="text-3xl font-black text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-cyan-400 transition-all duration-300 font-sans tracking-tight">{service.name}</h3>
+                <p className="text-gray-400 mb-8 leading-relaxed flex-grow text-sm font-sans">{service.description}</p>
                 <div className="mb-6 relative">
                     <div className="inline-block">
-                        <span className="text-2xl font-extrabold text-[#b91c1c]">Get your custom quote</span>
+                        <span className="text-2xl font-extrabold text-[#3b82f6]">Get your custom quote</span>
                     </div>
                     <span className="block text-sm text-gray-500 font-medium mt-1">Contact us to discuss scope & pricing</span>
                 </div>
 
-                <div className="border-t border-orange-100 mt-auto pt-4 space-y-4">
-                    <button onClick={() => setIsTermsVisible(!isTermsVisible)} className="flex justify-between items-center w-full text-sm font-semibold text-gray-600 hover:text-red-800 transition-colors">
+                <div className="border-t border-white/10 mt-auto pt-4 space-y-4">
+                    <button onClick={() => setIsTermsVisible(!isTermsVisible)} className="flex justify-between items-center w-full text-sm font-semibold text-gray-400 hover:text-white transition-colors">
                         <span>Terms & Details</span>
                         <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isTermsVisible ? 'rotate-180' : ''}`} />
                     </button>
                     <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isTermsVisible ? 'max-h-96' : 'max-h-0'}`}>
                         <div className="text-xs text-gray-500 space-y-3 pt-2">
                             <div>
-                                <h4 className="font-bold text-gray-700">Client Terms</h4>
+                                <h4 className="font-bold text-gray-300">Client Terms</h4>
                                 <p>{service.terms.clientSupport}</p>
                             </div>
                             <div>
-                                <h4 className="font-bold text-gray-700">Studio Terms</h4>
+                                <h4 className="font-bold text-gray-300">Studio Terms</h4>
                                 <p>{service.terms.studioSupport}</p>
                             </div>
                         </div>
@@ -125,8 +125,8 @@ const PackageCard = ({ service, onBook, index, customizerScrollRef }) => {
                 <button onClick={() => {
                     customizerScrollRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     setTimeout(() => onBook(), 500);
-                }} disabled={!service.is_active} className="relative mt-4 w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed group/btn shadow-lg shadow-red-900/20">
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-700 via-red-600 to-yellow-600 bg-[length:200%_100%] group-hover/btn:bg-right transition-all duration-500"></div>
+                }} disabled={!service.is_active} className="relative mt-4 w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed group/btn shadow-lg shadow-blue-900/20">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-700 bg-[length:200%_100%] group-hover/btn:bg-right transition-all duration-500"></div>
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000"></div>
                     <span className="relative flex items-center justify-center gap-2">
                         {service.is_active ? 'Get Custom Quote' : 'Unavailable'}
@@ -226,10 +226,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
     const customizerScrollRef = useRef(null);
     const addOnsScrollRef = useRef(null);
 
-    const sankranthiReel = services.find(s => s.name === 'Sankranthi Reel Special');
-    const sankranthiPhoto = services.find(s => s.name === 'Sankranthi Photo Special');
-    const sankranthiVideo = services.find(s => s.name === 'Sankranthi Video Special');
-    const sankranthiCombo = services.find(s => s.name === 'Sankranthi Combo Pack');
+
 
     useEffect(() => {
         if (services.length > 0 && !selectedService) {
@@ -361,358 +358,61 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
 
     return (
         <>
-            <section className="relative py-32 bg-gradient-to-br from-[#4a0404] via-[#7c0a02] to-[#b91c1c] overflow-hidden">
-                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/diagonales-decalees.png')]"></div>
-                {/* Mandala / Rangoli Decorative Background */}
-                <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] opacity-20 rounded-full animate-spin-slow pointer-events-none mix-blend-overlay"></div>
-                <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] opacity-20 rounded-full animate-spin-slow-reverse pointer-events-none mix-blend-overlay"></div>
+            <section className="relative py-32 bg-[#020202] overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#020202] to-[#020202]"></div>
 
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                    <div className="absolute top-10 left-10 w-64 h-64 bg-yellow-500/20 rounded-full blur-3xl animate-pulse"></div>
-                    <div className="absolute bottom-10 right-10 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-                    {/* Floating Kites */}
-                    <div className="absolute top-20 right-4 sm:right-[20%] text-4xl sm:text-6xl animate-float-slow opacity-80" style={{ animationDuration: '8s' }}>🪁</div>
-                    <div className="absolute top-40 left-4 sm:left-[10%] text-3xl sm:text-4xl animate-float-delayed opacity-60" style={{ animationDuration: '10s' }}>🪁</div>
+                    <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] animate-pulse"></div>
+                    <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
-                    <div className="w-40 h-40 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(234,179,8,0.6)] border-4 border-yellow-500/50 p-4 animate-bounce-slow">
+                    <div className="w-40 h-40 bg-white/5 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(59,130,246,0.3)] border-4 border-white/10 p-4 animate-bounce-slow">
                         <img src="/images/logos/FocseraStudios.jpg" alt="Focsera Studios" className="w-full h-full object-contain rounded-full" />
                     </div>
-                    <h1 className="text-4xl sm:text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 mb-6 drop-shadow-sm tracking-tight font-serif">
+                    <h1 className="text-4xl sm:text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 mb-6 drop-shadow-sm tracking-tight font-sans">
                         FOCSERA STUDIOS
                     </h1>
-                    <p className="text-xl md:text-3xl text-yellow-50/90 max-w-3xl mx-auto mb-8 font-light tracking-wide font-serif italic">
-                        "Capturing the Essence of Tradition & Celebration"
+                    <p className="text-xl md:text-3xl text-slate-400 max-w-3xl mx-auto mb-8 font-light tracking-wide font-sans italic">
+                        "Capturing the Essence of Your Moments"
                     </p>
-                    <div className="w-32 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto mb-8"></div>
-                    <p className="text-lg text-white/80 max-w-2xl mx-auto font-sans leading-relaxed">
+                    <div className="w-32 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto mb-8"></div>
+                    <p className="text-lg text-slate-500 max-w-2xl mx-auto font-sans leading-relaxed">
                         Premium Photography & Videography Services for your most cherished moments.
                     </p>
                 </div>
             </section>
 
-            <section className="py-16 bg-[#fffbf0] border-b border-orange-100 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-500 via-red-500 to-yellow-500"></div>
+            <section className="py-16 bg-[#050505] border-b border-white/5 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-                        <div className="text-center p-8 rounded-3xl hover:bg-white hover:shadow-xl transition-all duration-300 group">
-                            <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <Camera className="text-[#d97706]" size={40} />
+                        <div className="text-center p-8 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-300 group">
+                            <div className="w-24 h-24 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <Camera className="text-blue-400" size={40} />
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-3 font-serif">Photography Services</h3>
-                            <p className="text-gray-600 text-lg">Professional photography for weddings, portraits, fashion, and commercial projects</p>
+                            <h3 className="text-2xl font-bold text-white mb-3 font-sans">Photography Services</h3>
+                            <p className="text-gray-400 text-lg">Professional photography for weddings, portraits, fashion, and commercial projects</p>
                         </div>
-                        <div className="text-center p-8 rounded-3xl hover:bg-white hover:shadow-xl transition-all duration-300 group">
-                            <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#d97706]"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                        <div className="text-center p-8 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 hover:shadow-2xl hover:shadow-cyan-900/20 transition-all duration-300 group">
+                            <div className="w-24 h-24 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-3 font-serif">Videography Services</h3>
-                            <p className="text-gray-600 text-lg">Cinematic video production for events, commercials, and promotional content</p>
+                            <h3 className="text-2xl font-bold text-white mb-3 font-sans">Videography Services</h3>
+                            <p className="text-gray-400 text-lg">Cinematic video production for events, commercials, and promotional content</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Sankranthi Special Offer Section */}
-            <section className="py-24 relative overflow-hidden bg-[#1a0505]">
-                {/* Premium Festive Background */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#4a0404] via-[#2a0a0a] to-[#000000] opacity-95"></div>
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] opacity-20 mix-blend-overlay"></div>
 
-                {/* Animated Sparkles & Glows */}
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                    <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-gradient-to-br from-yellow-600/10 to-transparent rounded-full blur-[100px] animate-pulse"></div>
-                    <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-gradient-to-tl from-red-600/10 to-transparent rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-                    {/* Floating Icons */}
-                    <div className="absolute top-20 left-10 text-yellow-500/10 animate-float-slow text-8xl transform rotate-12 select-none">🪁</div>
-                    <div className="absolute bottom-40 right-20 text-orange-500/10 animate-float-delayed text-8xl transform -rotate-12 select-none">🌾</div>
-                    <div className="absolute top-1/2 left-20 text-red-500/20 text-9xl animate-pulse select-none">✨</div>
-                    <div className="absolute top-1/3 right-1/4 text-yellow-200/20 text-4xl animate-ping select-none" style={{ animationDuration: '3s' }}>✦</div>
-                </div>
-
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-20">
-                        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black px-8 py-2 rounded-full text-sm mb-8 shadow-[0_0_30px_rgba(234,179,8,0.4)] tracking-wider uppercase transform hover:scale-105 transition-transform cursor-default border border-yellow-300">
-                            <span>✨</span> Limited Time Festival Offer <span>✨</span>
-                        </div>
-                        <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-100 via-yellow-200 to-yellow-600 mb-8 drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] uppercase tracking-tight leading-none font-serif">
-                            SANKRANTHI @ ₹99 & ₹199<br /><span className="text-white text-3xl sm:text-4xl md:text-6xl lg:text-7xl drop-shadow-lg">FESTIVE SPECIAL</span>
-                        </h2>
-                        <div className="flex items-center justify-center gap-6 mb-6">
-                            <div className="h-[2px] w-16 bg-gradient-to-r from-transparent via-yellow-500 to-transparent"></div>
-                            <span className="text-2xl md:text-3xl text-yellow-400 font-serif italic tracking-wide">Celebrate. Capture. Experience.</span>
-                            <div className="h-[2px] w-16 bg-gradient-to-l from-transparent via-yellow-500 to-transparent"></div>
-                        </div>
-                        <div className="inline-block bg-red-900/50 border border-red-500/30 px-6 py-2 rounded-full mb-8 backdrop-blur-sm">
-                            <p className="text-red-200 font-bold tracking-wide uppercase text-sm flex items-center gap-2">
-                                📍 Valid Only in Hyderabad
-                            </p>
-                        </div>
-                        <p className="text-xl text-yellow-100/80 font-light max-w-3xl mx-auto leading-relaxed font-sans">
-                            A festival trial experience designed for you to experience Focsera Studios' quality.
-                        </p>
-                        {new Date() > new Date('2026-10-08') && (
-                            <div className="mt-10 bg-red-950/90 border border-red-500/50 text-red-200 font-bold py-4 px-10 rounded-2xl inline-block backdrop-blur-md shadow-2xl">
-                                🚫 OFFER CLOSED
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-16">
-                        {/* Reel Option */}
-                        <div className="group bg-gradient-to-b from-gray-900 to-black backdrop-blur-xl rounded-3xl p-1 shadow-2xl hover:shadow-[0_0_40px_rgba(234,179,8,0.2)] transition-all duration-500 hover:-translate-y-2">
-                            <div className="bg-[#1a1a1a] rounded-[22px] p-8 h-full flex flex-col border border-white/5 group-hover:border-yellow-500/30 transition-colors">
-                                <div className="text-center mb-8">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-purple-900 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg ring-1 ring-white/10 group-hover:scale-110 transition-transform duration-500">
-                                        🎬
-                                    </div>
-                                    <h3 className="text-xl font-bold text-white tracking-wide mb-2">REEL MAKING</h3>
-                                    <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">₹99</div>
-                                </div>
-                                <ul className="space-y-4 mb-8 flex-grow">
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-purple-500/20"><Check className="text-purple-400 w-3 h-3" /></div> Sankranthi Theme</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-purple-500/20"><Check className="text-purple-400 w-3 h-3" /></div> iPhone or DSLR (Based on availability)</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-purple-500/20"><Check className="text-purple-400 w-3 h-3" /></div> Clean Basic Edit</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-purple-500/20"><Check className="text-purple-400 w-3 h-3" /></div> Festive Color Tone</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-purple-500/20"><Check className="text-purple-400 w-3 h-3" /></div> Vertical Format</li>
-                                </ul>
-                                <button
-                                    onClick={() => sankranthiReel && onBookNow(sankranthiReel, {}, 99, true)}
-                                    disabled={new Date() > new Date('2026-10-08') || !sankranthiReel}
-                                    className="w-full py-4 bg-white/5 hover:bg-purple-600 text-white font-bold rounded-xl border border-white/10 hover:border-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : (!sankranthiReel ? 'UNAVAILABLE' : 'BOOK NOW')}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Photography Option */}
-                        <div className="group bg-gradient-to-b from-gray-900 to-black backdrop-blur-xl rounded-3xl p-1 shadow-2xl hover:shadow-[0_0_40px_rgba(234,179,8,0.2)] transition-all duration-500 hover:-translate-y-2 relative">
-                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase shadow-lg z-10">Popular</div>
-                            <div className="bg-[#1a1a1a] rounded-[22px] p-8 h-full flex flex-col border border-white/5 group-hover:border-yellow-500/30 transition-colors">
-                                <div className="text-center mb-8">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-blue-900 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg ring-1 ring-white/10 group-hover:scale-110 transition-transform duration-500">
-                                        📸
-                                    </div>
-                                    <h3 className="text-xl font-bold text-white tracking-wide mb-2">PHOTOSHOOT</h3>
-                                    <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">₹99</div>
-                                </div>
-                                <ul className="space-y-4 mb-8 flex-grow">
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-blue-500/20"><Check className="text-blue-400 w-3 h-3" /></div> Mini Experience</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-blue-500/20"><Check className="text-blue-400 w-3 h-3" /></div> iPhone or DSLR (Based on availability)</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-blue-500/20"><Check className="text-blue-400 w-3 h-3" /></div> Natural Light</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-blue-500/20"><Check className="text-blue-400 w-3 h-3" /></div> Pro Framing</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-xs italic opacity-70">*No guaranteed photo count</li>
-                                </ul>
-                                <button
-                                    onClick={() => sankranthiPhoto && onBookNow(sankranthiPhoto, {}, 99, true)}
-                                    disabled={new Date() > new Date('2026-10-08') || !sankranthiPhoto}
-                                    className="w-full py-4 bg-white/5 hover:bg-blue-600 text-white font-bold rounded-xl border border-white/10 hover:border-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : (!sankranthiPhoto ? 'UNAVAILABLE' : 'BOOK NOW')}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Videography Option */}
-                        <div className="group bg-gradient-to-b from-gray-900 to-black backdrop-blur-xl rounded-3xl p-1 shadow-2xl hover:shadow-[0_0_40px_rgba(234,179,8,0.2)] transition-all duration-500 hover:-translate-y-2">
-                            <div className="bg-[#1a1a1a] rounded-[22px] p-8 h-full flex flex-col border border-white/5 group-hover:border-yellow-500/30 transition-colors">
-                                <div className="text-center mb-8">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-green-900 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg ring-1 ring-white/10 group-hover:scale-110 transition-transform duration-500">
-                                        🎥
-                                    </div>
-                                    <h3 className="text-xl font-bold text-white tracking-wide mb-2">VIDEOGRAPHY</h3>
-                                    <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-400">₹99</div>
-                                </div>
-                                <ul className="space-y-4 mb-8 flex-grow">
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-emerald-500/20"><Check className="text-emerald-400 w-3 h-3" /></div> Short Festive Video</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-emerald-500/20"><Check className="text-emerald-400 w-3 h-3" /></div> iPhone or DSLR (Based on availability)</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-emerald-500/20"><Check className="text-emerald-400 w-3 h-3" /></div> Clean Edits</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-emerald-500/20"><Check className="text-emerald-400 w-3 h-3" /></div> BGM Included</li>
-                                </ul>
-                                <button
-                                    onClick={() => sankranthiVideo && onBookNow(sankranthiVideo, {}, 99, true)}
-                                    disabled={new Date() > new Date('2026-10-08') || !sankranthiVideo}
-                                    className="w-full py-4 bg-white/5 hover:bg-emerald-600 text-white font-bold rounded-xl border border-white/10 hover:border-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : (!sankranthiVideo ? 'UNAVAILABLE' : 'BOOK NOW')}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Combo Pack Option */}
-                        <div className="group bg-gradient-to-br from-yellow-500 via-orange-500 to-red-600 rounded-3xl p-1 shadow-[0_0_50px_rgba(234,179,8,0.4)] transform hover:-translate-y-2 transition-all duration-500 relative">
-                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-red-600 px-6 py-1.5 rounded-full text-xs font-black tracking-widest uppercase shadow-xl z-10 animate-pulse border-2 border-yellow-400">
-                                ✨ Best Value ✨
-                            </div>
-                            <div className="bg-[#1a1a1a] rounded-[22px] p-8 h-full flex flex-col relative overflow-hidden">
-                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400"></div>
-                                <div className="text-center mb-8 relative z-10">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg ring-2 ring-yellow-500/50 group-hover:rotate-12 transition-transform duration-500">
-                                        🎁
-                                    </div>
-                                    <h3 className="text-xl font-black text-white tracking-wide mb-1">COMBO PACK</h3>
-                                    <p className="text-[10px] font-bold text-yellow-400 uppercase tracking-widest mb-3">All-in-One Experience</p>
-                                    <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 drop-shadow-sm">₹199</div>
-                                </div>
-                                <ul className="space-y-4 mb-8 flex-grow relative z-10">
-                                    <li className="flex items-center gap-3 text-white font-bold text-sm"><div className="p-1 rounded-full bg-yellow-500"><Check className="text-black w-3 h-3" /></div> Reel + Photos + Video</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-white/10"><Check className="text-yellow-400 w-3 h-3" /></div> Single Slot Execution</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-white/10"><Check className="text-yellow-400 w-3 h-3" /></div> iPhone or DSLR (Based on availability)</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-white/10"><Check className="text-yellow-400 w-3 h-3" /></div> Festive color tone</li>
-                                    <li className="flex items-center gap-3 text-gray-300 text-sm"><div className="p-1 rounded-full bg-white/10"><Check className="text-yellow-400 w-3 h-3" /></div> Social-media ready</li>
-                                </ul>
-                                <button
-                                    onClick={() => sankranthiCombo && onBookNow(sankranthiCombo, {}, 199, true)}
-                                    disabled={new Date() > new Date('2026-10-08') || !sankranthiCombo}
-                                    className="w-full py-4 bg-gradient-to-r from-yellow-500 to-red-600 text-white font-black rounded-xl shadow-lg hover:shadow-yellow-500/50 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {new Date() > new Date('2026-10-08') ? 'CLOSED' : (!sankranthiCombo ? 'UNAVAILABLE' : 'GRAB DEAL @ ₹199')}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Who Can Avail This Offer */}
-                    <div className="max-w-5xl mx-auto mb-16 mt-16">
-                        <div className="bg-white/5 backdrop-blur-md rounded-3xl p-6 md:p-12 border border-white/10 relative overflow-hidden group hover:border-yellow-500/20 transition-colors">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-
-                            <div className="text-center mb-10">
-                                <h3 className="text-2xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 mb-4 font-serif">
-                                    WHO CAN AVAIL THIS OFFER?
-                                </h3>
-                                <p className="text-gray-300 max-w-2xl mx-auto text-lg font-light">
-                                    The Sankranthi Festive Offer is open to individuals and groups who want to capture festive moments in a simple, joyful way.
-                                </p>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                                <div className="space-y-6">
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                        <div className="text-3xl">👨‍👩‍👧‍👦</div>
-                                        <div>
-                                            <h4 className="text-white font-bold text-lg mb-1">Families</h4>
-                                            <p className="text-gray-400 text-sm">Celebrating Sankranthi together</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                        <div className="text-3xl">🧑‍🤝‍🧑</div>
-                                        <div>
-                                            <h4 className="text-white font-bold text-lg mb-1">Friends & Groups</h4>
-                                            <p className="text-gray-400 text-sm">Capturing festive memories</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                        <div className="text-3xl">🎓</div>
-                                        <div>
-                                            <h4 className="text-white font-bold text-lg mb-1">Students & Creators</h4>
-                                            <p className="text-gray-400 text-sm">Looking for festive reels or photos</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="space-y-6">
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                        <div className="text-3xl">🏢</div>
-                                        <div>
-                                            <h4 className="text-white font-bold text-lg mb-1">Small Businesses</h4>
-                                            <p className="text-gray-400 text-sm">Festive content & branding shots</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                        <div className="text-3xl">🛍️</div>
-                                        <div>
-                                            <h4 className="text-white font-bold text-lg mb-1">Local Brands</h4>
-                                            <p className="text-gray-400 text-sm">Shops and entrepreneurs</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                        <div className="text-3xl">👗</div>
-                                        <div>
-                                            <h4 className="text-white font-bold text-lg mb-1">Individuals</h4>
-                                            <p className="text-gray-400 text-sm">Celebrating traditional outfits</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-red-950/30 border border-red-500/20 rounded-2xl p-6 relative overflow-hidden">
-                                <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
-                                <h4 className="text-red-200 font-bold flex items-center gap-2 mb-3 text-lg">
-                                    <span>⚠️</span> Important Clarification
-                                </h4>
-                                <ul className="space-y-2 text-gray-300 text-sm list-disc pl-5 marker:text-red-500">
-                                    <li>Offer valid strictly within <strong>Hyderabad city limits</strong>.</li>
-                                    <li>Group size must fit within one booked slot.</li>
-                                    <li>Large groups or commercial shoots requiring extended time, props, or setups are <strong className="text-red-300">not covered</strong> under this festive offer.</li>
-                                    <li>For high-scale commercial or brand shoots, premium packages apply.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Booking Process & Terms */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                        <div className="bg-black/40 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:border-yellow-500/30 transition-colors">
-                            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                                <span className="text-2xl">📝</span> Booking & Execution Process
-                            </h3>
-                            <ul className="space-y-4 text-sm text-gray-300">
-                                <li className="flex gap-3">
-                                    <span className="font-bold text-yellow-500 min-w-[20px]">1.</span>
-                                    <span><strong>Book a Slot:</strong> Select your service and choose an available day & time slot.</span>
-                                </li>
-                                <li className="flex gap-3">
-                                    <span className="font-bold text-yellow-500 min-w-[20px]">2.</span>
-                                    <span><strong>Be Ready:</strong> Client must be fully ready (outfit, grooming) at the booked slot time.</span>
-                                </li>
-                                <li className="flex gap-3">
-                                    <span className="font-bold text-yellow-500 min-w-[20px]">3.</span>
-                                    <span><strong>Punctuality:</strong> We will not wait beyond the allotted slot. Delays may lead to cancellation without rescheduling.</span>
-                                </li>
-                                <li className="flex gap-3">
-                                    <span className="font-bold text-yellow-500 min-w-[20px]">4.</span>
-                                    <span><strong>Single Slot:</strong> Each booking is valid for one continuous slot only. No extensions.</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="flex flex-col justify-center items-center bg-black/40 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:border-yellow-500/30 transition-colors h-full">
-                            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                <span className="text-2xl">📜</span> Terms & Conditions
-                            </h3>
-                            <p className="text-gray-400 text-sm text-center mb-6">
-                                Please review our strict terms and conditions for this special festive offer.
-                            </p>
-                            <button
-                                onClick={() => setShowTerms(true)}
-                                className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/20 hover:border-yellow-500/50 text-white font-semibold rounded-xl transition-all flex items-center gap-2 group"
-                            >
-                                View Strict Terms & Conditions
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </button>
-                            <p className="text-[10px] text-gray-500 mt-4 italic">
-                                *Booking confirms acceptance
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="mt-12 text-center">
-                        <p className="text-white font-bold text-lg italic opacity-90">
-                            "Sankranthi vibes. Captured by Focsera Studios."
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <section ref={packagesRef} className="py-16 md:py-24 bg-[#fffbf0] relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+            <section ref={packagesRef} className="py-16 md:py-24 bg-[#0a0a0a] relative overflow-hidden border-t border-b border-white/5">
+                <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] invert"></div>
                 <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 ${packagesAreVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                     <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-gray-900 mb-4 font-serif">Our Signature Packages</h2>
-                        <div className="w-24 h-1.5 bg-gradient-to-r from-yellow-500 to-red-500 mx-auto rounded-full"></div>
+                        <h2 className="text-4xl font-bold text-white mb-4 font-sans tracking-tight">Our Signature Packages</h2>
+                        <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)]"></div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {services.filter(s => s && !s.name.toLowerCase().includes('sankranthi')).map((service, index) => (
@@ -722,17 +422,17 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                 </div>
             </section>
 
-            <section ref={customizerScrollRef} className="py-16 md:py-24 bg-gradient-to-b from-[#fffbf0] to-white scroll-mt-24 relative">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-200 to-transparent"></div>
+            <section ref={customizerScrollRef} className="py-16 md:py-24 bg-[#050505] scroll-mt-24 relative border-t border-white/5">
+                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
                 <div ref={customizerSectionRef} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${customizerIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                     <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-gray-900 mb-4 font-serif">Build Your Own Package</h2>
-                        <div className="w-24 h-1.5 bg-gradient-to-r from-yellow-500 to-red-500 mx-auto rounded-full"></div>
+                        <h2 className="text-4xl font-bold text-white mb-4 font-sans tracking-tight">Build Your Own Package</h2>
+                        <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)]"></div>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                        <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-gray-200 shadow-2xl space-y-8">
+                        <div className="lg:col-span-2 bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl space-y-8">
                             <div>
-                                <h3 className="text-xl font-bold mb-4">1. Select Your Base Service</h3>
+                                <h3 className="text-xl font-bold mb-4 text-white">1. Select Your Base Service</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                     {services.filter(s => s && !s.name.toLowerCase().includes('sankranthi')).map(service => (
                                         <button key={service?.id ?? service?.name ?? Math.random()} onClick={() => {
@@ -743,18 +443,18 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                                     addOnsScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                                 }, 100);
                                             }
-                                        }} disabled={!service.is_active} className={`group/service relative p-5 border-2 rounded-2xl text-left transition-all duration-300 transform overflow-hidden ${(selectedService?.id === service.id) ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-xl border-transparent scale-105' : 'bg-white/80 backdrop-blur-sm border-gray-200'} ${service.is_active ? 'hover:-translate-y-1 hover:shadow-lg cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}>
+                                        }} disabled={!service.is_active} className={`group/service relative p-5 border-2 rounded-2xl text-left transition-all duration-300 transform overflow-hidden ${(selectedService?.id === service.id) ? 'bg-gradient-to-br from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-900/50 border-transparent scale-105' : 'bg-black/40 border-white/10 hover:border-blue-500/50 hover:bg-white/5'} ${service.is_active ? 'hover:-translate-y-1 cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}>
                                             {selectedService?.id === service.id && (
                                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]"></div>
                                             )}
-                                            <span className="relative font-bold block text-sm md:text-base">{service.name}</span>
-                                            <span className={`relative text-xs md:text-sm font-medium ${(selectedService?.id === service.id) ? 'text-white/90' : 'text-gray-600'}`}>Get Custom Quote</span>
+                                            <span className={`relative font-bold block text-sm md:text-base ${(selectedService?.id === service.id) ? 'text-white' : 'text-gray-200'}`}>{service.name}</span>
+                                            <span className={`relative text-xs md:text-sm font-medium ${(selectedService?.id === service.id) ? 'text-white/90' : 'text-gray-500'}`}>Get Custom Quote</span>
                                         </button>
                                     ))}
                                 </div>
                             </div>
                             <div ref={addOnsScrollRef}>
-                                <h3 className="text-xl font-bold mb-4">2. Choose Add-ons</h3>
+                                <h3 className="text-xl font-bold mb-4 text-white">2. Choose Add-ons</h3>
                                 <div className="space-y-4">
                                     {addOns.map((addOn) => {
                                         const isQuantityBased = ['extra_photographer', 'extra_videographer', 'extended_coverage'].includes(addOn.key);
@@ -762,38 +462,38 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                                         const quantity = addonQuantities[addOn.key] || 1;
 
                                         return (
-                                            <div key={addOn.key} className={`p-4 border-2 rounded-xl transition-all duration-300 ${isSelected ? 'bg-blue-50 border-[#0052CC] shadow-md' : 'bg-gray-50 border-gray-200'}`}>
+                                            <div key={addOn.key} className={`p-4 border rounded-xl transition-all duration-300 ${isSelected ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.1)]' : 'bg-black/20 border-white/5 hover:border-white/20'}`}>
                                                 <div className="flex items-start justify-between gap-4">
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-3 mb-2">
                                                             <button
                                                                 onClick={() => handleAddOnToggle(addOn.key)}
-                                                                className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[#0052CC] border-[#0052CC]' : 'border-gray-300 hover:border-gray-400'}`}
+                                                                className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all ${isSelected ? 'bg-blue-600 border-blue-600' : 'border-gray-600 hover:border-gray-400 bg-transparent'}`}
                                                             >
                                                                 {isSelected && <Check className="text-white" size={16} />}
                                                             </button>
-                                                            <span className="font-semibold text-gray-900">{addOn.label}</span>
+                                                            <span className="font-semibold text-gray-200">{addOn.label}</span>
                                                         </div>
                                                         {addOn.description && (
-                                                            <p className="text-xs text-gray-600 ml-9">{addOn.description}</p>
+                                                            <p className="text-xs text-gray-500 ml-9">{addOn.description}</p>
                                                         )}
                                                     </div>
                                                     <div className="flex flex-col items-end gap-2">
-                                                        <span className="text-sm font-bold text-gray-900">
+                                                        <span className="text-sm font-bold text-gray-300">
                                                             Get Custom Quote
                                                         </span>
                                                         {isSelected && isQuantityBased && (
-                                                            <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-300 px-2 py-1">
+                                                            <div className="flex items-center gap-2 bg-black/40 rounded-lg border border-white/10 px-2 py-1">
                                                                 <button
                                                                     onClick={() => handleQuantityChange(addOn.key, -1)}
-                                                                    className="w-6 h-6 flex items-center justify-center text-gray-600 hover:text-[#0052CC] hover:bg-blue-50 rounded transition-all"
+                                                                    className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 rounded transition-all"
                                                                 >
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                                                 </button>
-                                                                <span className="text-sm font-semibold w-8 text-center">{quantity}</span>
+                                                                <span className="text-sm font-semibold w-8 text-center text-white">{quantity}</span>
                                                                 <button
                                                                     onClick={() => handleQuantityChange(addOn.key, 1)}
-                                                                    className="w-6 h-6 flex items-center justify-center text-gray-600 hover:text-[#0052CC] hover:bg-blue-50 rounded transition-all"
+                                                                    className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 rounded transition-all"
                                                                 >
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                                                 </button>
@@ -808,29 +508,29 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                             </div>
                         </div>
                         <div className="lg:col-span-1 sticky top-8">
-                            <div className="bg-white/70 backdrop-blur-lg p-8 rounded-3xl border-2 border-[#0052CC] shadow-2xl">
-                                <h3 className="text-2xl font-bold mb-6 text-center">Your Custom Package</h3>
-                                <div className="space-y-3 mb-6 border-b border-blue-200 pb-4">
+                            <div className="bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl">
+                                <h3 className="text-2xl font-bold mb-6 text-center text-white">Your Custom Package</h3>
+                                <div className="space-y-3 mb-6 border-b border-white/10 pb-4">
                                     <div className="flex justify-between items-center">
-                                        <p className="font-semibold text-gray-700">{selectedService?.name || 'Service'}</p>
-                                        <p className="text-gray-600 font-medium">Get Custom Quote</p>
+                                        <p className="font-semibold text-gray-300">{selectedService?.name || 'Service'}</p>
+                                        <p className="text-gray-400 font-medium">Get Custom Quote</p>
                                     </div>
                                     {Object.entries(selectedAddOns).filter(([_, value]) => value).map(([key]) => {
                                         const addOn = addOns.find(a => a.key === key);
                                         const quantity = addonQuantities[key] || 1;
                                         return addOn ? (
                                             <div key={key} className="flex justify-between items-center text-sm">
-                                                <p className="text-gray-600">{addOn.label}{quantity > 1 ? ` (x${quantity})` : ''}</p>
+                                                <p className="text-gray-400">{addOn.label}{quantity > 1 ? ` (x${quantity})` : ''}</p>
                                                 <p className="text-gray-500 font-medium">+ Get Custom Quote</p>
                                             </div>
                                         ) : null;
                                     })}
                                 </div>
                                 <div className="flex justify-between items-center mb-6">
-                                    <p className="text-lg font-bold">Estimated Total</p>
-                                    <p className="text-xl font-bold text-[#0052CC]">Contact for Pricing</p>
+                                    <p className="text-lg font-bold text-white">Estimated Total</p>
+                                    <p className="text-xl font-bold text-blue-400">Contact for Pricing</p>
                                 </div>
-                                <button onClick={handleCustomBooking} className="button-primary w-full">
+                                <button onClick={handleCustomBooking} className="button-primary w-full shadow-lg shadow-blue-900/30">
                                     Request Custom Quote
                                     <ArrowRight className="button-primary-icon" />
                                 </button>
@@ -841,45 +541,45 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                 </div>
             </section>
 
-            <section ref={quoteSectionRef} className="py-24 bg-[#fffbf0] relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] opacity-5"></div>
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-200 to-transparent"></div>
+            <section ref={quoteSectionRef} className="py-24 bg-[#0a0a0a] relative overflow-hidden border-t border-white/5">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-900/10 via-transparent to-transparent"></div>
+                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-900/40 to-transparent"></div>
                 <div className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ${quoteIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                    <h2 className="text-4xl font-bold text-gray-900 mb-4 font-serif">Have a Unique Project?</h2>
-                    <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+                    <h2 className="text-4xl font-bold text-white mb-4 font-sans tracking-tight">Have a Unique Project?</h2>
+                    <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto font-light">
                         If you didn't find the perfect package, tell us about your event, and we'll create a custom quote just for you.
                     </p>
-                    <form onSubmit={handleQuoteSubmit} className="bg-white p-8 rounded-3xl border border-orange-100 shadow-2xl text-left max-w-3xl mx-auto space-y-6 relative z-10">
+                    <form onSubmit={handleQuoteSubmit} className="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl text-left max-w-3xl mx-auto space-y-6 relative z-10 hover:shadow-blue-900/10 transition-shadow duration-500">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field" placeholder="John Doe" required /></div>
-                            <div><label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field" placeholder="you@example.com" required /></div>
-                            <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field" placeholder="+91 12345 67890" /></div>
+                            <div><label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="John Doe" required /></div>
+                            <div><label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="you@example.com" required /></div>
+                            <div><label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="+91 12345 67890" /></div>
                             <div>
-                                <label htmlFor="event_date" className="block text-sm font-medium text-gray-700 mb-2">Event Start Date</label>
-                                <input type="date" id="event_date" name="event_date" className="w-full input-field" />
+                                <label htmlFor="event_date" className="block text-sm font-medium text-gray-400 mb-2">Event Start Date</label>
+                                <input type="date" id="event_date" name="event_date" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 icon-invert" />
                             </div>
                         </div>
                         <div>
-                            <label htmlFor="event_end_date" className="block text-sm font-medium text-gray-700 mb-2">Event End Date (Optional - for multi-day events)</label>
-                            <input type="date" id="event_end_date" name="event_end_date" className="w-full input-field" />
+                            <label htmlFor="event_end_date" className="block text-sm font-medium text-gray-400 mb-2">Event End Date (Optional - for multi-day events)</label>
+                            <input type="date" id="event_end_date" name="event_end_date" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 icon-invert" />
                         </div>
-                        <div><label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field" placeholder="Please include as many details as possible: location, number of guests, duration, specific shots you need, etc." required></textarea></div>
-                        <button type="submit" className="button-primary w-full">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
+                        <div><label htmlFor="details" className="block text-sm font-medium text-gray-400 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Please include as many details as possible: location, number of guests, duration, specific shots you need, etc." required></textarea></div>
+                        <button type="submit" className="button-primary w-full shadow-lg shadow-blue-900/20">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
                     </form>
                 </div>
             </section>
 
-            <footer className="bg-gray-800 text-white py-16">
+            <footer className="bg-black text-white py-16 border-t border-white/5">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300"><Camera className="text-white" size={32} /></div>
-                    <p className="font-bold text-2xl mb-2">Focsera Studios</p>
-                    <p className="text-gray-400">Capturing Moments, Creating Memories.</p>
+                    <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300 border border-white/10"><Camera className="text-blue-500" size={32} /></div>
+                    <p className="font-bold text-2xl mb-2 font-sans tracking-tight">Focsera Studios</p>
+                    <p className="text-gray-500 font-light">Capturing Moments, Creating Memories.</p>
                     <div className="flex justify-center gap-6 my-8">
-                        <a href="" className="text-gray-400 hover:text-white transition-colors"><Twitter /></a>
-                        <a href="https://www.instagram.com/focsera.in/" className="text-gray-400 hover:text-white transition-colors"><Instagram /></a>
-                        <a href="#" className="text-gray-400 hover:text-white transition-colors"><Facebook /></a>
+                        <a href="" className="text-gray-500 hover:text-white transition-colors"><Twitter /></a>
+                        <a href="https://www.instagram.com/focsera.in/" className="text-gray-500 hover:text-white transition-colors"><Instagram /></a>
+                        <a href="#" className="text-gray-500 hover:text-white transition-colors"><Facebook /></a>
                     </div>
-                    <p className="text-sm text-gray-500 mt-8">© {new Date().getFullYear()} Focsera Studios. All Rights Reserved.</p>
+                    <p className="text-sm text-gray-600 mt-8">© {new Date().getFullYear()} Focsera Studios. All Rights Reserved.</p>
                 </div>
             </footer>
             {showFancyModal && fancyModalContent && (
@@ -904,24 +604,24 @@ const CheckoutHeader = ({ currentStep }) => {
     const currentStepIndex = steps.findIndex(step => step.id === currentStep);
 
     return (
-        <header className="bg-[#fffbf0]/90 backdrop-blur-lg sticky top-0 z-40 shadow-sm border-b border-orange-100">
+        <header className="bg-black/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm border-b border-white/5">
             <nav className="max-w-5xl mx-auto px-4 py-4">
                 <div className="flex justify-between items-center mb-4">
-                    <a href="#" onClick={(e) => { e.preventDefault(); window.location.reload(); }} className="flex items-center gap-2 font-bold text-xl text-gray-900 font-serif">
-                        <Camera className="text-yellow-600" />
+                    <a href="#" onClick={(e) => { e.preventDefault(); window.location.reload(); }} className="flex items-center gap-2 font-bold text-xl text-white font-sans tracking-tight">
+                        <Camera className="text-blue-500" />
                         Focsera Studios
                     </a>
                 </div>
                 <div className="relative">
-                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200"></div>
-                    <div className="absolute top-1/2 left-0 h-0.5 bg-gradient-to-r from-red-600 to-yellow-500 transition-all duration-500" style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
+                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/10"></div>
+                    <div className="absolute top-1/2 left-0 h-0.5 bg-gradient-to-r from-blue-600 to-cyan-500 transition-all duration-500" style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
                     <div className="relative flex justify-between">
                         {steps.map((step, index) => (
                             <div key={step.id} className="flex flex-col items-center">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${index <= currentStepIndex ? 'bg-gradient-to-br from-red-600 to-yellow-600 border-transparent text-white shadow-lg' : 'bg-white border-gray-300 text-gray-400'}`}>
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${index <= currentStepIndex ? 'bg-gradient-to-br from-blue-600 to-cyan-600 border-transparent text-white shadow-lg shadow-blue-900/50' : 'bg-gray-900 border-gray-700 text-gray-500'}`}>
                                     {index < currentStepIndex ? <Check /> : step.icon}
                                 </div>
-                                <p className={`mt-2 text-xs font-semibold ${index <= currentStepIndex ? 'text-red-700' : 'text-gray-500'}`}>{step.name}</p>
+                                <p className={`mt-2 text-xs font-semibold ${index <= currentStepIndex ? 'text-blue-400' : 'text-gray-600'}`}>{step.name}</p>
                             </div>
                         ))}
                     </div>
@@ -1010,34 +710,33 @@ const LoginPage = ({ onLogin, onBack }) => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex flex-col items-center justify-center p-4 pt-40 relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(100,116,139,0.08),transparent_50%)]"></div>
+        <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-4 pt-40 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(100,116,139,0.1),transparent_50%)]"></div>
 
             <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-20 left-10 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-                <div className="absolute top-40 right-10 w-96 h-96 bg-slate-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-                <div className="absolute bottom-20 left-1/2 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+                <div className="absolute top-20 left-10 w-96 h-96 bg-blue-900/30 rounded-full mix-blend-screen filter blur-[100px] animate-pulse"></div>
+                <div className="absolute top-40 right-10 w-96 h-96 bg-cyan-900/30 rounded-full mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
             </div>
 
             <div className="w-full max-w-md animate-fadeInUp relative z-10">
-                <div className="bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-200 p-8 lg:p-10">
-                    <button onClick={onBack} className="absolute top-6 left-6 text-slate-600 hover:text-slate-800 font-medium text-sm flex items-center gap-2 transition-colors">
+                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 p-8 lg:p-10">
+                    <button onClick={onBack} className="absolute top-6 left-6 text-gray-400 hover:text-white font-medium text-sm flex items-center gap-2 transition-colors">
                         <span className="hover:-translate-x-1 transition-transform">&larr;</span> Back
                     </button>
 
                     <div className="text-center mb-8 mt-8">
-                        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent inline-block mb-2">
+                        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent inline-block mb-2 font-sans tracking-tight">
                             FOCSERA
                         </h2>
-                        <p className="text-slate-600">{isLoginView ? 'Sign in to continue your booking' : 'Join Focsera Studios today'}</p>
+                        <p className="text-gray-400">{isLoginView ? 'Sign in to continue your booking' : 'Join Focsera Studios today'}</p>
                     </div>
 
-                    <div className="flex gap-2 mb-8 bg-slate-100 p-1.5 rounded-2xl">
+                    <div className="flex gap-2 mb-8 bg-black/40 p-1.5 rounded-2xl border border-white/5">
                         <button
                             onClick={() => setIsLoginView(true)}
                             className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${isLoginView
-                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30'
-                                : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-900/30'
+                                : 'text-gray-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             Log In
@@ -1045,8 +744,8 @@ const LoginPage = ({ onLogin, onBack }) => {
                         <button
                             onClick={() => setIsLoginView(false)}
                             className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${!isLoginView
-                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30'
-                                : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-900/30'
+                                : 'text-gray-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             Sign Up
@@ -1055,15 +754,15 @@ const LoginPage = ({ onLogin, onBack }) => {
 
                     {error && (
                         <div className={`mb-6 p-4 rounded-xl text-sm flex items-start gap-3 ${messageType === 'error'
-                            ? 'bg-red-50 border border-red-200 text-red-700'
-                            : 'bg-blue-50 border border-blue-200 text-blue-700'
+                            ? 'bg-red-500/10 border border-red-500/20 text-red-400'
+                            : 'bg-blue-500/10 border border-blue-500/20 text-blue-400'
                             }`}>
                             <span>{error}</span>
                         </div>
                     )}
 
                     {successMessage && (
-                        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-start gap-3">
+                        <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm flex items-start gap-3">
                             <span>{successMessage}</span>
                         </div>
                     )}
@@ -1071,15 +770,15 @@ const LoginPage = ({ onLogin, onBack }) => {
                     <form onSubmit={handleAuth} className="space-y-5">
                         {!isLoginView && (
                             <div className="group">
-                                <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Full Name</label>
+                                <label className="text-sm font-bold text-gray-300 block mb-2 ml-1">Full Name</label>
                                 <div className="relative">
                                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" size={20} />
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10" size={20} />
                                     <input
                                         type="text"
                                         value={fullName}
                                         onChange={e => setFullName(e.target.value)}
-                                        className="relative w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                        className="relative w-full pl-12 pr-4 py-4 bg-black/40 border-2 border-white/10 rounded-xl focus:border-blue-500 focus:bg-black/60 focus:outline-none transition-all text-white placeholder:text-gray-600"
                                         placeholder="John Doe"
                                         required
                                     />
@@ -1088,15 +787,15 @@ const LoginPage = ({ onLogin, onBack }) => {
                         )}
 
                         <div className="group">
-                            <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Email Address</label>
+                            <label className="text-sm font-bold text-gray-300 block mb-2 ml-1">Email Address</label>
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 7 10 6 10-6" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 7 10 6 10-6" /></svg>
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
-                                    className="relative w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                    className="relative w-full pl-12 pr-4 py-4 bg-black/40 border-2 border-white/10 rounded-xl focus:border-blue-500 focus:bg-black/60 focus:outline-none transition-all text-white placeholder:text-gray-600"
                                     placeholder="you@example.com"
                                     required
                                 />
@@ -1104,15 +803,15 @@ const LoginPage = ({ onLogin, onBack }) => {
                         </div>
 
                         <div className="group">
-                            <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Password</label>
+                            <label className="text-sm font-bold text-gray-300 block mb-2 ml-1">Password</label>
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
-                                    className="relative w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400"
+                                    className="relative w-full pl-12 pr-12 py-4 bg-black/40 border-2 border-white/10 rounded-xl focus:border-blue-500 focus:bg-black/60 focus:outline-none transition-all text-white placeholder:text-gray-600"
                                     placeholder="••••••••"
                                     required
                                     minLength={6}
@@ -1120,7 +819,7 @@ const LoginPage = ({ onLogin, onBack }) => {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10 transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white z-10 transition-colors"
                                 >
                                     {showPassword ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
@@ -1147,11 +846,11 @@ const LoginPage = ({ onLogin, onBack }) => {
                     </form>
 
                     <div className="mt-8 text-center">
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-gray-500">
                             {isLoginView ? "Don't have an account? " : "Already have an account? "}
                             <button
                                 onClick={() => setIsLoginView(!isLoginView)}
-                                className="text-blue-600 font-bold hover:text-blue-700 transition-colors"
+                                className="text-blue-400 font-bold hover:text-blue-300 transition-colors"
                             >
                                 {isLoginView ? 'Sign Up' : 'Log In'}
                             </button>
@@ -1159,15 +858,15 @@ const LoginPage = ({ onLogin, onBack }) => {
                     </div>
 
                     <div className="flex items-center my-6">
-                        <div className="flex-grow border-t border-slate-200"></div>
-                        <span className="mx-4 text-slate-400 text-sm font-medium">OR</span>
-                        <div className="flex-grow border-t border-slate-200"></div>
+                        <div className="flex-grow border-t border-white/10"></div>
+                        <span className="mx-4 text-gray-500 text-sm font-medium">OR</span>
+                        <div className="flex-grow border-t border-white/10"></div>
                     </div>
 
                     <button
                         onClick={handleGoogleLogin}
                         disabled={loading}
-                        className="w-full flex items-center justify-center gap-3 py-3.5 border-2 border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 mb-4"
+                        className="w-full flex items-center justify-center gap-3 py-3.5 border-2 border-white/10 rounded-xl font-bold text-gray-300 hover:bg-white/5 hover:border-white/20 hover:text-white transition-all duration-300 mb-4"
                     >
                         <GoogleIcon className="w-5 h-5" />
                         <span>Continue with Google</span>
@@ -1175,7 +874,7 @@ const LoginPage = ({ onLogin, onBack }) => {
 
                     <button
                         onClick={onLogin}
-                        className="w-full py-3.5 border-2 border-slate-200 rounded-xl font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                        className="w-full py-3.5 border-2 border-white/10 rounded-xl font-semibold text-gray-300 hover:bg-white/5 hover:border-white/20 hover:text-white transition-all"
                     >
                         Continue as Guest
                     </button>
@@ -1185,66 +884,69 @@ const LoginPage = ({ onLogin, onBack }) => {
     );
 };
 
-const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => (
-    <div className="min-h-screen bg-[#fffbf0] p-4 sm:p-8 pt-40 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-        <div className="max-w-5xl mx-auto animate-fadeInUp relative z-10">
-            <div className="mb-8">
-                <h1 className="text-4xl font-bold text-gray-900 mb-2 font-serif">Review Your Order</h1>
-                <p className="text-gray-600">Please review your package details before proceeding to checkout</p>
-            </div>
-
-            <div className="grid lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2">
-                    <div className="bg-white rounded-3xl shadow-lg overflow-hidden border border-orange-100">
-                        <div className="aspect-video w-full overflow-hidden bg-gray-200">
-                            <img src={bookingPackage.service.thumbnail} alt={bookingPackage.service.name} className="w-full h-full object-cover" />
-                        </div>
-                        <div className="p-8">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-3 font-serif">{bookingPackage.service.name}</h2>
-                            <p className="text-gray-600 leading-relaxed font-sans">{bookingPackage.service.description}</p>
-                        </div>
-                    </div>
+const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => {
+    return (
+        <div className="min-h-screen bg-[#050505] pt-24 pb-12 px-4 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-900/10 via-transparent to-transparent"></div>
+            <div className="max-w-5xl mx-auto animate-fadeInUp relative z-10">
+                <div className="mb-8">
+                    <h1 className="text-4xl font-bold text-white mb-2 font-sans tracking-tight">Review Your Order</h1>
+                    <p className="text-gray-400">Please review your package details before proceeding to checkout</p>
                 </div>
 
-                <div className="lg:col-span-1">
-                    <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-orange-200 sticky top-8">
-                        <h3 className="text-xl font-bold mb-6 font-serif text-gray-900">Order Summary</h3>
-                        <div className="space-y-4 mb-6">
-                            <div className="flex justify-between items-center pb-4 border-b border-orange-100">
-                                <span className="font-semibold text-gray-700">Base Package</span>
-                                <span className="font-bold text-gray-900">Custom Quote</span>
+                <div className="grid lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2">
+                        <div className="bg-white/5 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/10">
+                            <div className="aspect-video w-full overflow-hidden bg-gray-900 relative">
+                                <img src={bookingPackage.service.thumbnail} alt={bookingPackage.service.name} className="w-full h-full object-cover opacity-80" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                             </div>
-                            {Object.entries(bookingPackage.addOns).filter(([_, v]) => v).map(([key]) => {
-                                const addOn = addOns.find(a => a.key === key);
-                                return addOn ? (
-                                    <div key={key} className="flex justify-between items-center">
-                                        <span className="text-gray-600">{addOn.label}</span>
-                                        <span className="text-gray-700 font-medium">+ Custom Quote</span>
-                                    </div>
-                                ) : null;
-                            })}
-                        </div>
-                        <div className="pt-6 border-t border-orange-100 mb-6">
-                            <div className="flex justify-between items-center">
-                                <span className="text-lg font-bold font-serif">Total</span>
-                                <span className="text-xl font-bold text-[#b91c1c]">Contact for Pricing</span>
+                            <div className="p-8">
+                                <h2 className="text-3xl font-bold text-white mb-3 font-sans tracking-tight">{bookingPackage.service.name}</h2>
+                                <p className="text-gray-400 leading-relaxed font-sans">{bookingPackage.service.description}</p>
                             </div>
-                            <p className="text-xs text-gray-500 mt-2">*Final price will be confirmed after consultation</p>
                         </div>
-                        <button onClick={onProceed} className="w-full py-4 bg-gradient-to-r from-[#7c0a02] to-[#b91c1c] text-white font-bold rounded-xl shadow-lg hover:shadow-red-900/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
-                            Proceed to Checkout
-                            <ArrowRight className="w-5 h-5" />
-                        </button>
-                        <button onClick={onBack} className="w-full py-4 mt-3 text-center font-semibold text-gray-600 hover:text-red-800 transition-colors flex items-center justify-center gap-2">
-                            <span>&larr;</span> Back
-                        </button>
+                    </div>
+
+                    <div className="lg:col-span-1">
+                        <div className="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/10 sticky top-8">
+                            <h3 className="text-xl font-bold mb-6 font-sans tracking-tight text-white">Order Summary</h3>
+                            <div className="space-y-4 mb-6">
+                                <div className="flex justify-between items-center pb-4 border-b border-white/10">
+                                    <span className="font-semibold text-gray-300">Base Package</span>
+                                    <span className="font-bold text-white">Custom Quote</span>
+                                </div>
+                                {Object.entries(bookingPackage.addOns).filter(([_, v]) => v).map(([key]) => {
+                                    const addOn = addOns.find(a => a.key === key);
+                                    return addOn ? (
+                                        <div key={key} className="flex justify-between items-center">
+                                            <span className="text-gray-400">{addOn.label}</span>
+                                            <span className="text-gray-300 font-medium">+ Custom Quote</span>
+                                        </div>
+                                    ) : null;
+                                })}
+                            </div>
+                            <div className="pt-6 border-t border-white/10 mb-6">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-lg font-bold font-sans tracking-tight text-white">Total</span>
+                                    <span className="text-xl font-bold text-blue-400">Contact for Pricing</span>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-2">*Final price will be confirmed after consultation</p>
+                            </div>
+                            <button onClick={onProceed} className="w-full button-primary shadow-lg shadow-blue-900/30">
+                                Proceed to Checkout
+                                <ArrowRight className="w-5 h-5" />
+                            </button>
+                            <button onClick={onBack} className="w-full py-4 mt-3 text-center font-semibold text-gray-400 hover:text-white transition-colors flex items-center justify-center gap-2">
+                                <span>&larr;</span> Back
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => {
 
@@ -1288,55 +990,55 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
     };
 
     return (
-        <div className="min-h-screen bg-[#fffbf0] p-4 sm:p-8 pt-48 relative overflow-hidden">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+        <div className="min-h-screen bg-[#050505] p-4 sm:p-8 pt-48 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-900/10 via-transparent to-transparent"></div>
             <div className="max-w-6xl mx-auto animate-fadeInUp relative z-10">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2 font-serif">Complete Your Booking</h1>
-                    <p className="text-gray-600">Enter your event details to finalize your booking</p>
+                    <h1 className="text-4xl font-bold text-white mb-2 font-sans tracking-tight">Complete Your Booking</h1>
+                    <p className="text-gray-400">Enter your event details to finalize your booking</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                     <div className="lg:col-span-2">
-                        <form onSubmit={handleConfirmBooking} className="bg-white p-8 rounded-3xl shadow-lg border border-orange-100 space-y-6">
+                        <form onSubmit={handleConfirmBooking} className="bg-white/5 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/10 space-y-6">
                             <div>
-                                <h3 className="text-xl font-bold mb-6 font-serif">Contact Information</h3>
+                                <h3 className="text-xl font-bold mb-6 font-sans tracking-tight text-white">Contact Information</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Full Name</label>
-                                        <input name="name" type="text" className="w-full input-field" placeholder="Rahul Sharma" defaultValue={session?.user?.user_metadata?.full_name || ''} required />
+                                        <label className="text-sm font-semibold text-gray-300 block mb-2">Full Name</label>
+                                        <input name="name" type="text" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Rahul Sharma" defaultValue={session?.user?.user_metadata?.full_name || ''} required />
                                     </div>
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Email Address</label>
-                                        <input name="email" type="email" className="w-full input-field" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required />
+                                        <label className="text-sm font-semibold text-gray-300 block mb-2">Email Address</label>
+                                        <input name="email" type="email" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required />
                                     </div>
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Phone Number</label>
-                                        <input name="phone" type="tel" className="w-full input-field" placeholder="+91 98765 43210" required />
+                                        <label className="text-sm font-semibold text-gray-300 block mb-2">Phone Number</label>
+                                        <input name="phone" type="tel" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="+91 98765 43210" required />
                                     </div>
                                     {isSankranthi && (
                                         <>
                                             <div>
-                                                <label className="text-sm font-semibold text-gray-700 block mb-2">Number of People</label>
-                                                <input name="number_of_people" type="number" min="1" max="10" className="w-full input-field" placeholder="e.g. 4" required />
+                                                <label className="text-sm font-semibold text-gray-300 block mb-2">Number of People</label>
+                                                <input name="number_of_people" type="number" min="1" max="10" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="e.g. 4" required />
                                             </div>
                                         </>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="pt-6 border-t border-gray-200">
-                                <h3 className="text-xl font-bold mb-6 font-serif">Event Details</h3>
+                            <div className="pt-6 border-t border-white/10">
+                                <h3 className="text-xl font-bold mb-6 font-sans tracking-tight text-white">Event Details</h3>
                                 <div className="space-y-6">
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Event Date(s)</label>
+                                        <label className="text-sm font-semibold text-gray-300 block mb-2">Event Date(s)</label>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="text-xs text-gray-600 block mb-1">Start Date {isSankranthi && <span className="text-red-600 font-bold">(Jan 9-14 Only)</span>}</label>
+                                                <label className="text-xs text-gray-500 block mb-1">Start Date {isSankranthi && <span className="text-red-400 font-bold">(Jan 9-14 Only)</span>}</label>
                                                 <input
                                                     name="event_date"
                                                     type="date"
-                                                    className="w-full input-field"
+                                                    className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 icon-invert"
                                                     required
                                                     min={isSankranthi ? "2026-01-09" : undefined}
                                                     max={isSankranthi ? "2026-01-14" : undefined}
@@ -1344,8 +1046,8 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                             </div>
                                             {!isSankranthi && (
                                                 <div>
-                                                    <label className="text-xs text-gray-600 block mb-1">End Date (Optional - for multi-day events)</label>
-                                                    <input name="event_end_date" type="date" className="w-full input-field" />
+                                                    <label className="text-xs text-gray-500 block mb-1">End Date (Optional - for multi-day events)</label>
+                                                    <input name="event_end_date" type="date" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 icon-invert" />
                                                 </div>
                                             )}
                                         </div>
@@ -1353,22 +1055,22 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
 
                                     {isSankranthi && (
                                         <div>
-                                            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4 rounded-r-lg">
+                                            <div className="bg-yellow-900/20 border-l-4 border-yellow-600 p-4 mb-4 rounded-r-lg">
                                                 <div className="flex">
                                                     <div className="flex-shrink-0">
-                                                        <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                                        <svg className="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
                                                             <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                                         </svg>
                                                     </div>
                                                     <div className="ml-3">
-                                                        <p className="text-sm text-yellow-700">
+                                                        <p className="text-sm text-yellow-200">
                                                             <strong className="font-bold">Important:</strong> Please be fully ready in your outfits by the start of your slot. We will not be able to wait or extend the slot if you are late.
                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <label className="text-sm font-semibold text-gray-700 block mb-2">Preferred Time Slot</label>
-                                            <select name="time_slot" className="w-full input-field" required>
+                                            <label className="text-sm font-semibold text-gray-300 block mb-2">Preferred Time Slot</label>
+                                            <select name="time_slot" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" required>
                                                 <option value="">Select a time slot</option>
                                                 {Array.from({ length: 13 }).map((_, i) => {
                                                     const startHour = 8 + i;
@@ -1386,14 +1088,14 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                     )}
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Event Venue / Location {isSankranthi && <span className="text-red-600 font-bold">(Hyderabad Only)</span>}</label>
-                                        <textarea name="event_venue" className="w-full input-field h-32 resize-none" placeholder={isSankranthi ? "Enter the full address of your event venue in Hyderabad" : "Enter the full address of your event venue"} required></textarea>
+                                        <label className="text-sm font-semibold text-gray-300 block mb-2">Event Venue / Location {isSankranthi && <span className="text-red-400 font-bold">(Hyderabad Only)</span>}</label>
+                                        <textarea name="event_venue" className="w-full input-field h-32 resize-none bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder={isSankranthi ? "Enter the full address of your event venue in Hyderabad" : "Enter the full address of your event venue"} required></textarea>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="pt-8">
-                                <button type="submit" className="w-full py-4 bg-gradient-to-r from-[#7c0a02] to-[#b91c1c] text-white font-bold rounded-xl shadow-lg hover:shadow-red-900/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                                <button type="submit" className="w-full button-primary shadow-lg shadow-blue-900/30">
                                     Confirm Booking
                                     <ArrowRight className="w-6 h-6" />
                                 </button>
@@ -1405,12 +1107,12 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                     </div>
 
                     <div className="lg:col-span-1">
-                        <div className="bg-white/90 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-orange-200 sticky top-32">
-                            <h3 className="text-xl font-bold mb-6 font-serif text-gray-900">Order Summary</h3>
+                        <div className="bg-white/5 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/10 sticky top-32">
+                            <h3 className="text-xl font-bold mb-6 font-sans tracking-tight text-white">Order Summary</h3>
                             <div className="space-y-4">
-                                <div className="flex justify-between items-center pb-4 border-b border-orange-100">
-                                    <span className="font-semibold text-gray-700">{bookingPackage.service.name}</span>
-                                    <span className="font-bold text-gray-900">
+                                <div className="flex justify-between items-center pb-4 border-b border-white/10">
+                                    <span className="font-semibold text-gray-300">{bookingPackage.service.name}</span>
+                                    <span className="font-bold text-white">
                                         {bookingPackage.totalPrice > 0 ? `₹${bookingPackage.totalPrice}` : 'Custom Quote'}
                                     </span>
                                 </div>
@@ -1418,16 +1120,16 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                     const addOn = addOns.find(a => a.key === key);
                                     return addOn ? (
                                         <div key={key} className="flex justify-between items-center">
-                                            <span className="text-gray-600">{addOn.label}</span>
-                                            <span className="text-gray-700 font-medium">+ Custom Quote</span>
+                                            <span className="text-gray-400">{addOn.label}</span>
+                                            <span className="text-gray-300 font-medium">+ Custom Quote</span>
                                         </div>
                                     ) : null;
                                 })}
                             </div>
-                            <div className="pt-6 border-t border-orange-100">
+                            <div className="pt-6 border-t border-white/10">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-lg font-bold font-serif">Total</span>
-                                    <span className="text-xl font-bold text-[#b91c1c]">
+                                    <span className="text-lg font-bold font-sans tracking-tight text-white">Total</span>
+                                    <span className="text-xl font-bold text-blue-400">
                                         {bookingPackage.totalPrice > 0 ? `₹${bookingPackage.totalPrice}` : 'Contact for Pricing'}
                                     </span>
                                 </div>
@@ -1435,7 +1137,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                     {bookingPackage.totalPrice > 0 ? '*Inclusive of all taxes' : '*Final price confirmed after consultation'}
                                 </p>
                             </div>
-                            <button onClick={onBack} className="w-full py-4 mt-6 text-center font-semibold text-gray-600 hover:text-red-800 transition-colors flex items-center justify-center gap-2 border border-gray-200 rounded-xl hover:bg-gray-50">
+                            <button onClick={onBack} className="w-full py-4 mt-6 text-center font-semibold text-gray-400 hover:text-white transition-colors flex items-center justify-center gap-2 border border-white/10 rounded-xl hover:bg-white/5">
                                 <span>&larr;</span> Back to Cart
                             </button>
                         </div>
@@ -1456,7 +1158,7 @@ const SuccessModal = ({ onClose, bookingPackage }) => {
     }, []);
 
     return (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fadeIn overflow-hidden">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fadeIn overflow-hidden">
             {confetti && (
                 <div className="absolute inset-0 pointer-events-none">
                     {[...Array(50)].map((_, i) => (
@@ -1470,7 +1172,7 @@ const SuccessModal = ({ onClose, bookingPackage }) => {
                                 height: `${Math.random() * 10 + 5}px`,
                                 backgroundColor: isSankranthi
                                     ? ['#FFD700', '#FF4500', '#FF6347', '#FFA500', '#FFFF00'][Math.floor(Math.random() * 5)]
-                                    : ['#0052CC', '#0066FF', '#00C7FF', '#FFD700', '#FF6B6B'][Math.floor(Math.random() * 5)],
+                                    : ['#3B82F6', '#06B6D4', '#2563EB', '#60A5FA', '#22D3EE'][Math.floor(Math.random() * 5)],
                                 animationDelay: `${Math.random() * 2}s`,
                                 animationDuration: `${Math.random() * 3 + 2}s`,
                                 borderRadius: Math.random() > 0.5 ? '50%' : '0',
@@ -1481,24 +1183,24 @@ const SuccessModal = ({ onClose, bookingPackage }) => {
                 </div>
             )}
 
-            <div className={`bg-gradient-to-br ${isSankranthi ? 'from-[#fffbf0] to-[#fff0f0]' : 'from-white to-gray-50'} rounded-3xl shadow-2xl p-6 md:p-12 text-center w-full max-w-2xl mx-auto border-2 ${isSankranthi ? 'border-yellow-500' : 'border-[#0052CC]'} relative animate-scaleIn max-h-[90vh] flex flex-col overflow-hidden`}>
+            <div className={`bg-gradient-to-br ${isSankranthi ? 'from-[#fffbf0] to-[#fff0f0]' : 'from-[#0a0a0a] to-gray-900'} rounded-3xl shadow-2xl p-6 md:p-12 text-center w-full max-w-2xl mx-auto border-2 ${isSankranthi ? 'border-yellow-500' : 'border-blue-500/50'} relative animate-scaleIn max-h-[90vh] flex flex-col overflow-hidden`}>
                 <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-20">
-                    <div className={`w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br ${isSankranthi ? 'from-yellow-400 to-red-600' : 'from-green-400 to-green-600'} flex items-center justify-center shadow-2xl animate-bounce-slow`}>
+                    <div className={`w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br ${isSankranthi ? 'from-yellow-400 to-red-600' : 'from-blue-500 to-cyan-500'} flex items-center justify-center shadow-2xl shadow-blue-900/50 animate-bounce-slow`}>
                         {isSankranthi ? <span className="text-5xl">🪁</span> : <Check className="w-12 h-12 md:w-20 md:h-20 text-white" strokeWidth={4} />}
                     </div>
                 </div>
 
                 <div className="mt-12 md:mt-20 overflow-y-auto flex-grow px-2">
-                    <h2 className={`text-3xl md:text-5xl font-bold ${isSankranthi ? 'text-red-800' : 'text-gray-900'} mb-4 animate-slideDown`}>
+                    <h2 className={`text-3xl md:text-5xl font-bold ${isSankranthi ? 'text-red-800' : 'text-white'} mb-4 animate-slideDown font-sans tracking-tight`}>
                         {isSankranthi ? 'Sankranthi Slot Confirmed!' : 'Booking Confirmed!'}
                     </h2>
-                    <div className={`w-24 h-1 bg-gradient-to-r ${isSankranthi ? 'from-yellow-500 to-red-500' : 'from-[#0052CC] to-[#0066FF]'} mx-auto mb-6 rounded-full`}></div>
+                    <div className={`w-24 h-1 bg-gradient-to-r ${isSankranthi ? 'from-yellow-500 to-red-500' : 'from-blue-500 to-cyan-500'} mx-auto mb-6 rounded-full`}></div>
 
-                    <div className={`${isSankranthi ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200'} border-2 rounded-2xl p-8 mb-8`}>
-                        <p className="text-xl text-gray-700 leading-relaxed mb-6">
-                            Thank you for choosing <span className={`font-bold ${isSankranthi ? 'text-red-700' : 'text-[#0052CC]'}`}>Focsera Studios</span>!
+                    <div className={`${isSankranthi ? 'bg-red-50 border-red-200' : 'bg-white/5 border-white/10'} border-2 rounded-2xl p-8 mb-8`}>
+                        <p className={`text-xl leading-relaxed mb-6 ${isSankranthi ? 'text-gray-700' : 'text-gray-300'}`}>
+                            Thank you for choosing <span className={`font-bold ${isSankranthi ? 'text-red-700' : 'text-blue-400'}`}>Focsera Studios</span>!
                         </p>
-                        <p className="text-gray-600 leading-relaxed mb-6">
+                        <p className={`leading-relaxed mb-6 ${isSankranthi ? 'text-gray-600' : 'text-gray-400'}`}>
                             {isSankranthi
                                 ? "Your festive slot is locked! Get ready to capture your Sankranthi memories."
                                 : "Your booking request has been successfully received and our team is already reviewing the details."}
@@ -1512,43 +1214,43 @@ const SuccessModal = ({ onClose, bookingPackage }) => {
                         )}
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
-                            <div className="bg-white rounded-xl p-6 shadow-md">
-                                <div className={`w-12 h-12 rounded-full ${isSankranthi ? 'bg-red-100' : 'bg-blue-100'} flex items-center justify-center mx-auto mb-3`}>
-                                    <span className={`text-2xl font-bold ${isSankranthi ? 'text-red-600' : 'text-[#0052CC]'}`}>1</span>
+                            <div className={`${isSankranthi ? 'bg-white' : 'bg-white/5'} rounded-xl p-6 shadow-md`}>
+                                <div className={`w-12 h-12 rounded-full ${isSankranthi ? 'bg-red-100' : 'bg-blue-900/30'} flex items-center justify-center mx-auto mb-3`}>
+                                    <span className={`text-2xl font-bold ${isSankranthi ? 'text-red-600' : 'text-blue-400'}`}>1</span>
                                 </div>
-                                <h4 className="font-bold text-gray-900 mb-2">Confirmation Email</h4>
-                                <p className="text-sm text-gray-600">Sent within 5 minutes</p>
+                                <h4 className={`font-bold mb-2 ${isSankranthi ? 'text-gray-900' : 'text-white'}`}>Confirmation Email</h4>
+                                <p className={`text-sm ${isSankranthi ? 'text-gray-600' : 'text-gray-400'}`}>Sent within 5 minutes</p>
                             </div>
 
-                            <div className="bg-white rounded-xl p-6 shadow-md">
-                                <div className={`w-12 h-12 rounded-full ${isSankranthi ? 'bg-red-100' : 'bg-blue-100'} flex items-center justify-center mx-auto mb-3`}>
-                                    <span className={`text-2xl font-bold ${isSankranthi ? 'text-red-600' : 'text-[#0052CC]'}`}>2</span>
+                            <div className={`${isSankranthi ? 'bg-white' : 'bg-white/5'} rounded-xl p-6 shadow-md`}>
+                                <div className={`w-12 h-12 rounded-full ${isSankranthi ? 'bg-red-100' : 'bg-blue-900/30'} flex items-center justify-center mx-auto mb-3`}>
+                                    <span className={`text-2xl font-bold ${isSankranthi ? 'text-red-600' : 'text-blue-400'}`}>2</span>
                                 </div>
-                                <h4 className="font-bold text-gray-900 mb-2">{isSankranthi ? 'Be Ready' : 'Team Contact'}</h4>
-                                <p className="text-sm text-gray-600">{isSankranthi ? 'Arrive fully ready' : 'Within 24 hours'}</p>
+                                <h4 className={`font-bold mb-2 ${isSankranthi ? 'text-gray-900' : 'text-white'}`}>{isSankranthi ? 'Be Ready' : 'Team Contact'}</h4>
+                                <p className={`text-sm ${isSankranthi ? 'text-gray-600' : 'text-gray-400'}`}>{isSankranthi ? 'Arrive fully ready' : 'Within 24 hours'}</p>
                             </div>
 
-                            <div className="bg-white rounded-xl p-6 shadow-md">
-                                <div className={`w-12 h-12 rounded-full ${isSankranthi ? 'bg-red-100' : 'bg-blue-100'} flex items-center justify-center mx-auto mb-3`}>
-                                    <span className={`text-2xl font-bold ${isSankranthi ? 'text-red-600' : 'text-[#0052CC]'}`}>3</span>
+                            <div className={`${isSankranthi ? 'bg-white' : 'bg-white/5'} rounded-xl p-6 shadow-md`}>
+                                <div className={`w-12 h-12 rounded-full ${isSankranthi ? 'bg-red-100' : 'bg-blue-900/30'} flex items-center justify-center mx-auto mb-3`}>
+                                    <span className={`text-2xl font-bold ${isSankranthi ? 'text-red-600' : 'text-blue-400'}`}>3</span>
                                 </div>
-                                <h4 className="font-bold text-gray-900 mb-2">{isSankranthi ? 'Shoot Day' : 'Final Details'}</h4>
-                                <p className="text-sm text-gray-600">{isSankranthi ? 'Enjoy the vibe!' : 'Pricing & schedule'}</p>
+                                <h4 className={`font-bold mb-2 ${isSankranthi ? 'text-gray-900' : 'text-white'}`}>{isSankranthi ? 'Shoot Day' : 'Final Details'}</h4>
+                                <p className={`text-sm ${isSankranthi ? 'text-gray-600' : 'text-gray-400'}`}>{isSankranthi ? 'Enjoy the vibe!' : 'Pricing & schedule'}</p>
                             </div>
                         </div>
 
-                        <p className="text-sm text-gray-500 italic">
+                        <p className={`text-sm italic ${isSankranthi ? 'text-gray-500' : 'text-gray-500'}`}>
                             Our professional team will reach out to discuss the final details, confirm pricing, and schedule your shoot.
                         </p>
                     </div>
 
-                    <button onClick={onClose} className="button-primary text-lg px-12 py-4 shadow-xl hover:shadow-2xl transition-all">
+                    <button onClick={onClose} className="button-primary text-lg px-12 py-4 shadow-xl hover:shadow-2xl transition-all shadow-blue-900/30">
                         Return to Studios
                         <ArrowRight className="button-primary-icon" size={24} />
                     </button>
 
-                    <p className="text-sm text-gray-500 mt-6">
-                        Need immediate assistance? Call us at <span className="font-semibold text-[#0052CC]">+91 98765 43210</span>
+                    <p className={`text-sm mt-6 ${isSankranthi ? 'text-gray-500' : 'text-gray-500'}`}>
+                        Need immediate assistance? Call us at <span className={`font-semibold ${isSankranthi ? 'text-red-600' : 'text-blue-400'}`}>+91 98765 43210</span>
                     </p>
                 </div>
             </div>

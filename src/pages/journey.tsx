@@ -1,21 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 /* ---------- Types ---------- */
 interface MediaItem {
   title: string;
   caption: string;
-  mediaId: string; // MODIFICATION: Renamed from driveId
+  mediaId: string;
   type: "video" | "image";
   aspectRatio?: "16:9" | "9:16";
 }
 
 /* ---------- Helpers ---------- */
-
-/**
- * Extracts YouTube Video ID from various URL formats.
- * @param {string} url - The YouTube URL.
- * @returns {string | null} - The video ID or null if not found.
- */
 const getYouTubeId = (url: string): string | null => {
   if (!url) return null;
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -23,66 +18,17 @@ const getYouTubeId = (url: string): string | null => {
   return (match && match[2].length === 11) ? match[2] : null;
 };
 
-/**
- * MODIFICATION: Removed DRIVE_PREVIEW_HELPER
- */
-
-/**
- * Generates an embeddable URL for media items.
- * @param {string} mediaId - The media ID or URL.
-  if (!idOrUrl) return "";
-  let baseUrl = "";
-  let originalParams: string | null = null;
-
-  if (idOrUrl.includes("drive.google.com")) {
-    const urlParts = idOrUrl.split("?");
-    baseUrl = urlParts[0];
-    originalParams = urlParts[1] || null;
-    
-    if (baseUrl.includes("/view")) {
-      baseUrl = baseUrl.replace("/view", "/preview");
-    }
-
-    if (!baseUrl.includes("/preview")) {
-        const m = baseUrl.match(/\/d\/([^/]+)/);
-        if (m && m[1]) {
-          baseUrl = `https://drive.google.com/file/d/${m[1]}/preview`;
-        }
-    }
-  } else {
-    // Assumes it's a driveId
-    baseUrl = `https://drive.google.com/file/d/${idOrUrl}/preview`;
-  }
-
-  const params = new URLSearchParams(originalParams || "");
-  if (isVideo) {
-    params.set("autoplay", "1"); // Add/overwrite autoplay=1
-  }
-
-  return `${baseUrl}?${params.toString()}`;
-};
-
-
-/**
- * Generates an embeddable URL for media items.
- * @param {string} idOrUrl - The media ID or URL.
- * @param {'video' | 'image'} type - The type of media.
- * @param {object} options - Options for the embed.
- * @param {boolean} [options.autoplay=false] - Whether to autoplay (and mute).
- * @param {boolean} [options.controls=false] - Whether to show controls.
- * @returns {string} - The embeddable URL.
- */
 const getEmbedUrl = (
-  mediaId: string | null | undefined, // MODIFICATION: Renamed from idOrUrl
+  mediaId: string | null | undefined,
   type: "video" | "image",
   options: { autoplay?: boolean; controls?: boolean } = {}
 ): string => {
-  if (!mediaId) return ""; // MODIFICATION: Renamed from idOrUrl
+  if (!mediaId) return "";
 
   const { autoplay = false, controls = false } = options;
 
   if (type === "video") {
-    const videoId = getYouTubeId(mediaId); // MODIFICATION: Renamed from idOrUrl
+    const videoId = getYouTubeId(mediaId);
     if (videoId) {
       const params = new URLSearchParams({
         playsinline: '1',
@@ -90,60 +36,51 @@ const getEmbedUrl = (
         modestbranding: '1',
         showinfo: '0',
       });
-      
+
       if (autoplay) {
         params.set('autoplay', '1');
-        params.set('mute', '1'); // Autoplay requires mute
+        params.set('mute', '1');
         params.set('loop', '1');
-        params.set('playlist', videoId); // Loop requires playlist
+        params.set('playlist', videoId);
       }
-      
+
       if (controls) {
         params.set('controls', '1');
       } else {
-         params.set('controls', '0');
+        params.set('controls', '0');
       }
 
       return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
     }
-    // MODIFICATION: Removed Google Drive fallback
-    return ""; // Return empty string if not a valid YouTube URL
+    return "";
   }
 
   if (type === "image") {
-    // Handle specific placeholders with placehold.co
-    if (mediaId.startsWith("1YOUTH_IMG") || mediaId.startsWith("1INNO_")) { // MODIFICATION: Renamed from idOrUrl
-       const text = mediaId.replace(/_/g, ' '); // MODIFICATION: Renamed from idOrUrl
-       const bgColor = "0a0a0a"; // Dark background
-       const textColor = "555555";
-       return `https://placehold.co/600x400/${bgColor}/${textColor}?text=${encodeURIComponent(text)}`;
+    if (mediaId.startsWith("1YOUTH") || mediaId.startsWith("1INNO")) {
+      const text = mediaId.replace(/_/g, ' ');
+      const bgColor = "0a0a0a";
+      const textColor = "555555";
+      return `https://placehold.co/600x400/${bgColor}/${textColor}?text=${encodeURIComponent(text)}`;
     }
-    // MODIFICATION: Removed Google Drive fallback, return mediaId as-is
     return mediaId || "";
   }
 
-  return mediaId || ""; // MODIFICATION: Renamed from idOrUrl
+  return mediaId || "";
 };
 
-
-const IconPlay = ({ className = "w-5 h-5" }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M5 3v18l15-9L5 3z" />
-  </svg>
-);
 const IconClose = ({ className = "w-6 h-6" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor">
     <path d="M18 6L6 18M6 6l12 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
+const IconExpand = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 /* ---------- Lightbox ---------- */
-interface LightboxProps {
-  item: MediaItem | null;
-  onClose: () => void;
-}
-
-function Lightbox({ item, onClose }: LightboxProps) {
+function Lightbox({ item, onClose }: { item: MediaItem | null; onClose: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -151,327 +88,260 @@ function Lightbox({ item, onClose }: LightboxProps) {
   }, [onClose]);
 
   if (!item) return null;
-  
-  // MODIFICATION: Use getEmbedUrl with autoplay and controls for the lightbox
-  const src = getEmbedUrl(item.mediaId, item.type, { autoplay: true, controls: true }); // MODIFICATION: Renamed from driveId
+
+  const src = getEmbedUrl(item.mediaId, item.type, { autoplay: true, controls: true });
   const isVideo = item.type === "video";
 
   return (
-    <div className="fixed inset-0 z-[4000] flex items-center justify-center bg-black/95 backdrop-blur-md p-4" onClick={onClose}>
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-[1200px] rounded-2xl overflow-hidden bg-[#121212] border border-white/10 shadow-2xl"
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[5000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4"
+        onClick={onClose}
       >
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-white/5">
-          <div>
-            <p className="text-white font-medium tracking-wide">{item.title}</p>
-            <p className="text-sm text-white/50">{item.caption}</p>
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          onClick={(e) => e.stopPropagation()}
+          className="w-full max-w-6xl rounded-2xl overflow-hidden bg-[#050505] border border-white/10 shadow-2xl relative"
+        >
+          <div className="absolute top-4 right-4 z-50">
+            <button onClick={onClose} className="p-2 bg-black/50 hover:bg-white/10 rounded-full text-white transition-colors border border-white/10">
+              <IconClose />
+            </button>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-            <IconClose className="text-white" />
-          </button>
-        </div>
-        <div className="bg-black flex items-center justify-center relative aspect-video">
-          {isVideo ? (
-            <iframe
-              src={src}
-              title={item.title}
-              // MODIFICATION: Updated allow attribute for YouTube
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-              className="w-full h-[75vh] border-0"
-            />
-          ) : (
-            <img src={src} alt={item.title} className="w-full h-[75vh] object-contain" />
-          )}
-        </div>
-      </div>
-    </div>
+
+          <div className="bg-black flex items-center justify-center relative aspect-video h-[80vh] w-full">
+            {isVideo ? (
+              <iframe
+                src={src}
+                title={item.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                className="w-full h-full border-0"
+              />
+            ) : (
+              <img src={src} alt={item.title} className="w-full h-full object-contain" />
+            )}
+          </div>
+
+          <div className="p-6 bg-[#050505] border-t border-white/10">
+            <h3 className="text-2xl font-bold text-white mb-1">{item.title}</h3>
+            <p className="text-gray-400">{item.caption}</p>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
-/* ---------- Horizontal Carousel ---------- */
-interface CarouselProps {
-  items?: MediaItem[];
-  interval?: number;
-  height?: number;
-  onOpen: (item: MediaItem) => void;
-}
+/* ---------- Components ---------- */
 
-function Carousel({ items = [], interval = 4000, height = 220, onOpen }: CarouselProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [idx, setIdx] = useState(0);
-
-  // MODIFICATION: Disabled autoscroll
-  // useEffect(() => {
-  //   if (items.length === 0) return;
-  //   const timer = setInterval(() => setIdx((i) => (i + 1) % items.length), interval);
-  //   return () => clearInterval(timer);
-  // }, [items.length, interval]);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !el.children[idx]) return;
-    el.children[idx].scrollIntoView({ behavior: "smooth", inline: "center" });
-  }, [idx]);
-
+const BentoGridItem = ({ item, className, onClick }: { item: MediaItem; className?: string; onClick: () => void }) => {
   return (
-    <div className="overflow-hidden py-4">
-      <div ref={ref} className="flex gap-6 overflow-x-auto no-scrollbar px-6">
-        {items.map((it, i) => {
-          // MODIFICATION: Get standard URL for images, autoplay for video previews
-          const imgThumbSrc = (it.type === 'image') 
-            ? getEmbedUrl(it.mediaId, it.type) // MODIFICATION: Renamed from driveId
-            : '';
-          const videoPreviewSrc = (it.type === 'video') 
-            ? getEmbedUrl(it.mediaId, it.type, { autoplay: true, controls: false }) // MODIFICATION: Renamed from driveId
-            : '';
-          
-          const isPortrait = it.aspectRatio === "9:16";
-          const landscapeWidthClass = "w-[min(600px,80vw)]";
-          
-          const style: React.CSSProperties = { height };
-          if (isPortrait) {
-            style.width = `${(height * 9) / 16}px`;
-          }
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      onClick={onClick}
+      className={`relative group rounded-3xl overflow-hidden cursor-pointer border border-white/5 bg-[#0a0a0a] ${className}`}
+    >
+      <div className="absolute inset-0 bg-gray-900 animate-pulse" /> {/* Placeholder loading */}
+      <img
+        src={getEmbedUrl(item.mediaId, item.type)}
+        alt={item.title}
+        className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-700"
+        loading="lazy"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
 
-          return (
-            <div
-              key={i}
-              onClick={() => onOpen(it)}
-              className={`relative flex-shrink-0 rounded-xl overflow-hidden shadow-2xl cursor-pointer group border border-white/5 hover:border-blue-500/50 transition-all duration-500 ${isPortrait ? "" : landscapeWidthClass}`}
-              style={style}
-            >
-              {it.type === "image" ? (
-                <img
-                  src={imgThumbSrc}
-                  alt={it.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="w-full h-full bg-gray-900 relative">
-                  <iframe
-                    src={videoPreviewSrc}
-                    // MODIFICATION: Updated allow attribute
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    className="w-full h-full object-cover border-0 pointer-events-none"
-                    tabIndex={-1} 
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 z-10" />
-                </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-90" />
-              <div className="absolute bottom-0 left-0 p-5">
-                <p className="text-white font-bold text-lg tracking-tight">{it.title}</p>
-                <p className="text-xs text-blue-200/80 font-medium uppercase tracking-wider mt-1">{it.caption}</p>
-              </div>
-            </div>
-          );
-        })}
+      <div className="absolute bottom-0 left-0 p-6 w-full">
+        <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+          <p className="text-blue-400 text-xs font-bold tracking-widest uppercase mb-1">{item.caption}</p>
+          <h3 className="text-white text-xl font-bold leading-tight">{item.title}</h3>
+        </div>
       </div>
-    </div>
-  );
+
+      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="p-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10 text-white">
+          <IconExpand className="w-4 h-4" />
+        </div>
+      </div>
+    </motion.div>
+  )
 }
 
-/* ---------- Main ---------- */
-export default function JourneyCinematicPro_YouTube() {
-  
-  // MODIFICATION: Data updated with YouTube URLs for videos and mediaId field
-  const slides: MediaItem[] = [
-    { title: "Teluginti Deepavali", caption: "Lights & storytelling.", mediaId: "", type: "video", aspectRatio: "9:16" },
-    { title: "Agentic AI", caption: "Future visuals & experiments.", mediaId: "https://www.youtube.com/watch?v=B069-0Iofb8", type: "video" },
-    { title: "Nature Cinematic", caption: "Calm & atmospheric.", mediaId: "https://www.youtube.com/watch?v=Cxw3t-8-bk8", type: "video" },
-  ];
+const ArchiveItem = ({ item, onClick }: { item: MediaItem, onClick: () => void }) => {
+  return (
+    <div
+      onClick={onClick}
+      className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 cursor-pointer border border-transparent hover:border-white/5 transition-all group"
+    >
+      <div className="w-20 h-16 rounded-lg overflow-hidden bg-gray-900 relative flex-shrink-0">
+        {item.type === 'video' ? (
+          <div className="w-full h-full bg-blue-900/20 flex items-center justify-center">
+            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[4px] border-t-transparent border-l-[8px] border-l-white border-b-[4px] border-b-transparent ml-1"></div>
+            </div>
+          </div>
+        ) : (
+          <img src={getEmbedUrl(item.mediaId, item.type)} className="w-full h-full object-cover" />
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <h4 className="text-white font-medium truncate group-hover:text-blue-400 transition-colors">{item.title}</h4>
+        <p className="text-xs text-gray-500 truncate">{item.caption}</p>
+      </div>
+    </div>
+  )
+}
 
-  const youth: MediaItem[] = [
-    { title: "Youth Speaks: Opening", caption: "Keynote", mediaId: "1YOUTH_IMG1", type: "image" },
-    { title: "Event Highlights", caption: "Cinematic Reel", mediaId: "https://www.youtube.com/watch?v=S21q-kB-dGk", type: "video", aspectRatio: "9:16" },
-    { title: "Audience Pulse", caption: "Crowd Moments", mediaId: "1YOUTH_IMG2", type: "image" },
-  ];
-
-  const innovate: MediaItem[] = [
-    { title: "Grand Opening", caption: "Stage Set", mediaId: "1INNO_OPEN", type: "image" },
-    { title: "Brand Battles", caption: "Official Poster", mediaId: "1INNO_POSTER", type: "image" },
-    { title: "InnovateX Recap", caption: "Aftermovie Reel", mediaId: "https://www.youtube.com/watch?v=2--j1fth-sE", type: "video" },
-  ];
-
+/* ---------- Main Page ---------- */
+export default function JourneyPage() {
   const [lightItem, setLightItem] = useState<MediaItem | null>(null);
 
-  /* ---- Parallax Logic ---- */
-  useEffect(() => {
-    const elms = document.querySelectorAll<HTMLElement>("[data-parallax='1']");
-    const onScroll = () => {
-      elms.forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const progress = 1 - rect.top / vh;
-        const offset = (progress - 0.5) * -80; 
-        el.style.transform = `translateY(${offset}px)`;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  // Data
+  // Data
+  const featuredMedia: MediaItem[] = [
+    { title: "Moments of Joy", caption: "Celebration", mediaId: "/images/journey/IMG_0566.png", type: "image", aspectRatio: "9:16" },
+    { title: "Art & Tradition", caption: "Rangoli Art", mediaId: "/images/journey/IMG_0569.png", type: "image", aspectRatio: "9:16" },
+    { title: "Community Spirit", caption: "Togetherness", mediaId: "/images/journey/IMG_05959_.png", type: "image", aspectRatio: "16:9" },
+    { title: "Shared Happiness", caption: "Festive Vibes", mediaId: "/images/journey/IMG_0575.png", type: "image", aspectRatio: "9:16" },
+    { title: "Cultural Essence", caption: "Heritage", mediaId: "/images/journey/IMG_0578.png", type: "image", aspectRatio: "9:16" },
+  ];
+
+  const archives: { category: string; items: MediaItem[] }[] = [
+    {
+      category: "InnovateX Highlights",
+      items: [
+        { title: "Grand Opening", caption: "Stage Set", mediaId: "1INNO_OPEN", type: "image" },
+        { title: "Brand Battles", caption: "Official Poster", mediaId: "1INNO_POSTER", type: "image" },
+        { title: "InnovateX Recap", caption: "Aftermovie Reel", mediaId: "https://www.youtube.com/watch?v=2--j1fth-sE", type: "video" },
+      ]
+    },
+    {
+      category: "Youth Speaks",
+      items: [
+        { title: "Youth Speaks: Opening", caption: "Keynote", mediaId: "1YOUTH_IMG1", type: "image" },
+        { title: "Event Highlights", caption: "Cinematic Reel", mediaId: "https://www.youtube.com/watch?v=S21q-kB-dGk", type: "video", aspectRatio: "9:16" },
+        { title: "Audience Pulse", caption: "Crowd Moments", mediaId: "1YOUTH_IMG2", type: "image" },
+      ]
+    },
+    {
+      category: "Cinematic Shorts",
+      items: [
+        { title: "Teluginti Deepavali", caption: "Lights & storytelling", mediaId: "", type: "video", aspectRatio: "9:16" },
+        { title: "Agentic AI", caption: "Future Visuals", mediaId: "https://www.youtube.com/watch?v=B069-0Iofb8", type: "video" },
+        { title: "Nature Cinematic", caption: "Calm & atmospheric", mediaId: "https://www.youtube.com/watch?v=Cxw3t-8-bk8", type: "video" },
+      ]
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-[#050505] text-slate-200 selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#020202] text-slate-200 selection:bg-orange-500/30">
       <style>{`
         html,body{scroll-behavior:smooth;overscroll-behavior:none}
         .no-scrollbar::-webkit-scrollbar{display:none}
       `}</style>
 
-      {/* Hero Slides */}
-      {slides.map((s, i) => {
-        const isPortrait = s.aspectRatio === "9:16";
-        
-        return (
-          <section key={i} className="relative h-screen flex items-end overflow-hidden border-b border-white/5">
-            <div 
-              data-parallax="1" 
-              className="absolute inset-0 will-change-transform flex justify-center items-center overflow-hidden"
-            >
-              <iframe
-                // MODIFICATION: Use getEmbedUrl with autoplay and no controls for hero
-                src={getEmbedUrl(s.mediaId, s.type, { autoplay: true, controls: false })} // MODIFICATION: Renamed from driveId
-                // MODIFICATION: Updated allow attribute
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                className={`border-0 opacity-80 ${isPortrait ? "h-full aspect-[9/16]" : "w-full h-full"}`}
-                title={s.title}
-                tabIndex={-1} 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#050505]/60 via-transparent to-transparent" />
-            </div>
-
-            <div className="relative z-20 w-full px-6 pb-32 md:pl-20">
-              <div className="max-w-2xl">
-                <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-4 drop-shadow-2xl">
-                  {s.title}
-                </h2>
-                <div className="h-1 w-20 bg-blue-500 mb-6 rounded-full" />
-                <p className="text-lg text-gray-300 mb-8 font-light border-l-2 border-white/30 pl-4">
-                  {s.caption}
-                </p>
-                <button
-                  onClick={() => setLightItem(s)}
-                  className="group px-8 py-4 rounded-full bg-white text-black font-bold flex items-center gap-3 hover:bg-blue-50 transition-all hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-                >
-                  <div className="p-1 bg-black rounded-full text-white group-hover:scale-110 transition-transform">
-                    <IconPlay className="w-4 h-4" />
-                  </div>
-                  Watch Film
-                </button>
-              </div>
-            </div>
-          </section>
-        )
-      })}
-
-      {/* Youth Speaks Section */}
-      <section className="relative min-h-screen flex flex-col justify-center bg-[#050505] py-24">
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-[#050505] to-[#050505]" />
-        </div>
-
-        <div className="relative z-20 px-6 mb-12 text-center">
-          <span className="text-blue-400 tracking-[0.2em] text-sm uppercase font-bold">Community Event</span>
-          <h2 className="text-4xl md:text-6xl font-bold text-white mt-2 mb-4">Youth Speaks</h2>
-          <p className="text-gray-400 max-w-xl mx-auto">
-            A platform for young voices. Experience the energy and the stories that unfolded on stage.
+      {/* Hero Section: Visual Chronicles */}
+      <section className="relative px-4 pt-32 pb-12 md:px-8 md:pt-40 md:pb-24 max-w-[1400px] mx-auto min-h-screen flex flex-col">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="mb-12 text-center"
+        >
+          <div className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 mb-6">
+            <span className="text-gray-300 text-xs font-bold tracking-[0.2em] uppercase">The Collection</span>
+          </div>
+          <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 mb-6 py-2 leading-tight">
+            Visual Chronicles
+          </h1>
+          <p className="max-w-xl mx-auto text-lg text-gray-400 font-light leading-relaxed">
+            Capturing the essence of life's most vibrant moments. A curated visual journey of community, innovation, and culture.
           </p>
+        </motion.div>
+
+        {/* Mobile Layout (Vertical Stack) */}
+        <div className="flex flex-col gap-4 md:hidden pb-12">
+          <BentoGridItem item={featuredMedia[2]} onClick={() => setLightItem(featuredMedia[2])} className="aspect-video" />
+          <div className="grid grid-cols-2 gap-3">
+            <BentoGridItem item={featuredMedia[0]} onClick={() => setLightItem(featuredMedia[0])} className="aspect-[9/16]" />
+            <BentoGridItem item={featuredMedia[1]} onClick={() => setLightItem(featuredMedia[1])} className="aspect-[9/16]" />
+            <BentoGridItem item={featuredMedia[3]} onClick={() => setLightItem(featuredMedia[3])} className="aspect-[9/16]" />
+            <BentoGridItem item={featuredMedia[4]} onClick={() => setLightItem(featuredMedia[4])} className="aspect-[9/16]" />
+          </div>
         </div>
 
-        <Carousel items={youth} interval={4000} height={300} onOpen={setLightItem} />
+        {/* Desktop Layout (Bento Grid) */}
+        <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-4 min-h-[800px]">
+          {/* Left Column */}
+          <BentoGridItem
+            item={featuredMedia[0]}
+            onClick={() => setLightItem(featuredMedia[0])}
+            className="col-span-1 row-span-2"
+          />
+
+          {/* Center Top Big */}
+          <BentoGridItem
+            item={featuredMedia[2]}
+            onClick={() => setLightItem(featuredMedia[2])}
+            className="col-span-2 row-span-1"
+          />
+
+          {/* Right Column */}
+          <BentoGridItem
+            item={featuredMedia[1]}
+            onClick={() => setLightItem(featuredMedia[1])}
+            className="col-span-1 row-span-2"
+          />
+
+          {/* Center Bottom Split */}
+          <BentoGridItem
+            item={featuredMedia[3]}
+            onClick={() => setLightItem(featuredMedia[3])}
+            className="col-span-1 row-span-1"
+          />
+          <BentoGridItem
+            item={featuredMedia[4]}
+            onClick={() => setLightItem(featuredMedia[4])}
+            className="col-span-1 row-span-1"
+          />
+        </div>
+
       </section>
 
-      {/* InnovateX25 - Major Redesign */}
-      <section id="innovatex" className="relative py-32 flex items-center justify-center bg-[#0a0a0a] border-y border-white/5">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-[30%] -right-[10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[100px]" />
-          <div className="absolute -bottom-[30%] -left-[10%] w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[100px]" />
-        </div>
+      {/* Minimized Archives Section */}
+      <section className="bg-[#050505] border-t border-white/5 py-12 px-6">
+        <div className="max-w-[1400px] mx-auto">
+          <h2 className="text-xl font-bold text-white mb-8 flex items-center gap-3">
+            <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+            Past Chronicles
+          </h2>
 
-        <div className="relative z-20 w-full max-w-6xl px-6 grid md:grid-cols-2 gap-12 items-center">
-
-          {/* Left: Glass Card Info */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-8 md:p-12 rounded-3xl shadow-2xl">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-              <span className="text-xs font-bold tracking-widest uppercase text-white/50">Flagship Summit</span>
-            </div>
-            <h1 className="text-5xl md:text-6xl font-black text-white mb-6 leading-tight">
-              Innovate<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">X</span>25
-            </h1>
-            <p className="text-lg text-gray-300 leading-relaxed mb-8">
-              Two days of relentless creativity.Brand Battles, and Echoes coming together for a summit of 350+ participants.
-            </p>
-
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="bg-black/40 p-4 rounded-xl border border-white/5">
-                <p className="text-2xl font-bold text-white">350+</p>
-                <p className="text-xs text-gray-500 uppercase">Attendees</p>
-              </div>
-              <div className="bg-black/40 p-4 rounded-xl border border-white/5">
-                <p className="text-2xl font-bold text-white">₹499</p>
-                <p className="text-xs text-gray-500 uppercase">Entry Fee</p>
-              </div>
-            </div>
-
-            <button className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold hover:opacity-90 transition-opacity shadow-lg shadow-blue-900/20">
-              View Full Recap
-            </button>
-          </div>
-
-          {/* Right: Video Grid / Visuals */}
-          <div className="space-y-6">
-            <div className="text-right mb-4">
-              <h3 className="text-2xl font-bold text-white">Gallery & Highlights</h3>
-              <p className="text-sm text-gray-500">Autoplaying previews</p>
-            </div>
-            <div
-              onClick={() => setLightItem(innovate[2])}
-              className="group relative aspect-video rounded-2xl overflow-hidden border border-white/10 cursor-pointer bg-black"
-            >
-              <iframe
-                // MODIFICATION: Use getEmbedUrl with autoplay and no controls for preview
-                src={getEmbedUrl(innovate[2].mediaId, innovate[2].type, { autoplay: true, controls: false })} // MODIFICATION: Renamed from driveId
-                className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                tabIndex={-1} 
-                // MODIFICATION: Updated allow attribute
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                title="InnovateX Recap"
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <IconPlay className="text-white w-6 h-6" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {archives.map((cat, i) => (
+              <div key={i} className="bg-white/5 rounded-2xl p-6 border border-white/5">
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-white/10 pb-2">
+                  {cat.category}
+                </h3>
+                <div className="space-y-2">
+                  {cat.items.map((it, j) => (
+                    <ArchiveItem key={j} item={it} onClick={() => setLightItem(it)} />
+                  ))}
                 </div>
               </div>
-            </div>
-            <div className="flex gap-4 h-32">
-              {innovate.slice(0, 2).map((item, i) => (
-                <div key={i} onClick={() => setLightItem(item)} className="flex-1 rounded-xl overflow-hidden border border-white/10 cursor-pointer relative group">
-                  <img
-                    // MODIFICATION: Use getEmbedUrl (no options needed for image)
-                    src={getEmbedUrl(item.mediaId, item.type)} // MODIFICATION: Renamed from driveId
-                    alt={item.title}
-                    className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
-
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-black border-t border-white/10 py-12 text-center">
-        <p className="text-white/40 text-sm font-light">
-          © {new Date().getFullYear()} Focsera Studios • Cinematic Experience
-        </p>
+      <footer className="text-center py-8 text-white/20 text-xs border-t border-white/5">
+        © {new Date().getFullYear()} Focsera Studios
       </footer>
 
       {/* Lightbox */}

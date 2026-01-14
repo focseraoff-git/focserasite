@@ -80,75 +80,78 @@ export default function ProductServices() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-[#050505] font-sans selection:bg-blue-500/30 text-gray-200">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-24 bg-gradient-to-br from-[#0052CC] to-[#0066FF] overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-full" style={{
-            backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
-            backgroundSize: '50px 50px'
+      <section className="relative pt-32 pb-24 bg-[#050505] overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#050505] to-[#050505]"></div>
+          <div className="absolute top-0 left-0 w-full h-full opacity-20" style={{
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundSize: '30px 30px'
           }}></div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="w-32 h-32 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl p-4">
-            <img src="/images/logos/FocseraProduct.jpg" alt="Focsera Product Services" className="w-full h-full object-contain" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fadeInUp">
+          <div className="w-32 h-32 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl p-4 ring-1 ring-white/10">
+            <img src="/images/logos/FocseraProduct.jpg" alt="Focsera Product Services" className="w-full h-full object-contain rounded-xl" />
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">Focsera Product Services</h1>
-          <p className="text-xl text-white/90 max-w-3xl mx-auto">
+          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-gray-400">
+            Focsera Product Services
+          </h1>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
             From concept to market. End-to-end product solutions that drive innovation and business success.
           </p>
         </div>
       </section>
 
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-[#050505] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
 
             {/* LEFT COLUMN: General Services List */}
             <div className="lg:col-span-4 space-y-12">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Core Services</h2>
-                <div className="w-16 h-1.5 bg-[#0052CC] rounded-full mb-8"></div>
-                <p className="text-gray-600 mb-8 leading-relaxed">
+              <div className="sticky top-24">
+                <h2 className="text-3xl font-bold text-white mb-6">Our Core Services</h2>
+                <div className="w-16 h-1 bg-blue-500 rounded-full mb-8 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                <p className="text-gray-400 mb-8 leading-relaxed">
                   We offer a comprehensive suite of product services designed to take your idea from initial concept to global success.
                 </p>
-              </div>
 
-              <div className="space-y-8">
-                {generalServices.map((service, index) => {
-                  const Icon = service.icon;
-                  return (
-                    <div key={index} className="flex gap-4 group">
-                      <div className="flex-shrink-0 w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-[#0052CC] transition-colors duration-300">
-                        <Icon className="text-[#0052CC] group-hover:text-white transition-colors duration-300" size={20} />
+                <div className="space-y-6">
+                  {generalServices.map((service, index) => {
+                    const Icon = service.icon;
+                    return (
+                      <div key={index} className="flex gap-5 group p-4 rounded-2xl hover:bg-white/5 transition-all duration-300 border border-transparent hover:border-white/5">
+                        <div className="flex-shrink-0 w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center group-hover:bg-blue-600/20 transition-colors duration-300 border border-blue-500/20">
+                          <Icon className="text-blue-400 group-hover:text-blue-300 transition-colors duration-300" size={20} />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-100 mb-2 group-hover:text-blue-400 transition-colors">{service.title}</h3>
+                          <p className="text-gray-500 text-sm leading-relaxed group-hover:text-gray-400">{service.description}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">{service.title}</h3>
-                        <p className="text-gray-500 text-sm leading-relaxed">{service.description}</p>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
             {/* RIGHT COLUMN: Featured Products */}
             <div className="lg:col-span-8">
-              <div className="mb-10">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>
-                <p className="text-gray-500">Discover our flagship software solutions.</p>
+              <div className="mb-10 flex items-baseline gap-4">
+                <h2 className="text-3xl font-bold text-white">Featured Products</h2>
+                <p className="text-gray-500">Flagship software solutions</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 gap-8">
 
                 {/* Product 1: FocseraDineQR */}
-                <div className="bg-[#09090b] border border-emerald-500/20 rounded-3xl p-10 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all duration-500 hover:shadow-[0_0_50px_-12px_rgba(16,185,129,0.3)] transform hover:-translate-y-1">
-                  <div className="absolute top-[-50%] right-[-50%] w-[100%] h-[100%] bg-emerald-500/10 rounded-full blur-[120px] group-hover:bg-emerald-500/20 transition-all duration-700 pointer-events-none"></div>
+                <div className="bg-[#09090b]/80 backdrop-blur-md border border-emerald-500/20 rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all duration-500 hover:shadow-[0_0_50px_-12px_rgba(16,185,129,0.3)] transform hover:-translate-y-1">
+                  <div className="absolute top-[-50%] right-[-50%] w-[100%] h-[100%] bg-emerald-500/5 rounded-full blur-[100px] group-hover:bg-emerald-500/10 transition-all duration-700 pointer-events-none"></div>
                   <div className="relative z-10">
                     <div className="flex justify-between items-start mb-8">
-                      <div className="w-20 h-20 bg-gradient-to-br from-emerald-900/50 to-emerald-600/20 border border-emerald-500/30 rounded-2xl flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform duration-500">
+                      <div className="w-20 h-20 bg-gradient-to-br from-emerald-900/40 to-emerald-600/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform duration-500 shadow-inner shadow-emerald-500/20">
                         <QrCode className="text-emerald-400" size={40} />
                       </div>
                       <div className="px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(16,185,129,0.4)]">
@@ -159,69 +162,69 @@ export default function ProductServices() {
                     <p className="text-gray-400 mb-8 leading-relaxed text-lg border-l-2 border-emerald-500/30 pl-4">
                       Streamline dining operations with intelligent QR solutions. Contactless ordering, digital menus, and real-time analytics.
                     </p>
-                    <ul className="space-y-4 mb-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
                       {['Contactless Ordering', 'Digital Menus', 'Real-time Updates', 'Analytics Dashboard'].map((feature, idx) => (
-                        <li key={idx} className="text-gray-300 flex items-center group/item">
-                          <span className="w-6 h-6 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 flex items-center justify-center mr-4 text-xs group-hover/item:bg-emerald-500 group-hover/item:text-black transition-all">✓</span>
+                        <div key={idx} className="text-gray-400 flex items-center group/item text-sm">
+                          <span className="w-5 h-5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 flex items-center justify-center mr-3 text-[10px] group-hover/item:bg-emerald-500 group-hover/item:text-black transition-all">✓</span>
                           {feature}
-                        </li>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                     <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-                      <Button onClick={handleBookDemo} className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl py-6 text-lg shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-300 transform hover:-translate-y-1">Book Demo</Button>
-                      <Button type="button" variant="outline" className="flex-1 border-white/10 hover:border-emerald-500/50 text-gray-300 hover:text-white rounded-xl h-auto py-6 font-medium bg-transparent hover:bg-white/5 backdrop-blur-sm">View More</Button>
+                      <Button onClick={handleBookDemo} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl py-6 text-lg shadow-lg shadow-emerald-600/20 hover:shadow-emerald-500/40 transition-all duration-300">Book Demo</Button>
+                      <Button type="button" variant="outline" className="flex-1 border-white/10 hover:border-emerald-500/50 text-gray-400 hover:text-white rounded-xl h-auto py-6 font-medium bg-white/5 hover:bg-white/10 backdrop-blur-sm">View Details</Button>
                     </div>
                   </div>
                 </div>
 
-                {/* Product 2: Skill Verse (Premium Dark Theme) */}
-                <Link to="/skill-verse" className="bg-[#0a0a0a] border border-blue-500/20 rounded-3xl p-10 shadow-2xl relative overflow-hidden group hover:border-blue-500/50 transition-all duration-500 hover:shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] transform hover:-translate-y-1 block">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Product 2: Skill Verse */}
+                  <Link to="/skill-verse" className="bg-[#0a0a0a]/80 backdrop-blur-md border border-blue-500/20 rounded-3xl p-8 shadow-2xl relative overflow-hidden group hover:border-blue-500/50 transition-all duration-500 hover:shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] transform hover:-translate-y-1 block h-full flex flex-col">
+                    <div className="absolute top-[-50%] right-[-50%] w-[100%] h-[100%] bg-blue-600/5 rounded-full blur-[100px] group-hover:bg-blue-600/10 transition-all duration-700 pointer-events-none"></div>
+                    <div className="absolute bottom-[-50%] left-[-50%] w-[100%] h-[100%] bg-purple-600/5 rounded-full blur-[100px] group-hover:bg-purple-600/10 transition-all duration-700 pointer-events-none"></div>
 
-                  {/* Cinematic Background Glow */}
-                  <div className="absolute top-[-50%] right-[-50%] w-[100%] h-[100%] bg-blue-600/10 rounded-full blur-[120px] group-hover:bg-blue-600/20 transition-all duration-700 pointer-events-none"></div>
-                  <div className="absolute bottom-[-50%] left-[-50%] w-[100%] h-[100%] bg-purple-600/10 rounded-full blur-[120px] group-hover:bg-purple-600/20 transition-all duration-700 pointer-events-none"></div>
-
-                  <div className="relative z-10 h-full flex flex-col">
-                    <div className="flex justify-between items-start mb-8">
-                      <div className="w-20 h-20 bg-gradient-to-br from-blue-900/50 to-purple-900/50 border border-blue-500/30 rounded-2xl flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform duration-500">
-                        <GraduationCap className="text-blue-400" size={40} />
+                    <div className="relative z-10 flex flex-col h-full">
+                      <div className="flex justify-between items-start mb-8">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-2xl flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform duration-500 shadow-inner shadow-blue-500/20">
+                          <GraduationCap className="text-blue-400" size={32} />
+                        </div>
+                        <div className="px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm">
+                          <span className="text-[10px] font-bold text-blue-400 tracking-wider uppercase">New</span>
+                        </div>
                       </div>
-                      <div className="px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(59,130,246,0.4)]">
-                        <span className="text-xs font-bold text-blue-400 tracking-wider uppercase">New Launch</span>
+
+                      <h3 className="text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-blue-400 transition-colors">Skill Verse</h3>
+                      <p className="text-gray-400 mb-6 text-sm leading-relaxed border-l-2 border-blue-500/30 pl-3">
+                        Teach Freely. Earn Fully. A fair ecosystem with <span className="text-white font-bold">0% commission</span>.
+                      </p>
+
+                      <ul className="space-y-3 mb-8 flex-grow">
+                        {['0% Commission', 'Global Reach', 'Live Classes'].map((feature, idx) => (
+                          <li key={idx} className="text-gray-400 flex items-center group/item text-sm">
+                            <span className="w-4 h-4 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center mr-3 text-[9px] group-hover/item:bg-blue-500 group-hover/item:text-black transition-all">✓</span>
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className="flex items-center text-blue-400 font-bold group-hover:translate-x-2 transition-transform text-sm mt-auto">
+                        Explore Platform <ArrowRight className="ml-2" size={16} />
                       </div>
                     </div>
+                  </Link>
 
-                    <h3 className="text-3xl font-bold text-white mb-4 tracking-tight group-hover:text-blue-400 transition-colors">Skill Verse</h3>
-                    <p className="text-gray-400 mb-8 leading-relaxed text-lg border-l-2 border-blue-500/30 pl-4">
-                      Teach Freely. Earn Fully. A fair, transparent, and creator-first learning ecosystem with <span className="text-white font-bold">0% commission</span>.
+                  {/* Product 3: Coming Soon */}
+                  <div className="bg-white/5 border border-white/10 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center text-center relative overflow-hidden h-full min-h-[300px] hover:bg-white/[0.07] transition-colors">
+                    <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-6 ring-1 ring-white/10">
+                      <Clock className="text-gray-500" size={28} />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-300 mb-2">Coming Soon</h3>
+                    <p className="text-gray-500 max-w-xs mx-auto text-sm">
+                      New tools to revolutionize product management are in the works.
                     </p>
-
-                    <ul className="space-y-4 mb-10">
-                      {['0% Commission', 'Free for Educators', 'Live & Recorded Classes', 'Global Reach'].map((feature, idx) => (
-                        <li key={idx} className="text-gray-300 flex items-center group/item">
-                          <span className="w-6 h-6 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center mr-4 text-xs group-hover/item:bg-blue-500 group-hover/item:text-black transition-all">✓</span>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="mt-auto flex items-center text-white font-bold group-hover:translate-x-2 transition-transform">
-                      Explore Platform <ArrowRight className="ml-2 text-blue-400" size={20} />
+                    <div className="mt-6 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-semibold text-gray-400 tracking-wider uppercase">
+                      In Development
                     </div>
-                  </div>
-                </Link>
-
-                {/* Product 3: Coming Soon */}
-                <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-3xl p-8 flex flex-col items-center justify-center text-center relative overflow-hidden">
-                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                    <Clock className="text-gray-400" size={32} />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-400 mb-2">Coming Soon</h3>
-                  <p className="text-gray-400 max-w-xs mx-auto">
-                    We are working on exciting new tools to revolutionize product management.
-                  </p>
-                  <div className="mt-6 px-4 py-2 bg-gray-200 rounded-full text-xs font-semibold text-gray-500 tracking-wider uppercase">
-                    In Development
                   </div>
                 </div>
 
@@ -235,10 +238,10 @@ export default function ProductServices() {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={handleClose} className="absolute inset-0 bg-black/80 backdrop-blur-md" />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative bg-[#0a0a0a] border border-white/10 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden text-white flex flex-col max-h-[90vh]">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={handleClose} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative bg-[#111] border border-white/10 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden text-white flex flex-col max-h-[90vh]">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-emerald-500/20 rounded-full blur-[60px] pointer-events-none"></div>
-              <div className="p-8 pb-6 border-b border-white/5 flex items-center justify-between relative z-10 flex-shrink-0">
+              <div className="p-8 pb-6 border-b border-white/5 flex items-center justify-between relative z-10 flex-shrink-0 bg-[#111]/50 backdrop-blur-sm">
                 <div><h3 className="text-2xl font-serif font-medium tracking-wide text-white">Book <span className="text-emerald-400">Demo</span></h3><p className="text-sm text-gray-400 mt-1">Experience the future of dining</p></div>
                 <button onClick={handleClose} className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white"><X size={20} /></button>
               </div>

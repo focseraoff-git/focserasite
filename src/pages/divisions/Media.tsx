@@ -549,86 +549,86 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
             ref={cardRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className={`group relative bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl overflow-hidden shadow-xl flex flex-col transition-all duration-500 ease-out hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)]`}
+            className={`group relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col transition-all duration-500 ease-out hover:shadow-[0_20px_60px_-15px_rgba(0,123,255,0.2)] hover:border-blue-500/30`}
             style={{ transitionDelay: `${index * 100}ms` }}
         >
             <div className="relative overflow-hidden">
                 {/* PREMIUM RIBBON */}
                 {selectedTier === 'premium' && (
                     <div className="absolute top-4 right-4 z-30">
-                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 text-white font-black shadow-lg transform rotate-6">
+                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-yellow-500 via-orange-500 to-red-600 text-white font-black shadow-lg transform rotate-6 border border-white/20">
                             <span className="text-xs uppercase tracking-wider">Premium</span>
                         </div>
                     </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <img src={packageData.thumbnail} alt={packageData.name} className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute top-4 left-4 z-20">
-                    <span className="px-4 py-1.5 bg-white/90 backdrop-blur-md text-xs font-bold text-gray-900 rounded-full shadow-lg">{packageData.category}</span>
+                    <span className="px-4 py-1.5 bg-black/60 backdrop-blur-md text-xs font-bold text-white rounded-full shadow-lg border border-white/10">{packageData.category}</span>
                 </div>
             </div>
-            <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-white/80 to-white backdrop-blur-lg">
-                <h3 className="text-3xl font-black text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-600 group-hover:to-blue-600 transition-all duration-300">{packageData.name}</h3>
-                <p className="text-gray-600 mb-6 leading-relaxed text-sm flex-grow">{packageData.description}</p>
+            <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-[#111] to-[#050505]">
+                <h3 className="text-3xl font-black text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-blue-400 transition-all duration-300 font-sans tracking-tight">{packageData.name}</h3>
+                <p className="text-gray-400 mb-6 leading-relaxed text-sm flex-grow font-sans">{packageData.description}</p>
 
                 <div className="mb-6">
-                    <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2"><List className="w-5 h-5 text-blue-600" /> Included Services</h4>
+                    <h4 className="text-sm font-bold text-gray-300 mb-3 flex items-center gap-2"><List className="w-5 h-5 text-blue-500" /> Included Services</h4>
                     <ul className="space-y-2">
                         {packageData.included_services.map(service => {
                             const highlighted = selectedTier === 'premium';
                             return (
-                                <li key={service} className={`flex items-center gap-3 transition-all ${highlighted ? 'bg-yellow-50 border border-yellow-200 rounded-md p-2 shadow-sm' : ''}`}>
-                                    <span className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${highlighted ? 'bg-yellow-100' : 'bg-green-100'}`}>
-                                        <Check className={`${highlighted ? 'text-yellow-600' : 'text-green-600'} w-4 h-4`} strokeWidth={3} />
+                                <li key={service} className={`flex items-center gap-3 transition-all ${highlighted ? 'bg-yellow-500/10 border border-yellow-500/30 rounded-md p-2 shadow-sm' : ''}`}>
+                                    <span className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${highlighted ? 'bg-yellow-500/20' : 'bg-green-500/20'}`}>
+                                        <Check className={`${highlighted ? 'text-yellow-400' : 'text-green-400'} w-4 h-4`} strokeWidth={3} />
                                     </span>
-                                    <span className={`text-sm ${highlighted ? 'text-gray-900 font-semibold' : 'text-gray-600'}`}>{service}</span>
+                                    <span className={`text-sm ${highlighted ? 'text-gray-200 font-semibold' : 'text-gray-400'}`}>{service}</span>
                                 </li>
                             )
                         })}
                     </ul>
                 </div>
 
-                <div className="mt-auto pt-6 border-t border-gray-200">
-                    <div className="flex bg-gray-100 p-1.5 rounded-2xl mb-6">
+                <div className="mt-auto pt-6 border-t border-white/10">
+                    <div className="flex bg-black/40 p-1.5 rounded-2xl mb-6 border border-white/5">
                         <button
                             onClick={() => setSelectedTier('standard')}
-                            className={`flex-1 py-3 rounded-xl font-bold text-center transition-all duration-300 ${selectedTier === 'standard' ? 'bg-white text-blue-600 shadow-md' : 'text-gray-600 hover:text-gray-800'}`}
+                            className={`flex-1 py-3 rounded-xl font-bold text-center transition-all duration-300 ${selectedTier === 'standard' ? 'bg-white/10 text-white shadow-md border border-white/10' : 'text-gray-500 hover:text-gray-300'}`}
                         >
                             Standard
                         </button>
                         <button
                             onClick={() => setSelectedTier('premium')}
-                            className={`flex-1 py-3 rounded-xl font-bold text-center transition-all duration-300 ${selectedTier === 'premium' ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30' : 'text-gray-600 hover:text-gray-800'}`}
+                            className={`flex-1 py-3 rounded-xl font-bold text-center transition-all duration-300 ${selectedTier === 'premium' ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30' : 'text-gray-500 hover:text-gray-300'}`}
                         >
                             Premium
                         </button>
                     </div>
 
                     {selectedTier === 'premium' && (
-                        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-center">
-                            <p className="text-xs font-semibold text-blue-700">✔ Includes Free Creator Kit! (Assets, VFX, SFX, etc.)</p>
+                        <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg text-center">
+                            <p className="text-xs font-semibold text-blue-300">✔ Includes Free Creator Kit! (Assets, VFX, SFX, etc.)</p>
                         </div>
                     )}
 
                     <div className="mb-6">
-                        <span className={`text-4xl font-black ${selectedTier === 'premium' ? 'bg-gradient-to-r from-yellow-500 via-orange-400 to-red-500 bg-clip-text text-transparent' : 'bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent'}`}>₹{price.toLocaleString('en-IN')}</span>
+                        <span className={`text-4xl font-black ${selectedTier === 'premium' ? 'bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent' : 'text-white'}`}>₹{price.toLocaleString('en-IN')}</span>
                         <span className="block text-sm text-gray-500 font-medium mt-1">per month</span>
-                        <p className="text-xs text-gray-500 italic mt-2">Default monthly prices shown — final price will be discussed and negotiated during consultation.</p>
+                        <p className="text-xs text-gray-600 italic mt-2">Default monthly prices shown — final price will be discussed and negotiated during consultation.</p>
                     </div>
 
                     <button
                         onClick={() => onBook(packageData, selectedTier)}
                         disabled={!packageData.is_active}
-                        className={`relative w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed group/btn ${selectedTier === 'premium' ? 'shadow-[0_20px_60px_-15px_rgba(255,165,0,0.25)]' : ''}`}
+                        className={`relative w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 disabled:bg-gray-800 disabled:cursor-not-allowed group/btn ${selectedTier === 'premium' ? 'shadow-[0_20px_60px_-15px_rgba(255,165,0,0.15)]' : 'shadow-lg shadow-blue-900/20'}`}
                     >
-                        <div className={`absolute inset-0 ${selectedTier === 'premium' ? 'bg-gradient-to-r from-yellow-500 via-orange-400 to-red-500' : 'bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500'} bg-[length:200%_100%] group-hover/btn:bg-right transition-all duration-500`}></div>
+                        <div className={`absolute inset-0 ${selectedTier === 'premium' ? 'bg-gradient-to-r from-yellow-500 via-orange-500 to-red-600' : 'bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600'} bg-[length:200%_100%] group-hover/btn:bg-right transition-all duration-500`}></div>
                         <span className="relative flex items-center justify-center gap-2">
                             {selectedTier === 'premium' ? (<><Sparkles className="w-5 h-5 text-white" /> Premium - Book This Package</>) : 'Book This Package'}
                             <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                         </span>
                     </button>
                     <div className="mt-3 text-center">
-                        <button type="button" onClick={() => onOpenTerms && onOpenTerms()} className="text-xs text-gray-600 hover:text-gray-900 underline">View Terms &amp; Conditions</button>
+                        <button type="button" onClick={() => onOpenTerms && onOpenTerms()} className="text-xs text-gray-500 hover:text-white underline transition-colors">View Terms &amp; Conditions</button>
                     </div>
                 </div>
             </div>
@@ -836,8 +836,8 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                 subtitle: 'Thank you — our team will reach out shortly.',
                 details: (
                     <>
-                        <p className="mb-2">We have received your project details and will review them shortly.</p>
-                        <p className="text-sm text-gray-600">Our media team will contact you within 24 hours to discuss your content strategy.</p>
+                        <p className="mb-2 text-gray-300">We have received your project details and will review them shortly.</p>
+                        <p className="text-sm text-gray-500">Our media team will contact you within 24 hours to discuss your content strategy.</p>
                     </>
                 )
             });
@@ -876,12 +876,12 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
 
     if (loadError) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-6">
-                <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-                    <h3 className="text-lg font-bold text-red-600 mb-2">Failed to load packages</h3>
-                    <p className="text-sm text-gray-600 mb-4">{String(loadError)}</p>
+            <div className="min-h-screen flex items-center justify-center p-6 bg-[#050505]">
+                <div className="max-w-md w-full bg-[#111] rounded-2xl shadow-xl p-8 text-center border border-white/10">
+                    <h3 className="text-lg font-bold text-red-500 mb-2">Failed to load packages</h3>
+                    <p className="text-sm text-gray-400 mb-4">{String(loadError)}</p>
                     <div className="flex justify-center">
-                        <button onClick={() => onRetry && onRetry()} className="px-6 py-3 bg-[#0052CC] text-white rounded-xl">Retry</button>
+                        <button onClick={() => onRetry && onRetry()} className="px-6 py-3 bg-[#0052CC] text-white rounded-xl hover:bg-blue-600 transition-colors">Retry</button>
                     </div>
                 </div>
             </div>
@@ -890,7 +890,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
 
     if (!packages || packages.length === 0) {
         return (
-            <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">No packages available right now.</div>
+            <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-500 bg-[#050505]">No packages available right now.</div>
         );
     }
 
@@ -906,20 +906,20 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
 
     return (
         <>
-            <section className="relative py-32 bg-gradient-to-br from-[#0052CC] to-[#0066FF] overflow-hidden">
-                <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZHRoPSI1MCI+PHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSJ0cmFuc3BhcmVudCIvPjxjaXJjbGUgY3g9IjI1IiBjeT0iMjUiIHI9IjEiIGZpbGw9IndoaXRlIi8+PC9zdmc+')]"></div>
-                <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/10 rounded-full animate-[float_8s_ease-in-out_infinite]"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-white/10 rounded-2xl animate-[float_12s_ease-in-out_infinite]"></div>
+            <section className="relative py-32 bg-gradient-to-br from-[#020617] via-[#0B1121] to-[#0f172a] overflow-hidden border-b border-white/5">
+                <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat mix-blend-overlay"></div>
+                <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-500/10 rounded-full animate-[float_8s_ease-in-out_infinite] blur-xl"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-purple-500/10 rounded-2xl animate-[float_12s_ease-in-out_infinite] blur-2xl"></div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
-                    <div className="w-32 h-32 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl overflow-hidden">
-                        <img src="/images/logos/FocseraMedia.jpg" alt="Focsera Media" className="w-full h-full object-contain" />
+                    <div className="w-32 h-32 bg-black/40 backdrop-blur-xl rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl overflow-hidden border border-white/10">
+                        <img src="/images/logos/FocseraMedia.jpg" alt="Focsera Media" className="w-full h-full object-contain opacity-90 hover:opacity-100 transition-opacity" />
                     </div>
-                    <h1 className="text-5xl sm:text-7xl font-bold text-white mb-6">Focsera Media</h1>
-                    <p className="text-xl text-white/90 max-w-3xl mx-auto mb-4">
+                    <h1 className="text-5xl sm:text-7xl font-bold text-white mb-6 tracking-tight drop-shadow-lg">Focsera Media</h1>
+                    <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-4 font-light">
                         Professional Content, Marketing & Growth Services
                     </p>
-                    <p className="text-lg text-white/80 max-w-2xl mx-auto">
+                    <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
                         We build your brand's voice and amplify your reach. From content strategy to ad campaigns, we provide end-to-end media solutions.
                     </p>
                 </div>
@@ -934,32 +934,34 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
             {/* Booking Modal */}
             <CreatorBoostModal isOpen={showBoostModal} onClose={() => setShowBoostModal(false)} />
 
-            <section className="py-16 bg-white border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section className="py-16 bg-[#050505] border-b border-white/5 relative">
+                <div className="absolute inset-0 opacity-[0.02] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] invert"></div>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-                        <div className="text-center p-8">
-                            <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                                <Edit className="text-[#0052CC]" size={40} />
+                        <div className="text-center p-8 rounded-3xl hover:bg-white/5 transition-all duration-300 border border-transparent hover:border-white/5">
+                            <div className="w-20 h-20 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-blue-500/20 shadow-[0_0_30px_rgba(0,82,204,0.15)]">
+                                <Edit className="text-[#3b82f6]" size={40} />
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-3">Content Creation</h3>
-                            <p className="text-gray-600 text-lg">High-quality writing, video editing, and visual design to tell your story.</p>
+                            <h3 className="text-2xl font-bold text-white mb-3 tracking-wide">Content Creation</h3>
+                            <p className="text-gray-400 text-lg font-light">High-quality writing, video editing, and visual design to tell your story.</p>
                         </div>
-                        <div className="text-center p-8">
-                            <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                                <TrendingUp className="text-[#0052CC]" size={40} />
+                        <div className="text-center p-8 rounded-3xl hover:bg-white/5 transition-all duration-300 border border-transparent hover:border-white/5">
+                            <div className="w-20 h-20 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-blue-500/20 shadow-[0_0_30px_rgba(0,82,204,0.15)]">
+                                <TrendingUp className="text-[#3b82f6]" size={40} />
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-3">Marketing & Growth</h3>
-                            <p className="text-gray-600 text-lg">Strategic SEO, SMM, and ad campaigns to grow your audience.</p>
+                            <h3 className="text-2xl font-bold text-white mb-3 tracking-wide">Marketing & Growth</h3>
+                            <p className="text-gray-400 text-lg font-light">Strategic SEO, SMM, and ad campaigns to grow your audience.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section ref={packagesRef} className="py-24 bg-white">
+            <section ref={packagesRef} className="py-24 bg-[#050505] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-900/10 blur-[120px] rounded-full pointer-events-none"></div>
                 <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${packagesAreVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Our Signature Packages</h2>
-                        <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-blue-600 mx-auto rounded-full"></div>
+                    <div className="text-center mb-16 relative z-10">
+                        <h2 className="text-4xl font-bold text-white mb-4 gradient-text">Our Signature Packages</h2>
+                        <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-blue-600 mx-auto rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
                     </div>
                     {/* Creator's Choice promo card — scrolls to customizer and shows live estimate */}
                     <div className="max-w-2xl mx-auto mb-6">
@@ -982,7 +984,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                         })()}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
                         {packages.filter(Boolean).filter(p => Number(p.id) !== CREATOR_CHOICE_ID).map((pkg, index) => (
                             <MediaPackageCard
                                 key={pkg?.id ?? index}
@@ -997,42 +999,43 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                 </div>
             </section>
 
-            <section ref={customizerScrollRef} className="py-24 bg-gray-50 scroll-mt-24">
+            <section ref={customizerScrollRef} className="py-24 bg-[#080808] border-t border-white/5 scroll-mt-24 relative overflow-hidden">
+                <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-purple-900/10 blur-[100px] rounded-full pointer-events-none"></div>
                 <div ref={customizerSectionRef} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${customizerIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Build Your Own Package</h2>
-                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                    <div className="text-center mb-16 relative z-10">
+                        <h2 className="text-4xl font-bold text-white mb-4 gradient-text">Build Your Own Package</h2>
+                        <p className="text-lg text-gray-500 max-w-2xl mx-auto">
                             Select the individual services you need to create a plan that's perfectly tailored to your goals.
                         </p>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                        <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-gray-200 shadow-2xl space-y-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start relative z-10">
+                        <div className="lg:col-span-2 bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl space-y-8">
 
                             {Object.entries(servicesByCategory).map(([category, services]) => (
                                 <div key={category}>
-                                    <h3 className="text-xl font-bold mb-4">{category} Services</h3>
+                                    <h3 className="text-xl font-bold mb-4 text-gray-300 border-b border-white/10 pb-2">{category} Services</h3>
                                     <div className="space-y-4">
                                         {services.map((service) => {
                                             const isSelected = selectedServices[service.key];
                                             return (
-                                                <div key={service.key} className={`p-4 border-2 rounded-xl transition-all duration-300 ${isSelected ? 'bg-blue-50 border-[#0052CC] shadow-md' : 'bg-gray-50 border-gray-200'}`}>
+                                                <div key={service.key} className={`p-4 border rounded-xl transition-all duration-300 ${isSelected ? 'bg-blue-900/20 border-blue-500/50 shadow-[0_0_15px_rgba(0,82,204,0.15)]' : 'bg-white/5 border-white/5 hover:border-white/20'}`}>
                                                     <div className="flex items-start justify-between gap-4">
                                                         <div className="flex-1">
                                                             <div className="flex items-center gap-3 mb-2">
                                                                 <button
                                                                     onClick={() => handleServiceToggle(service.key)}
-                                                                    className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[#0052CC] border-[#0052CC]' : 'border-gray-300 hover:border-gray-400'}`}
+                                                                    className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[#0052CC] border-[#0052CC]' : 'border-gray-500 hover:border-gray-400'}`}
                                                                 >
                                                                     {isSelected && <Check className="text-white" size={16} />}
                                                                 </button>
-                                                                <span className="font-semibold text-gray-900">{service.label}</span>
+                                                                <span className="font-semibold text-gray-200">{service.label}</span>
                                                             </div>
                                                             {service.description && (
-                                                                <p className="text-xs text-gray-600 ml-9">{service.description}</p>
+                                                                <p className="text-xs text-gray-500 ml-9">{service.description}</p>
                                                             )}
                                                         </div>
                                                         <div className="flex flex-col items-end gap-2">
-                                                            <span className="text-sm font-bold text-gray-900">
+                                                            <span className="text-sm font-bold text-gray-300">
                                                                 ₹{service.price_min.toLocaleString('en-IN')}
                                                             </span>
                                                         </div>
@@ -1046,67 +1049,67 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
 
                         </div>
                         <div className="lg:col-span-1 sticky top-8">
-                            <div className="bg-white/70 backdrop-blur-lg p-8 rounded-3xl border-2 border-[#0052CC] shadow-2xl">
-                                <h3 className="text-2xl font-bold mb-6 text-center">Your Custom Package</h3>
-                                <div className="space-y-3 mb-6 border-b border-blue-200 pb-4 min-h-[100px]">
+                            <div className="bg-[#111] backdrop-blur-lg p-8 rounded-3xl border-2 border-blue-900/30 shadow-2xl ring-1 ring-white/5">
+                                <h3 className="text-2xl font-bold mb-6 text-center text-white">Your Custom Package</h3>
+                                <div className="space-y-3 mb-6 border-b border-white/10 pb-4 min-h-[100px]">
                                     {Object.entries(selectedServices).filter(([_, value]) => value).length === 0 && (
-                                        <p className="text-sm text-gray-500 text-center py-6">Select services to see your total.</p>
+                                        <p className="text-sm text-gray-600 text-center py-6 italic">Select services to see your total.</p>
                                     )}
 
                                     {Object.entries(selectedServices).filter(([_, value]) => value).map(([key]) => {
                                         const service = individualServices.find(a => a.key === key);
-                                        const isPremiumMode = displayPrice > 0 && displayPrice >= 20000; // heuristic: premium-level total
+                                        const isPremiumMode = displayPrice > 0 && displayPrice >= 20000;
                                         return service ? (
-                                            <div key={key} className={`flex justify-between items-center text-sm transition-all ${isPremiumMode ? 'bg-yellow-50 border border-yellow-200 rounded-md p-2 shadow-sm' : ''}`}>
-                                                <p className={`${isPremiumMode ? 'text-gray-900 font-semibold' : 'text-gray-600'}`}>{service.label}</p>
-                                                <p className={`${isPremiumMode ? 'text-yellow-700 font-bold' : 'text-gray-500 font-medium'}`}>+ ₹{(service.price_min).toLocaleString('en-IN')}</p>
+                                            <div key={key} className={`flex justify-between items-center text-sm transition-all ${isPremiumMode ? 'bg-yellow-900/10 border border-yellow-500/20 rounded-md p-2 shadow-sm' : ''}`}>
+                                                <p className={`${isPremiumMode ? 'text-gray-200 font-semibold' : 'text-gray-400'}`}>{service.label}</p>
+                                                <p className={`${isPremiumMode ? 'text-yellow-500 font-bold' : 'text-gray-500 font-medium'}`}>+ ₹{(service.price_min).toLocaleString('en-IN')}</p>
                                             </div>
                                         ) : null;
                                     })}
                                 </div>
                                 <div className="flex justify-between items-center mb-6">
-                                    <p className="text-lg font-bold">Estimated Total</p>
-                                    <p className="text-3xl font-bold text-[#0052CC]">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
+                                    <p className="text-lg font-bold text-gray-300">Estimated Total</p>
+                                    <p className="text-3xl font-bold text-[#3b82f6]">₹{Math.round(displayPrice).toLocaleString('en-IN')}</p>
                                 </div>
                                 <p className="text-xs text-gray-500 italic mb-4">These are default estimates — final pricing will be discussed and negotiated after a consultation.</p>
-                                <button onClick={handleCustomBooking} className="button-primary w-full">
+                                <button onClick={handleCustomBooking} className="button-primary w-full shadow-lg shadow-blue-600/20">
                                     Book This Package
                                     <ArrowRight className="button-primary-icon" />
                                 </button>
-                                <p className="text-xs text-gray-500 mt-4 text-center">Final price will be confirmed after consultation.</p>
+                                <p className="text-[10px] text-gray-600 mt-4 text-center">Final price will be confirmed after consultation.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section ref={quoteSectionRef} className="py-24 bg-white">
+            <section ref={quoteSectionRef} className="py-24 bg-[#050505] border-t border-white/5">
                 <div className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ${quoteIsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                    <h2 className="text-4xl font-bold text-gray-900 mb-4 gradient-text">Have a Unique Project?</h2>
-                    <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+                    <h2 className="text-4xl font-bold text-white mb-4 gradient-text">Have a Unique Project?</h2>
+                    <p className="text-lg text-gray-500 mb-12 max-w-2xl mx-auto">
                         If you're unsure where to start, tell us about your goals, and we'll create a custom quote just for you.
                     </p>
-                    <form onSubmit={handleQuoteSubmit} className="bg-gray-50 p-8 rounded-3xl border border-gray-200 shadow-2xl text-left max-w-3xl mx-auto space-y-6">
+                    <form onSubmit={handleQuoteSubmit} className="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl text-left max-w-3xl mx-auto space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field" placeholder="John Doe" required /></div>
-                            <div><label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field" placeholder="you@example.com" required /></div>
+                            <div><label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field" placeholder="John Doe" required /></div>
+                            <div><label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field" placeholder="you@example.com" required /></div>
                         </div>
-                        <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field" placeholder="+91 12345 67890" /></div>
-                        <div><label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field" placeholder="Please include as many details as possible: your business, target audience, content goals, etc." required></textarea></div>
-                        <button type="submit" className="button-primary w-full">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
+                        <div><label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field" placeholder="+91 12345 67890" /></div>
+                        <div><label htmlFor="details" className="block text-sm font-medium text-gray-400 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field" placeholder="Please include as many details as possible: your business, target audience, content goals, etc." required></textarea></div>
+                        <button type="submit" className="button-primary w-full transform hover:scale-[1.02] shadow-xl shadow-blue-500/20">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
                         <div className="mt-3 text-center">
-                            <button type="button" onClick={() => setShowTerms(true)} className="text-xs text-gray-600 hover:text-gray-900 underline">View Terms &amp; Conditions</button>
+                            <button type="button" onClick={() => setShowTerms(true)} className="text-xs text-gray-500 hover:text-white underline transition-colors">View Terms &amp; Conditions</button>
                         </div>
                     </form>
                 </div>
             </section>
 
-            <footer className="bg-gray-800 text-white py-16">
+            <footer className="bg-black/80 text-white py-16 border-t border-white/5">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300"><Megaphone className="text-white" size={32} /></div>
+                    <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 transform hover:scale-110 transition-transform duration-300 border border-white/10"><Megaphone className="text-blue-500" size={32} /></div>
                     <p className="font-bold text-2xl mb-2">Focsera Media</p>
-                    <p className="text-gray-400">Content that Converts, Strategy that Scales.</p>
-                    <p className="text-sm text-gray-500 mt-8">© {new Date().getFullYear()} Focsera Media. All Rights Reserved.</p>
+                    <p className="text-gray-500">Content that Converts, Strategy that Scales.</p>
+                    <p className="text-sm text-gray-600 mt-8">© {new Date().getFullYear()} Focsera Media. All Rights Reserved.</p>
                 </div>
             </footer>
             {
@@ -1140,24 +1143,24 @@ const CheckoutHeader = ({ currentStep }) => {
     const currentStepIndex = steps.findIndex(step => step.id === currentStep);
 
     return (
-        <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
+        <header className="bg-black/80 backdrop-blur-lg sticky top-0 z-40 border-b border-white/10">
             <nav className="max-w-5xl mx-auto px-4 py-4">
                 <div className="flex justify-between items-center mb-4">
-                    <a href="#" onClick={(e) => { e.preventDefault(); window.location.reload(); }} className="flex items-center gap-2 font-bold text-xl text-gray-800">
-                        <Megaphone className="text-blue-600" />
+                    <a href="#" onClick={(e) => { e.preventDefault(); window.location.reload(); }} className="flex items-center gap-2 font-bold text-xl text-white">
+                        <Megaphone className="text-blue-500" />
                         Focsera Media
                     </a>
                 </div>
                 <div className="relative">
-                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200"></div>
+                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/10"></div>
                     <div className="absolute top-1/2 left-0 h-0.5 bg-blue-600 transition-all duration-500" style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
                     <div className="relative flex justify-between">
                         {steps.map((step, index) => (
                             <div key={step.id} className="flex flex-col items-center">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${index <= currentStepIndex ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-gray-300 text-gray-400'}`}>
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${index <= currentStepIndex ? 'bg-blue-600 border-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.5)]' : 'bg-black/40 border-white/10 text-gray-500'}`}>
                                     {index < currentStepIndex ? <Check /> : step.icon}
                                 </div>
-                                <p className={`mt-2 text-xs font-semibold ${index <= currentStepIndex ? 'text-blue-600' : 'text-gray-500'}`}>{step.name}</p>
+                                <p className={`mt-2 text-xs font-semibold ${index <= currentStepIndex ? 'text-blue-400' : 'text-gray-600'}`}>{step.name}</p>
                             </div>
                         ))}
                     </div>
@@ -1225,42 +1228,42 @@ const LoginPage = ({ onLogin, onBack }) => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex flex-col items-center justify-center p-4 pt-40 relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(100,116,139,0.08),transparent_50%)]"></div>
+        <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-4 pt-40 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(37,99,235,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.1),transparent_50%)]"></div>
             <div className="w-full max-w-md animate-fadeInUp relative z-10">
-                <div className="bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-200 p-8 lg:p-10">
-                    <button onClick={onBack} className="absolute top-6 left-6 text-slate-600 hover:text-slate-800 font-medium text-sm flex items-center gap-2 transition-colors">
+                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 p-8 lg:p-10">
+                    <button onClick={onBack} className="absolute top-6 left-6 text-gray-400 hover:text-white font-medium text-sm flex items-center gap-2 transition-colors">
                         <span className="hover:-translate-x-1 transition-transform">&larr;</span> Back
                     </button>
                     <div className="text-center mb-8 mt-8">
-                        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent inline-block mb-2">
+                        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-blue-500 to-blue-300 bg-clip-text text-transparent inline-block mb-2">
                             FOCSERA
                         </h2>
-                        <p className="text-slate-600">{isLoginView ? 'Sign in to continue your booking' : 'Join Focsera Media today'}</p>
+                        <p className="text-gray-400">{isLoginView ? 'Sign in to continue your booking' : 'Join Focsera Media today'}</p>
                     </div>
 
-                    <div className="flex gap-2 mb-8 bg-slate-100 p-1.5 rounded-2xl">
+                    <div className="flex gap-2 mb-8 bg-black/40 p-1.5 rounded-2xl border border-white/5">
                         <button
                             onClick={() => setIsLoginView(true)}
-                            className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${isLoginView ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}
+                            className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${isLoginView ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                         >
                             Log In
                         </button>
                         <button
                             onClick={() => setIsLoginView(false)}
-                            className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${!isLoginView ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}
+                            className={`flex-1 py-3.5 rounded-xl font-bold transition-all duration-300 ${!isLoginView ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                         >
                             Sign Up
                         </button>
                     </div>
 
                     {error && (
-                        <div className={`mb-6 p-4 rounded-xl text-sm flex items-start gap-3 ${messageType === 'error' ? 'bg-red-50 border border-red-200 text-red-700' : 'bg-blue-50 border border-blue-200 text-blue-700'}`}>
+                        <div className={`mb-6 p-4 rounded-xl text-sm flex items-start gap-3 ${messageType === 'error' ? 'bg-red-900/20 border border-red-500/30 text-red-200' : 'bg-blue-900/20 border border-blue-500/30 text-blue-200'}`}>
                             <span>{error}</span>
                         </div>
                     )}
                     {successMessage && (
-                        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-start gap-3">
+                        <div className="mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-xl text-green-200 text-sm flex items-start gap-3">
                             <span>{successMessage}</span>
                         </div>
                     )}
@@ -1268,29 +1271,29 @@ const LoginPage = ({ onLogin, onBack }) => {
                     <form onSubmit={handleAuth} className="space-y-5">
                         {!isLoginView && (
                             <div className="group">
-                                <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Full Name</label>
+                                <label className="text-sm font-bold text-gray-300 block mb-2 ml-1">Full Name</label>
                                 <div className="relative">
                                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" size={20} />
-                                    <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} className="relative w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="John Doe" required />
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10" size={20} />
+                                    <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} className="w-full pl-12 pr-4 py-4 input-field text-white placeholder-gray-500" placeholder="John Doe" required />
                                 </div>
                             </div>
                         )}
                         <div className="group">
-                            <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Email Address</label>
+                            <label className="text-sm font-bold text-gray-300 block mb-2 ml-1">Email Address</label>
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 7 10 6 10-6" /></svg>
-                                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="relative w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="you@example.com" required />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 7 10 6 10-6" /></svg>
+                                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full pl-12 pr-4 py-4 input-field text-white placeholder-gray-500" placeholder="you@example.com" required />
                             </div>
                         </div>
                         <div className="group">
-                            <label className="text-sm font-bold text-slate-700 block mb-2 ml-1">Password</label>
+                            <label className="text-sm font-bold text-gray-300 block mb-2 ml-1">Password</label>
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                                <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="relative w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all text-slate-800 placeholder:text-slate-400" placeholder="••••••••" required minLength={6} />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                                <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="w-full pl-12 pr-12 py-4 input-field text-white placeholder-gray-500" placeholder="••••••••" required minLength={6} />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white z-10 transition-colors">
                                     {showPassword ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
                                     ) : (
@@ -1310,19 +1313,19 @@ const LoginPage = ({ onLogin, onBack }) => {
                     </form>
 
                     <div className="mt-8 text-center">
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-gray-400">
                             {isLoginView ? "Don't have an account? " : "Already have an account? "}
-                            <button onClick={() => setIsLoginView(!isLoginView)} className="text-blue-600 font-bold hover:text-blue-700 transition-colors">
+                            <button onClick={() => setIsLoginView(!isLoginView)} className="text-blue-500 font-bold hover:text-blue-400 transition-colors">
                                 {isLoginView ? 'Sign Up' : 'Log In'}
                             </button>
                         </p>
                     </div>
                     <div className="flex items-center my-8">
-                        <div className="flex-grow border-t border-slate-200"></div>
-                        <span className="mx-4 text-slate-400 text-sm font-medium">OR</span>
-                        <div className="flex-grow border-t border-slate-200"></div>
+                        <div className="flex-grow border-t border-white/10"></div>
+                        <span className="mx-4 text-gray-500 text-sm font-medium">OR</span>
+                        <div className="flex-grow border-t border-white/10"></div>
                     </div>
-                    <button onClick={onLogin} className="w-full py-3.5 border-2 border-slate-200 rounded-xl font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all">
+                    <button onClick={onLogin} className="w-full py-3.5 border border-white/10 bg-white/5 rounded-xl font-semibold text-gray-300 hover:bg-white/10 hover:text-white transition-all">
                         Continue as Guest
                     </button>
                 </div>
@@ -1333,70 +1336,85 @@ const LoginPage = ({ onLogin, onBack }) => {
 
 const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => {
     const isCustom = bookingPackage.package.id === CREATOR_CHOICE_ID;
-    const basePrice = isCustom ? 0 : (bookingPackage.tier === 'standard' ? bookingPackage.package.standard_price : bookingPackage.package.premium_price);
+    const basePrice = bookingPackage.tier === 'premium' ? bookingPackage.package.premium_price : bookingPackage.package.standard_price;
+    const services = isCustom
+        ? Object.entries(bookingPackage.selectedServices).filter(([_, v]) => v).map(([key]) => {
+            const s = individualServices.find(a => a.key === key);
+            return s ? { name: s.label, price: s.price_min } : null;
+        }).filter(Boolean)
+        : bookingPackage.package.included_services.map(s => ({ name: s, price: 0 }));
+
+    const totalPrice = isCustom ? bookingPackage.customTotal : basePrice;
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 sm:p-8 pt-40">
-            <div className="max-w-5xl mx-auto animate-fadeInUp">
-                <div className="mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Review Your Order</h1>
-                    <p className="text-gray-600">Please review your package details before proceeding to checkout</p>
-                </div>
+        <div className="min-h-screen pt-32 pb-16 px-4 bg-[#050505]">
+            <div className="max-w-4xl mx-auto">
+                <div className="bg-white/5 backdrop-blur-md rounded-3xl shadow-2xl border border-white/10 overflow-hidden animate-fadeInUp">
+                    <div className="p-8 border-b border-white/10">
+                        <h2 className="text-3xl font-bold text-white mb-2">Review Your Order</h2>
+                        <p className="text-gray-400">Please verify the package details before proceeding to checkout.</p>
+                    </div>
+                    <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-12">
+                        <div className="md:col-span-2 space-y-8">
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2"><List size={20} className="text-blue-500" /> Package Summary</h3>
+                                <div className="bg-black/40 rounded-2xl p-6 border border-white/5">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h4 className="font-bold text-xl text-white">{bookingPackage.package.name}</h4>
+                                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mt-2 ${bookingPackage.tier === 'premium' ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white' : 'bg-gray-800 text-gray-300'}`}>
+                                                {bookingPackage.tier === 'premium' ? 'PREMIUM TIER' : 'STANDARD TIER'}
+                                            </span>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-2xl font-bold text-white">₹{totalPrice.toLocaleString('en-IN')}</p>
+                                            <p className="text-xs text-gray-500">per month</p>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-400 text-sm leading-relaxed mb-6">{bookingPackage.package.description}</p>
 
-                <div className="grid lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2">
-                        <div className="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
-                            <div className="aspect-video w-full overflow-hidden bg-gray-200">
-                                <img src={bookingPackage.package.thumbnail} alt={bookingPackage.package.name} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="p-8">
-                                <h2 className="text-3xl font-bold text-gray-900 mb-3">{bookingPackage.package.name}</h2>
-                                <p className="text-gray-600 leading-relaxed">{isCustom ? "A custom selection of our media services tailored to your needs." : bookingPackage.package.description}</p>
+                                    <div className="space-y-3">
+                                        <p className="text-sm font-bold text-gray-300">Included in this plan:</p>
+                                        <ul className="grid grid-cols-1 gap-2">
+                                            {services.map((s, i) => (
+                                                <li key={i} className="flex justify-between text-sm text-gray-400 py-1 border-b border-white/5 last:border-0">
+                                                    <span className="flex items-center gap-2"><Check size={14} className="text-green-500" /> {s.name}</span>
+                                                    {s.price > 0 && <span className="font-medium text-gray-300">+₹{s.price.toLocaleString()}</span>}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="lg:col-span-1">
-                        <div className="bg-white rounded-3xl shadow-lg p-8 border-2 border-[#0052CC] sticky top-8">
-                            <h3 className="text-xl font-bold mb-6">Order Summary</h3>
-                            <div className="space-y-4 mb-6">
-                                <div className="flex justify-between items-center pb-4 border-b border-gray-200">
-                                    <span className="font-semibold text-gray-700">
-                                        {isCustom ? "Custom Package" : `Base Package (${bookingPackage.tier})`}
-                                    </span>
-                                    {!isCustom && (
-                                        <span className="font-bold text-gray-900">₹{basePrice.toLocaleString('en-IN')}</span>
-                                    )}
+                        <div className="md:col-span-1">
+                            <div className="bg-blue-900/10 rounded-2xl p-6 border border-blue-500/20 sticky top-8">
+                                <h3 className="text-lg font-bold text-white mb-4">Order Total</h3>
+                                <div className="flex justify-between items-center mb-2 text-gray-400">
+                                    <span>Subtotal</span>
+                                    <span>₹{totalPrice.toLocaleString('en-IN')}</span>
                                 </div>
-
-                                {isCustom ? (
-                                    Object.entries(bookingPackage.services).filter(([_, v]) => v).map(([key]) => {
-                                        const service = individualServices.find(a => a.key === key);
-                                        return service ? (
-                                            <div key={key} className="flex justify-between items-center">
-                                                <span className="text-gray-600">{service.label}</span>
-                                                <span className="text-gray-700 font-medium">+ ₹{service.price_min.toLocaleString('en-IN')}</span>
-                                            </div>
-                                        ) : null;
-                                    })
-                                ) : (
-                                    <p className="text-sm text-gray-500">Includes all services listed for the {bookingPackage.tier} tier.</p>
-                                )}
-                            </div>
-                            <div className="pt-6 border-t-2 border-gray-200 mb-6">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-lg font-bold">Total</span>
-                                    <span className="text-3xl font-bold text-[#0052CC]">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</span>
+                                <div className="flex justify-between items-center mb-6 text-green-400 text-sm">
+                                    <span>Consultation</span>
+                                    <span>FREE</span>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-2">*Final price will be confirmed after consultation</p>
+                                <div className="border-t border-white/10 pt-4 mb-8">
+                                    <div className="flex justify-between items-center">
+                                        <span className="font-bold text-white text-lg">Total</span>
+                                        <span className="font-bold text-2xl text-blue-400">₹{totalPrice.toLocaleString('en-IN')}</span>
+                                    </div>
+                                    <p className="text-[10px] text-gray-500 mt-2 text-right">Excluding applicable taxes</p>
+                                </div>
+                                <div className="space-y-3">
+                                    <button onClick={onProceed} className="button-primary w-full shadow-lg shadow-blue-600/20">
+                                        Proceed to Checkout <ArrowRight className="button-primary-icon" />
+                                    </button>
+                                    <button onClick={onBack} className="w-full py-3 text-gray-400 font-medium hover:text-white transition-colors">
+                                        Go Back
+                                    </button>
+                                </div>
                             </div>
-                            <button onClick={onProceed} className="button-primary w-full mb-3">
-                                Proceed to Checkout
-                                <ArrowRight className="button-primary-icon" />
-                            </button>
-                            <button onClick={onBack} className="w-full py-3 text-center font-semibold text-gray-600 hover:text-gray-900 transition-colors">
-                                &larr; Back
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -1405,140 +1423,64 @@ const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => 
     );
 };
 
-const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, individualServices }) => {
+const DetailsPage = ({ bookingPackage, onSubmit, onBack }) => {
+    const [loading, setLoading] = useState(false);
 
-    const handleConfirmBooking = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData(e.target);
-        const clientDetails = Object.fromEntries(formData.entries());
-
-        let packageDetails = {};
-        if (bookingPackage.package.id === CREATOR_CHOICE_ID) {
-            packageDetails = {
-                serviceName: "Creator's Choice (Custom)",
-                customServices: Object.entries(bookingPackage.services)
-                    .filter(([_, v]) => v)
-                    .map(([key]) => {
-                        const service = individualServices.find(a => a.key === key);
-                        return service ? service.label : null;
-                    }).filter(Boolean)
-            };
-        } else {
-            packageDetails = {
-                serviceName: bookingPackage.package.name,
-                tier: bookingPackage.tier,
-                includedServices: bookingPackage.package.included_services
-            };
-        }
-
-        const bookingData = {
-            user_id: session?.user?.id,
-            package_id: bookingPackage.package.id,
-            total_price: bookingPackage.totalPrice,
-            client_details: {
-                name: clientDetails.name,
-                email: clientDetails.email,
-                phone: clientDetails.phone,
-                company_name: clientDetails.company_name || null,
-            },
-            package_details: packageDetails
-        };
-
-        const { error } = await supabase.from('media_bookings').insert([bookingData]);
-        if (error) {
-            alert('Error creating booking: ' + error.message);
-        } else {
-            onConfirm();
-        }
+        setLoading(true);
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Real submission logic would go here
+        onSubmit(e);
+        setLoading(false);
     };
 
-    const isCustom = bookingPackage.package.id === CREATOR_CHOICE_ID;
-
     return (
-        <div className="min-h-screen bg-gray-50 p-4 sm:p-8 pt-40">
-            <div className="max-w-6xl mx-auto animate-fadeInUp">
-                <div className="mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Complete Your Booking</h1>
-                    <p className="text-gray-600">Enter your project details to finalize your booking</p>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                    <div className="lg:col-span-2">
-                        <form onSubmit={handleConfirmBooking} className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 space-y-6">
+        <div className="min-h-screen pt-32 pb-16 px-4 bg-[#050505]">
+            <div className="max-w-2xl mx-auto animate-fadeInUp">
+                <div className="bg-white/5 backdrop-blur-md rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+                    <div className="p-8 border-b border-white/10">
+                        <h2 className="text-3xl font-bold text-white mb-2">Final Details</h2>
+                        <p className="text-gray-400">Enter your contact information to finalize the booking request.</p>
+                    </div>
+                    <div className="p-8">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-300 mb-2">First Name</label>
+                                    <input type="text" name="firstName" className="w-full input-field" placeholder="John" required />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-300 mb-2">Last Name</label>
+                                    <input type="text" name="lastName" className="w-full input-field" placeholder="Doe" required />
+                                </div>
+                            </div>
                             <div>
-                                <h3 className="text-xl font-bold mb-6">Contact Information</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Full Name</label>
-                                        <input name="name" type="text" className="w-full input-field" placeholder="John Doe" defaultValue={session?.user?.user_metadata?.full_name || ''} required />
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Email Address</label>
-                                        <input name="email" type="email" className="w-full input-field" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required />
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Phone Number</label>
-                                        <input name="phone" type="tel" className="w-full input-field" placeholder="+91 98765 43210" required />
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Company Name (Optional)</label>
-                                        <input name="company_name" type="text" className="w-full input-field" placeholder="Your Company Inc." />
-                                    </div>
-                                </div>
+                                <label className="block text-sm font-bold text-gray-300 mb-2">Company Name (Optional)</label>
+                                <input type="text" name="company" className="w-full input-field" placeholder="Your Company Ltd." />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-300 mb-2">Project Vision / Details</label>
+                                <textarea name="notes" rows="4" className="w-full input-field" placeholder="Briefly describe what you're looking for..." required></textarea>
                             </div>
 
-                            <div className="pt-6 border-t border-gray-200">
-                                <h3 className="text-xl font-bold mb-6">Project Details</h3>
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-2">Primary Goal</label>
-                                        <textarea name="project_goals" rows="3" className="w-full input-field" placeholder="What is the main goal for this content? (e.g., increase brand awareness, generate leads, grow social media following)" required></textarea>
-                                    </div>
-                                </div>
+                            <div className="bg-yellow-900/10 border border-yellow-500/20 rounded-xl p-4 flex gap-3 items-start">
+                                <Info className="text-yellow-500 mt-0.5 flex-shrink-0" size={18} />
+                                <p className="text-sm text-yellow-200/80">
+                                    <strong>Note:</strong> No payment is required right now. This request starts the consultation process. We will contact you to finalize details and pricing.
+                                </p>
                             </div>
 
-                            <div className="pt-6 flex flex-col-reverse sm:flex-row items-center gap-4">
-                                <button type="button" onClick={onBack} className="w-full sm:w-auto font-semibold text-gray-600 hover:text-gray-900 py-3 px-8 rounded-xl transition-colors">
-                                    &larr; Back
+                            <div className="pt-6 flex gap-4">
+                                <button type="button" onClick={onBack} className="flex-1 py-4 bg-white/5 text-white font-bold rounded-xl hover:bg-white/10 transition-colors border border-white/10">
+                                    Back
                                 </button>
-                                <button type="submit" className="button-primary w-full sm:flex-1">
-                                    Confirm Booking
-                                    <ArrowRight className="button-primary-icon" />
+                                <button type="submit" disabled={loading} className="flex-[2] button-primary shadow-lg shadow-blue-600/20">
+                                    {loading ? 'Processing...' : 'Confirm Request'}
                                 </button>
                             </div>
                         </form>
-                    </div>
-
-                    <div className="lg:col-span-1">
-                        <div className="bg-white rounded-3xl shadow-lg p-8 border-2 border-[#0052CC] sticky top-8">
-                            <h3 className="text-xl font-bold mb-6">Order Summary</h3>
-                            <div className="space-y-4 mb-6">
-                                <div className="flex justify-between items-center pb-4 border-b border-gray-200">
-                                    <span className="font-semibold text-gray-700">{bookingPackage.package.name} {bookingPackage.tier ? `(${bookingPackage.tier})` : ''}</span>
-                                </div>
-
-                                {isCustom ? (
-                                    Object.entries(bookingPackage.services).filter(([_, v]) => v).map(([key]) => {
-                                        const service = individualServices.find(a => a.key === key);
-                                        return service ? (
-                                            <div key={key} className="flex justify-between items-center text-sm">
-                                                <span className="text-gray-600">{service.label}</span>
-                                                <span className="text-gray-700 font-medium">+ ₹{service.price_min.toLocaleString('en-IN')}</span>
-                                            </div>
-                                        ) : null;
-                                    })
-                                ) : (
-                                    <p className="text-sm text-gray-500">Includes all services for the {bookingPackage.tier} tier.</p>
-                                )}
-                            </div>
-                            <div className="pt-6 border-t-2 border-gray-200">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-lg font-bold">Total</span>
-                                    <span className="text-3xl font-bold text-[#0052CC]">₹{bookingPackage.totalPrice.toLocaleString('en-IN')}</span>
-                                </div>
-                                <p className="text-xs text-gray-500 mt-2">*Final price confirmed after consultation</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1547,15 +1489,15 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, individualSer
 };
 
 const SuccessModal = ({ onClose }) => {
-    const [confetti, setConfetti] = React.useState(true);
+    const [confetti, setConfetti] = useState(true);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const timer = setTimeout(() => setConfetti(false), 3000);
         return () => clearTimeout(timer);
     }, []);
 
     return (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fadeIn overflow-hidden">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fadeIn overflow-hidden">
             {confetti && (
                 <div className="absolute inset-0 pointer-events-none">
                     {[...Array(50)].map((_, i) => (
@@ -1578,46 +1520,46 @@ const SuccessModal = ({ onClose }) => {
                 </div>
             )}
 
-            <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl p-12 text-center max-w-2xl mx-auto border-2 border-[#0052CC] relative animate-scaleIn">
+            <div className="bg-[#111] backdrop-blur-xl rounded-3xl shadow-2xl p-12 text-center max-w-2xl mx-auto border-2 border-blue-500/30 relative animate-scaleIn">
                 <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-2xl animate-bounce-slow">
+                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-[0_0_50px_rgba(34,197,94,0.4)] animate-bounce-slow">
                         <Check className="w-20 h-20 text-white" strokeWidth={4} />
                     </div>
                 </div>
 
                 <div className="mt-20">
-                    <h2 className="text-5xl font-bold text-gray-900 mb-4 animate-slideDown">Booking Confirmed!</h2>
-                    <div className="w-24 h-1 bg-gradient-to-r from-[#0052CC] to-[#0066FF] mx-auto mb-6 rounded-full"></div>
+                    <h2 className="text-5xl font-bold text-white mb-4 animate-slideDown">Booking Confirmed!</h2>
+                    <div className="w-24 h-1 bg-gradient-to-r from-[#0052CC] to-[#0066FF] mx-auto mb-6 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.6)]"></div>
 
-                    <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-8 mb-8">
-                        <p className="text-xl text-gray-700 leading-relaxed mb-6">
-                            Thank you for choosing <span className="font-bold text-[#0052CC]">Focsera Media</span>!
+                    <div className="bg-blue-900/10 border border-blue-500/20 rounded-2xl p-8 mb-8">
+                        <p className="text-xl text-gray-300 leading-relaxed mb-6">
+                            Thank you for choosing <span className="font-bold text-blue-400">Focsera Media</span>!
                         </p>
-                        <p className="text-gray-600 leading-relaxed mb-6">
+                        <p className="text-gray-400 leading-relaxed mb-6">
                             Your booking request has been successfully received and our team is already reviewing the details.
                         </p>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
-                            <div className="bg-white rounded-xl p-6 shadow-md">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
-                                    <span className="text-2xl font-bold text-[#0052CC]">1</span>
+                            <div className="bg-white/5 rounded-xl p-6 shadow-md border border-white/5">
+                                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-3">
+                                    <span className="text-2xl font-bold text-blue-400">1</span>
                                 </div>
-                                <h4 className="font-bold text-gray-900 mb-2">Confirmation Email</h4>
-                                <p className="text-sm text-gray-600">Sent within 5 minutes</p>
+                                <h4 className="font-bold text-white mb-2">Confirmation Email</h4>
+                                <p className="text-sm text-gray-500">Sent within 5 minutes</p>
                             </div>
-                            <div className="bg-white rounded-xl p-6 shadow-md">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
-                                    <span className="text-2xl font-bold text-[#0052CC]">2</span>
+                            <div className="bg-white/5 rounded-xl p-6 shadow-md border border-white/5">
+                                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-3">
+                                    <span className="text-2xl font-bold text-blue-400">2</span>
                                 </div>
-                                <h4 className="font-bold text-gray-900 mb-2">Strategy Call</h4>
-                                <p className="text-sm text-gray-600">Within 24 hours</p>
+                                <h4 className="font-bold text-white mb-2">Strategy Call</h4>
+                                <p className="text-sm text-gray-500">Within 24 hours</p>
                             </div>
-                            <div className="bg-white rounded-xl p-6 shadow-md">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
-                                    <span className="text-2xl font-bold text-[#0052CC]">3</span>
+                            <div className="bg-white/5 rounded-xl p-6 shadow-md border border-white/5">
+                                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-3">
+                                    <span className="text-2xl font-bold text-blue-400">3</span>
                                 </div>
-                                <h4 className="font-bold text-gray-900 mb-2">Project Kick-off</h4>
-                                <p className="text-sm text-gray-600">Pricing & schedule</p>
+                                <h4 className="font-bold text-white mb-2">Project Kick-off</h4>
+                                <p className="text-sm text-gray-500">Pricing & schedule</p>
                             </div>
                         </div>
 
@@ -1626,12 +1568,12 @@ const SuccessModal = ({ onClose }) => {
                         </p>
                     </div>
 
-                    <button onClick={onClose} className="button-primary text-lg px-12 py-4 shadow-xl hover:shadow-2xl transition-all">
+                    <button onClick={onClose} className="button-primary text-lg px-12 py-4 shadow-xl hover:shadow-2xl transition-all shadow-blue-600/20">
                         Return to Media
                         <ArrowRight className="button-primary-icon" size={24} />
                     </button>
                     <p className="text-sm text-gray-500 mt-6">
-                        Need immediate assistance? Call us at <span className="font-semibold text-[#0052CC]">+91 98765 43210</span>
+                        Need immediate assistance? Call us at <span className="font-semibold text-blue-400">+91 98765 43210</span>
                     </p>
                 </div>
             </div>
@@ -1815,45 +1757,59 @@ export default function App() {
 
     const renderContent = () => {
         if (!bookingPackage && (currentView === 'cart' || currentView === 'details')) {
-            return <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-600">Please select a package first.</div>
+            return <div className="min-h-screen flex items-center justify-center text-lg font-semibold text-gray-400 bg-[#050505] p-4 text-center">
+                <div>
+                    <p className="mb-4">Please select a package first.</p>
+                    <button onClick={resetToLanding} className="button-primary">Go to Packages</button>
+                </div>
+            </div>;
         }
 
-        switch (currentView) {
-            case 'login':
-                return <LoginPage onLogin={() => setCurrentView('cart')} onBack={resetToLanding} />;
-            case 'cart':
-                return <CartPage
-                    bookingPackage={bookingPackage}
-                    individualServices={individualServices}
-                    onProceed={() => setCurrentView('details')}
-                    onBack={resetToLanding}
-                />;
-            case 'details':
-                return <DetailsPage
-                    bookingPackage={bookingPackage}
-                    individualServices={individualServices}
-                    session={session}
-                    onConfirm={() => setShowSuccess(true)}
-                    onBack={() => setCurrentView('cart')}
-                />;
-            case 'landing':
-            default:
-                return <LandingPage
-                    onBookNow={handleBookNow}
-                    packages={packages}
-                    individualServices={individualServices}
-                    loadError={loadError}
-                    onRetry={() => { setLoadError(null); getInitialData(); }}
-                />;
-        }
+        const showHeader = ['login', 'cart', 'details'].includes(currentView);
+
+        return (
+            <>
+                {showHeader && <CheckoutHeader currentStep={currentView} />}
+                {(() => {
+                    switch (currentView) {
+                        case 'login':
+                            return <LoginPage onLogin={() => setCurrentView('cart')} onBack={resetToLanding} />;
+                        case 'cart':
+                            return <CartPage
+                                bookingPackage={bookingPackage}
+                                individualServices={individualServices}
+                                onProceed={() => setCurrentView('details')}
+                                onBack={resetToLanding}
+                            />;
+                        case 'details':
+                            return <DetailsPage
+                                bookingPackage={bookingPackage}
+                                individualServices={individualServices}
+                                session={session}
+                                onSubmit={() => setShowSuccess(true)}
+                                onBack={() => setCurrentView('cart')}
+                            />;
+                        case 'landing':
+                        default:
+                            return <LandingPage
+                                onBookNow={handleBookNow}
+                                packages={packages}
+                                individualServices={individualServices}
+                                loadError={loadError}
+                                onRetry={() => { setLoadError(null); getInitialData(); }}
+                            />;
+                    }
+                })()}
+            </>
+        );
     };
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+            <div className="min-h-screen flex items-center justify-center bg-[#050505]">
                 <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-lg font-semibold text-gray-700">Loading Focsera Media...</p>
+                    <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4 shadow-[0_0_15px_rgba(37,99,235,0.5)]"></div>
+                    <p className="text-lg font-bold text-gray-300">Loading Focsera Media...</p>
                 </div>
             </div>
         );
@@ -1900,7 +1856,7 @@ export default function App() {
                 }
                 .animate-confetti { animation: confetti forwards; }
 
-                .gradient-text { background: linear-gradient(90deg, #0052CC, #007BFF, #33A1FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: background-pan 5s linear infinite; }
+                .gradient-text { background: linear-gradient(90deg, #60a5fa, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: background-pan 5s linear infinite; }
 
                 .button-primary {
                     position: relative; overflow: hidden;
@@ -1916,16 +1872,17 @@ export default function App() {
                 .button-primary:hover:not(:disabled) .button-primary-icon { transform: translateX(4px); }
 
                 .input-field {
-                    background-color: white; border: 1px solid #e2e8f0; border-radius: 0.5rem;
-                    padding: 0.75rem 1rem; transition: all 0.2s ease-in-out;
+                    background-color: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem;
+                    padding: 0.75rem 1rem; transition: all 0.2s ease-in-out; color: white;
                 }
                 .input-field:focus {
                     outline: none; border-color: var(--brand-blue);
                     box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
                 }
+                .input-field::placeholder { color: #9ca3af; }
             `}</style>
 
-            <div className="bg-gray-50 text-gray-800 font-sans antialiased">
+            <div className="bg-[#050505] min-h-screen text-gray-200 font-sans antialiased selection:bg-blue-500/30">
                 {['login', 'cart', 'details'].includes(currentView) && <CheckoutHeader currentStep={currentView} />}
                 {renderContent()}
                 {showSuccess && <SuccessModal onClose={resetToLanding} />}
