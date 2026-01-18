@@ -1,9 +1,261 @@
 // @ts-nocheck
 import { Link, useLocation } from 'react-router-dom';
-import { Globe, ShoppingCart, Code, ArrowRight, Sparkles, Star } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Globe, ShoppingCart, Code, ArrowRight, Sparkles, Star, CheckCircle, Plus } from 'lucide-react';
+import { useEffect, useState, useMemo } from 'react';
 
 import { supabase } from '../../lib/supabase';
+
+// --- FUEL-UP KIT DATA & COMPONENT ---
+const FUEL_UP_ADDONS = {
+  core_brand: {
+    title: 'Core Brand Modules — Look Legit',
+    items: [
+      { id: 'visiting_card_design', name: 'Visiting Card Design (Print-Ready)', price: 499, description: 'Offline trust & credibility' },
+      { id: 'visiting_card_print', name: 'Visiting Card Printing (100 cards)', price: 400, description: 'High-quality print (delivery extra)' },
+    ]
+  },
+  website_trust: {
+    title: 'Website Trust Modules — Build Confidence',
+    items: [
+      { id: 'best_sellers', name: 'Best Services / Best Sellers Section', price: 499, description: 'Shows what you are known for' },
+      { id: 'testimonials', name: 'Testimonials Section', price: 499, description: 'Social proof from customers' },
+      { id: 'gallery', name: 'Gallery Section', price: 499, description: 'Real photos of work, food, or space' },
+    ]
+  },
+  customer_action: {
+    title: 'Customer Action Modules — Get Enquiries',
+    items: [
+      { id: 'enquiry_form', name: 'Structured Enquiry Form', price: 499, description: 'No missed enquiries' },
+    ]
+  },
+  order_pickup: {
+    title: 'Order & Pickup Module — Only if needed',
+    items: [
+      { id: 'order_status', name: 'Order Accept & Pickup Status System', price: 1499, description: 'Accepted → Preparing → Ready' },
+    ]
+  }
+};
+
+const FuelUpKit = () => {
+  const basePrice = 1999;
+  const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>({});
+
+  const toggleAddon = (id: string) => {
+    setSelectedAddons(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const totalPrice = useMemo(() => {
+    let total = basePrice;
+    Object.values(FUEL_UP_ADDONS).forEach(category => {
+      category.items.forEach(item => {
+        if (selectedAddons[item.id]) {
+          total += item.price;
+        }
+      });
+    });
+    return total;
+  }, [selectedAddons]);
+
+  const selectedItemsList = useMemo(() => {
+    const list = ['Fuel-Up Base Starter'];
+    Object.values(FUEL_UP_ADDONS).forEach(category => {
+      category.items.forEach(item => {
+        if (selectedAddons[item.id]) {
+          list.push(`${item.name} (₹${item.price})`);
+        }
+      });
+    });
+    return list;
+  }, [selectedAddons]);
+
+  const handleBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const name = formData.get('name') as string;
+    const mobile = formData.get('mobile') as string;
+    const business = formData.get('business') as string;
+
+    const messageDetails = `Selected Configuration:\n- Base Starter (₹1999)\n${Object.values(FUEL_UP_ADDONS).flatMap(c => c.items.filter(i => selectedAddons[i.id]).map(i => `- ${i.name} (₹${i.price})`)).join('\n')}\n\nTotal Estimate: ₹${totalPrice}`;
+
+    const bookingData = {
+      name,
+      mobile,
+      business_name: business,
+      message: messageDetails,
+      offer_code: 'FUEL_UP_KIT',
+      status: 'new'
+    };
+
+    // Save to Supabase
+    try {
+      await supabase.from('web_bookings').insert([bookingData]);
+    } catch (err) {
+      console.error('Error saving booking:', err);
+    }
+
+    // Redirect to WhatsApp
+    const whatsappText = `*New Fuel-Up Kit Inquiry* 🚀%0A%0A*Name:* ${name}%0A*Business:* ${business}%0A*Mobile:* ${mobile}%0A%0A*Configuration:*%0A- Base Starter (₹1,999)${Object.values(FUEL_UP_ADDONS).flatMap(c => c.items.filter(i => selectedAddons[i.id]).map(i => `%0A- ${i.name} (₹${i.price})`)).join('')}%0A%0A*Total Estimate:* ₹${totalPrice.toLocaleString('en-IN')}`;
+    window.open(`https://wa.me/919515803954?text=${whatsappText}`, '_blank');
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="text-center mb-16 relative">
+        <div className="absolute inset-0 flex items-center justify-center -z-10 opacity-30 blur-3xl">
+          <div className="w-72 h-72 sm:w-96 sm:h-96 bg-blue-600/20 rounded-full animate-pulse-slow"></div>
+        </div>
+
+        <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-blue-500/30 text-blue-400 font-bold text-sm tracking-wide mb-8 backdrop-blur-md shadow-[0_0_20px_rgba(59,130,246,0.2)] animate-fade-in-up">
+          <Sparkles size={16} /> OFFICIAL LAUNCH PAD
+        </div>
+
+        <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white mb-6 tracking-tight animate-fade-in-up delay-100">
+          Focsera <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 drop-shadow-[0_0_30px_rgba(59,130,246,0.5)]">Fuel-Up Kit</span>
+        </h2>
+
+        <p className="text-lg sm:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light animate-fade-in-up delay-200">
+          The ultimate starter kit to <span className="text-white font-medium">launch your professional identity</span>. <br className="hidden md:block" />
+          Build your own branding package starting at just <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold border-b border-blue-500/30">₹1,999</span>.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start animate-fade-in-up delay-300">
+        {/* Left: Configurator */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* Base Starter Card */}
+          <div className="bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl border border-blue-500/30 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 relative overflow-hidden group hover:border-blue-500/50 transition-all duration-500 shadow-2xl">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] group-hover:bg-blue-600/20 transition-all"></div>
+            <div className="absolute top-0 right-0 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-sm font-bold rounded-bl-3xl shadow-lg">CORE FOUNDATION</div>
+
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 relative z-10">
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">Base Starter Kit</h3>
+                <p className="text-blue-200/60 text-base">The foundation of your digital presence. <strong>Design work only.</strong> <span className="text-xs opacity-60">(Hosting/Domain not included)</span></p>
+              </div>
+              <div className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 mt-6 md:mt-0 tracking-tight">₹1,999</div>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-5 relative z-10">
+              {['Basic Logo Design', 'Brand Colour Palette', 'Font Pairing', 'Multi-page Website', 'Mobile Responsive', 'WhatsApp Integration'].map((item, i) => (
+                <div key={i} className="flex items-center gap-4 text-gray-300 group/item">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20 group-hover/item:bg-blue-500/20 component-transition">
+                    <CheckCircle size={16} className="text-blue-400" />
+                  </div>
+                  <span className="font-medium">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Add-on Groups */}
+          {Object.entries(FUEL_UP_ADDONS).map(([key, section]) => (
+            <div key={key} className="space-y-4">
+              <h4 className="text-xl font-bold text-gray-300 px-2">{section.title}</h4>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {section.items.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => toggleAddon(item.id)}
+                    className={`cursor-pointer p-5 rounded-2xl border transition-all duration-300 flex justify-between items-center group ${selectedAddons[item.id]
+                      ? 'bg-blue-600/10 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.2)]'
+                      : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10'
+                      }`}
+                  >
+                    <div>
+                      <h5 className={`font-bold mb-1 group-hover:text-white transition-colors ${selectedAddons[item.id] ? 'text-white' : 'text-gray-300'}`}>{item.name}</h5>
+                      <span className="text-xs text-gray-500 group-hover:text-gray-400 block mb-2">{item.description}</span>
+                      <span className="text-xs font-mono text-blue-400 group-hover:text-blue-300">Add for ₹{item.price}</span>
+                    </div>
+                    <div className={`w-6 h-6 rounded-full border flex items-center justify-center transition-colors flex-shrink-0 ${selectedAddons[item.id]
+                      ? 'bg-blue-500 border-blue-500 text-white'
+                      : 'border-gray-600 text-transparent group-hover:border-gray-400'
+                      }`}>
+                      {selectedAddons[item.id] ? <CheckCircle size={14} fill="currentColor" /> : <Plus size={14} />}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Right: Summary & Form */}
+        <div className="lg:col-span-4">
+          <div className="sticky top-24 space-y-6">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
+              <h3 className="text-2xl font-bold text-white mb-6">Your Estimated Kit</h3>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex justify-between items-center text-gray-300 pb-4 border-b border-white/10">
+                  <span>Base Starter</span>
+                  <span className="font-mono">₹1,999</span>
+                </div>
+                {Object.values(FUEL_UP_ADDONS).flatMap(c => c.items.filter(i => selectedAddons[i.id])).map(item => (
+                  <div key={item.id} className="flex justify-between items-center text-sm text-gray-400">
+                    <span className="truncate pr-4">{item.name}</span>
+                    <span className="font-mono whitespace-nowrap">+ ₹{item.price}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-between items-center mb-8 pt-4 border-t border-white/10">
+                <span className="text-lg font-bold text-white">Total Estimate</span>
+                <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+                  ₹{totalPrice.toLocaleString('en-IN')}
+                </span>
+              </div>
+
+              <form onSubmit={handleBooking} className="space-y-4">
+                <input type="text" name="name" required placeholder="Your Name" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-0 outline-none transition-colors" />
+                <input type="text" name="business" required placeholder="Business Name" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-0 outline-none transition-colors" />
+                <input type="tel" name="mobile" required placeholder="Mobile Number" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-0 outline-none transition-colors" />
+
+                <button type="submit" className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-900/40 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                  Start Your Fuel-Up
+                </button>
+                <p className="text-xs text-center text-gray-500 mt-4">
+                  *Payment required only after design approval. <br />
+                  No advance needed.
+                </p>
+              </form>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
+                <h4 className="font-bold text-gray-200 mb-3 flex items-center gap-2"><Star size={16} className="text-yellow-500" /> Payment & Assurance</h4>
+                <ul className="text-sm text-gray-400 space-y-2 list-disc pl-4">
+                  <li>Design preview shared <strong>before</strong> payment.</li>
+                  <li>Payment required only after design approval.</li>
+                  <li>No advance payment required.</li>
+                </ul>
+              </div>
+
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
+                <h4 className="font-bold text-gray-200 mb-3 flex items-center gap-2"><Sparkles size={16} className="text-blue-400" /> Delivery & Revisions</h4>
+                <ul className="text-sm text-gray-400 space-y-2 list-disc pl-4">
+                  <li><strong>Base Starter:</strong> 2–3 working days.</li>
+                  <li><strong>Revisions:</strong> 1–2 minor tweaks per asset.</li>
+                  <li>Add-on timelines vary based on selection.</li>
+                </ul>
+              </div>
+
+              <div className="bg-white/5 border border-red-500/10 rounded-2xl p-5">
+                <h4 className="font-bold text-gray-200 mb-3 text-red-300">Important Limitations</h4>
+                <p className="text-xs text-gray-500 mb-2">The Fuel-Up Kit is a starter package. It does <strong>NOT</strong> include:</p>
+                <ul className="text-xs text-gray-500 space-y-1 list-disc pl-4">
+                  <li>Brand strategy or naming</li>
+                  <li>Marketing or SEO services</li>
+                  <li>Social media handling</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function Web() {
   const { hash } = useLocation();
@@ -54,6 +306,13 @@ export default function Web() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] opacity-60 pointer-events-none">
         <div className="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-input from-transparent via-white/10 to-transparent blur-[100px] rotate-45"></div>
       </div>
+
+      {/* Focsera Fuel-Up Kit Section (OFFICIAL OFFERING) - HERO POSITION */}
+      <section id="fuel-up-kit" className="relative pt-32 pb-24 overflow-hidden">
+        {/* Hero Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-blue-900/20 rounded-full blur-[120px] pointer-events-none"></div>
+        <FuelUpKit />
+      </section>
 
       {/* Sankranthi Special Offer Section - ULTRA PREMIUM HERO */}
       <section id="sankranthi-offer" className="relative pt-32 pb-24">
@@ -262,6 +521,10 @@ export default function Web() {
         </div>
       </section>
 
+
+
+
+
       {/* Standard Services Section - Refined Dark */}
       <section className="py-32 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900/50"></div>
@@ -312,6 +575,6 @@ export default function Web() {
           </Link>
         </div>
       </section>
-    </div>
+    </div >
   );
 }

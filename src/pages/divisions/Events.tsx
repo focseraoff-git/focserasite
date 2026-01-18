@@ -194,11 +194,11 @@ const PackageCard = ({ service, onBook, index, addOnsScrollRef, onOpenTerms }) =
                         <div className="text-xs text-gray-500 space-y-3 pt-2">
                             <div>
                                 <h4 className="font-bold text-gray-300">Client Terms</h4>
-                                <p>{service.terms.clientSupport}</p>
+                                <p>{service.terms?.clientSupport || 'Contact for details'}</p>
                             </div>
                             <div>
                                 <h4 className="font-bold text-gray-300">Studio Terms</h4>
-                                <p>{service.terms.studioSupport}</p>
+                                <p>{service.terms?.studioSupport || 'Contact for details'}</p>
                             </div>
                         </div>
                     </div>
@@ -689,7 +689,7 @@ export default function Events() {
             if (servicesError) throw servicesError;
 
             const { data: addOnsData, error: addOnsError } = await supabase
-                .from('event_addons')
+                .from('event_add_ons')
                 .select('*')
                 .order('id');
 
