@@ -1,98 +1,109 @@
+import React, { useState, useEffect } from 'react';
+import { X, CheckCircle, Sparkles, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-import { X, ArrowRight, Sparkles } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-
-export default function FuelUpPopup() {
+const FuelUpPopup = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const navigate = useNavigate();
 
     useEffect(() => {
         // Show popup after a short delay
         const timer = setTimeout(() => {
-            setIsOpen(true);
+            const hasSeenPopup = sessionStorage.getItem('hasSeenFuelUpPopup');
+            if (!hasSeenPopup) {
+                setIsOpen(true);
+                sessionStorage.setItem('hasSeenFuelUpPopup', 'true');
+            }
         }, 1500);
         return () => clearTimeout(timer);
     }, []);
 
     if (!isOpen) return null;
 
-    const handleCta = () => {
-        setIsOpen(false);
-        navigate('/web#fuel-up-kit');
-    };
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300"
+                className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fadeIn"
                 onClick={() => setIsOpen(false)}
             ></div>
 
             {/* Modal Content */}
-            <div className="relative bg-[#0A0A0A] rounded-[2rem] p-[1px] overflow-hidden max-w-md w-full shadow-2xl animate-fade-in-up">
-                {/* Gradient Border Animation */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/40 via-purple-500/10 to-transparent"></div>
+            <div className="relative bg-[#0a0a0a] border border-white/10 rounded-3xl shadow-2xl overflow-hidden max-w-lg w-full animate-scaleIn">
 
-                {/* Glow Effects */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-[80px] pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 w-40 h-40 bg-cyan-500/10 rounded-full blur-[50px] pointer-events-none"></div>
+                {/* Close Button */}
+                <button
+                    onClick={() => setIsOpen(false)}
+                    className="absolute top-4 right-4 p-2 bg-white/5 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors z-20"
+                >
+                    <X size={20} />
+                </button>
 
-                <div className="relative bg-[#080808] rounded-[calc(2rem-1px)] p-6 sm:p-8">
+                {/* Hero Image / Gradient Area */}
+                <div className="relative h-32 bg-gradient-to-br from-blue-900 to-black overflow-hidden flex items-center justify-center font-sans">
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+                    <div className="absolute top-[-50%] left-[-20%] w-64 h-64 bg-blue-500/30 rounded-full blur-[80px]"></div>
 
-                    <button
-                        onClick={() => setIsOpen(false)}
-                        className="absolute top-4 right-4 p-2 bg-white/5 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors border border-white/5 z-20"
-                    >
-                        <X size={20} />
-                    </button>
-
-                    <div className="mb-6 relative z-10">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-900/40 border border-blue-500/30 text-blue-400 text-[10px] sm:text-xs font-bold tracking-wide mb-5 shadow-[0_0_10px_rgba(59,130,246,0.3)]">
-                            <Sparkles size={12} /> NEW LAUNCH
+                    <div className="relative z-10 text-center">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[10px] font-bold uppercase tracking-widest mb-2 animate-bounce-slow">
+                            <Sparkles size={12} /> New Launch
                         </div>
+                        <h2 className="text-3xl font-black text-white tracking-tight">Focsera Fuel-Up Kit</h2>
+                    </div>
+                </div>
 
-                        <h3 className="text-2xl sm:text-3xl font-black text-white mb-2 tracking-tight leading-tight">
-                            Focsera <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Fuel-Up Kit</span>
-                        </h3>
+                {/* Content Body */}
+                <div className="p-8">
+                    <p className="text-gray-400 text-center mb-6 text-sm leading-relaxed">
+                        The ultimate starter kit to launch your professional identity.
+                    </p>
 
-                        <p className="text-gray-400 text-sm leading-relaxed mb-6 font-medium">
-                            The ultimate starter kit to launch your professional identity.
-                        </p>
-
-                        <div className="flex items-baseline gap-3 mb-8 bg-white/5 p-4 rounded-xl border border-white/5 w-fit">
-                            <span className="text-3xl sm:text-4xl font-black text-white">₹1,999</span>
-                            <div className="flex flex-col items-start leading-none">
-                                <span className="text-xs text-gray-500 line-through">₹4,999</span>
-                                <span className="text-[10px] text-green-400 font-bold uppercase">Launch Offer</span>
-                            </div>
-                        </div>
-
-                        <div className="space-y-3 mb-8">
-                            {['Visiting Cards Design & Print', 'Professional Logo & Branding', 'Premium Website Design'].map((item, i) => (
-                                <div key={i} className="flex items-center gap-3 text-sm text-gray-300">
-                                    <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 flex-shrink-0 border border-blue-500/20">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                    <span className="font-medium">{item}</span>
+                    {/* Features List */}
+                    <div className="space-y-3 mb-8">
+                        {[
+                            'Visiting Cards Design & Print',
+                            'Professional Logo & Branding',
+                            'Premium Website Design'
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5">
+                                <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                                    <CheckCircle size={12} className="text-blue-400" />
                                 </div>
-                            ))}
+                                <span className="text-gray-200 text-sm font-medium">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Pricing Block */}
+                    <div className="flex items-end justify-center gap-4 mb-8">
+                        <div className="text-center">
+                            <span className="block text-gray-500 text-xs font-semibold line-through">₹4,999</span>
+                            <span className="block text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                                ₹1,999
+                            </span>
+                        </div>
+                        <div className="pb-2">
+                            <span className="px-2 py-1 bg-green-500/20 text-green-400 text-[10px] font-bold uppercase rounded border border-green-500/30">
+                                Launch Offer
+                            </span>
                         </div>
                     </div>
 
-                    <button
-                        onClick={handleCta}
-                        className="w-full py-4 bg-white text-black font-bold text-lg rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(255,255,255,0.2)] group relative overflow-hidden"
+                    {/* CTA */}
+                    <Link
+                        to="/web#fuel-up-kit"
+                        onClick={() => setIsOpen(false)}
+                        className="block w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-center rounded-xl shadow-lg shadow-blue-900/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
                     >
-                        <span className="relative z-10">Get Your Kit Now</span>
-                        <ArrowRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-200/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                    </button>
+                        Claim Offer Now
+                    </Link>
 
-                    <p className="text-center text-[10px] text-gray-600 mt-5 uppercase tracking-widest font-bold">Limited Payment • No Hidden Fees</p>
+                    <p className="text-center text-[10px] text-gray-600 mt-4">
+                        Limited time offer. Terms & conditions apply.
+                    </p>
                 </div>
             </div>
         </div>
     );
-}
+};
+
+export default FuelUpPopup;

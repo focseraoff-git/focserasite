@@ -180,7 +180,7 @@ const PackageCard = ({ service, onBook, index, addOnsScrollRef, onOpenTerms }) =
                 <p className="text-gray-400 mb-8 leading-relaxed flex-grow text-sm font-sans">{service.description}</p>
                 <div className="mb-6 relative">
                     <div className="inline-block">
-                        <span className="text-2xl font-extrabold text-[#3b82f6]">Get your custom quote</span>
+                        <span className="text-lg md:text-2xl font-extrabold text-[#3b82f6]">Get your custom quote</span>
                     </div>
                     <span className="block text-sm text-gray-500 font-medium mt-1">Contact us to discuss scope & pricing</span>
                 </div>
@@ -249,28 +249,10 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTe
     }, [services, selectedService]);
 
     useEffect(() => {
-        if (!selectedService) return;
-        let newTotal = selectedService.price_min;
-        Object.keys(selectedAddOns).forEach(key => {
-            if (selectedAddOns[key]) {
-                const addOn = addOns.find(a => a.key === key);
-                if (addOn) {
-                    const quantity = addonQuantities[key] || 1;
-                    newTotal += addOn.price_min * quantity;
-                }
-            }
-        });
-        setTotalPrice(newTotal);
+        // Price calculation logic removed
     }, [selectedService, selectedAddOns, addonQuantities, addOns]);
 
-    useEffect(() => {
-        const animation = requestAnimationFrame(() => {
-            const difference = totalPrice - displayPrice;
-            if (Math.abs(difference) < 1) setDisplayPrice(totalPrice);
-            else setDisplayPrice(displayPrice + difference * 0.1);
-        });
-        return () => cancelAnimationFrame(animation);
-    }, [totalPrice, displayPrice]);
+    // Price display animation logic removed
 
     const handleAddOnToggle = (key) => {
         setSelectedAddOns(prev => ({ ...prev, [key]: !prev[key] }));
@@ -315,7 +297,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTe
         }
         if (quoteData.location) contextualNotes += `\nLocation: ${quoteData.location}`;
         if (quoteData.event_end_date) contextualNotes += `\nEnd Date: ${quoteData.event_end_date}`;
-        if (totalPrice) contextualNotes += `\nEstimated Total: Contact for Pricing`;
+        contextualNotes += `\nEstimated Total: Contact for Pricing`;
 
         const combinedDetails = details + contextualNotes;
 
@@ -359,7 +341,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTe
         const customPackage = {
             service: selectedService,
             addOns: selectedAddOns,
-            totalPrice: totalPrice,
+            totalPrice: null,
         };
         // Scroll to the add-ons section first so users can review/adjust add-ons
         // then trigger the booking flow shortly after the scroll animation.
@@ -565,7 +547,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTe
                             <div className="bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl">
                                 <h3 className="text-2xl font-bold mb-6 text-center text-white">Your Custom Package</h3>
                                 <div className="space-y-3 mb-6 border-b border-white/10 pb-4">
-                                    <div className="flex justify-between items-center">
+                                    <div className="flex justify-between items-center text-sm md:text-base">
                                         <p className="font-semibold text-gray-300">{selectedService.name}</p>
                                         <p className="text-gray-400 font-medium">Get your custom quote</p>
                                     </div>

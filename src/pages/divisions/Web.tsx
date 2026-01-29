@@ -10,28 +10,28 @@ const FUEL_UP_ADDONS = {
   core_brand: {
     title: 'Core Brand Modules — Look Legit',
     items: [
-      { id: 'visiting_card_design', name: 'Visiting Card Design (Print-Ready)', price: 499, description: 'Offline trust & credibility' },
-      { id: 'visiting_card_print', name: 'Visiting Card Printing (100 cards)', price: 400, description: 'High-quality print (delivery extra)' },
+      { id: 'visiting_card_design', name: 'Visiting Card Design (Print-Ready)', description: 'Offline trust & credibility' },
+      { id: 'visiting_card_print', name: 'Visiting Card Printing (100 cards)', description: 'High-quality print (delivery extra)' },
     ]
   },
   website_trust: {
     title: 'Website Trust Modules — Build Confidence',
     items: [
-      { id: 'best_sellers', name: 'Best Services / Best Sellers Section', price: 499, description: 'Shows what you are known for' },
-      { id: 'testimonials', name: 'Testimonials Section', price: 499, description: 'Social proof from customers' },
-      { id: 'gallery', name: 'Gallery Section', price: 499, description: 'Real photos of work, food, or space' },
+      { id: 'best_sellers', name: 'Best Services / Best Sellers Section', description: 'Shows what you are known for' },
+      { id: 'testimonials', name: 'Testimonials Section', description: 'Social proof from customers' },
+      { id: 'gallery', name: 'Gallery Section', description: 'Real photos of work, food, or space' },
     ]
   },
   customer_action: {
     title: 'Customer Action Modules — Get Enquiries',
     items: [
-      { id: 'enquiry_form', name: 'Structured Enquiry Form', price: 499, description: 'No missed enquiries' },
+      { id: 'enquiry_form', name: 'Structured Enquiry Form', description: 'No missed enquiries' },
     ]
   },
   order_pickup: {
     title: 'Order & Pickup Module — Only if needed',
     items: [
-      { id: 'order_status', name: 'Order Accept & Pickup Status System', price: 1499, description: 'Accepted → Preparing → Ready' },
+      { id: 'order_status', name: 'Order Accept & Pickup Status System', description: 'Accepted → Preparing → Ready' },
     ]
   }
 };
@@ -44,24 +44,14 @@ const FuelUpKit = () => {
     setSelectedAddons(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const totalPrice = useMemo(() => {
-    let total = basePrice;
-    Object.values(FUEL_UP_ADDONS).forEach(category => {
-      category.items.forEach(item => {
-        if (selectedAddons[item.id]) {
-          total += item.price;
-        }
-      });
-    });
-    return total;
-  }, [selectedAddons]);
+  /* Removed price calculation logic */
 
   const selectedItemsList = useMemo(() => {
     const list = ['Fuel-Up Base Starter'];
     Object.values(FUEL_UP_ADDONS).forEach(category => {
       category.items.forEach(item => {
         if (selectedAddons[item.id]) {
-          list.push(`${item.name} (₹${item.price})`);
+          list.push(`${item.name}`);
         }
       });
     });
@@ -76,7 +66,7 @@ const FuelUpKit = () => {
     const mobile = formData.get('mobile') as string;
     const business = formData.get('business') as string;
 
-    const messageDetails = `Selected Configuration:\n- Base Starter (₹1999)\n${Object.values(FUEL_UP_ADDONS).flatMap(c => c.items.filter(i => selectedAddons[i.id]).map(i => `- ${i.name} (₹${i.price})`)).join('\n')}\n\nTotal Estimate: ₹${totalPrice}`;
+    const messageDetails = `Selected Configuration:\n- Base Starter\n${Object.values(FUEL_UP_ADDONS).flatMap(c => c.items.filter(i => selectedAddons[i.id]).map(i => `- ${i.name}`)).join('\n')}\n\nTotal Estimate: Contact for Pricing`;
 
     const bookingData = {
       name,
@@ -95,7 +85,7 @@ const FuelUpKit = () => {
     }
 
     // Redirect to WhatsApp
-    const whatsappText = `*New Fuel-Up Kit Inquiry* 🚀%0A%0A*Name:* ${name}%0A*Business:* ${business}%0A*Mobile:* ${mobile}%0A%0A*Configuration:*%0A- Base Starter (₹1,999)${Object.values(FUEL_UP_ADDONS).flatMap(c => c.items.filter(i => selectedAddons[i.id]).map(i => `%0A- ${i.name} (₹${i.price})`)).join('')}%0A%0A*Total Estimate:* ₹${totalPrice.toLocaleString('en-IN')}`;
+    const whatsappText = `*New Fuel-Up Kit Inquiry* 🚀%0A%0A*Name:* ${name}%0A*Business:* ${business}%0A*Mobile:* ${mobile}%0A%0A*Configuration:*%0A- Base Starter${Object.values(FUEL_UP_ADDONS).flatMap(c => c.items.filter(i => selectedAddons[i.id]).map(i => `%0A- ${i.name}`)).join('')}%0A%0A*Total Estimate:* Contact for Pricing`;
     window.open(`https://wa.me/919515803954?text=${whatsappText}`, '_blank');
   };
 
@@ -116,7 +106,7 @@ const FuelUpKit = () => {
 
         <p className="text-lg sm:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light animate-fade-in-up delay-200">
           The ultimate starter kit to <span className="text-white font-medium">launch your professional identity</span>. <br className="hidden md:block" />
-          Build your own branding package starting at just <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold border-b border-blue-500/30">₹1,999</span>.
+          Build your own branding package.
         </p>
       </div>
 
@@ -133,7 +123,7 @@ const FuelUpKit = () => {
                 <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">Base Starter Kit</h3>
                 <p className="text-blue-200/60 text-base">The foundation of your digital presence. <strong>Design work only.</strong> <span className="text-xs opacity-60">(Hosting/Domain not included)</span></p>
               </div>
-              <div className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 mt-6 md:mt-0 tracking-tight">₹1,999</div>
+              <div className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 mt-6 md:mt-0 tracking-tight">Standard</div>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-5 relative z-10">
@@ -165,7 +155,7 @@ const FuelUpKit = () => {
                     <div>
                       <h5 className={`font-bold mb-1 group-hover:text-white transition-colors ${selectedAddons[item.id] ? 'text-white' : 'text-gray-300'}`}>{item.name}</h5>
                       <span className="text-xs text-gray-500 group-hover:text-gray-400 block mb-2">{item.description}</span>
-                      <span className="text-xs font-mono text-blue-400 group-hover:text-blue-300">Add for ₹{item.price}</span>
+                      <span className="text-xs font-mono text-blue-400 group-hover:text-blue-300">Select</span>
                     </div>
                     <div className={`w-6 h-6 rounded-full border flex items-center justify-center transition-colors flex-shrink-0 ${selectedAddons[item.id]
                       ? 'bg-blue-500 border-blue-500 text-white'
@@ -189,20 +179,20 @@ const FuelUpKit = () => {
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between items-center text-gray-300 pb-4 border-b border-white/10">
                   <span>Base Starter</span>
-                  <span className="font-mono">₹1,999</span>
+                  <span className="font-mono">Included</span>
                 </div>
                 {Object.values(FUEL_UP_ADDONS).flatMap(c => c.items.filter(i => selectedAddons[i.id])).map(item => (
                   <div key={item.id} className="flex justify-between items-center text-sm text-gray-400">
                     <span className="truncate pr-4">{item.name}</span>
-                    <span className="font-mono whitespace-nowrap">+ ₹{item.price}</span>
+                    <span className="font-mono whitespace-nowrap">+ Selected</span>
                   </div>
                 ))}
               </div>
 
               <div className="flex justify-between items-center mb-8 pt-4 border-t border-white/10">
                 <span className="text-lg font-bold text-white">Total Estimate</span>
-                <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
-                  ₹{totalPrice.toLocaleString('en-IN')}
+                <span className="text-xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+                  Contact Us
                 </span>
               </div>
 
@@ -330,7 +320,7 @@ export default function Web() {
             </h1>
 
             <p className="text-xl sm:text-2xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed">
-              Unlock a cinematic, premium website for just <span className="text-white font-bold border-b-2 border-orange-500">₹999</span>. <br className="hidden sm:block" />
+              Unlock a cinematic, premium website. <br className="hidden sm:block" />
               Limited slots available for visionaries.
             </p>
           </div>
@@ -354,10 +344,10 @@ export default function Web() {
                       </div>
                     </div>
                     <div className="mt-4 sm:mt-0 text-right">
-                      <div className="text-6xl font-black text-white tracking-tighter drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                        ₹999
+                      <div className="text-4xl md:text-6xl font-black text-white tracking-tighter drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                        Premium
                       </div>
-                      <div className="text-sm text-gray-500 line-through font-medium">₹4,999</div>
+                      <div className="text-sm text-gray-500 font-medium">Limited Offer</div>
                     </div>
                   </div>
 
@@ -434,7 +424,7 @@ export default function Web() {
                       }
 
                       // 3. WhatsApp Redirect
-                      const text = `*Sankranthi Premium Offer Booking (₹999)*%0A%0A*Name:* ${name}%0A*Mobile:* ${mobile}%0A*Business:* ${business || 'N/A'}%0A*Message:* ${messageVal || 'I am interested in the ₹999 premium website offer.'}`;
+                      const text = `*Sankranthi Premium Offer Booking (Premium)*%0A%0A*Name:* ${name}%0A*Mobile:* ${mobile}%0A*Business:* ${business || 'N/A'}%0A*Message:* ${messageVal || 'I am interested in the premium website offer.'}`;
 
                       window.open(`https://wa.me/919515803954?text=${text}`, '_blank');
                     }} className="space-y-5 relative z-10">

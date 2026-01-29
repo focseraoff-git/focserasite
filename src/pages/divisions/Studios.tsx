@@ -239,12 +239,8 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
     }, [services, selectedService]);
 
     useEffect(() => {
-        setTotalPrice(0);
+        // Price calculation logic removed
     }, [selectedService, selectedAddOns, addonQuantities, addOns]);
-
-    useEffect(() => {
-        setDisplayPrice(0);
-    }, [totalPrice, displayPrice]);
 
     const handleAddOnToggle = (key) => {
         setSelectedAddOns(prev => ({ ...prev, [key]: !prev[key] }));
@@ -331,9 +327,9 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
         const customPackage = {
             service: selectedService,
             addOns: selectedAddOns,
-            totalPrice: totalPrice,
+            totalPrice: null,
         };
-        onBookNow(customPackage.service, customPackage.addOns, customPackage.totalPrice);
+        onBookNow(customPackage.service, customPackage.addOns);
     };
 
     if (loadError) {
@@ -928,7 +924,7 @@ const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => {
                             <div className="pt-6 border-t border-white/10 mb-6">
                                 <div className="flex justify-between items-center">
                                     <span className="text-lg font-bold font-sans tracking-tight text-white">Total</span>
-                                    <span className="text-xl font-bold text-blue-400">Contact for Pricing</span>
+                                    <span className="text-sm md:text-xl font-bold text-blue-400">Contact for Pricing</span>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-2">*Final price will be confirmed after consultation</p>
                             </div>
@@ -959,7 +955,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
         const bookingData = {
             user_id: session?.user?.id,
             service_id: bookingPackage.service.id,
-            total_price: bookingPackage.totalPrice,
+            total_price: null,
             event_date: clientDetails.event_date,
             event_venue: clientDetails.event_venue,
             client_details: {
@@ -1128,7 +1124,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                             <div className="pt-6 border-t border-white/10">
                                 <div className="flex justify-between items-center">
                                     <span className="text-lg font-bold font-sans tracking-tight text-white">Total</span>
-                                    <span className="text-xl font-bold text-blue-400">
+                                    <span className="text-sm md:text-xl font-bold text-blue-400">
                                         Contact for Pricing
                                     </span>
                                 </div>
@@ -1234,7 +1230,7 @@ const SuccessModal = ({ onClose, bookingPackage }) => {
                                     <span className={`text-2xl font-bold ${isSankranthi ? 'text-red-600' : 'text-blue-400'}`}>3</span>
                                 </div>
                                 <h4 className={`font-bold mb-2 ${isSankranthi ? 'text-gray-900' : 'text-white'}`}>{isSankranthi ? 'Shoot Day' : 'Final Details'}</h4>
-                                <p className={`text-sm ${isSankranthi ? 'text-gray-600' : 'text-gray-400'}`}>{isSankranthi ? 'Enjoy the vibe!' : 'Pricing & schedule'}</p>
+                                <p className={`text-sm ${isSankranthi ? 'text-gray-600' : 'text-gray-400'}`}>{isSankranthi ? 'Enjoy the vibe!' : 'Confirm details'}</p>
                             </div>
                         </div>
 
@@ -1285,8 +1281,6 @@ export default function App() {
                 description: s.description || s.short_description || '',
                 thumbnail: s.thumbnail || s.image_url || `https://placehold.co/600x400/94A3B8/FFFFFF?text=${encodeURIComponent(s.name || 'Service')}`,
                 category: s.category || 'General',
-                price_min: Number(s.price_min || s.price || 0),
-                pricing_mode: s.pricing_mode || 'per event',
                 is_active: !!s.is_active,
                 terms: s.terms || {},
                 default_add_ons: s.default_add_ons || {}
@@ -1296,7 +1290,6 @@ export default function App() {
                 key: a.key || a.name?.toLowerCase().replace(/\s+/g, '_') || String(a.id),
                 label: a.label || a.name || a.key || 'Add-on',
                 description: a.description || '',
-                price_min: Number(a.price_min || a.price || 0),
                 is_active: !!a.is_active
             }));
 
@@ -1376,19 +1369,14 @@ export default function App() {
         window.scrollTo(0, 0);
     };
 
-    const handleBookNow = (service, addOns, price, skipCart = false) => {
+    const handleBookNow = (service, addOns, skipCart = false) => {
         if (!service.is_active) return;
         const addOnsList = addOns || service.default_add_ons;
-        let finalPrice = price;
-
-        if (finalPrice === undefined || finalPrice === null) {
-            finalPrice = 0;
-        }
 
         const packageToBook = {
             service: service,
             addOns: addOnsList,
-            totalPrice: finalPrice,
+            totalPrice: null,
         };
 
         sessionStorage.setItem('focseraBookingPackage', JSON.stringify(packageToBook));
@@ -1530,7 +1518,7 @@ export default function App() {
                 ::-webkit-scrollbar-thumb:hover { background: #b91c1c; }
             `}</style>
 
-            <div className="bg-gray-50 text-gray-800 font-sans antialiased">
+            <div className="bg-gray-50 text-gray-800 font-sans antialiased overflow-x-hidden">
                 {['login', 'cart', 'details'].includes(currentView) && <CheckoutHeader currentStep={currentView} />}
                 {renderContent()}
                 {showSuccess && <SuccessModal onClose={resetToLanding} bookingPackage={bookingPackage} />}

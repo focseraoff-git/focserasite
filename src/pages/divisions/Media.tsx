@@ -101,86 +101,44 @@ const packagesData = [
         standard_price: 25000,
         premium_price: 50000,
         included_services: ["Social Media Marketing", "Running Ads (Meta, Google)", "SEO Optimization"],
-        is_active: true,
+        included_services: ['Brand Film / TVC', '12 Reels/Shorts', 'SEO Blog Strategy'],
+        delivery_time: '30 Days',
+        ideal_for: 'Established Brands'
     },
     {
-        id: 4,
-        name: "Community Connect",
-        description: "Build a loyal following through strategic collaborations, brand tie-ups, and active community engagement.",
-        thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTU5fDB8MHwxfGFsbHx8fHx8fHx8fDE3MzIzMzg5Nzh8&ixlib=rb-4.0.3&q=80&w=600",
-        category: "Community",
-        standard_price: 20000,
-        premium_price: 40000,
-        included_services: ["Collaborations", "Brand Tie-ups", "Community Engagement"],
-        is_active: true,
-    },
-    {
-        id: 5,
-        name: "Growth Intelligence",
-        description: "Make data-driven decisions with in-depth performance analysis, SEO, and strategic content planning.",
-        thumbnail: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTU5fDB8MHwxfGFsbHx8fHx8fHx8fDE3MzIzMzg5Nzh8&ixlib=rb-4.0.3&q=80&w=600",
-        category: "Strategy",
-        standard_price: 25000,
-        premium_price: 50000,
-        included_services: ["Performance Analysis", "SEO Optimization", "Content Planning & Strategy"],
-        is_active: true,
-    },
-
-    {
-        id: 6,
+        id: '4', // This ID matches CREATOR_CHOICE_ID
         name: "Creator's Choice",
-        description: "Don't see a package that fits? Build your own by selecting only the services you need.",
+        description: 'Build your own custom package. Pick exactly what you need.',
         thumbnail: "https://images.unsplash.com/photo-1553877522-c36980345885?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTU5fDB8MHwxfGFsbHx8fHx8fHx8fDE3MzIzMzg5Nzh8&ixlib=rb-4.0.3&q=80&w=600",
-        category: "Custom",
-        standard_price: 0,
-        premium_price: 0,
-        included_services: ["Fully customizable - client selects any combination of services"],
-        is_active: false, // This ensures it's treated as a promo card
+        included_services: ['Custom Selection'],
+        delivery_time: 'Flexible',
+        ideal_for: 'Everyone'
     }
 ];
 
 const CREATOR_BOOST_PACKAGE = {
-    id: 99,
-    name: "CreatorBoost 10X Pack",
-    description: "Focsera Media’s CreatorBoost 10X Pack is designed for influencers, YouTubers, and content creators. This pack provides professional content ready to post, saving time and increasing engagement.",
+    id: 'creator_boost',
+    name: 'CreatorBoost 10X Pack',
+    description: 'The ultimate starter kit for creators. 10 Reels + 10 Posts + Strategy.',
     thumbnail: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-    category: "Limited Offer",
-    standard_price: 999,
-    premium_price: 999, // Single price
-    included_services: [
-        "10 professionally edited reels with captions OR 10 high-CTA thumbnails",
-        "Cinematic cuts and high-quality visuals",
-        "Optimized for social media platforms (Instagram Reels, YouTube Shorts)",
-        "Content planning support",
-        "Caption strategy with CTA",
-        "Brand-consistent visuals",
-        "Platform-optimized formatting",
-        "One revision round included"
-    ],
-    is_active: true,
+    included_services: ['10 High-Retention Reels', '10 Static Posts', 'Growth Strategy', 'Hashtag Research'],
+    delivery_time: '30 Days',
+    ideal_for: 'Creators / Influencers'
 };
 
 // Individual services derived from the "Included Services" list in the doc.
 // This is used for the custom package builder.
 const individualServicesData = [
-    { id: 1, key: 'content_writing', label: 'Content Writing', description: 'Blog posts, articles, and scripts.', price_min: 8000, category: 'Content' },
-    { id: 2, key: 'caption_generation', label: 'Caption Generation', description: 'Engaging captions for social media posts.', price_min: 5000, category: 'Content' },
-    { id: 3, key: 'video_timeline', label: 'Video Timeline', description: 'Strategic planning and timeline creation for video content.', price_min: 6000, category: 'Content' },
-    { id: 4, key: 'thumbnail_design', label: 'Thumbnail Design', description: 'Click-worthy thumbnails for YouTube and other platforms.', price_min: 7000, category: 'Visuals' },
-    { id: 5, key: 'video_editing', label: 'Video Editing', description: 'Professional editing for short or long-form content.', price_min: 12000, category: 'Visuals' },
-    { id: 6, key: 'video_storytelling', label: 'Video Storytelling Assets', description: 'Captions, timelines, and assets for compelling stories.', price_min: 7500, category: 'Visuals' },
-    { id: 7, key: 'smm', label: 'Social Media Marketing', description: 'Managing and growing your social media presence.', price_min: 15000, category: 'Marketing' },
-    { id: 8, key: 'ads', label: 'Running Ads (Meta, Google)', description: 'Full-service ad campaign management.', price_min: 20000, category: 'Marketing' },
-    { id: 9, key: 'seo', label: 'SEO Optimization', description: 'Improve your search engine ranking.', price_min: 18000, category: 'Marketing' },
-    { id: 10, key: 'collabs', label: 'Collaborations', description: 'Identifying and managing creator collaborations.', price_min: 10000, category: 'Community' },
-    { id: 11, key: 'brand_tieups', label: 'Brand Tie-ups', description: 'Securing and managing brand sponsorship deals.', price_min: 15000, category: 'Community' },
-    { id: 12, key: 'community_engagement', label: 'Community Engagement', description: 'Actively managing and engaging with your online community.', price_min: 9000, category: 'Community' },
-    { id: 13, key: 'analysis', label: 'Performance Analysis', description: 'Monthly reports and insights on your content performance.', price_min: 12000, category: 'Strategy' },
-    { id: 14, key: 'strategy', label: 'Content Planning & Strategy', description: 'Long-term content calendar and strategic planning.', price_min: 15000, category: 'Strategy' },
+    { key: 'reels', label: 'Reels / Shorts Production', category: 'Video', description: 'High-retention vertical video editing.' },
+    { key: 'static_posts', label: 'Static Social Media Posts', category: 'Design', description: 'Professional graphics for Instagram/LinkedIn.' },
+    { key: 'seo_blogs', label: 'SEO Blog Writing', category: 'Marketing', description: 'Rank higher on Google with optimized articles.' },
+    { key: 'ad_management', label: 'Ad Campaign Management', category: 'Marketing', description: 'Meta & Google Ads setup and optimization.' },
+    { key: 'brand_film', label: 'Brand Film / TVC', category: 'Video', description: 'Cinematic brand storytelling.' },
+    { key: 'logo_design', label: 'Logo & Brand Identity', category: 'Design', description: 'Complete visual identity design.' },
 ];
 
 // ID used throughout the file to identify the Creator's Choice / Custom package
-const CREATOR_CHOICE_ID = 6;
+const CREATOR_CHOICE_ID = '4';
 
 // --- TERMS & CONDITIONS for Focsera Media ---
 const TERMS_TEXT = `FOCSERA MEDIA – GENERAL TERMS AND CONDITIONS
@@ -424,25 +382,30 @@ const CreatorBoostSection = ({ onBook }) => {
                                 {/* Shine Efx */}
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 blur-[50px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
-                                <div className="flex justify-between items-start mb-8">
-                                    <div className="bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded text-[10px] font-bold text-yellow-500 tracking-wider">
-                                        LIMITED SLOTS
+                                <div className="flex-1 text-center md:text-left relative z-10">
+                                    <div className="inline-block px-3 py-1 bg-yellow-500/20 border border-yellow-500/50 rounded-full text-yellow-300 text-xs font-bold uppercase tracking-wider mb-4 animate-bounce-slow">
+                                        Limited Time Offer
                                     </div>
-                                    <div className="text-right">
-                                        <div className="text-xs text-gray-500 line-through decoration-red-500/50">₹4,999</div>
-                                        <div className="text-green-400 text-xs font-bold">LIMITED OFFER</div>
-                                    </div>
-                                </div>
+                                    <h2 className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tighter leading-none drop-shadow-xl">
+                                        CreatorBoost <br />
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">10X Pack</span>
+                                    </h2>
+                                    <p className="text-xl text-blue-100/80 mb-8 font-light max-w-lg mx-auto md:mx-0">
+                                        Explode your growth with 10 High-Retention Reels + 10 Static Posts + Strategy.
+                                    </p>
 
-                                <div className="mb-8 text-center relative z-10">
-                                    <div className="text-5xl font-black text-white tracking-tighter drop-shadow-lg">
-                                        ₹999
+                                    <div className="flex flex-col sm:flex-row items-center gap-6 mb-8">
+                                        <div className="text-center sm:text-left">
+                                            <div className="text-3xl md:text-5xl font-black text-white tracking-tighter drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                                                Special Offer
+                                            </div>
+                                        </div>
+                                        <div className="hidden sm:block w-px h-16 bg-white/20"></div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-bold text-white border border-white/20">10</div>
+                                            <span className="text-sm text-blue-200">Slots Left</span>
+                                        </div>
                                     </div>
-                                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto my-4"></div>
-                                    <p className="text-gray-400 text-xs uppercase tracking-widest">Monthly Creator Pack</p>
-                                </div>
-
-                                <div className="space-y-3 mb-8">
                                     <h4 className="text-[10px] font-bold text-gray-600 uppercase tracking-widest text-center mb-4">How it works</h4>
                                     <div className="flex items-center gap-3 text-sm text-gray-300">
                                         <span className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-mono text-gray-500">1</span>
@@ -459,7 +422,7 @@ const CreatorBoostSection = ({ onBook }) => {
                                 </div>
 
                                 <button
-                                    onClick={() => onBook(CREATOR_BOOST_PACKAGE, 'standard')}
+                                    onClick={() => onBook(CREATOR_BOOST_PACKAGE)}
                                     className="group relative w-full py-4 bg-white text-black font-bold text-sm tracking-widest uppercase rounded-xl overflow-hidden hover:bg-gray-100 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
@@ -481,12 +444,10 @@ const CreatorBoostSection = ({ onBook }) => {
 };
 
 
-const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onOpenTerms, customEstimatedPrice = 0, customSelectedCount = 0 }) => {
+const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onOpenTerms, customSelectedCount = 0 }) => {
     const cardRef = useRef(null);
-    const [selectedTier, setSelectedTier] = useState('standard'); // 'standard' or 'premium'
 
     const handleMouseMove = (e) => {
-        if (!packageData.is_active) return;
         const { clientX, clientY, currentTarget } = e;
         const { left, top, width, height } = currentTarget.getBoundingClientRect();
         const x = (clientX - left - width / 2) / 25;
@@ -495,12 +456,11 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
     };
 
     const handleMouseLeave = (e) => {
-        if (!packageData.is_active) return;
         e.currentTarget.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale3d(1, 1, 1)';
     };
 
     // Handle the custom "Creator's Choice" card, which acts as a promo for the customizer
-    if (!packageData.is_active) {
+    if (packageData.id === CREATOR_CHOICE_ID) {
         return (
             <div
                 className="group relative bg-white/80 backdrop-blur-sm border-2 border-dashed border-gray-300 rounded-3xl overflow-hidden shadow-xl flex flex-col transition-all duration-500 ease-out hover:shadow-2xl hover:border-blue-500"
@@ -523,13 +483,7 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
                     </button>
                     {/* Dynamic estimated price for Creator's Choice */}
                     <div className="mt-6 w-full text-center">
-                        {customEstimatedPrice > 0 ? (
-                            <>
-                                <div className="text-xl font-black text-gray-900">Contact for Pricing</div>
-                            </>
-                        ) : (
-                            <div className="text-sm text-gray-500">Estimate will appear after you select services below</div>
-                        )}
+                        <div className="text-lg md:text-xl font-black text-gray-900">Contact for Pricing</div>
                         {customSelectedCount > 0 && <div className="text-xs text-gray-600 mt-1">{customSelectedCount} service(s) selected</div>}
                     </div>
 
@@ -541,93 +495,65 @@ const MediaPackageCard = ({ packageData, onBook, index, customizerScrollRef, onO
         );
     }
 
-    const price = selectedTier === 'standard' ? packageData.standard_price : packageData.premium_price;
+    const isPremium = packageData.id === '3'; // Example: 'Brand Authority' is considered premium
 
     return (
         <div
             ref={cardRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className={`group relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col transition-all duration-500 ease-out hover:shadow-[0_20px_60px_-15px_rgba(0,123,255,0.2)] hover:border-blue-500/30`}
+            className={`relative group p-8 rounded-3xl border transition-all duration-500 hover:-translate-y-2 ${isPremium ? 'bg-gradient-to-b from-blue-900/20 to-black border-blue-500/30 shadow-[0_0_30px_rgba(37,99,235,0.15)]' : 'bg-[#111] border-white/5 hover:border-white/20'}`}
             style={{ transitionDelay: `${index * 100}ms` }}
         >
-            <div className="relative overflow-hidden">
-                {/* PREMIUM RIBBON */}
-                {selectedTier === 'premium' && (
-                    <div className="absolute top-4 right-4 z-30">
-                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-yellow-500 via-orange-500 to-red-600 text-white font-black shadow-lg transform rotate-6 border border-white/20">
-                            <span className="text-xs uppercase tracking-wider">Premium</span>
-                        </div>
-                    </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <img src={packageData.thumbnail} alt={packageData.name} className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute top-4 left-4 z-20">
-                    <span className="px-4 py-1.5 bg-black/60 backdrop-blur-md text-xs font-bold text-white rounded-full shadow-lg border border-white/10">{packageData.category}</span>
+            {isPremium && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+                    Best Value
+                </div>
+            )}
+
+            <div className="mb-6">
+                <h3 className="text-2xl font-bold text-white mb-2">{packageData.name}</h3>
+                <p className="text-gray-400 text-sm h-10">{packageData.description}</p>
+            </div>
+
+            <div className="mb-8">
+                <div className="flex items-baseline gap-1">
+                    <span className="text-xl md:text-4xl font-bold text-white tracking-tight">
+                        Contact for Pricing
+                    </span>
+                </div>
+                <div className="mt-2 text-xs font-mono text-gray-500 uppercase tracking-widest">
+                    Customizable
                 </div>
             </div>
-            <div className="p-8 flex flex-col flex-grow bg-gradient-to-b from-[#111] to-[#050505]">
-                <h3 className="text-3xl font-black text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-blue-400 transition-all duration-300 font-sans tracking-tight">{packageData.name}</h3>
-                <p className="text-gray-400 mb-6 leading-relaxed text-sm flex-grow font-sans">{packageData.description}</p>
 
-                <div className="mb-6">
-                    <h4 className="text-sm font-bold text-gray-300 mb-3 flex items-center gap-2"><List className="w-5 h-5 text-blue-500" /> Included Services</h4>
-                    <ul className="space-y-2">
-                        {packageData.included_services.map(service => {
-                            const highlighted = selectedTier === 'premium';
-                            return (
-                                <li key={service} className={`flex items-center gap-3 transition-all ${highlighted ? 'bg-yellow-500/10 border border-yellow-500/30 rounded-md p-2 shadow-sm' : ''}`}>
-                                    <span className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${highlighted ? 'bg-yellow-500/20' : 'bg-green-500/20'}`}>
-                                        <Check className={`${highlighted ? 'text-yellow-400' : 'text-green-400'} w-4 h-4`} strokeWidth={3} />
-                                    </span>
-                                    <span className={`text-sm ${highlighted ? 'text-gray-200 font-semibold' : 'text-gray-400'}`}>{service}</span>
-                                </li>
-                            )
-                        })}
-                    </ul>
-                </div>
+            <div className="mb-6">
+                <h4 className="text-sm font-bold text-gray-300 mb-3 flex items-center gap-2"><List className="w-5 h-5 text-blue-500" /> Included Services</h4>
+                <ul className="space-y-2">
+                    {packageData.included_services.map((service, i) => (
+                        <li key={i} className="flex items-center gap-3">
+                            <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 bg-green-500/20">
+                                <Check className="text-green-400 w-4 h-4" strokeWidth={3} />
+                            </span>
+                            <span className="text-sm text-gray-400">{service}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
 
-                <div className="mt-auto pt-6 border-t border-white/10">
-                    <div className="flex bg-black/40 p-1.5 rounded-2xl mb-6 border border-white/5">
-                        <button
-                            onClick={() => setSelectedTier('standard')}
-                            className={`flex-1 py-3 rounded-xl font-bold text-center transition-all duration-300 ${selectedTier === 'standard' ? 'bg-white/10 text-white shadow-md border border-white/10' : 'text-gray-500 hover:text-gray-300'}`}
-                        >
-                            Standard
-                        </button>
-                        <button
-                            onClick={() => setSelectedTier('premium')}
-                            className={`flex-1 py-3 rounded-xl font-bold text-center transition-all duration-300 ${selectedTier === 'premium' ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30' : 'text-gray-500 hover:text-gray-300'}`}
-                        >
-                            Premium
-                        </button>
-                    </div>
-
-                    {selectedTier === 'premium' && (
-                        <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg text-center">
-                            <p className="text-xs font-semibold text-blue-300">✔ Includes Free Creator Kit! (Assets, VFX, SFX, etc.)</p>
-                        </div>
-                    )}
-
-                    <div className="mb-6">
-                        <span className={`text-3xl font-black ${selectedTier === 'premium' ? 'bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent' : 'text-white'}`}>Contact for Pricing</span>
-                        <p className="text-xs text-gray-600 italic mt-2">Final price will be discussed and negotiated during consultation.</p>
-                    </div>
-
-                    <button
-                        onClick={() => onBook(packageData, selectedTier)}
-                        disabled={!packageData.is_active}
-                        className={`relative w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 disabled:bg-gray-800 disabled:cursor-not-allowed group/btn ${selectedTier === 'premium' ? 'shadow-[0_20px_60px_-15px_rgba(255,165,0,0.15)]' : 'shadow-lg shadow-blue-900/20'}`}
-                    >
-                        <div className={`absolute inset-0 ${selectedTier === 'premium' ? 'bg-gradient-to-r from-yellow-500 via-orange-500 to-red-600' : 'bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600'} bg-[length:200%_100%] group-hover/btn:bg-right transition-all duration-500`}></div>
-                        <span className="relative flex items-center justify-center gap-2">
-                            {selectedTier === 'premium' ? (<><Sparkles className="w-5 h-5 text-white" /> Premium - Book This Package</>) : 'Book This Package'}
-                            <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
-                        </span>
-                    </button>
-                    <div className="mt-3 text-center">
-                        <button type="button" onClick={() => onOpenTerms && onOpenTerms()} className="text-xs text-gray-500 hover:text-white underline transition-colors">View Terms &amp; Conditions</button>
-                    </div>
+            <div className="mt-auto pt-6 border-t border-white/10">
+                <button
+                    onClick={() => onBook(packageData)}
+                    className={`relative w-full py-4 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300 group/btn shadow-lg shadow-blue-900/20`}
+                >
+                    <div className={`absolute inset-0 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_100%] group-hover/btn:bg-right transition-all duration-500`}></div>
+                    <span className="relative flex items-center justify-center gap-2">
+                        Book This Package
+                        <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                    </span>
+                </button>
+                <div className="mt-3 text-center">
+                    <button type="button" onClick={() => onOpenTerms && onOpenTerms()} className="text-xs text-gray-500 hover:text-white underline transition-colors">View Terms &amp; Conditions</button>
                 </div>
             </div>
         </div>
@@ -649,8 +575,8 @@ const CreatorBoostModal = ({ isOpen, onClose }) => {
         // 1. Prepare Data for DB
         const bookingData = {
             user_id: null, // Guest booking
-            package_id: 99, // CREATOR_BOOST_PACKAGE.id
-            total_price: 999,
+            package_id: CREATOR_BOOST_PACKAGE.id,
+            total_price: null, // No price for this offer
             client_details: {
                 name: details.name,
                 email: details.email,
@@ -661,7 +587,7 @@ const CreatorBoostModal = ({ isOpen, onClose }) => {
             },
             package_details: {
                 name: "CreatorBoost 10X Pack",
-                tier: "standard"
+                tier: "special_offer"
             },
             status: 'pending'
         };
@@ -699,14 +625,15 @@ const CreatorBoostModal = ({ isOpen, onClose }) => {
                         Secure Your Spot
                     </h3>
                     <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
-                        <X size={24} />
+                        {/* Assuming X icon is defined elsewhere or using a simple X */}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="col-span-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="col-span-1 sm:col-span-2">
                             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Full Name</label>
                             <input name="name" required type="text" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-yellow-500 focus:outline-none transition-colors" placeholder="John Doe" />
                         </div>
@@ -718,12 +645,12 @@ const CreatorBoostModal = ({ isOpen, onClose }) => {
                             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email</label>
                             <input name="email" required type="email" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-yellow-500 focus:outline-none transition-colors" placeholder="john@example.com" />
                         </div>
-                        <div className="col-span-2">
+                        <div className="col-span-1 sm:col-span-2">
                             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sample Footage / Channel Link</label>
                             <input name="sample_link" required type="url" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-yellow-500 focus:outline-none transition-colors" placeholder="Google Drive / YouTube / Instagram Link" />
                             <p className="text-[10px] text-gray-500 mt-1">Link to raw footage or your current channel.</p>
                         </div>
-                        <div className="col-span-2">
+                        <div className="col-span-1 sm:col-span-2">
                             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Additional Notes (Optional)</label>
                             <textarea name="notes" rows="2" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-yellow-500 focus:outline-none transition-colors" placeholder="Any specific requirements?"></textarea>
                         </div>
@@ -748,8 +675,6 @@ const CreatorBoostModal = ({ isOpen, onClose }) => {
 // --- MAIN PAGE COMPONENT ---
 const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRetry }) => {
     const [selectedServices, setSelectedServices] = useState({});
-    const [totalPrice, setTotalPrice] = useState(0);
-    const [displayPrice, setDisplayPrice] = useState(0);
     const [showFancyModal, setShowFancyModal] = useState(false);
     const [fancyModalContent, setFancyModalContent] = useState(null);
     const [showTerms, setShowTerms] = useState(false);
@@ -762,28 +687,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
     const [quoteSectionRef, quoteIsVisible] = useIntersectionObserver({ threshold: 0.1 });
     const customizerScrollRef = useRef(null);
 
-
-    useEffect(() => {
-        let newTotal = 0;
-        Object.keys(selectedServices).forEach(key => {
-            if (selectedServices[key]) {
-                const service = individualServices.find(a => a.key === key);
-                if (service) {
-                    newTotal += service.price_min;
-                }
-            }
-        });
-        setTotalPrice(newTotal);
-    }, [selectedServices, individualServices]);
-
-    useEffect(() => {
-        const animation = requestAnimationFrame(() => {
-            const difference = totalPrice - displayPrice;
-            if (Math.abs(difference) < 1) setDisplayPrice(totalPrice);
-            else setDisplayPrice(displayPrice + difference * 0.1);
-        });
-        return () => cancelAnimationFrame(animation);
-    }, [totalPrice, displayPrice]);
+    const selectedServiceCount = Object.entries(selectedServices).filter(([_, v]) => v).length;
 
     const handleServiceToggle = (key) => {
         setSelectedServices(prev => ({ ...prev, [key]: !prev[key] }));
@@ -809,7 +713,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
         if (selectedServiceKeys.length) {
             contextualNotes += `\n\nInterested Services: ${selectedServiceKeys.join(', ')}`;
         }
-        if (totalPrice) contextualNotes += `\nEstimated Total: ${totalPrice}`;
+        contextualNotes += `\nEstimated Total: Contact for Pricing`;
 
         const combinedDetails = details + contextualNotes;
 
@@ -847,14 +751,14 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
     };
 
     const handleCustomBooking = () => {
-        if (totalPrice === 0) {
+        if (selectedServiceCount === 0) {
             alert("Please select at least one service to build a custom package.");
             return;
         }
         // Find the 'Creator's Choice' package from the main data source to use as a template.
         // Be defensive: Supabase may return ids as strings, or the package may be missing from remote data.
-        const customPackageTemplate = (packages || []).find(p => Number(p?.id) === CREATOR_CHOICE_ID)
-            || packagesData.find(p => Number(p?.id) === CREATOR_CHOICE_ID);
+        const customPackageTemplate = (packages || []).find(p => p?.id === CREATOR_CHOICE_ID)
+            || packagesData.find(p => p?.id === CREATOR_CHOICE_ID);
 
         if (!customPackageTemplate) {
             console.error("Creator's Choice package template not found.");
@@ -869,7 +773,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
             return;
         }
 
-        onBookNow(customPackageTemplate, selectedServices, totalPrice);
+        onBookNow(customPackageTemplate, selectedServices);
     };
 
     if (loadError) {
@@ -964,7 +868,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                     {/* Creator's Choice promo card — scrolls to customizer and shows live estimate */}
                     <div className="max-w-2xl mx-auto mb-6">
                         {(() => {
-                            const cc = (packages || []).find(p => Number(p.id) === CREATOR_CHOICE_ID) || packagesData.find(p => Number(p.id) === CREATOR_CHOICE_ID);
+                            const cc = (packages || []).find(p => p.id === CREATOR_CHOICE_ID) || packagesData.find(p => p.id === CREATOR_CHOICE_ID);
                             if (cc) {
                                 return (
                                     <MediaPackageCard
@@ -973,8 +877,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                                         onOpenTerms={() => setShowTerms(true)}
                                         index={-1}
                                         customizerScrollRef={customizerScrollRef}
-                                        customEstimatedPrice={displayPrice}
-                                        customSelectedCount={Object.entries(selectedServices).filter(([_, v]) => v).length}
+                                        customSelectedCount={selectedServiceCount}
                                     />
                                 );
                             }
@@ -983,7 +886,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
-                        {packages.filter(Boolean).filter(p => Number(p.id) !== CREATOR_CHOICE_ID).map((pkg, index) => (
+                        {packages.filter(Boolean).filter(p => p.id !== CREATOR_CHOICE_ID).map((pkg, index) => (
                             <MediaPackageCard
                                 key={pkg?.id ?? index}
                                 packageData={pkg}
@@ -1050,17 +953,16 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
                             <div className="bg-[#111] backdrop-blur-lg p-8 rounded-3xl border-2 border-blue-900/30 shadow-2xl ring-1 ring-white/5">
                                 <h3 className="text-2xl font-bold mb-6 text-center text-white">Your Custom Package</h3>
                                 <div className="space-y-3 mb-6 border-b border-white/10 pb-4 min-h-[100px]">
-                                    {Object.entries(selectedServices).filter(([_, value]) => value).length === 0 && (
+                                    {selectedServiceCount === 0 && (
                                         <p className="text-sm text-gray-600 text-center py-6 italic">Select services to see your total.</p>
                                     )}
 
                                     {Object.entries(selectedServices).filter(([_, value]) => value).map(([key]) => {
                                         const service = individualServices.find(a => a.key === key);
-                                        const isPremiumMode = displayPrice > 0 && displayPrice >= 20000;
                                         return service ? (
-                                            <div key={key} className={`flex justify-between items-center text-sm transition-all ${isPremiumMode ? 'bg-yellow-900/10 border border-yellow-500/20 rounded-md p-2 shadow-sm' : ''}`}>
-                                                <p className={`${isPremiumMode ? 'text-gray-200 font-semibold' : 'text-gray-400'}`}>{service.label}</p>
-                                                <p className={`${isPremiumMode ? 'text-yellow-500 font-bold' : 'text-gray-500 font-medium'}`}>Included</p>
+                                            <div key={key} className={`flex justify-between items-center text-sm transition-all`}>
+                                                <p className={`text-gray-200 font-semibold`}>{service.label}</p>
+                                                <p className={`text-gray-500 font-medium`}>Included</p>
                                             </div>
                                         ) : null;
                                     })}
@@ -1334,15 +1236,12 @@ const LoginPage = ({ onLogin, onBack }) => {
 
 const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => {
     const isCustom = bookingPackage.package.id === CREATOR_CHOICE_ID;
-    const basePrice = bookingPackage.tier === 'premium' ? bookingPackage.package.premium_price : bookingPackage.package.standard_price;
     const services = isCustom
         ? Object.entries(bookingPackage.selectedServices).filter(([_, v]) => v).map(([key]) => {
             const s = individualServices.find(a => a.key === key);
-            return s ? { name: s.label, price: s.price_min } : null;
+            return s ? { name: s.label } : null;
         }).filter(Boolean)
-        : bookingPackage.package.included_services.map(s => ({ name: s, price: 0 }));
-
-    const totalPrice = isCustom ? bookingPackage.customTotal : basePrice;
+        : bookingPackage.package.included_services.map(s => ({ name: s }));
 
     return (
         <div className="min-h-screen pt-32 pb-16 px-4 bg-[#050505]">
@@ -1376,7 +1275,7 @@ const CartPage = ({ bookingPackage, onProceed, onBack, individualServices }) => 
                                             {services.map((s, i) => (
                                                 <li key={i} className="flex justify-between text-sm text-gray-400 py-1 border-b border-white/5 last:border-0">
                                                     <span className="flex items-center gap-2"><Check size={14} className="text-green-500" /> {s.name}</span>
-                                                    {s.price > 0 && <span className="font-medium text-gray-300">Included</span>}
+                                                    <span className="font-medium text-gray-300">Included</span>
                                                 </li>
                                             ))}
                                         </ul>
