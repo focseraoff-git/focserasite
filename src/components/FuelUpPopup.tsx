@@ -73,17 +73,16 @@ const FuelUpPopup = () => {
                         ))}
                     </div>
 
-                    {/* Pricing Block */}
+                    {/* Pricing Block - Hidden for Generic Offer */}
                     <div className="flex items-end justify-center gap-4 mb-8">
                         <div className="text-center">
-                            <span className="block text-gray-500 text-xs font-semibold line-through">₹4,999</span>
                             <span className="block text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]">
-                                ₹1,999
+                                Special Offer
                             </span>
                         </div>
                         <div className="pb-2">
                             <span className="px-2 py-1 bg-green-500/20 text-green-400 text-[10px] font-bold uppercase rounded border border-green-500/30">
-                                Launch Offer
+                                Launch
                             </span>
                         </div>
                     </div>
