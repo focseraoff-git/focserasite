@@ -99,7 +99,7 @@ export default function HomeCarousel() {
 
     return (
         <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="relative h-[500px] sm:h-[600px] w-full overflow-hidden rounded-[2.5rem] shadow-2xl group">
+            <div className="relative h-[450px] sm:h-[600px] w-full overflow-hidden rounded-[1.5rem] sm:rounded-[2.5rem] shadow-2xl group">
 
                 {/* Slides */}
                 {slides.map((slide, index) => (
@@ -117,25 +117,25 @@ export default function HomeCarousel() {
                         </div>
 
                         {/* Content Container */}
-                        <div className="relative z-10 h-full flex flex-col justify-center items-start px-8 sm:px-16 md:px-24 max-w-4xl">
+                        <div className="relative z-10 h-full flex flex-col justify-center items-start px-6 sm:px-16 md:px-24 max-w-4xl pt-8 sm:pt-0">
 
-                            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/10 ${slide.accentColor} font-bold text-sm mb-6 backdrop-blur-md animate-fade-in-up`}>
-                                <slide.icon size={16} /> {slide.title}
+                            <div className={`inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/10 border border-white/10 ${slide.accentColor} font-bold text-xs sm:text-sm mb-4 sm:mb-6 backdrop-blur-md animate-fade-in-up`}>
+                                <slide.icon size={14} className="sm:w-4 sm:h-4" /> {slide.title}
                             </div>
 
-                            <h2 className="text-5xl sm:text-7xl font-black text-white mb-6 tracking-tight leading-none animate-fade-in-up delay-100">
+                            <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-white mb-4 sm:mb-6 tracking-tight leading-tight sm:leading-none animate-fade-in-up delay-100">
                                 {slide.subtitle}
                             </h2>
 
-                            <p className="text-lg sm:text-xl text-gray-300 mb-10 max-w-2xl leading-relaxed animate-fade-in-up delay-200">
+                            <p className="text-sm sm:text-xl text-gray-300 mb-6 sm:mb-10 max-w-2xl leading-relaxed animate-fade-in-up delay-200 line-clamp-3 sm:line-clamp-none">
                                 {slide.description}
                             </p>
 
                             <button
                                 onClick={() => handleLink(slide.link)}
-                                className={`px-8 py-4 ${slide.buttonColor} text-white rounded-xl font-bold text-lg flex items-center gap-3 transition-all hover:scale-105 hover:shadow-lg animate-fade-in-up delay-300`}
+                                className={`px-6 py-3 sm:px-8 sm:py-4 ${slide.buttonColor} text-white rounded-xl font-bold text-sm sm:text-lg flex items-center gap-2 sm:gap-3 transition-all hover:scale-105 hover:shadow-lg animate-fade-in-up delay-300`}
                             >
-                                Explore Now <ArrowRight size={20} />
+                                Explore Now <ArrowRight size={18} className="sm:w-5 sm:h-5" />
                             </button>
                         </div>
                     </div>
