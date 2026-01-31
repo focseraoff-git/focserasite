@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import FancyModal from '../../components/FancyModal';
+import FebInFramesSection from '../../components/FebCampaign/FebInFramesSection';
 
 
 // --- ICONS (using inline SVGs for self-containment) ---
@@ -355,44 +356,47 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
     return (
         <>
             <section className="relative py-32 bg-[#020202] overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#020202] to-[#020202]"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-pink-900/20 via-[#020202] to-[#020202]"></div>
 
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                    <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] animate-pulse"></div>
-                    <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+                    <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-pink-500/10 rounded-full blur-[100px] animate-pulse"></div>
+                    <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-rose-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
                     <div className="w-40 h-40 bg-white/5 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(59,130,246,0.3)] border-4 border-white/10 p-4 animate-bounce-slow">
                         <img src="/images/logos/FocseraStudios.jpg" alt="Focsera Studios" className="w-full h-full object-contain rounded-full" />
                     </div>
-                    <h1 className="text-4xl sm:text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 mb-6 drop-shadow-sm tracking-tight font-sans">
+                    <h1 className="text-4xl sm:text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-200 to-rose-300 mb-6 drop-shadow-sm tracking-tight font-sans">
                         FOCSERA STUDIOS
                     </h1>
                     <p className="text-xl md:text-3xl text-slate-400 max-w-3xl mx-auto mb-8 font-light tracking-wide font-sans italic">
                         "Capturing the Essence of Your Moments"
                     </p>
-                    <div className="w-32 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto mb-8"></div>
+                    <div className="w-32 h-1 bg-gradient-to-r from-transparent via-pink-500 to-transparent mx-auto mb-8"></div>
                     <p className="text-lg text-slate-500 max-w-2xl mx-auto font-sans leading-relaxed">
                         Premium Photography & Videography Services for your most cherished moments.
                     </p>
                 </div>
             </section>
 
+            {/* --- Feb in Frames Campaign --- */}
+            <FebInFramesSection />
+
             <section className="py-16 bg-[#050505] border-b border-white/5 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-pink-500/50 to-transparent"></div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
                         <div className="text-center p-8 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-300 group">
-                            <div className="w-24 h-24 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <Camera className="text-blue-400" size={40} />
+                            <div className="w-24 h-24 bg-pink-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <Camera className="text-pink-400" size={40} />
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-3 font-sans">Photography Services</h3>
                             <p className="text-gray-400 text-lg">Professional photography for weddings, portraits, fashion, and commercial projects</p>
                         </div>
                         <div className="text-center p-8 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 hover:shadow-2xl hover:shadow-cyan-900/20 transition-all duration-300 group">
-                            <div className="w-24 h-24 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                            <div className="w-24 h-24 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-rose-400"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-3 font-sans">Videography Services</h3>
                             <p className="text-gray-400 text-lg">Cinematic video production for events, commercials, and promotional content</p>
@@ -547,19 +551,19 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                     </p>
                     <form onSubmit={handleQuoteSubmit} className="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl text-left max-w-3xl mx-auto space-y-6 relative z-10 hover:shadow-blue-900/10 transition-shadow duration-500">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="John Doe" required /></div>
-                            <div><label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="you@example.com" required /></div>
-                            <div><label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="+91 12345 67890" /></div>
+                            <div><label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">Full Name</label><input type="text" id="name" name="name" className="w-full input-field !bg-black/40 !border-white/10 !text-white placeholder:text-gray-600 focus:!border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="John Doe" required /></div>
+                            <div><label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">Email Address</label><input type="email" id="email" name="email" className="w-full input-field !bg-black/40 !border-white/10 !text-white placeholder:text-gray-600 focus:!border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="you@example.com" required /></div>
+                            <div><label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-2">Phone Number</label><input type="tel" id="phone" name="phone" className="w-full input-field !bg-black/40 !border-white/10 !text-white placeholder:text-gray-600 focus:!border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="+91 12345 67890" /></div>
                             <div>
                                 <label htmlFor="event_date" className="block text-sm font-medium text-gray-400 mb-2">Event Start Date</label>
-                                <input type="date" id="event_date" name="event_date" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 icon-invert" />
+                                <input type="date" id="event_date" name="event_date" className="w-full input-field !bg-black/40 !border-white/10 !text-white placeholder:text-gray-600 focus:!border-blue-500 focus:ring-1 focus:ring-blue-500 icon-invert" />
                             </div>
                         </div>
                         <div>
                             <label htmlFor="event_end_date" className="block text-sm font-medium text-gray-400 mb-2">Event End Date (Optional - for multi-day events)</label>
-                            <input type="date" id="event_end_date" name="event_end_date" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 icon-invert" />
+                            <input type="date" id="event_end_date" name="event_end_date" className="w-full input-field !bg-black/40 !border-white/10 !text-white placeholder:text-gray-600 focus:!border-blue-500 focus:ring-1 focus:ring-blue-500 icon-invert" />
                         </div>
-                        <div><label htmlFor="details" className="block text-sm font-medium text-gray-400 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Please include as many details as possible: location, number of guests, duration, specific shots you need, etc." required></textarea></div>
+                        <div><label htmlFor="details" className="block text-sm font-medium text-gray-400 mb-2">Tell us about your project</label><textarea id="details" name="details" rows="5" className="w-full input-field !bg-black/40 !border-white/10 !text-white placeholder:text-gray-600 focus:!border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Please include as many details as possible: location, number of guests, duration, specific shots you need, etc." required></textarea></div>
                         <button type="submit" className="button-primary w-full shadow-lg shadow-blue-900/20">Get a Custom Quote <ArrowRight className="button-primary-icon" /></button>
                     </form>
                 </div>

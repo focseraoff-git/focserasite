@@ -1,10 +1,12 @@
 // @ts-ignore
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Camera, Megaphone, PartyPopper, Globe, Package, GraduationCap, ArrowRight, Sparkles } from 'lucide-react';
+import { Camera, Megaphone, PartyPopper, Globe, Package, GraduationCap, ArrowRight, Sparkles, Armchair, Clapperboard, Calendar } from 'lucide-react';
 
 import FuelUpPopup from '../components/FuelUpPopup';
 import HomeCarousel from '../components/HomeCarousel';
+
+import FebHeroRibbon from '../components/FebCampaign/FebHeroRibbon';
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
@@ -26,17 +28,24 @@ export default function Home() {
       gradient: 'from-blue-500 to-cyan-500'
     },
     {
-      icon: Megaphone,
+      icon: Clapperboard,
       name: 'Focsera Media',
       path: '/media',
-      description: 'Content strategy, social media marketing, and influencer campaigns to maximize engagement.',
-      gradient: 'from-[#0052CC] to-blue-600'
+      description: 'Full-service media production house. From concept to post-production, we bring stories to life.',
+      gradient: 'from-indigo-500 to-blue-600'
     },
     {
-      icon: PartyPopper,
+      icon: Armchair,
+      name: 'Focsera Interiors',
+      path: '/interiors',
+      description: 'Transforming spaces into living masterpieces. Bespoke interior design solutions for your dream home.',
+      gradient: 'from-[#0066FF] to-blue-600'
+    },
+    {
+      icon: Calendar,
       name: 'Focsera Events',
       path: '/events',
-      description: 'Corporate, private, and campus events designed to create memorable experiences.',
+      description: 'Creating unforgettable experiences. Corporate events, weddings, and parties managed with precision.',
       gradient: 'from-blue-600 to-[#0066FF]'
     },
     {
@@ -53,17 +62,11 @@ export default function Home() {
       description: 'End-to-end product solutions from design and modeling to marketing and sales support.',
       gradient: 'from-cyan-500 to-[#0052CC]'
     },
-    {
-      icon: GraduationCap,
-      name: 'Focsera Skill',
-      path: '/divisions/skill/dashboard',
-      description: 'Professional training in creative and digital technologies to empower the next generation.',
-      gradient: 'from-blue-500 to-[#0052CC]'
-    }
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-[#ECECEC]">
+      <FebHeroRibbon />
       <FuelUpPopup />
       <style>{` 
       /* PromptX CTA shimmer effect */
@@ -127,22 +130,22 @@ export default function Home() {
             </Link>
 
             {/* 2. NEW PromptX Button */}
-            <Link
+            {/* <Link
               to="/promptx"
               className="group px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-cyan-500/40 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base hover:-translate-y-0.5"
             >
               <Sparkles size={18} className="group-hover:rotate-12 transition-transform" />
               <span>PromptX</span>
-            </Link>
+            </Link> */}
 
             {/* 4. ArenaX Button */}
-            <Link
+            {/* <Link
               to="/arenax"
               className="group px-6 py-3 sm:px-8 sm:py-4 glass-effect border border-white/30 text-white rounded-full font-semibold hover:bg-white hover:text-[#0052CC] transition-all duration-300 promptx-cta text-sm sm:text-base hover:-translate-y-0.5"
             >
               <span className="relative z-10">ArenaX</span>
               <div className="promptx-shimmer" aria-hidden></div>
-            </Link>
+            </Link> */}
 
           </div>
           {/* --- END BUTTON GROUP --- */}

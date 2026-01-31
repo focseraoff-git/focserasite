@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, ArrowRight, Sparkles, Rocket, Camera, Utensils, GraduationCap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight, Sparkles, Rocket, Camera, Utensils, GraduationCap, Armchair } from 'lucide-react';
 
 const slides = [
     {
@@ -48,15 +48,15 @@ const slides = [
         link: '/product-services'
     },
     {
-        id: 'skill-verse',
-        title: 'Skill Verse',
-        subtitle: 'Future-Ready Learning',
-        description: 'Master in-demand creative and digital skills. Join a community of learners and distinct creators.',
-        bgClass: 'bg-gradient-to-br from-indigo-900 via-black to-blue-900',
-        accentColor: 'text-indigo-400',
-        buttonColor: 'bg-indigo-500 hover:bg-indigo-400',
-        icon: GraduationCap,
-        link: '/divisions/skill/dashboard'
+        id: 'interiors',
+        title: 'Focsera Interiors',
+        subtitle: 'Redefine Your Space',
+        description: 'Transforming residential and commercial spaces with bespoke interior design solutions.',
+        bgClass: 'bg-gradient-to-br from-orange-900 via-black to-amber-900',
+        accentColor: 'text-orange-400',
+        buttonColor: 'bg-orange-500 hover:bg-orange-400',
+        icon: Armchair,
+        link: '/interiors'
     }
 ];
 

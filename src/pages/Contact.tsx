@@ -109,7 +109,7 @@ export default function Contact() {
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Call Us</h3>
                   <p className="text-gray-600">+91 9515803954</p>
-                 
+
                 </div>
               </div>
 
@@ -156,7 +156,7 @@ export default function Contact() {
                   <option>Focsera Events</option>
                   <option>Focsera Web</option>
                   <option>Focsera Product Services</option>
-                  <option>Focsera Skill</option>
+                  <option>Focsera Interiors</option>
                 </select>
               </div>
               <div>

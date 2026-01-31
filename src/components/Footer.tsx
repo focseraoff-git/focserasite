@@ -9,7 +9,7 @@ const divisions = [
   { name: 'Events', path: '/events' },
   { name: 'Web', path: '/web' },
   { name: 'Product Services', path: '/product-services' },
-  { name: 'Skill', path: '/divisions/skill/dashboard' },
+  { name: 'Interiors', path: '/interiors' },
 ];
 
 const companyLinks = [
@@ -32,8 +32,8 @@ interface FooterLinkProps {
 }
 const FooterLink: FC<FooterLinkProps> = ({ to, children }) => (
   <li>
-    <Link 
-      to={to} 
+    <Link
+      to={to}
       className="text-gray-400 hover:text-[#0052CC] transition-all duration-300 font-light hover:-translate-y-px block"
     >
       {children}
@@ -91,8 +91,8 @@ const Footer: FC = () => {
             <ul className="space-y-3 text-sm">
               {socialLinks.map((social) => (
                 <li key={social.name}>
-                  <a 
-                    href={social.href} 
+                  <a
+                    href={social.href}
                     className="flex items-center gap-2 text-gray-400 hover:text-[#0052CC] transition-all duration-300 font-light hover:-translate-y-px"
                   >
                     <social.icon size={16} />

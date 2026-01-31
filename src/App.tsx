@@ -12,8 +12,7 @@ const Media = React.lazy(() => import('./pages/divisions/Media'));
 const Events = React.lazy(() => import('./pages/divisions/Events'));
 const Web = React.lazy(() => import('./pages/divisions/Web'));
 const ProductServices = React.lazy(() => import('./pages/divisions/ProductServices'));
-const SkillVerse = React.lazy(() => import('./pages/divisions/SkillVerse'));
-const SkillApp = React.lazy(() => import("./pages/divisions/Skill/App"));
+const Interiors = React.lazy(() => import('./pages/divisions/Interiors'));
 
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -35,8 +34,6 @@ function AppInner() {
   const location = useLocation();
 
   const hideLayoutOn = [
-    "/divisions/skill",
-    "/divisions/skill/",
     "/arenax",
     "/arenax/",
   ];
@@ -76,7 +73,7 @@ function AppInner() {
           <Route path="/events" element={<Events />} />
           <Route path="/web" element={<Web />} />
           <Route path="/product-services" element={<ProductServices />} />
-          <Route path="/skill-verse" element={<SkillVerse />} />
+
           <Route path="/journey" element={<Journey />} />
           <Route path="/promptx" element={<PromptX />} />
           <Route path="/ai-workshop" element={<PromptX />} />
@@ -94,8 +91,7 @@ function AppInner() {
           <Route path="/arenax/*" element={<ArenaXAppRoutes />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
 
-          {/* Skill App */}
-          <Route path="/divisions/skill/*" element={<SkillApp />} />
+          <Route path="/interiors" element={<Interiors />} />
         </Routes>
       </Suspense>
 

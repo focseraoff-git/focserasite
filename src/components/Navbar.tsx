@@ -5,7 +5,7 @@ import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ✅ FIXED: Using the standard 'supabase' client so it matches your Login page
-import { supabase } from "../lib/supabase"; 
+import { supabase } from "../lib/supabase";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -22,10 +22,10 @@ const Navbar = () => {
   const divisions = [
     { name: "Studios", path: "/studios" },
     { name: "Media", path: "/media" },
+    { name: "Interiors", path: "/interiors" },
     { name: "Events", path: "/events" },
     { name: "Web", path: "/web" },
     { name: "Product Services", path: "/product-services" },
-    { name: "Skill", path: "/divisions/skill/dashboard" },
   ];
 
   const mainMenu = [
@@ -71,9 +71,9 @@ const Navbar = () => {
       const navRect = navRef.current.getBoundingClientRect();
       const centerX = navRect.left + navRect.width / 2;
       const centerY = navRect.top + navRect.height / 2;
-      
+
       const elementBehind = document.elementFromPoint(centerX, centerY + 100);
-      
+
       if (elementBehind) {
         const bgColor = window.getComputedStyle(elementBehind).backgroundColor;
         const rgb = bgColor.match(/\d+/g);
@@ -201,22 +201,15 @@ const Navbar = () => {
             <Link
               key={item.label}
               to={item.path!}
-              className={`text-sm font-semibold px-4 py-2 rounded-full ${
-                isActive(item.path!) ? `${activeTextColor} ${activeBg}` : `${textColor} ${hoverTextColor}`
-              }`}
+              className={`text-sm font-semibold px-4 py-2 rounded-full ${isActive(item.path!) ? `${activeTextColor} ${activeBg}` : `${textColor} ${hoverTextColor}`
+                }`}
             >
               {item.label}
             </Link>
           )
         )}
 
-        {/* Skill Portal CTA */}
-        <Link
-          to="/divisions/skill/dashboard"
-          className="ml-3 px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-semibold shadow-md hover:scale-105 transition-transform duration-300"
-        >
-          SkillPortal
-        </Link>
+
 
         {/* ACCOUNT BUTTON */}
         <Link
@@ -294,14 +287,7 @@ const Navbar = () => {
               )
             )}
 
-            {/* Mobile Skill CTA */}
-            <Link
-              to="/divisions/skill/dashboard"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block mt-3 text-center py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-semibold"
-            >
-              Skill Portal
-            </Link>
+
 
             <div className={`mt-3 pt-3 border-t ${isDarkBackground ? "border-slate-700" : "border-slate-200"}`}>
               <Link
