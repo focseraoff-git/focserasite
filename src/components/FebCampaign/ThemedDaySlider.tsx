@@ -46,7 +46,7 @@ const ThemedDaySlider = ({ onSelectTheme }: { onSelectTheme: (theme: string) => 
                         </div>
 
                         <button
-                            className="mt-2 w-full text-sm font-bold text-white bg-gradient-to-r from-pink-600 to-rose-600 py-3 px-4 rounded-xl shadow-lg shadow-pink-900/20 hover:shadow-pink-500/40 transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
+                            className="mt-2 w-full text-sm font-bold text-white bg-gradient-to-r from-pink-600 to-rose-600 py-3 px-4 rounded-xl shadow-lg shadow-pink-900/20 hover:shadow-pink-500/40 transition-all duration-300"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onSelectTheme(`${day.name} (${day.date})`);

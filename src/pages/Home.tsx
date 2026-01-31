@@ -81,11 +81,11 @@ export default function Home() {
         {/* Festive Overlay */}
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <div
-            className="absolute top-1/4 left-1/4 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse"
+            className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse"
             style={{ transform: `translateY(${scrollY * 0.3}px)` }}
           ></div>
           <div
-            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#ECECEC] rounded-full mix-blend-overlay filter blur-3xl animate-pulse"
+            className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-[#ECECEC] rounded-full mix-blend-overlay filter blur-3xl animate-pulse"
             style={{ transform: `translateY(${scrollY * 0.2}px)` }}
           ></div>
         </div>
@@ -108,7 +108,7 @@ export default function Home() {
               Welcome to the Future of Creativity
             </div>
           </div>
-          <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black text-white mb-6 animate-fade-in leading-tight tracking-tight">
+          <h1 className="text-3xl sm:text-6xl lg:text-8xl font-black text-white mb-6 animate-fade-in leading-tight tracking-tight">
             Focus. Create.<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-blue-200 drop-shadow-sm">Celebrate.</span>
           </h1>
@@ -246,20 +246,20 @@ export default function Home() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="glass-effect rounded-3xl p-8 sm:p-10 text-center group hover:bg-white/20 transition-all duration-300">
-              <div className="text-5xl sm:text-6xl font-bold text-white mb-3 sm:mb-4 group-hover:scale-110 transition-transform">6</div>
+            <div className="glass-effect rounded-3xl p-6 sm:p-10 text-center group hover:bg-white/20 transition-all duration-300">
+              <div className="text-4xl sm:text-6xl font-bold text-white mb-3 sm:mb-4 group-hover:scale-110 transition-transform">6</div>
               <div className="text-xl sm:text-2xl font-semibold text-white mb-2 sm:mb-3">Specialized Divisions</div>
               <div className="text-white/80 font-light text-sm sm:text-base">Comprehensive creative and digital solutions</div>
             </div>
 
-            <div className="glass-effect rounded-3xl p-8 sm:p-10 text-center group hover:bg-white/20 transition-all duration-300">
-              <div className="text-5xl sm:text-6xl font-bold text-white mb-3 sm:mb-4 group-hover:scale-110 transition-transform">∞</div>
+            <div className="glass-effect rounded-3xl p-6 sm:p-10 text-center group hover:bg-white/20 transition-all duration-300">
+              <div className="text-4xl sm:text-6xl font-bold text-white mb-3 sm:mb-4 group-hover:scale-110 transition-transform">∞</div>
               <div className="text-xl sm:text-2xl font-semibold text-white mb-2 sm:mb-3">Endless Possibilities</div>
               <div className="text-white/80 font-light text-sm sm:text-base">Unlimited creative potential</div>
             </div>
 
-            <div className="glass-effect rounded-3xl p-8 sm:p-10 text-center group hover:bg-white/20 transition-all duration-300">
-              <div className="text-5xl sm:text-6xl font-bold text-white mb-3 sm:mb-4 group-hover:scale-110 transition-transform">1</div>
+            <div className="glass-effect rounded-3xl p-6 sm:p-10 text-center group hover:bg-white/20 transition-all duration-300">
+              <div className="text-4xl sm:text-6xl font-bold text-white mb-3 sm:mb-4 group-hover:scale-110 transition-transform">1</div>
               <div className="text-xl sm:text-2xl font-semibold text-white mb-2 sm:mb-3">Unified Vision</div>
               <div className="text-white/80 font-light text-sm sm:text-base">Global excellence in creativity</div>
             </div>

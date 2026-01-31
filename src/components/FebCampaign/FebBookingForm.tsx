@@ -167,7 +167,7 @@ export function FebBookingForm({ selectedTheme, onClearTheme }: FebBookingFormPr
     }
 
     return (
-        <div className="bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden group">
+        <div className="bg-[#0A0A0A] border border-white/5 rounded-[2rem] p-6 md:p-12 shadow-2xl relative overflow-hidden group">
             {/* AI/Cosmic Background Effects */}
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
             <div className="absolute -top-20 -right-20 w-80 h-80 bg-pink-600/20 rounded-full blur-[100px] group-hover:bg-pink-600/30 transition-all duration-1000"></div>

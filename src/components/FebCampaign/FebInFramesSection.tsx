@@ -12,8 +12,8 @@ const FebInFramesSection = () => {
             {/* Background Ambience */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-pink-500/50 to-transparent"></div>
-                <div className="absolute top-20 left-10 w-96 h-96 bg-pink-900/20 rounded-full blur-[100px]"></div>
-                <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-900/20 rounded-full blur-[100px]"></div>
+                <div className="absolute top-20 left-10 w-72 h-72 md:w-96 md:h-96 bg-pink-900/20 rounded-full blur-[80px] md:blur-[100px]"></div>
+                <div className="absolute bottom-20 right-10 w-72 h-72 md:w-96 md:h-96 bg-purple-900/20 rounded-full blur-[80px] md:blur-[100px]"></div>
             </div>
 
             <div className="max-w-[1400px] mx-auto relative z-10">
@@ -23,8 +23,8 @@ const FebInFramesSection = () => {
                     <span className="inline-block px-4 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-sm font-bold uppercase tracking-widest mb-6">
                         Valentine Week Special
                     </span>
-                    <h2 className="text-6xl md:text-8xl font-black text-white mb-6">
-                        Feb <span className="font-['Dancing_Script'] font-bold text-7xl md:text-9xl text-pink-500 mx-2" style={{ textShadow: '0 0 30px rgba(236, 72, 153, 0.5)' }}>in</span> Frames
+                    <h2 className="text-4xl sm:text-6xl md:text-8xl font-black text-white mb-6">
+                        Feb <span className="font-['Dancing_Script'] font-bold text-5xl sm:text-7xl md:text-9xl text-pink-500 mx-2" style={{ textShadow: '0 0 30px rgba(236, 72, 153, 0.5)' }}>in</span> Frames
                     </h2>
                     <p className="text-xl md:text-2xl text-gray-300 font-light max-w-2xl mx-auto">
                         Partner, friends, family, or solo — <strong className="text-white">you enjoy the moment</strong>. We’ll capture it.

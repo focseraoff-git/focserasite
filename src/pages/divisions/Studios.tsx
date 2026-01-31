@@ -367,7 +367,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                     <div className="w-40 h-40 bg-white/5 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(59,130,246,0.3)] border-4 border-white/10 p-4 animate-bounce-slow">
                         <img src="/images/logos/FocseraStudios.jpg" alt="Focsera Studios" className="w-full h-full object-contain rounded-full" />
                     </div>
-                    <h1 className="text-4xl sm:text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-200 to-rose-300 mb-6 drop-shadow-sm tracking-tight font-sans">
+                    <h1 className="text-5xl sm:text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-200 to-rose-300 mb-6 drop-shadow-sm tracking-tight font-sans">
                         FOCSERA STUDIOS
                     </h1>
                     <p className="text-xl md:text-3xl text-slate-400 max-w-3xl mx-auto mb-8 font-light tracking-wide font-sans italic">
