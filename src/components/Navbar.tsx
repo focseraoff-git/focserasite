@@ -21,11 +21,11 @@ const Navbar = () => {
 
   const divisions = [
     { name: "Studios", path: "/studios" },
-    { name: "Media", path: "/media" },
-    { name: "Interiors", path: "/interiors" },
     { name: "Events", path: "/events" },
+    { name: "Interiors", path: "/interiors" },
     { name: "Web", path: "/web" },
     { name: "Product Services", path: "/product-services" },
+    { name: "Media", path: "/media" },
   ];
 
   const mainMenu = [

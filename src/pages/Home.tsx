@@ -28,11 +28,11 @@ export default function Home() {
       gradient: 'from-blue-500 to-cyan-500'
     },
     {
-      icon: Clapperboard,
-      name: 'Focsera Media',
-      path: '/media',
-      description: 'Full-service media production house. From concept to post-production, we bring stories to life.',
-      gradient: 'from-indigo-500 to-blue-600'
+      icon: Calendar,
+      name: 'Focsera Events',
+      path: '/events',
+      description: 'Creating unforgettable experiences. Corporate events, weddings, and parties managed with precision.',
+      gradient: 'from-blue-600 to-[#0066FF]'
     },
     {
       icon: Armchair,
@@ -40,13 +40,6 @@ export default function Home() {
       path: '/interiors',
       description: 'Transforming spaces into living masterpieces. Bespoke interior design solutions for your dream home.',
       gradient: 'from-[#0066FF] to-blue-600'
-    },
-    {
-      icon: Calendar,
-      name: 'Focsera Events',
-      path: '/events',
-      description: 'Creating unforgettable experiences. Corporate events, weddings, and parties managed with precision.',
-      gradient: 'from-blue-600 to-[#0066FF]'
     },
     {
       icon: Globe,
@@ -61,6 +54,13 @@ export default function Home() {
       path: '/product-services',
       description: 'End-to-end product solutions from design and modeling to marketing and sales support.',
       gradient: 'from-cyan-500 to-[#0052CC]'
+    },
+    {
+      icon: Clapperboard,
+      name: 'Focsera Media',
+      path: '/media',
+      description: 'Full-service media production house. From concept to post-production, we bring stories to life.',
+      gradient: 'from-indigo-500 to-blue-600'
     },
   ];
 
