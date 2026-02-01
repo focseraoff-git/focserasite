@@ -62,6 +62,12 @@ export function FebBookingForm({ selectedTheme, onClearTheme }: FebBookingFormPr
         setIsSubmitting(true);
         setErrorMsg('');
 
+        if (!/^\d{10}$/.test(formData.phone)) {
+            setErrorMsg('Please enter a valid 10-digit phone number.');
+            setIsSubmitting(false);
+            return;
+        }
+
         if (!formData.timeSlot) {
             setErrorMsg('Please select a preferred time slot.');
             setIsSubmitting(false);
