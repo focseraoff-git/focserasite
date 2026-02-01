@@ -243,7 +243,7 @@ export function FebBookingForm({ selectedTheme, onClearTheme }: FebBookingFormPr
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                            <label className="text-xs text-gray-400 font-bold uppercase tracking-wider">Coordinates</label>
+                            <label className="text-xs text-gray-400 font-bold uppercase tracking-wider">Location</label>
                             <input
                                 type="text"
                                 value={formData.location}
