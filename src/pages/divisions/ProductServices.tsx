@@ -32,7 +32,7 @@ export default function ProductServices() {
     {
       icon: Package,
       title: 'Product Modelling',
-      description: 'Advanced 3D visualization and prototyping services to bring your product ideas to life.'
+      description: 'Advanced visualization and prototyping services to bring your product ideas to life.'
     },
     {
       icon: TrendingUp,

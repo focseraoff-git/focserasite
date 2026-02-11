@@ -36,8 +36,10 @@ import {
     Lock,
     ShoppingBag,
     Sofa,
-    Lamp
+    Lamp,
+    Map
 } from 'lucide-react';
+import MapPicker from '../../components/MapPicker';
 
 // --- Types (Shared) ---
 type IntentType = 'Room-Wise' | 'Full Home' | null;
@@ -162,6 +164,60 @@ function QuoteGenerator() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
+    const [isLocating, setIsLocating] = useState(false);
+    const [isMapOpen, setIsMapOpen] = useState(false);
+
+    const detectLocation = () => {
+        if (!navigator.geolocation) {
+            alert('Geolocation is not supported by your browser');
+            return;
+        }
+
+        setIsLocating(true);
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            try {
+                const { latitude, longitude } = position.coords;
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en`);
+                const data = await response.json();
+
+                console.log('Nominatim response:', data); // Debug log
+
+                const addr = data.address;
+                // Try to find the most relevant local area name
+                const area = addr.suburb ||
+                    addr.neighbourhood ||
+                    addr.residential ||
+                    addr.village ||
+                    addr.town ||
+                    addr.city_district ||
+                    addr.city ||
+                    addr.road;
+
+                // Construct a readable string
+                let locationString = area;
+
+                // Append city if it's different from area and exists
+                if (addr.city && area !== addr.city) {
+                    locationString = `${area}, ${addr.city}`;
+                } else if (!area && data.display_name) {
+                    // Fallback to the full display name if we can't parse specific fields
+                    // Take the first 2 parts of the display name for brevity
+                    locationString = data.display_name.split(',').slice(0, 2).join(',');
+                }
+
+                setFormData(prev => ({ ...prev, location: locationString || 'Location Found' }));
+            } catch (error) {
+                console.error('Error fetching address:', error);
+                alert('Unable to fetch address details.');
+            } finally {
+                setIsLocating(false);
+            }
+        }, (error) => {
+            console.error('Geolocation error:', error);
+            alert('Unable to retrieve your location. Please ensure location permissions are enabled.');
+            setIsLocating(false);
+        });
+    };
 
     const [formData, setFormData] = useState<QuoteFormData>({
         intent: null,
@@ -389,7 +445,28 @@ function QuoteGenerator() {
                                     <div className="space-y-4">
                                         <CustomSelect options={['Apartment', 'Villa', 'Commercial']} value={formData.propertyType} onChange={(v: any) => setFormData(prev => ({ ...prev, propertyType: v }))} placeholder="Property Type" icon={Home} />
                                         <CustomSelect options={['1BHK', '2BHK', '3BHK', '4BHK+', 'Villa']} value={formData.configuration} onChange={(v: any) => setFormData(prev => ({ ...prev, configuration: v }))} placeholder="Configuration" icon={Grid3X3} />
-                                        <CustomSelect options={LOCATIONS} value={formData.location} onChange={(v: any) => setFormData(prev => ({ ...prev, location: v }))} placeholder="Location" icon={MapPin} />
+                                        <div>
+                                            <CustomSelect options={LOCATIONS} value={formData.location} onChange={(v: any) => setFormData(prev => ({ ...prev, location: v }))} placeholder="Location" icon={MapPin} />
+
+                                            <div className="grid grid-cols-2 gap-3 mt-3">
+                                                <button
+                                                    onClick={detectLocation}
+                                                    disabled={isLocating}
+                                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-orange-500/50 rounded-xl transition-all text-sm font-medium text-white group"
+                                                >
+                                                    {isLocating ? <Loader2 size={16} className="animate-spin text-orange-500" /> : <MapPin size={16} className="text-orange-500 group-hover:scale-110 transition-transform" />}
+                                                    {isLocating ? 'Detecting...' : 'Detect Location'}
+                                                </button>
+
+                                                <button
+                                                    onClick={() => setIsMapOpen(true)}
+                                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-blue-500/50 rounded-xl transition-all text-sm font-medium text-white group"
+                                                >
+                                                    <Map size={16} className="text-blue-500 group-hover:scale-110 transition-transform" />
+                                                    Select on Map
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="space-y-4">
                                         <input type="text" value={formData.name} onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))} placeholder="Full Name" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white" />
@@ -428,6 +505,16 @@ function QuoteGenerator() {
                     </div>
                 )}
             </div>
+
+            {isMapOpen && (
+                <MapPicker
+                    onClose={() => setIsMapOpen(false)}
+                    onConfirm={(address) => {
+                        setFormData(prev => ({ ...prev, location: address }));
+                        setIsMapOpen(false);
+                    }}
+                />
+            )}
         </div >
     );
 }
@@ -524,7 +611,7 @@ export default function Interiors() {
                         </h1>
 
                         <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed tracking-wide">
-                            See your dream space come to life before you build. Hyper-realistic 3D visuals delivered in 24 hours.
+                            See your dream space come to life before you build. Hyper-realistic visuals delivered in 24 hours.
                         </p>
                     </div>
 
@@ -632,7 +719,7 @@ export default function Interiors() {
                             {[
                                 "Personalized Concept Layout",
                                 "Curated Mood & Style Direction",
-                                "Main 3D Hero Visualization"
+                                "Main Hero Visualization"
                             ].map((item, i) => (
                                 <motion.li
                                     initial={{ opacity: 0, x: -20 }}
