@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import FancyModal from '../../components/FancyModal';
 import FebInFramesSection from '../../components/FebCampaign/FebInFramesSection';
+import Snapshot74 from '../../assets/Snapshot_74.png';
 
 
 // --- ICONS (using inline SVGs for self-containment) ---
@@ -38,6 +39,15 @@ const CreditCard = (props) => (
 );
 const GoogleIcon = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48" {...props}><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"></path><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"></path><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.222 0-9.618-3.226-11.283-7.614l-6.522 5.025C9.505 39.556 16.227 44 24 44z"></path><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C41.382 36.661 44 31.023 44 24c0-1.341-.138-2.65-.389-3.917z"></path></svg>
+);
+const Timer = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+);
+const Heart = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+);
+const Plus = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
 );
 
 const useIntersectionObserver = (options) => {
@@ -211,6 +221,100 @@ const TermsModal = ({ onClose }) => {
     );
 };
 
+const Focsera999Offer = ({ onBook, onCustomize }) => {
+    return (
+        <section id="focsera-999-offer" className="relative w-full bg-gradient-to-r from-yellow-400 via-orange-300 to-yellow-500 overflow-hidden py-12 md:py-20 lg:py-24">
+            {/* Soft light flare */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/20 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl"></div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    {/* Left Content */}
+                    <div className="text-left space-y-6">
+                        <div className="inline-flex items-center gap-2 bg-black/90 text-yellow-400 px-4 py-1.5 rounded-full text-sm font-bold shadow-lg transform hover:scale-105 transition-transform duration-300">
+                            <Timer size={16} className="animate-pulse" />
+                            <span className="tracking-wide uppercase">LIMITED TIME OFFER!</span>
+                        </div>
+
+                        <div className="space-y-2">
+                            <h2 className="text-6xl md:text-7xl lg:text-8xl font-black text-black tracking-tighter leading-none flex items-center gap-4">
+                                Just ₹999
+                                <Camera className="w-12 h-12 md:w-16 md:h-16 text-black/80 rotate-12" />
+                            </h2>
+                            <h3 className="text-3xl md:text-4xl font-bold text-black/80">
+                                Book Now!
+                            </h3>
+                        </div>
+
+                        <p className="text-xl md:text-2xl font-semibold text-black/70">
+                            Professional Photography & Editing Included!
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                            <button
+                                onClick={onBook}
+                                className="inline-flex items-center justify-center px-8 py-4 bg-black text-white text-lg font-bold rounded-2xl shadow-xl hover:bg-gray-900 hover:scale-105 transition-all duration-300 group"
+                            >
+                                Book Your Shoot Now
+                                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                            <button
+                                onClick={onCustomize}
+                                className="inline-flex items-center justify-center px-8 py-4 bg-white/20 backdrop-blur-md text-black border-2 border-black/10 text-lg font-bold rounded-2xl shadow-lg hover:bg-white/30 hover:scale-105 transition-all duration-300"
+                            >
+                                Customize
+                            </button>
+                        </div>
+
+                        <div className="space-y-2">
+                            <p className="text-red-700 font-bold text-sm flex items-center gap-2 animate-bounce">
+                                First few clients only – Hurry!
+                            </p>
+                            <p className="text-black/60 text-sm font-medium">Link in bio to book</p>
+                        </div>
+
+
+                        {/* Trust Row */}
+                        <div className="flex flex-wrap gap-4 pt-6 border-t border-black/10">
+                            {['Home service available', 'Instant editing', 'Photo + reels + framed photos delivery'].map((item, i) => (
+                                <div key={i} className="flex items-center gap-2 text-black/70 font-medium text-sm">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-black/40"></div>
+                                    {item}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Right Image */}
+                    <div className="relative mx-auto w-full max-w-md lg:max-w-full">
+                        {/* Floating Social Icons */}
+                        <div className="absolute top-10 right-4 z-20 flex flex-col gap-3">
+                            <div className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-red-500 animate-bounce-slow">
+                                <Heart size={20} fill="currentColor" />
+                            </div>
+                            <div className="w-10 h-10 bg-blue-600 rounded-full shadow-lg flex items-center justify-center text-white">
+                                <Plus size={24} />
+                            </div>
+                        </div>
+
+                        <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 transform rotate-2 hover:rotate-0 transition-all duration-500">
+                            <img
+                                src={Snapshot74}
+                                alt="Professional Shoot"
+                                className="w-full h-auto object-cover aspect-[4/5] hover:scale-105 transition-transform duration-700"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
 const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
     const [selectedService, setSelectedService] = useState(null);
     const [showFancyModal, setShowFancyModal] = useState(false);
@@ -379,6 +483,27 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                     </p>
                 </div>
             </section>
+
+            {/* --- Focsera 999 Offer --- */}
+            <Focsera999Offer
+                onBook={() => {
+                    // Look for the specific 'Just ₹999 Offer' service
+                    const offerService = services.find(s => s.name === 'Just ₹999 Offer')
+                        || services.find(s => s.name.toLowerCase().includes('999'))
+                        || services.find(s => s.name.toLowerCase().includes('portrait')); // Fallback
+
+                    if (offerService) {
+                        onBookNow(offerService, offerService.default_add_ons);
+                    } else {
+                        // If absolutely no service found (unlikely if fallback exists), scroll to customizer
+                        customizerScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        alert("The 'Just ₹999 Offer' service could not be found in the database. Redirecting to custom package builder.");
+                    }
+                }}
+                onCustomize={() => {
+                    customizerScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+            />
 
             {/* --- Feb in Frames Campaign --- */}
             <FebInFramesSection />
@@ -913,7 +1038,11 @@ const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => {
                             <div className="space-y-4 mb-6">
                                 <div className="flex justify-between items-center pb-4 border-b border-white/10">
                                     <span className="font-semibold text-gray-300">Base Package</span>
-                                    <span className="font-bold text-white">Custom Quote</span>
+                                    <span className="font-bold text-white">
+                                        {bookingPackage.service.pricing_mode === 'fixed' && bookingPackage.service.price_min > 0
+                                            ? `₹${bookingPackage.service.price_min}`
+                                            : 'Custom Quote'}
+                                    </span>
                                 </div>
                                 {Object.entries(bookingPackage.addOns).filter(([_, v]) => v).map(([key]) => {
                                     const addOn = addOns.find(a => a.key === key);
@@ -928,9 +1057,17 @@ const CartPage = ({ bookingPackage, onProceed, onBack, addOns }) => {
                             <div className="pt-6 border-t border-white/10 mb-6">
                                 <div className="flex justify-between items-center">
                                     <span className="text-lg font-bold font-sans tracking-tight text-white">Total</span>
-                                    <span className="text-sm md:text-xl font-bold text-blue-400">Contact for Pricing</span>
+                                    <span className="text-sm md:text-xl font-bold text-blue-400">
+                                        {bookingPackage.service.pricing_mode === 'fixed' && bookingPackage.service.price_min > 0
+                                            ? `₹${bookingPackage.service.price_min}`
+                                            : 'Contact for Pricing'}
+                                    </span>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-2">*Final price will be confirmed after consultation</p>
+                                <p className="text-xs text-gray-500 mt-2">
+                                    {bookingPackage.service.pricing_mode === 'fixed' && bookingPackage.service.price_min > 0
+                                        ? '*Price is fixed. Additional customizations may vary.'
+                                        : '*Final price will be confirmed after consultation'}
+                                </p>
                             </div>
                             <button onClick={onProceed} className="w-full button-primary shadow-lg shadow-blue-900/30">
                                 Proceed to Checkout
@@ -1112,7 +1249,9 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                 <div className="flex justify-between items-center pb-4 border-b border-white/10">
                                     <span className="font-semibold text-gray-300">{bookingPackage.service.name}</span>
                                     <span className="font-bold text-white">
-                                        Custom Quote
+                                        {bookingPackage.service.pricing_mode === 'fixed' && bookingPackage.service.price_min > 0
+                                            ? `₹${bookingPackage.service.price_min}`
+                                            : 'Custom Quote'}
                                     </span>
                                 </div>
                                 {Object.entries(bookingPackage.addOns).filter(([_, v]) => v).map(([key]) => {
@@ -1129,11 +1268,15 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                 <div className="flex justify-between items-center">
                                     <span className="text-lg font-bold font-sans tracking-tight text-white">Total</span>
                                     <span className="text-sm md:text-xl font-bold text-blue-400">
-                                        Contact for Pricing
+                                        {bookingPackage.service.pricing_mode === 'fixed' && bookingPackage.service.price_min > 0
+                                            ? `₹${bookingPackage.service.price_min}`
+                                            : 'Contact for Pricing'}
                                     </span>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-2">
-                                    *Final price confirmed after consultation
+                                    {bookingPackage.service.pricing_mode === 'fixed' && bookingPackage.service.price_min > 0
+                                        ? '*Price is fixed. Additional customizations may vary.'
+                                        : '*Final price confirmed after consultation'}
                                 </p>
                             </div>
                             <button onClick={onBack} className="w-full py-4 mt-6 text-center font-semibold text-gray-400 hover:text-white transition-colors flex items-center justify-center gap-2 border border-white/10 rounded-xl hover:bg-white/5">
@@ -1287,7 +1430,9 @@ export default function App() {
                 category: s.category || 'General',
                 is_active: !!s.is_active,
                 terms: s.terms || {},
-                default_add_ons: s.default_add_ons || {}
+                default_add_ons: s.default_add_ons || {},
+                price_min: s.price_min,
+                pricing_mode: s.pricing_mode
             }));
 
             const mappedAddOns = (addOnsData || []).map(a => ({

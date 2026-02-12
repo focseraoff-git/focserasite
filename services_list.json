@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "name": "Pre-Wedding / Wedding Shoots",
+    "is_active": true,
+    "description": "Advance payment of 50% required to confirm the booking. Clients must arrange location permissions and be punctual.",
+    "thumbnail": "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop"
+  },
+  {
+    "id": 3,
+    "name": "Corporate Events",
+    "is_active": true,
+    "description": "50% advance to confirm event. Confidential footage will not be shared publicly. Client receives full rights for marketing and internal use.",
+    "thumbnail": "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop"
+  },
+  {
+    "id": 6,
+    "name": "Social Media Reels",
+    "is_active": true,
+    "description": "50% advance required to confirm the shoot. Client must finalize the concept and references before the shoot day.",
+    "thumbnail": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1974&auto=format&fit=crop"
+  },
+  {
+    "id": 2,
+    "name": "Birthday & Private Parties",
+    "is_active": true,
+    "description": "30% advance booking required. Additional hours billed separately. Client ensures venue access and power supply.",
+    "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRGToWYxdou5Lp2gD5nGrMX31nYjlHNS0MhQ&s"
+  },
+  {
+    "id": 4,
+    "name": "Baby / Maternity Shoots",
+    "is_active": true,
+    "description": "Client ensures baby’s comfort and readiness. One reschedule allowed if informed 48 hours prior.",
+    "thumbnail": "https://media.istockphoto.com/id/1183469678/photo/baby-photography-with-dslr-camera.jpg?s=612x612&w=0&k=20&c=KqIaFA8zfGYPBzNhOnIWUyCJLImqKC1AhpcmvHKVagE="
+  },
+  {
+    "id": 5,
+    "name": "Fashion / Model Portfolios",
+    "is_active": true,
+    "description": "50% advance required. Outfits and styling by client unless included. Only edited images delivered unless raw files purchased.",
+    "thumbnail": "https://media.istockphoto.com/id/1198596867/photo/selective-focus-of-cameraman-filming-beautiful-model-in-photo-studio-with-spotlights.jpg?s=612x612&w=0&k=20&c=wmkOIzyU3LR1joMHpyplo1FSPPDraf5VCZ6Y0Tz1AGE="
+  },
+  {
+    "id": 11,
+    "name": "Feb in Frames",
+    "is_active": true,
+    "description": "Exclusive Valentine Week AI-Enhanced Studio Experience. Includes Reels, Photos, and Premium Frames.",
+    "thumbnail": "/images/feb-campaign-thumb.jpg"
+  }
+]
