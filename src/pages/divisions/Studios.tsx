@@ -230,7 +230,7 @@ const TermsModal = ({ onClose }) => {
     );
 };
 
-const InstantMemoriesPricing = ({ onBook, onWhatsApp }) => {
+const InstantMemoriesPricing = ({ onBook, onWhatsApp, services }) => {
     const plans = [
         {
             name: "Quick Moments",
@@ -269,9 +269,16 @@ const InstantMemoriesPricing = ({ onBook, onWhatsApp }) => {
     ];
 
     const handlePlanClick = (plan) => {
+        // Find a valid service ID to use as a base
+        // Priority: Service named "Instant", or "999", or just the first active service
+        const baseService = services?.find(s =>
+            s.name.toLowerCase().includes('instant') ||
+            s.name.includes('999')
+        ) || services?.find(s => s.is_active) || { id: 1 }; // Fallback to ID 1 if nothing found
+
         const syntheticService = {
-            id: `instant-${plan.price ? plan.price.replace(/\D/g, '') : 'custom'}`,
-            name: plan.name,
+            id: baseService.id, // Use REAL database ID
+            name: plan.name, // Display name (overrides DB name in UI)
             price: plan.price && plan.price !== 'Contact' && plan.price !== 'Custom' ? parseInt(plan.price.replace(/\D/g, '')) : 0,
             price_min: plan.price && plan.price !== 'Contact' && plan.price !== 'Custom' ? parseInt(plan.price.replace(/\D/g, '')) : 0,
             pricing_mode: plan.price && plan.price !== 'Contact' && plan.price !== 'Custom' ? 'fixed' : 'quote',
@@ -666,6 +673,7 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
 
             {/* --- Instant Memories Pricing Section --- */}
             <InstantMemoriesPricing
+                services={services}
                 onBook={(syntheticService) => {
                     // Directly handle the booking with the synthetic or real service object
                     if (syntheticService) {
@@ -1268,7 +1276,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
         const bookingData = {
             user_id: session?.user?.id,
             service_id: bookingPackage.service.id,
-            total_price: null,
+            total_price: bookingPackage.service.price_min || bookingPackage.service.price || 0,
             event_date: clientDetails.event_date,
             event_venue: clientDetails.event_venue,
             client_details: {
@@ -1314,21 +1322,21 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="text-sm font-semibold text-gray-300 block mb-2">Full Name</label>
-                                        <input name="name" type="text" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Rahul Sharma" defaultValue={session?.user?.user_metadata?.full_name || ''} required />
+                                        <input name="name" type="text" className="w-full input-field bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-3 px-4 rounded-xl" placeholder="Rahul Sharma" defaultValue={session?.user?.user_metadata?.full_name || ''} required />
                                     </div>
                                     <div>
                                         <label className="text-sm font-semibold text-gray-300 block mb-2">Email Address</label>
-                                        <input name="email" type="email" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required />
+                                        <input name="email" type="email" className="w-full input-field bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-3 px-4 rounded-xl" placeholder="you@example.com" defaultValue={session?.user?.email || ''} required />
                                     </div>
                                     <div>
                                         <label className="text-sm font-semibold text-gray-300 block mb-2">Phone Number</label>
-                                        <input name="phone" type="tel" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="+91 98765 43210" required />
+                                        <input name="phone" type="tel" className="w-full input-field bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-3 px-4 rounded-xl" placeholder="+91 98765 43210" required />
                                     </div>
                                     {isSankranthi && (
                                         <>
                                             <div>
                                                 <label className="text-sm font-semibold text-gray-300 block mb-2">Number of People</label>
-                                                <input name="number_of_people" type="number" min="1" max="10" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="e.g. 4" required />
+                                                <input name="number_of_people" type="number" min="1" max="10" className="w-full input-field bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-3 px-4 rounded-xl" placeholder="e.g. 4" required />
                                             </div>
                                         </>
                                     )}
@@ -1346,7 +1354,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                                 <input
                                                     name="event_date"
                                                     type="date"
-                                                    className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 icon-invert"
+                                                    className="w-full input-field bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-3 px-4 rounded-xl"
                                                     required
                                                     min={isSankranthi ? "2026-01-09" : undefined}
                                                     max={isSankranthi ? "2026-01-14" : undefined}
@@ -1355,7 +1363,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                             {!isSankranthi && (
                                                 <div>
                                                     <label className="text-xs text-gray-500 block mb-1">End Date (Optional - for multi-day events)</label>
-                                                    <input name="event_end_date" type="date" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 icon-invert" />
+                                                    <input name="event_end_date" type="date" className="w-full input-field bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-3 px-4 rounded-xl" />
                                                 </div>
                                             )}
                                         </div>
@@ -1378,7 +1386,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
                                                 </div>
                                             </div>
                                             <label className="text-sm font-semibold text-gray-300 block mb-2">Preferred Time Slot</label>
-                                            <select name="time_slot" className="w-full input-field bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" required>
+                                            <select name="time_slot" className="w-full input-field bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-3 px-4 rounded-xl" required>
                                                 <option value="">Select a time slot</option>
                                                 {Array.from({ length: 13 }).map((_, i) => {
                                                     const startHour = 8 + i;
@@ -1397,7 +1405,7 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
 
                                     <div>
                                         <label className="text-sm font-semibold text-gray-300 block mb-2">Event Venue / Location {isSankranthi && <span className="text-red-400 font-bold">(Hyderabad Only)</span>}</label>
-                                        <textarea name="event_venue" className="w-full input-field h-32 resize-none bg-black/40 border-white/10 text-white placeholder:text-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder={isSankranthi ? "Enter the full address of your event venue in Hyderabad" : "Enter the full address of your event venue"} required></textarea>
+                                        <textarea name="event_venue" className="w-full input-field h-32 resize-none bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-3 px-4 rounded-xl" placeholder={isSankranthi ? "Enter the full address of your event venue in Hyderabad" : "Enter the full address of your event venue"} required></textarea>
                                     </div>
                                 </div>
                             </div>
