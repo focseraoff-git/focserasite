@@ -181,6 +181,243 @@ export type Database = {
         }
         Relationships: []
       }
+      studio_bookings: {
+        Row: {
+          client_details: Json
+          created_at: string
+          event_date: string | null
+          event_venue: string | null
+          id: number
+          package_details: Json
+          service_id: number
+          status: string | null
+          total_price: number
+          user_id: string | null
+        }
+        Insert: {
+          client_details: Json
+          created_at?: string
+          event_date?: string | null
+          event_venue?: string | null
+          id?: number
+          package_details: Json
+          service_id: number
+          status?: string | null
+          total_price: number
+          user_id?: string | null
+        }
+        Update: {
+          client_details?: Json
+          created_at?: string
+          event_date?: string | null
+          event_venue?: string | null
+          id?: number
+          package_details?: Json
+          service_id?: number
+          status?: string | null
+          total_price?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studio_bookings_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "studio_services"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      premium_bookings: {
+        Row: {
+          client_details: Json
+          created_at: string
+          event_date: string | null
+          event_venue: string | null
+          id: number
+          package_details: Json
+          package_id: number
+          selected_addons: Json | null
+          special_requirements: string | null
+          status: string | null
+          tier_id: number
+          time_slot: string | null
+          total_price: number
+          user_id: string | null
+        }
+        Insert: {
+          client_details?: Json | null
+          created_at?: string
+          event_date?: string | null
+          event_venue?: string | null
+          id?: number
+          package_details?: Json | null
+          package_id: number
+          selected_addons?: Json | null
+          special_requirements?: string | null
+          status?: string | null
+          tier_id: number
+          time_slot?: string | null
+          total_price: number
+          user_id?: string | null
+        }
+        Update: {
+          client_details?: Json | null
+          created_at?: string
+          event_date?: string | null
+          event_venue?: string | null
+          id?: number
+          package_details?: Json | null
+          package_id?: number
+          selected_addons?: Json | null
+          special_requirements?: string | null
+          status?: string | null
+          tier_id?: number
+          time_slot?: string | null
+          total_price?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "premium_bookings_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "premium_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "premium_bookings_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "premium_package_tiers"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      premium_package_addons: {
+        Row: {
+          addon_key: string
+          created_at: string
+          description: string | null
+          id: number
+          is_active: boolean | null
+          name: string
+          package_id: number
+          price: number
+        }
+        Insert: {
+          addon_key: string
+          created_at?: string
+          description?: string | null
+          id?: number
+          is_active?: boolean | null
+          name: string
+          package_id: number
+          price: number
+        }
+        Update: {
+          addon_key?: string
+          created_at?: string
+          description?: string | null
+          id?: number
+          is_active?: boolean | null
+          name?: string
+          package_id?: number
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "premium_package_addons_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "premium_packages"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      premium_package_tiers: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          features: Json | null
+          id: number
+          ideal_for: string | null
+          is_popular: boolean | null
+          package_id: number
+          price: number
+          tier_key: string
+          tier_name: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          features?: Json | null
+          id?: number
+          ideal_for?: string | null
+          is_popular?: boolean | null
+          package_id: number
+          price: number
+          tier_key: string
+          tier_name: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          features?: Json | null
+          id?: number
+          ideal_for?: string | null
+          is_popular?: boolean | null
+          package_id?: number
+          price?: number
+          tier_key?: string
+          tier_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "premium_package_tiers_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "premium_packages"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      premium_packages: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: number
+          is_active: boolean
+          name: string
+          package_key: string
+          terms: Json | null
+          thumbnail: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: number
+          is_active?: boolean
+          name: string
+          package_key: string
+          terms?: Json | null
+          thumbnail?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: number
+          is_active?: boolean
+          name?: string
+          package_key?: string
+          terms?: Json | null
+          thumbnail?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

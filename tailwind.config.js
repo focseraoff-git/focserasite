@@ -20,6 +20,8 @@ export default {
     },
     fontFamily: {
       heading: ['Poppins', 'sans-serif'],
+      sans: ['Inter', 'sans-serif'],
+      serif: ['Playfair Display', 'serif'],
     },
     keyframes: {
       shimmer: {

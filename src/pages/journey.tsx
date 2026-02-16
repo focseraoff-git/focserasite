@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import JourneyGallery from "../components/JourneyGallery";
 
 /* ---------- Types ---------- */
 interface MediaItem {
@@ -211,6 +212,8 @@ export default function JourneyPage() {
     { title: "Cultural Essence", caption: "Heritage", mediaId: "/images/journey/IMG_0578.png", type: "image", aspectRatio: "9:16" },
   ];
 
+
+
   const archives: { category: string; items: MediaItem[] }[] = [
     {
       category: "InnovateX Highlights",
@@ -313,6 +316,9 @@ export default function JourneyPage() {
         </div>
 
       </section>
+
+      {/* New Journey Gallery Section */}
+      <JourneyGallery />
 
       {/* Minimized Archives Section */}
       <section className="bg-[#050505] border-t border-white/5 py-12 px-6">

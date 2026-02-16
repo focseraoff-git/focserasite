@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import FancyModal from '../../components/FancyModal';
-import FebInFramesSection from '../../components/FebCampaign/FebInFramesSection';
+import PremiumOfferSection from '../../components/PremiumOfferSection';
 import Snapshot74 from '../../assets/Snapshot_74.png';
 
 
@@ -646,36 +646,36 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
 
     return (
         <>
-            <section className="relative py-32 bg-[#020202] overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-pink-900/20 via-[#020202] to-[#020202]"></div>
+            <section className="relative py-20 md:py-28 lg:py-32 bg-[#020202] overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#020202] to-[#020202]"></div>
 
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                    <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-pink-500/10 rounded-full blur-[100px] animate-pulse"></div>
-                    <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-rose-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+                    <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] animate-pulse"></div>
+                    <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
-                    <div className="w-40 h-40 bg-white/5 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(59,130,246,0.3)] border-4 border-white/10 p-4 animate-bounce-slow">
+                    <div className="w-32 h-32 md:w-40 md:h-40 bg-white/5 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-6 md:mb-8 shadow-[0_0_40px_rgba(59,130,246,0.3)] border-4 border-white/10 p-3 md:p-4 animate-bounce-slow">
                         <img src="/images/logos/FocseraStudios.jpg" alt="Focsera Studios" className="w-full h-full object-contain rounded-full" />
                     </div>
-                    <h1 className="text-5xl sm:text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-200 to-rose-300 mb-6 drop-shadow-sm tracking-tight font-sans">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300 mb-4 md:mb-6 drop-shadow-sm tracking-tight font-sans">
                         FOCSERA STUDIOS
                     </h1>
-                    <p className="text-xl md:text-3xl text-slate-400 max-w-3xl mx-auto mb-8 font-light tracking-wide font-sans italic">
+                    <p className="text-lg md:text-xl lg:text-3xl text-slate-400 max-w-3xl mx-auto mb-6 md:mb-8 font-light tracking-wide font-sans italic">
                         "Capturing the Essence of Your Moments"
                     </p>
-                    <div className="w-32 h-1 bg-gradient-to-r from-transparent via-pink-500 to-transparent mx-auto mb-8"></div>
-                    <p className="text-lg text-slate-500 max-w-2xl mx-auto font-sans leading-relaxed">
+                    <div className="w-24 md:w-32 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto mb-6 md:mb-8"></div>
+                    <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto font-sans leading-relaxed">
                         Premium Photography & Videography Services for your most cherished moments.
                     </p>
                 </div>
             </section>
 
-            {/* --- Instant Memories Pricing Section --- */}
-            <InstantMemoriesPricing
+            {/* --- Premium Instant Memories Pricing Section --- */}
+            <PremiumOfferSection
                 services={services}
+                imageUrl={Snapshot74}
                 onBook={(syntheticService) => {
-                    // Directly handle the booking with the synthetic or real service object
                     if (syntheticService) {
                         onBookNow(syntheticService, syntheticService.default_add_ons || {});
                     }
@@ -685,23 +685,21 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                 }}
             />
 
-            {/* --- Feb in Frames Campaign --- */}
-            <FebInFramesSection />
 
             <section className="py-16 bg-[#050505] border-b border-white/5 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-pink-500/50 to-transparent"></div>
+                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
                         <div className="text-center p-8 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-300 group">
-                            <div className="w-24 h-24 bg-pink-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <Camera className="text-pink-400" size={40} />
+                            <div className="w-24 h-24 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <Camera className="text-blue-400" size={40} />
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-3 font-sans">Photography Services</h3>
                             <p className="text-gray-400 text-lg">Professional photography for weddings, portraits, fashion, and commercial projects</p>
                         </div>
                         <div className="text-center p-8 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 hover:shadow-2xl hover:shadow-cyan-900/20 transition-all duration-300 group">
-                            <div className="w-24 h-24 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-rose-400"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                            <div className="w-24 h-24 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-3 font-sans">Videography Services</h3>
                             <p className="text-gray-400 text-lg">Cinematic video production for events, commercials, and promotional content</p>

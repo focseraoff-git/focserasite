@@ -29,6 +29,8 @@ import PromptX from './pages/PromptX';
 import VerifyPage from "./pages/VerifyPage";
 import RefundCancellationPolicyPage from './pages/RPolicy';
 import PrivacyPolicyPage from './pages/PPolicy';
+import PackageBooking from './pages/PackageBooking';
+import BookingReview from './pages/BookingReview';
 
 function AppInner() {
   const location = useLocation();
@@ -92,6 +94,8 @@ function AppInner() {
           <Route path="/payment-success" element={<PaymentSuccess />} />
 
           <Route path="/interiors" element={<Interiors />} />
+          <Route path="/booking" element={<PackageBooking />} />
+          <Route path="/booking/review" element={<BookingReview />} />
         </Routes>
       </Suspense>
 
