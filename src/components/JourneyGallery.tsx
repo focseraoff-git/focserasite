@@ -414,7 +414,7 @@ export default function JourneyGallery() {
                                                 alt={item.title}
                                                 className="relative w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-105"
                                                 loading={index < 4 ? "eager" : "lazy"}
-                                                fetchPriority={index < 4 ? "high" : "auto"}
+                                                fetchpriority={index < 4 ? "high" : "auto"}
                                             />
 
                                             {/* Cinematic Gradient Overlay */}

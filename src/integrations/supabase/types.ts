@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      dine_qr_requests: {
+        Row: {
+          id: number
+          created_at: string
+          restaurant_name: string
+          contact_name: string
+          email: string
+          phone: string
+          table_count: string | null
+          address: string | null
+          cuisine_type: string | null
+          current_pos: string | null
+          details: string | null
+        }
+        Insert: {
+          id?: number
+          created_at?: string
+          restaurant_name: string
+          contact_name: string
+          email: string
+          phone: string
+          table_count?: string | null
+          address?: string | null
+          cuisine_type?: string | null
+          current_pos?: string | null
+          details?: string | null
+        }
+        Update: {
+          id?: number
+          created_at?: string
+          restaurant_name?: string
+          contact_name?: string
+          email?: string
+          phone?: string
+          table_count?: string | null
+          address?: string | null
+          cuisine_type?: string | null
+          current_pos?: string | null
+          details?: string | null
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string

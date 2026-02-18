@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { Camera, Globe, Package, ArrowRight, Sparkles, Armchair, Clapperboard, Calendar, ArrowDown, Play } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-import FuelUpPopup from '../components/FuelUpPopup';
 import HomeCarousel from '../components/HomeCarousel';
 import PackagesSection from '../components/PackagesSection';
 import JourneyGallery from '../components/JourneyGallery';
@@ -93,8 +92,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 font-sans selection:bg-blue-500 selection:text-white overflow-x-hidden">
-      <FuelUpPopup />
-
       {/* --- HERO SECTION (Immersive Dark - Ultra Luxury) --- */}
       <section className="relative min-h-screen flex flex-col justify-center items-center pt-24 pb-12 overflow-hidden bg-slate-950">
         {/* Deep, Rich Background Gradients - PARALLAX ENABLED */}
@@ -129,7 +126,7 @@ export default function Home() {
               initial={{ opacity: 0, x: -50, rotateX: 10 }}
               animate={{ opacity: 1, x: 0, rotateX: 0 }}
               transition={{ ...longTransition, delay: 0.3 }}
-              className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[10rem] font-sans font-black tracking-tighter leading-[0.85] text-white z-10 self-start lg:ml-0 drop-shadow-2xl origin-top"
+              className="text-4xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[10rem] font-sans font-black tracking-tighter leading-[0.85] text-white z-10 self-start lg:ml-0 drop-shadow-2xl origin-top"
             >
               Focus.
             </motion.h1>
@@ -139,9 +136,9 @@ export default function Home() {
               initial={{ opacity: 0, y: 30, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ ...longTransition, delay: 0.5 }}
-              className="self-center lg:self-auto lg:ml-[20%] -mt-2 sm:-mt-4 md:-mt-6 z-20"
+              className="self-center lg:self-auto lg:ml-[20%] mt-0 sm:-mt-4 md:-mt-6 z-20"
             >
-              <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[10rem] font-serif italic text-slate-300 tracking-tight leading-[0.85] mix-blend-overlay opacity-90">
+              <h1 className="text-4xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[10rem] font-serif italic text-slate-300 tracking-tight leading-[0.85] mix-blend-overlay opacity-90">
                 Create.
               </h1>
             </motion.div>
@@ -151,7 +148,7 @@ export default function Home() {
               initial={{ opacity: 0, x: 50, rotateX: -10 }}
               animate={{ opacity: 1, x: 0, rotateX: 0 }}
               transition={{ ...longTransition, delay: 0.7 }}
-              className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[10rem] font-sans font-black tracking-tighter leading-[0.85] text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 self-end lg:mr-32 -mt-2 sm:-mt-4 md:-mt-6 z-10 drop-shadow-[0_20px_50px_rgba(255,255,255,0.25)] origin-top"
+              className="text-4xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[10rem] font-sans font-black tracking-tighter leading-[0.85] text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 self-end lg:mr-32 mt-0 sm:-mt-4 md:-mt-6 z-10 drop-shadow-[0_20px_50px_rgba(255,255,255,0.25)] origin-top"
             >
               Celebrate.
             </motion.h1>
@@ -162,7 +159,7 @@ export default function Home() {
               animate={{ opacity: 1, scale: 1, rotate: 6 }}
               whileHover={{ scale: 1.05, rotate: 0 }}
               transition={{ ...standardTransition, delay: 1 }}
-              className="absolute top-[35%] right-[5%] lg:right-[15%] lg:top-[30%] bg-white/10 backdrop-blur-xl border border-white/20 px-5 py-3 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] z-30 cursor-default group"
+              className="mt-8 lg:mt-0 relative lg:absolute lg:top-[30%] right-auto lg:right-[15%] bg-white/10 backdrop-blur-xl border border-white/20 px-5 py-3 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] z-30 cursor-default group self-center lg:self-auto"
             >
               <div className="flex items-center gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
