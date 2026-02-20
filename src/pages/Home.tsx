@@ -99,11 +99,11 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black"></div>
 
           {/* Cinematic Noise Texture - Fixed/Static for tactile feel */}
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 md:opacity-20 mix-blend-normal md:mix-blend-overlay pointer-events-none"></div>
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 md:opacity-20 mix-blend-normal md:mix-blend-overlay pointer-events-none will-change-transform"></div>
 
-          {/* Subtle Ambient Glow (No blobs, no grid - Pure Ambience) */}
-          <motion.div style={{ y: y1 }} className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 w-[90vw] h-[600px] bg-blue-900/10 blur-[180px] rounded-full pointer-events-none mix-blend-screen opacity-50"></motion.div>
-          <motion.div style={{ y: y2 }} className="hidden md:block absolute bottom-0 right-0 w-[60vw] h-[600px] bg-slate-800/10 blur-[180px] rounded-full pointer-events-none mix-blend-screen opacity-40"></motion.div>
+          {/* Optimized Ambient Glow - Reduced Blur for Performance */}
+          <motion.div style={{ y: y1, willChange: 'transform' }} className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 w-[90vw] h-[600px] bg-blue-900/10 blur-[100px] rounded-full pointer-events-none mix-blend-screen opacity-50"></motion.div>
+          <motion.div style={{ y: y2, willChange: 'transform' }} className="hidden md:block absolute bottom-0 right-0 w-[60vw] h-[600px] bg-slate-800/10 blur-[100px] rounded-full pointer-events-none mix-blend-screen opacity-40"></motion.div>
         </div>
 
         <div className="relative z-10 text-center px-4 max-w-[90rem] mx-auto w-full">

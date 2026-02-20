@@ -31,9 +31,9 @@ export default function PackagesSection() {
         <section className="relative py-24 md:py-32 overflow-hidden bg-slate-950 will-change-transform" id="packages">
             {/* Deep Ambient Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none transform-gpu">
-                <div className="absolute top-0 right-1/4 w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-blue-900/10 blur-[100px] md:blur-[150px] rounded-full mix-blend-screen animate-pulse"></div>
-                <div className="absolute bottom-0 left-1/4 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-indigo-900/10 blur-[100px] md:blur-[150px] rounded-full mix-blend-screen animate-pulse" style={{ animationDelay: '2s' }}></div>
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay"></div>
+                <div className="absolute top-0 right-1/4 w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-blue-900/10 blur-[80px] md:blur-[120px] rounded-full mix-blend-screen animate-pulse will-change-transform"></div>
+                <div className="absolute bottom-0 left-1/4 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-indigo-900/10 blur-[80px] md:blur-[120px] rounded-full mix-blend-screen animate-pulse will-change-transform" style={{ animationDelay: '2s' }}></div>
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay will-change-transform"></div>
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -522,17 +522,18 @@ const PricingCard = ({ title, price, desc, features, idealFor, highlight = false
                 hidden: { y: 30, opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: ease } }
             }}
-            className={`relative p-8 rounded-[2rem] border transition-all duration-500 group overflow-hidden h-full flex flex-col justify-between ${highlight
+            whileHover={{ y: -8, scale: 1.01, transition: { duration: 0.4, ease: "circOut" } }}
+            className={`relative p-8 rounded-[2rem] border transition-colors duration-500 group overflow-hidden h-full flex flex-col justify-between will-change-transform ${highlight
                 ? isGold
-                    ? 'bg-amber-950/20 border-amber-500/30 hover:border-amber-400/50'
-                    : 'bg-blue-950/20 border-blue-500/30 hover:border-blue-400/50'
-                : 'bg-white/[0.02] border-white/[0.05] hover:border-white/[0.1] hover:bg-white/[0.04]'
+                    ? 'bg-amber-950/20 border-amber-500/30 hover:border-amber-400/60 shadow-[0_0_0_1px_rgba(245,158,11,0.1)] hover:shadow-[0_20px_40px_-10px_rgba(245,158,11,0.2)]'
+                    : 'bg-blue-950/20 border-blue-500/30 hover:border-blue-400/60 shadow-[0_0_0_1px_rgba(59,130,246,0.1)] hover:shadow-[0_20px_40px_-10px_rgba(59,130,246,0.2)]'
+                : 'bg-white/[0.02] border-white/[0.05] hover:border-white/[0.2] hover:bg-white/[0.04] hover:shadow-[0_20px_40px_-10px_rgba(255,255,255,0.05)]'
                 } `}>
             {highlight && (
                 <div className={`absolute inset-0 opacity-20 ${isGold ? 'bg-gradient-to-b from-amber-500/20 to-transparent' : 'bg-gradient-to-b from-blue-500/20 to-transparent'} pointer-events-none`}></div>
             )}
 
-            <div className="relative z-10 flex flex-col h-full">
+            <div className="relative z-10 flex flex-col h-full pointer-events-none">
                 <div className="mb-6">
                     <h4 className={`text-xs font-bold uppercase tracking-[0.2em] mb-2 ${highlight ? (isGold ? 'text-amber-400' : 'text-blue-400') : 'text-slate-500'} `}>
                         {title}
@@ -560,12 +561,15 @@ const PricingCard = ({ title, price, desc, features, idealFor, highlight = false
                 </div>
 
                 <button
-                    onClick={onSelect}
-                    className={`w-full py-4 rounded-xl font-bold text-sm uppercase tracking-wider transition-all duration-300 mt-8 ${highlight
+                    onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click propagation if needed
+                        onSelect();
+                    }}
+                    className={`w-full py-4 rounded-xl font-bold text-sm uppercase tracking-wider transition-all duration-300 mt-8 pointer-events-auto ${highlight
                         ? isGold
-                            ? 'bg-amber-500 text-black hover:bg-amber-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]'
-                            : 'bg-blue-600 text-white hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)]'
-                        : 'bg-transparent border border-white/10 text-white hover:bg-white/10'
+                            ? 'bg-amber-500 text-black hover:bg-amber-400 hover:scale-[1.02] shadow-[0_4px_20px_rgba(245,158,11,0.4)] hover:shadow-[0_8px_30px_rgba(245,158,11,0.5)]'
+                            : 'bg-blue-600 text-white hover:bg-blue-500 hover:scale-[1.02] shadow-[0_4px_20px_rgba(37,99,235,0.4)] hover:shadow-[0_8px_30px_rgba(37,99,235,0.5)]'
+                        : 'bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20'
                         } `}>
                     Select Package
                 </button>

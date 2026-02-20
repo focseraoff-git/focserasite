@@ -114,6 +114,8 @@ const Navbar = () => {
             src="/images/logos/logog.png"
             alt="Focsera Logo"
             className="h-8 w-auto object-contain brightness-0 invert" // Force white logo
+            loading="eager"
+            fetchPriority="high"
           />
           <span className="text-lg font-bold tracking-tight text-white hidden sm:block">
             FOCSERA

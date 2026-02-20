@@ -200,6 +200,8 @@ export default function WhyFocsera() {
                                         className="w-full h-full object-cover opacity-40 group-hover:opacity-30 transition-opacity duration-700"
                                         whileHover={{ scale: 1.05 }}
                                         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                                        loading="lazy"
+                                        decoding="async"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-950/60" />
                                 </div>
