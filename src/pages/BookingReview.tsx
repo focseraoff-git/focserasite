@@ -4,12 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import {
     Check, Loader2, AlertCircle, Calendar, MapPin,
-    User, Mail, Phone, Edit, CheckCircle2, PartyPopper
+    User, Mail, Phone, Edit, CheckCircle2, PartyPopper, Sparkles
 } from 'lucide-react';
 
 interface ReviewState {
     packageType: 'Dream Space' | 'Celebration';
-    tier: 'Lite' | 'Standard' | 'Premium';
+    tier: 'Lite' | 'Standard' | 'Premium' | 'Custom';
     category: 'dream' | 'celebration';
     formData: {
         name: string;
@@ -20,6 +20,7 @@ interface ReviewState {
         spaceType: string;
         eventType: string;
         notes: string;
+        selectedServices: string[];
     };
 }
 
@@ -28,12 +29,14 @@ const PRICING = {
     'Dream Space': {
         Lite: 15000,
         Standard: 35000,
-        Premium: 65000
+        Premium: 65000,
+        Custom: 0 // Placeholder
     },
     'Celebration': {
         Lite: 8000,
         Standard: 20000,
-        Premium: 45000
+        Premium: 45000,
+        Custom: 0 // Placeholder
     }
 };
 
@@ -48,6 +51,28 @@ const EVENT_TYPE_LABELS: Record<string, { label: string; icon: string }> = {
     family: { label: 'Family Event', icon: '👨‍👩‍👧‍👦' },
     milestone: { label: 'Milestone Event', icon: '🎉' },
     other: { label: 'Other Celebration', icon: '🎊' }
+};
+
+const CUSTOM_SERVICE_LABELS: Record<string, string> = {
+    // Dream Space Services
+    painting: 'Painting',
+    furnishing: 'Furnishing',
+    flooring: 'Flooring',
+    wardrobes: 'Wardrobes',
+    tiles: 'Tiles',
+    false_ceiling: 'False Ceiling',
+    electrical: 'Electrical',
+    plumbing: 'Plumbing',
+
+    // Celebration Services
+    photography: 'Photography',
+    videography: 'Videography',
+    reels: 'Reels / Shorts',
+    drone: 'Drone Coverage',
+    styling: 'Space Styling',
+    decoration: 'Decoration Setup',
+    editing: 'Advanced Editing',
+    album: 'Photo Album'
 };
 
 export default function BookingReview() {
@@ -73,7 +98,7 @@ export default function BookingReview() {
 
     // Calculate pricing
     const basePrice = PRICING[packageType][tier];
-    const totalPrice = basePrice;
+    const isCustom = tier === 'Custom';
 
     const handleEdit = () => {
         navigate('/booking', { state });
@@ -124,18 +149,19 @@ export default function BookingReview() {
                 location: formData.location,
                 preferred_date: formData.preferredDate || null,
                 notes: formData.notes,
-                base_price: basePrice
+                base_price: isCustom ? 'To be quoted' : basePrice,
+                selected_custom_services: isCustom ? formData.selectedServices : []
             };
 
             const bookingPayload = {
                 package_id: packageData.id,
                 tier_id: tierData.id,
-                total_price: totalPrice,
+                total_price: isCustom ? null : basePrice, // Store null for custom quotes
                 event_date: formData.preferredDate || null,
                 event_venue: formData.location,
                 client_details: clientDetails,
                 package_details: packageDetails,
-                selected_addons: null,
+                selected_addons: isCustom ? formData.selectedServices : null, // Storing custom services in addons/JSONB if available
                 special_requirements: formData.notes,
                 status: 'new',
                 user_id: null // Implicitly handled if needed, or null for guest
@@ -360,7 +386,7 @@ export default function BookingReview() {
                         className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-2xl p-6 relative overflow-hidden"
                     >
                         <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl" />
-                        <div className="relative flex items-center justify-between mb-4">
+                        <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                             <div>
                                 <h3 className="text-2xl font-black text-white mb-1">{packageType} Package</h3>
                                 {packageType === 'Dream Space' && formData.spaceType && (
@@ -387,14 +413,47 @@ export default function BookingReview() {
                                     </motion.div>
                                 )}
                             </div>
-                            <motion.div
-                                whileHover={{ scale: 1.05 }}
-                                className="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-bold shadow-lg"
-                            >
-                                {tier} Tier
-                            </motion.div>
+                            <div className="flex flex-col items-end gap-2">
+                                <motion.div
+                                    whileHover={{ scale: 1.05 }}
+                                    className="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-bold shadow-lg"
+                                >
+                                    {tier} Tier
+                                </motion.div>
+                                <div className="text-white font-bold text-xl">
+                                    {isCustom ? (
+                                        <span className="text-blue-300">To be quoted</span>
+                                    ) : (
+                                        `₹${basePrice.toLocaleString()}`
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </motion.div>
+
+                    {/* Selected Services (Custom Only) */}
+                    {isCustom && formData.selectedServices && formData.selectedServices.length > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.45 }}
+                            className="space-y-4"
+                        >
+                            <h3 className="text-xl font-bold text-white flex items-center gap-2 border-b border-white/10 pb-3">
+                                <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400">
+                                    <Sparkles size={20} />
+                                </div>
+                                <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Selected Services</span>
+                            </h3>
+                            <div className="flex flex-wrap gap-2">
+                                {formData.selectedServices.map(serviceId => (
+                                    <div key={serviceId} className="px-4 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-200 text-sm font-medium">
+                                        {CUSTOM_SERVICE_LABELS[serviceId] || serviceId}
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
 
                     {/* Personal Information */}
                     <motion.div
@@ -525,7 +584,7 @@ export default function BookingReview() {
                         transition={{ delay: 1 }}
                         className="text-center text-xs text-gray-500 pt-4"
                     >
-                        By confirming, you agree to our terms and conditions. A 50% advance payment may be required to secure your booking.
+                        By confirming, you agree to our terms and conditions. {isCustom ? 'A quote will be provided shortly.' : 'A 50% advance payment may be required to secure your booking.'}
                     </motion.p>
                 </motion.div>
             </div>

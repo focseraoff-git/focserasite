@@ -108,10 +108,14 @@ function AppInner() {
 }
 
 
+import SmoothScroll from './components/SmoothScroll';
+
 export default function App() {
   return (
     <Router>
-      <AppInner />
+      <SmoothScroll>
+        <AppInner />
+      </SmoothScroll>
     </Router>
   );
 }

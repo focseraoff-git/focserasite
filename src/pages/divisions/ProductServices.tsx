@@ -93,7 +93,7 @@ export default function ProductServices() {
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fadeInUp">
-          <div className="w-32 h-32 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl p-4 ring-1 ring-white/10">
+          <div className="w-32 h-32 bg-[#111]/80 sm:bg-white/5 backdrop-blur-none sm:backdrop-blur-xl border border-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg sm:shadow-2xl p-4 ring-1 ring-white/10">
             <img src="/images/logos/FocseraProduct.jpg" alt="Focsera Product Services" className="w-full h-full object-contain rounded-xl" />
           </div>
           <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-gray-400">
@@ -148,14 +148,14 @@ export default function ProductServices() {
               <div className="grid grid-cols-1 gap-8">
 
                 {/* Product 1: FocseraDineQR */}
-                <div className="bg-[#09090b]/80 backdrop-blur-md border border-emerald-500/20 rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all duration-500 hover:shadow-[0_0_50px_-12px_rgba(16,185,129,0.3)] transform hover:-translate-y-1">
+                <div className="bg-[#09090b]/90 sm:bg-[#09090b]/80 backdrop-blur-none sm:backdrop-blur-md border border-emerald-500/20 rounded-3xl p-8 sm:p-10 shadow-xl sm:shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all duration-500 hover:shadow-[0_0_50px_-12px_rgba(16,185,129,0.3)] transform hover:-translate-y-1">
                   <div className="absolute top-[-50%] right-[-50%] w-[100%] h-[100%] bg-emerald-500/5 rounded-full blur-[100px] group-hover:bg-emerald-500/10 transition-all duration-700 pointer-events-none"></div>
                   <div className="relative z-10">
                     <div className="flex justify-between items-start mb-8">
-                      <div className="w-20 h-20 bg-gradient-to-br from-emerald-900/40 to-emerald-600/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform duration-500 shadow-inner shadow-emerald-500/20">
+                      <div className="w-20 h-20 bg-gradient-to-br from-emerald-900/40 to-emerald-600/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center backdrop-blur-none sm:backdrop-blur-md group-hover:scale-110 transition-transform duration-500 shadow-inner shadow-emerald-500/20">
                         <QrCode className="text-emerald-400" size={40} />
                       </div>
-                      <div className="px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(16,185,129,0.4)]">
+                      <div className="px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-none sm:backdrop-blur-sm shadow-[0_0_15px_-5px_rgba(16,185,129,0.4)]">
                         <span className="text-xs font-bold text-emerald-400 tracking-wider uppercase">Flagship</span>
                       </div>
                     </div>
@@ -173,23 +173,23 @@ export default function ProductServices() {
                     </div>
                     <div className="flex flex-col sm:flex-row gap-4 mt-auto">
                       <Button onClick={handleBookDemo} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl py-6 text-lg shadow-lg shadow-emerald-600/20 hover:shadow-emerald-500/40 transition-all duration-300">Book Demo</Button>
-                      <Button type="button" variant="outline" className="flex-1 border-white/10 hover:border-emerald-500/50 text-gray-400 hover:text-white rounded-xl h-auto py-6 font-medium bg-white/5 hover:bg-white/10 backdrop-blur-sm">View Details</Button>
+                      <Button type="button" variant="outline" className="flex-1 border-white/10 hover:border-emerald-500/50 text-gray-400 hover:text-white rounded-xl h-auto py-6 font-medium bg-white/5 hover:bg-white/10 backdrop-blur-none sm:backdrop-blur-sm">View Details</Button>
                     </div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Product 2: Skill Verse */}
-                  <Link to="/skill-verse" className="bg-[#0a0a0a]/80 backdrop-blur-md border border-blue-500/20 rounded-3xl p-8 shadow-2xl relative overflow-hidden group hover:border-blue-500/50 transition-all duration-500 hover:shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] transform hover:-translate-y-1 block h-full flex flex-col">
+                  <Link to="/skill-verse" className="bg-[#0a0a0a]/90 sm:bg-[#0a0a0a]/80 backdrop-blur-none sm:backdrop-blur-md border border-blue-500/20 rounded-3xl p-8 shadow-xl sm:shadow-2xl relative overflow-hidden group hover:border-blue-500/50 transition-all duration-500 hover:shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] transform hover:-translate-y-1 block h-full flex flex-col">
                     <div className="absolute top-[-50%] right-[-50%] w-[100%] h-[100%] bg-blue-600/5 rounded-full blur-[100px] group-hover:bg-blue-600/10 transition-all duration-700 pointer-events-none"></div>
                     <div className="absolute bottom-[-50%] left-[-50%] w-[100%] h-[100%] bg-purple-600/5 rounded-full blur-[100px] group-hover:bg-purple-600/10 transition-all duration-700 pointer-events-none"></div>
 
                     <div className="relative z-10 flex flex-col h-full">
                       <div className="flex justify-between items-start mb-8">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-2xl flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform duration-500 shadow-inner shadow-blue-500/20">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-2xl flex items-center justify-center backdrop-blur-none sm:backdrop-blur-md group-hover:scale-110 transition-transform duration-500 shadow-inner shadow-blue-500/20">
                           <GraduationCap className="text-blue-400" size={32} />
                         </div>
-                        <div className="px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm">
+                        <div className="px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 backdrop-blur-none sm:backdrop-blur-sm">
                           <span className="text-[10px] font-bold text-blue-400 tracking-wider uppercase">New</span>
                         </div>
                       </div>
@@ -239,8 +239,8 @@ export default function ProductServices() {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={handleClose} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative bg-[#111] border border-white/10 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden text-white flex flex-col max-h-[90vh]">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={handleClose} className="absolute inset-0 bg-black/90 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative bg-[#111] border border-white/10 rounded-3xl shadow-xl w-full max-w-2xl overflow-hidden text-white flex flex-col max-h-[90vh]">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-emerald-500/20 rounded-full blur-[60px] pointer-events-none"></div>
               <div className="p-8 pb-6 border-b border-white/5 flex items-center justify-between relative z-10 flex-shrink-0 bg-[#111]/50 backdrop-blur-sm">
                 <div><h3 className="text-2xl font-serif font-medium tracking-wide text-white">Book <span className="text-emerald-400">Demo</span></h3><p className="text-sm text-gray-400 mt-1">Experience the future of dining</p></div>

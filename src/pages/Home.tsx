@@ -99,11 +99,11 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black"></div>
 
           {/* Cinematic Noise Texture - Fixed/Static for tactile feel */}
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 md:opacity-20 mix-blend-normal md:mix-blend-overlay pointer-events-none"></div>
 
           {/* Subtle Ambient Glow (No blobs, no grid - Pure Ambience) */}
-          <motion.div style={{ y: y1 }} className="absolute top-0 left-1/2 -translate-x-1/2 w-[90vw] h-[600px] bg-blue-900/10 blur-[180px] rounded-full pointer-events-none mix-blend-screen opacity-50"></motion.div>
-          <motion.div style={{ y: y2 }} className="absolute bottom-0 right-0 w-[60vw] h-[600px] bg-slate-800/10 blur-[180px] rounded-full pointer-events-none mix-blend-screen opacity-40"></motion.div>
+          <motion.div style={{ y: y1 }} className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 w-[90vw] h-[600px] bg-blue-900/10 blur-[180px] rounded-full pointer-events-none mix-blend-screen opacity-50"></motion.div>
+          <motion.div style={{ y: y2 }} className="hidden md:block absolute bottom-0 right-0 w-[60vw] h-[600px] bg-slate-800/10 blur-[180px] rounded-full pointer-events-none mix-blend-screen opacity-40"></motion.div>
         </div>
 
         <div className="relative z-10 text-center px-4 max-w-[90rem] mx-auto w-full">
@@ -112,7 +112,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...standardTransition, delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-slate-300 text-[10px] sm:text-xs font-bold tracking-[0.25em] uppercase mb-10 sm:mb-14 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.05)] hover:bg-white/10 transition-colors cursor-default"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900/80 md:bg-white/5 border border-white/10 text-slate-300 text-[10px] sm:text-xs font-bold tracking-[0.25em] uppercase mb-10 sm:mb-14 backdrop-blur-none md:backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.05)] hover:bg-white/10 transition-colors cursor-default"
           >
             <Sparkles size={12} className="text-slate-400" />
             The Future of Creativity

@@ -109,12 +109,16 @@ export default function HomeCarousel() {
         }
     };
 
+    // Check for mobile to reduce animation load
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
     const slideVariants: any = {
         enter: (direction: number) => ({
             x: direction > 0 ? '100%' : '-100%',
             opacity: 0,
             scale: 0.9,
-            filter: "blur(20px)"
+            // Disable heavy blur on mobile
+            filter: isMobile ? "none" : "blur(20px)"
         }),
         center: {
             zIndex: 1,
@@ -128,12 +132,13 @@ export default function HomeCarousel() {
             x: direction < 0 ? '100%' : '-100%',
             opacity: 0,
             scale: 0.9,
-            filter: "blur(20px)"
+            // Disable heavy blur on mobile
+            filter: isMobile ? "none" : "blur(20px)"
         })
     };
 
     const contentVariants: any = {
-        hidden: { opacity: 0, y: 50, rotateX: 5 },
+        hidden: { opacity: 0, y: 50, rotateX: isMobile ? 0 : 5 }, // Simplify 3D transform
         visible: {
             opacity: 1,
             y: 0,

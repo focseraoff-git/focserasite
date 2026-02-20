@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, MapPin, User, Phone, Mail, Clock, AlertCircle, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, User, Phone, Mail, Clock, AlertCircle, ArrowRight, ArrowLeft, Sparkles, CheckSquare, Square, Brush, Sofa, Hammer, Grid, Lightbulb, Wrench } from 'lucide-react';
 
 const TIME_SLOTS = [
     'Morning (9AM - 12PM)',
@@ -10,9 +10,34 @@ const TIME_SLOTS = [
     'Full Day (9AM - 7PM)'
 ];
 
+const INTERIOR_SERVICES = [
+    { id: 'painting', label: 'Painting', icon: <Brush /> },
+    { id: 'furnishing', label: 'Furnishing', icon: <Sofa /> },
+    { id: 'flooring', label: 'Flooring', icon: <Grid /> },
+    { id: 'wardrobes', label: 'Wardrobes', icon: '🚪' },
+    { id: 'tiles', label: 'Tiles', icon: <Grid /> },
+    { id: 'false_ceiling', label: 'False Ceiling', icon: <Hammer /> },
+    { id: 'electrical', label: 'Electrical', icon: <Lightbulb /> },
+    { id: 'plumbing', label: 'Plumbing', icon: <Wrench /> }
+];
+
+const CELEBRATION_SERVICES = [
+    { id: 'photography', label: 'Photography', icon: '📸' },
+    { id: 'videography', label: 'Videography', icon: '🎥' },
+    { id: 'reels', label: 'Reels / Shorts', icon: '📱' },
+    { id: 'drone', label: 'Drone Coverage', icon: '🚁' },
+    { id: 'styling', label: 'Event Styling', icon: '✨' },
+    { id: 'decoration', label: 'Decoration', icon: '🎀' },
+    { id: 'editing', label: 'Editing', icon: '🎬' },
+    { id: 'album', label: 'Photo Album', icon: '📒' }
+];
+
+// Dream Space now includes EVERYTHING: Interiors + Celebration (Events/Studios)
+const DREAM_SPACE_SERVICES = [...INTERIOR_SERVICES, ...CELEBRATION_SERVICES];
+
 interface LocationState {
     packageType: 'Dream Space' | 'Celebration';
-    tier: 'Lite' | 'Standard' | 'Premium';
+    tier: 'Lite' | 'Standard' | 'Premium' | 'Custom';
     category: 'dream' | 'celebration';
 }
 
@@ -32,7 +57,8 @@ export default function PackageBooking() {
         preferredDate: '', // Optional for both
         spaceType: '', // For Dream Space: 'home' or 'business'
         eventType: '', // For Celebration: 'birthday', 'anniversary', etc.
-        notes: '' // Combined special requirements and notes
+        notes: '', // Combined special requirements and notes
+        selectedServices: [] as string[] // For Custom tier
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -46,12 +72,27 @@ export default function PackageBooking() {
 
     if (!state) return null;
 
+    const currentServices = state.packageType === 'Dream Space' ? DREAM_SPACE_SERVICES : CELEBRATION_SERVICES;
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
         // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
+        }
+    };
+
+    const toggleService = (serviceId: string) => {
+        setFormData(prev => {
+            const current = prev.selectedServices;
+            const updated = current.includes(serviceId)
+                ? current.filter(id => id !== serviceId)
+                : [...current, serviceId];
+            return { ...prev, selectedServices: updated };
+        });
+        if (errors.selectedServices) {
+            setErrors(prev => ({ ...prev, selectedServices: '' }));
         }
     };
 
@@ -77,6 +118,11 @@ export default function PackageBooking() {
         }
         if (state.packageType === 'Celebration' && !formData.eventType) {
             newErrors.eventType = 'Please select event type';
+        }
+
+        // Custom Tier Validation
+        if (state.tier === 'Custom' && formData.selectedServices.length === 0) {
+            newErrors.selectedServices = 'Please select at least one service';
         }
 
         setErrors(newErrors);
@@ -246,6 +292,50 @@ export default function PackageBooking() {
                             </motion.div>
                         </div>
                     </motion.div>
+
+                    {/* Checkbox Grid for Custom Package */}
+                    {state.tier === 'Custom' && (
+                        <div className="space-y-6 pt-8 border-t border-white/10">
+                            <h3 className="text-xl font-bold text-white flex items-center gap-3">
+                                <div className="p-2.5 rounded-xl bg-indigo-500/20 text-indigo-400 shadow-lg shadow-indigo-500/10">
+                                    <CheckSquare size={20} />
+                                </div>
+                                <span className="bg-gradient-to-r from-white via-indigo-100 to-gray-400 bg-clip-text text-transparent">
+                                    Select Services *
+                                </span>
+                            </h3>
+
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {currentServices.map(service => {
+                                    const isSelected = formData.selectedServices.includes(service.id);
+                                    return (
+                                        <motion.button
+                                            key={service.id}
+                                            type="button"
+                                            whileHover={{ scale: 1.02, y: -2 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => toggleService(service.id)}
+                                            className={`p-4 rounded-2xl border transition-all duration-300 text-center relative overflow-hidden group ${isSelected
+                                                ? 'bg-indigo-600/20 border-indigo-500/50 shadow-lg shadow-indigo-500/20'
+                                                : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                                                }`}
+                                        >
+                                            <div className={`absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 transition-opacity duration-500 ${isSelected ? 'opacity-100' : 'group-hover:opacity-100'}`} />
+                                            <div className="relative z-10 flex flex-col items-center gap-2">
+                                                <span className="text-2xl mb-1">{service.icon}</span>
+                                                <div className={`text-sm font-bold transition-colors ${isSelected ? 'text-white' : 'text-gray-400 group-hover:text-indigo-200'}`}>{service.label}</div>
+                                                <div className={`absolute top-2 right-2 ${isSelected ? 'text-indigo-400' : 'text-gray-600'}`}>
+                                                    {isSelected ? <CheckSquare size={14} /> : <Square size={14} />}
+                                                </div>
+                                            </div>
+                                        </motion.button>
+                                    );
+                                })}
+                            </div>
+                            {errors.selectedServices && <p className="error-message text-red-400 text-sm mt-2 flex items-center gap-1"><AlertCircle size={14} />{errors.selectedServices}</p>}
+                        </div>
+                    )}
+
 
                     {/* Location & Date */}
                     <div className="space-y-6 pt-8 border-t border-white/10">

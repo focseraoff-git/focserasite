@@ -12,8 +12,8 @@ import {
 export default function PackagesSection() {
     const [activeTab, setActiveTab] = useState<'dream' | 'celebration'>('dream');
     const navigate = useNavigate();
-    // Ultra-Smooth "Apple-like" Cubic Bezier Easing
-    const smoothEase = [0.23, 1, 0.32, 1] as any;
+    // Ultra-Smooth "Slime" Cubic Bezier Easing - Fluid & Viscous
+    const smoothEase = [0.25, 0.4, 0.25, 1] as any;
 
     const handlePackageSelect = (tier: string) => {
         const packageType = activeTab === 'dream' ? 'Dream Space' : 'Celebration';
@@ -28,24 +28,24 @@ export default function PackagesSection() {
     };
 
     return (
-        <section className="relative py-32 overflow-hidden bg-slate-950" id="packages">
+        <section className="relative py-24 md:py-32 overflow-hidden bg-slate-950 will-change-transform" id="packages">
             {/* Deep Ambient Background */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 right-1/4 w-[800px] h-[800px] bg-blue-900/10 blur-[150px] rounded-full mix-blend-screen"></div>
-                <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-indigo-900/10 blur-[150px] rounded-full mix-blend-screen"></div>
+            <div className="absolute inset-0 overflow-hidden pointer-events-none transform-gpu">
+                <div className="absolute top-0 right-1/4 w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-blue-900/10 blur-[100px] md:blur-[150px] rounded-full mix-blend-screen animate-pulse"></div>
+                <div className="absolute bottom-0 left-1/4 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-indigo-900/10 blur-[100px] md:blur-[150px] rounded-full mix-blend-screen animate-pulse" style={{ animationDelay: '2s' }}></div>
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay"></div>
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Header - Platinum Aesthetic */}
-                <div className="text-center mb-20 relative z-10">
+                <div className="text-center mb-16 md:mb-20 relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
+                        viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 0.8, ease: smoothEase }}
-                        className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/[0.03] border border-white/[0.08] text-blue-300 text-xs font-bold tracking-[0.2em] uppercase mb-8 backdrop-blur-md"
+                        className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/[0.03] border border-white/[0.08] text-blue-300 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase mb-6 md:mb-8 backdrop-blur-md shadow-lg"
                     >
                         <Sparkles size={14} className="text-blue-400" />
                         <span>Premium Offerings</span>
@@ -54,12 +54,12 @@ export default function PackagesSection() {
                     <motion.h2
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1, ease: smoothEase, delay: 0.2 }}
-                        className="text-5xl sm:text-6xl lg:text-8xl font-black text-white mb-8 tracking-tighter leading-[0.9]"
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 1, ease: smoothEase, delay: 0.1 }}
+                        className="text-4xl sm:text-6xl lg:text-8xl font-black text-white mb-8 tracking-tighter leading-[0.9] drop-shadow-2xl"
                     >
                         Crafting <br className="hidden sm:block" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-indigo-200 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-indigo-200 drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
                             Perfect Moments.
                         </span>
                     </motion.h2>
@@ -69,8 +69,9 @@ export default function PackagesSection() {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8, ease: smoothEase, delay: 0.4 }}
-                        className="inline-flex bg-white/[0.03] p-1.5 rounded-full border border-white/[0.08] backdrop-blur-xl relative z-20 mt-8"
+                        transition={{ duration: 0.8, ease: smoothEase, delay: 0.2 }}
+                        className="inline-flex bg-white/[0.03] p-1.5 rounded-full border border-white/[0.08] backdrop-blur-xl relative z-20 mt-4 md:mt-8 shadow-2xl"
+                        style={{ willChange: 'transform, opacity' }}
                     >
                         <TabButton
                             active={activeTab === 'dream'}
@@ -88,7 +89,7 @@ export default function PackagesSection() {
                 </div>
 
                 {/* Dynamic Content Area */}
-                <div className="min-h-[600px] mb-32">
+                <div className="min-h-[600px] mb-24 md:mb-32">
                     <AnimatePresence mode="wait">
                         {activeTab === 'dream' ? (
                             <DreamSpacePackage key="dream" ease={smoothEase} onSelect={handlePackageSelect} />
@@ -106,13 +107,14 @@ export default function PackagesSection() {
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.8, ease: smoothEase }}
-                            className="relative py-10 border-t border-white/[0.05]"
+                            className="relative py-10 border-t border-white/[0.05] overflow-hidden"
+                            style={{ willChange: 'height, opacity' }}
                         >
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-950 px-4 text-slate-500 text-[10px] font-bold tracking-[0.3em] uppercase">
                                 Industry Partners
                             </div>
                             <div className="flex items-center justify-center">
-                                <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12 items-center justify-items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-700 w-full text-white">
+                                <div className="grid grid-cols-3 md:grid-cols-5 gap-8 md:gap-12 items-center justify-items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-700 w-full text-white">
                                     <AsianPaintsLogo />
                                     <SaintGobainLogo />
                                     <HettichLogo />
@@ -137,7 +139,7 @@ export default function PackagesSection() {
                     </div>
 
                     <div className="min-h-[4rem] flex items-center justify-center">
-                        <div className="flex flex-wrap justify-center gap-8 md:gap-12 items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-700 w-full text-white px-4">
+                        <div className="flex flex-wrap justify-center gap-8 md:gap-16 items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-700 w-full text-white px-4">
                             <CanonLogo />
                             <SonyLogo />
                             <IphoneLogo />
@@ -153,11 +155,13 @@ export default function PackagesSection() {
 const TabButton = ({ active, onClick, label, icon }: any) => (
     <button
         onClick={onClick}
-        className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-500 ${active
+        className={`flex items-center gap-2 px-5 py-3 md:px-6 md:py-3 rounded-full text-xs md:text-sm font-bold transition-all duration-500 relative overflow-hidden group ${active
             ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.1)] border border-white/10'
             : 'text-slate-500 hover:text-white hover:bg-white/5 border border-transparent'
             } `}
+        style={{ WebkitTapHighlightColor: 'transparent' }}
     >
+        <div className={`absolute inset-0 bg-white/20 blur-xl opacity-0 transition-opacity duration-300 ${active ? 'opacity-0' : 'group-hover:opacity-100'}`} />
         {icon}
         {label}
     </button>
@@ -247,55 +251,69 @@ function DreamSpacePackage({ ease, onSelect }: { ease: any, onSelect: (tier: str
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true }}
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6"
                 >
                     <PricingCard
                         title="Lite"
-                        price="Essential"
-                        desc="Best for small spaces or simple setups."
+                        price="Refresh"
+                        desc="Essential upgrades for a fresh look."
                         features={[
-                            'Basic space styling guidance',
-                            'Minimal decoration setup',
-                            'Photography coverage',
-                            'Short reel creation',
-                            'Edited photos delivery'
+                            'Painting & Touch-ups',
+                            'Basic Electrical/Plumbing Check',
+                            'Deep Cleaning',
+                            'Simple Decor Styling',
+                            'Photography Coverage'
                         ]}
-                        idealFor="Small homes, offices, shops, budget-friendly setups."
+                        idealFor="Rental handovers, quick festive refresh, small apartments."
                         ease={ease}
                         onSelect={() => onSelect('Lite')}
                     />
                     <PricingCard
                         title="Standard"
-                        price="Signature"
-                        desc="Most popular option with balanced coverage."
+                        price="Ambience"
+                        desc="Balanced makeover for modern living."
                         features={[
-                            'Space styling & arrangement',
-                            'Decoration setup',
-                            'Photography + videography',
-                            'Cinematic reels',
-                            'Portrait sessions',
-                            'Event coordination support'
+                            'Full Painting & Wall Textures',
+                            'False Ceiling & Lighting',
+                            'Furniture Sourcing/Consult',
+                            'Event/Poojah Decoration',
+                            'Photo & Video Coverage'
                         ]}
                         highlight={true}
-                        idealFor="Homes, offices, store openings, medium celebrations."
+                        idealFor="New home entry (Gruhapravesam), office setup, store launch."
                         ease={ease}
                         onSelect={() => onSelect('Standard')}
                     />
                     <PricingCard
                         title="Premium"
-                        price="Visionary"
-                        desc="Complete experience with advanced services."
+                        price="Signature"
+                        desc="Complete luxury transformation."
                         features={[
-                            'Full space styling & enhancement',
-                            'Premium decoration setup',
-                            'Photography + cinematic video',
-                            'Multiple reels & portraits',
-                            'Frames or album options',
-                            'Event & Catering coordination'
+                            'End-to-End Interiors (Wardrobes+)',
+                            'Premium Flooring & Tiles',
+                            'Smart Home Electricals',
+                            'Grand Event Management',
+                            'Cinematic Production (Drone+)'
                         ]}
-                        idealFor="Luxury homes, businesses, high-end launches."
+                        idealFor="Luxury villas, flagship stores, grand weddings/events."
                         ease={ease}
                         onSelect={() => onSelect('Premium')}
+                    />
+                    <PricingCard
+                        title="Custom"
+                        price="Your Way"
+                        desc="Build a package that fits your specific needs."
+                        features={[
+                            'Mix Interiors + Events',
+                            'Pick specific services',
+                            'Flexible budget planning',
+                            'Consultation-first approach',
+                            'Personalized deliverables',
+                            'Add-on flexibility'
+                        ]}
+                        idealFor="Unique projects, specific requirements, custom budgets."
+                        ease={ease}
+                        onSelect={() => onSelect('Custom')}
                     />
                 </motion.div>
             </div>
@@ -412,7 +430,7 @@ function CelebrationPackage({ ease, onSelect }: { ease: any, onSelect: (tier: st
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true }}
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6"
                 >
                     <PricingCard
                         title="Lite"
@@ -460,6 +478,24 @@ function CelebrationPackage({ ease, onSelect }: { ease: any, onSelect: (tier: st
                         idealFor="Large celebrations, parties, milestone events."
                         ease={ease}
                         onSelect={() => onSelect('Premium')}
+                    />
+                    <PricingCard
+                        title="Custom"
+                        price="Your Way"
+                        desc="Tailor the perfect celebration package."
+                        features={[
+                            'Custom event coverage',
+                            'Select specific deliverables',
+                            'Mix & match services',
+                            'Personalized add-ons',
+                            'Specific aesthetic requirements',
+                            'Flexible budget options'
+                        ]}
+                        idealFor="Themed parties, unique events, specific needs."
+                        highlight={true}
+                        highlightColor="amber"
+                        ease={ease}
+                        onSelect={() => onSelect('Custom')}
                     />
                 </motion.div>
             </div>
