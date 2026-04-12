@@ -588,7 +588,19 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
         };
 
         try {
-            const { error } = await supabase.from('studio_quotes').insert([payload]);
+            const quotePayload = {
+                domain: 'studios',
+                source_table: 'studio_quote',
+                source_id: 'inquiry',
+                details: payload.details,
+                metadata: {
+                    name: payload.name,
+                    email: payload.email,
+                    phone: payload.phone,
+                    event_date: payload.event_date,
+                },
+            };
+            const { error } = await supabase.from('unified_quotes').insert([quotePayload]);
             if (error) {
                 console.error('Error inserting studio quote:', error);
                 alert('Error submitting quote: ' + (error.message || String(error)));
@@ -1271,31 +1283,34 @@ const DetailsPage = ({ bookingPackage, onConfirm, onBack, session, addOns }) => 
         const formData = new FormData(e.target);
         const clientDetails = Object.fromEntries(formData.entries());
 
+        const selectedAddOnLabels = Object.entries(bookingPackage.addOns)
+            .filter(([_, v]) => v)
+            .map(([key]) => {
+                const addOn = addOns.find(a => a.key === key);
+                return addOn ? addOn.label : null;
+            }).filter(Boolean);
+
         const bookingData = {
-            user_id: session?.user?.id,
-            service_id: bookingPackage.service.id,
-            total_price: bookingPackage.service.price_min || bookingPackage.service.price || 0,
-            event_date: clientDetails.event_date,
-            event_venue: clientDetails.event_venue,
-            client_details: {
-                name: clientDetails.name,
-                email: clientDetails.email,
-                phone: clientDetails.phone,
+            user_id: session?.user?.id || null,
+            domain: 'studios',
+            source_table: 'studio_booking',
+            source_id: String(bookingPackage.service.id),
+            total_price: bookingPackage.service.price_min || bookingPackage.service.price || null,
+            booking_date: clientDetails.event_date || null,
+            location: clientDetails.event_venue || null,
+            customer_name: clientDetails.name,
+            customer_email: clientDetails.email,
+            customer_phone: clientDetails.phone,
+            status: 'PENDING',
+            metadata: {
+                service_name: bookingPackage.service.name,
                 event_end_date: clientDetails.event_end_date || null,
                 number_of_people: clientDetails.number_of_people || null,
+                add_ons: selectedAddOnLabels,
             },
-            package_details: {
-                serviceName: bookingPackage.service.name,
-                addOns: Object.entries(bookingPackage.addOns)
-                    .filter(([_, v]) => v)
-                    .map(([key]) => {
-                        const addOn = addOns.find(a => a.key === key);
-                        return addOn ? addOn.label : null;
-                    }).filter(Boolean)
-            }
         };
 
-        const { error } = await supabase.from('studio_bookings').insert([bookingData]);
+        const { error } = await supabase.from('unified_bookings').insert([bookingData]);
         if (error) {
             alert('Error creating booking: ' + error.message);
         } else {
@@ -1593,7 +1608,7 @@ export default function App() {
         setIsLoading(true);
         try {
             const [{ data: servicesData, error: servicesError }, { data: addOnsData, error: addOnsError }] = await Promise.all([
-                supabase.from('studio_services').select('*').order('id', { ascending: true }),
+                supabase.from('unified_packages').select('*').in('domain', ['studios', 'Studio', 'Studios']).order('created_at', { ascending: true }),
                 supabase.from('studio_addons').select('*').order('id', { ascending: true })
             ]);
 
@@ -1603,14 +1618,14 @@ export default function App() {
             const mappedServices = (servicesData || []).map(s => ({
                 id: s.id,
                 name: s.name,
-                description: s.description || s.short_description || '',
-                thumbnail: s.thumbnail || s.image_url || `https://placehold.co/600x400/94A3B8/FFFFFF?text=${encodeURIComponent(s.name || 'Service')}`,
-                category: s.category || 'General',
+                description: s.description || '',
+                thumbnail: s.thumbnail || `https://placehold.co/600x400/94A3B8/FFFFFF?text=${encodeURIComponent(s.name || 'Service')}`,
+                category: (s.metadata as any)?.category || 'General',
                 is_active: !!s.is_active,
-                terms: s.terms || {},
-                default_add_ons: s.default_add_ons || {},
-                price_min: s.price_min,
-                pricing_mode: s.pricing_mode
+                terms: (s.metadata as any)?.terms || {},
+                default_add_ons: (s.metadata as any)?.default_add_ons || {},
+                price_min: s.price,
+                pricing_mode: (s.metadata as any)?.pricing_mode || 'quote'
             }));
 
             const mappedAddOns = (addOnsData || []).map(a => ({

@@ -133,43 +133,64 @@ const Account = () => {
         try {
             setError(null);
 
-            // 1. Fetch Event Bookings (Standard)
-            let eventQuery = supabase
-                .from('event_bookings' as any)
+            // 1. Fetch unified bookings (replaces old event_bookings)
+            let unifiedQuery = supabase
+                .from('unified_bookings')
                 .select('*')
                 .eq('user_id', userId)
                 .order('created_at', { ascending: false });
 
             // 2. Fetch PromptX Bookings (By Email)
             let promptxQuery = supabase
-                .from('promptx_bookings' as any)
+                .from('promptx_bookings')
                 .select('*')
                 .eq('email', email)
                 .order('created_at', { ascending: false });
 
             // Apply limit loosely to both (we'll slice after merge)
             if (limit && Number(limit) > 0) {
-                eventQuery = eventQuery.limit(Number(limit));
+                unifiedQuery = unifiedQuery.limit(Number(limit));
                 promptxQuery = promptxQuery.limit(Number(limit));
             }
 
-            const [eventRes, promptxRes] = await Promise.all([eventQuery, promptxQuery]);
+            const [unifiedRes, promptxRes] = await Promise.all([unifiedQuery, promptxQuery]);
 
-            if (eventRes.error) throw eventRes.error;
+            if (unifiedRes.error) throw unifiedRes.error;
             if (promptxRes.error) console.warn("PromptX fetch error (non-fatal):", promptxRes.error);
 
-            const events = eventRes.data || [];
+            // Normalize unified_bookings to internal display shape
+            const events = (unifiedRes.data || []).map((b: any) => ({
+                id: b.id,
+                status: b.status || 'pending',
+                total_price: b.total_price,
+                created_at: b.created_at,
+                event_date: b.booking_date,
+                event_venue: b.location,
+                package_details: {
+                    serviceName: b.metadata?.package_type
+                        ? `${b.metadata.package_type} – ${b.metadata.tier || ''}`
+                        : (b.source_table || 'Booking'),
+                    service: {
+                        name: b.metadata?.package_type
+                            ? `${b.metadata.package_type} – ${b.metadata.tier || ''}`
+                            : (b.source_table || 'Booking')
+                    },
+                    addOns: b.metadata?.selected_services || []
+                },
+                is_promptx: false,
+            }));
 
-            // Normalize PromptX bookings to match Event Booking structure
+            // Normalize PromptX bookings to match display structure
             const promptx = (promptxRes.data || []).map((b: any) => ({
                 id: b.order_id,
                 status: b.payment_status,
                 total_price: b.amount,
-                created_at: b.created_at, // Assumes created_at exists, if not it will be undefined/null
+                created_at: b.created_at,
                 event_date: '2026-01-03', // Hardcoded for this specific workshop
+                event_venue: 'PromptX Venue',
                 package_details: {
                     serviceName: 'PromptX AI Workshop',
-                    service: { name: 'PromptX AI Workshop' }, // fallback for display logic
+                    service: { name: 'PromptX AI Workshop' },
                     description: `Attendee: ${b.student_name} (${b.class_level})`,
                     addOns: ['Certificate', 'Ai Kit']
                 },
@@ -179,7 +200,7 @@ const Account = () => {
             }));
 
             // Merge and Sort by Date
-            const allBookings = [...(events as any[]), ...(promptx as any[])].sort((a, b) => {
+            const allBookings = [...events, ...promptx].sort((a, b) => {
                 const dateA = new Date(a.created_at || 0).getTime();
                 const dateB = new Date(b.created_at || 0).getTime();
                 return dateB - dateA;

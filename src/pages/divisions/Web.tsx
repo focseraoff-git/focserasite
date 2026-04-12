@@ -68,20 +68,20 @@ const FuelUpKit = () => {
 
     const messageDetails = `Selected Configuration:\n- Base Starter\n${Object.values(FUEL_UP_ADDONS).flatMap(c => c.items.filter(i => selectedAddons[i.id]).map(i => `- ${i.name}`)).join('\n')}\n\nTotal Estimate: Contact for Pricing`;
 
-    const bookingData = {
-      name,
-      mobile,
-      business_name: business,
-      message: messageDetails,
-      offer_code: 'FUEL_UP_KIT',
-      status: 'new'
+    const quotePayload = {
+      domain: 'web',
+      source_table: 'fuel_up_kit',
+      source_id: 'FUEL_UP_KIT',
+      details: messageDetails,
+      metadata: { name, mobile, business_name: business },
+      status: 'new',
     };
 
     // Save to Supabase
     try {
-      await supabase.from('web_bookings').insert([bookingData]);
+      await supabase.from('unified_quotes').insert([quotePayload]);
     } catch (err) {
-      console.error('Error saving booking:', err);
+      console.error('Error saving quote:', err);
     }
 
     // Redirect to WhatsApp
@@ -247,6 +247,54 @@ const FuelUpKit = () => {
   );
 };
 
+const WebPackagesSection = () => {
+    const [packages, setPackages] = useState<any[]>([]);
+    
+    useEffect(() => {
+        const fetchPackages = async () => {
+            const { data } = await supabase.from('unified_packages').select('*').in('domain', ['Web', 'web', 'Webs']);
+            if (data) setPackages(data.filter(p => p.is_active));
+        };
+        fetchPackages();
+    }, []);
+
+    const handleWhatsAppBooking = (pkgName: string) => {
+        const text = `*Inquiry for ${pkgName}*%0A%0AHi Focsera, I am interested in booking this package.`;
+        window.open(`https://wa.me/918610266034?text=${text}`, '_blank');
+    };
+
+    if (packages.length === 0) return null;
+
+    return (
+      <section className="relative pt-16 pb-24" id="web-packages">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16 relative">
+                <h2 className="text-4xl sm:text-5xl font-black text-white mb-6 tracking-tight">Premium Packages</h2>
+                <p className="text-lg text-gray-400">Discover our tailor-made digital solutions</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {packages.map((pkg) => (
+                    <div key={pkg.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 flex flex-col hover:border-blue-500/50 transition-colors shadow-2xl relative group">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-[2rem] pointer-events-none"></div>
+                        <div className="relative z-10 mb-6">
+                            {pkg.thumbnail && <img src={pkg.thumbnail} alt={pkg.name} className="w-full h-40 object-cover rounded-xl mb-6 shadow-md" />}
+                            <h3 className="text-2xl font-bold text-white mb-3">{pkg.name}</h3>
+                            <p className="text-sm text-gray-400 leading-relaxed">{pkg.description}</p>
+                        </div>
+                        <div className="relative z-10 mt-auto pt-6 border-t border-white/10">
+                            <div className="mb-6 flex items-baseline gap-2">
+                                <span className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Contact for Pricing</span>
+                            </div>
+                            <button onClick={() => handleWhatsAppBooking(pkg.name)} className="w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl font-bold hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-900/30 transition-transform">Book via WhatsApp</button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+      </section>
+    );
+};
+
 export default function Web() {
   const { hash } = useLocation();
 
@@ -303,6 +351,8 @@ export default function Web() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-blue-900/20 rounded-full blur-[120px] pointer-events-none"></div>
         <FuelUpKit />
       </section>
+
+      <WebPackagesSection />
 
       {/* Sankranthi Special Offer Section - ULTRA PREMIUM HERO */}
       <section id="sankranthi-offer" className="relative pt-32 pb-24">
@@ -402,21 +452,21 @@ export default function Web() {
                       const messageVal = formData.get('message'); // Rename to avoid conflict with constructed message
 
                       // 1. Prepare Data
-                      const bookingData = {
-                        name: name,
-                        mobile: mobile,
-                        business_name: business,
-                        message: messageVal,
-                        offer_code: "SANKRANTHI_WEB_OFFER_999",
-                        status: 'pending'
+                      const quotePayload = {
+                        domain: 'web',
+                        source_table: 'web_booking',
+                        source_id: 'SANKRANTHI_WEB_OFFER_999',
+                        details: messageVal as string,
+                        metadata: { name, mobile, business_name: business },
+                        status: 'new',
                       };
 
                       try {
-                        // 2. Insert DB (New dedicated table)
-                        const { error } = await supabase.from('web_bookings').insert([bookingData]);
+                        // 2. Insert DB (unified_quotes replaces old web_bookings)
+                        const { error } = await supabase.from('unified_quotes').insert([quotePayload]);
                         if (error) {
                           console.error(error);
-                          alert("Note: Could not save to database, but proceeding to WhatsApp. " + error.message);
+                          // Proceed anyway to WhatsApp
                         }
                       } catch (err) {
                         console.error(err);

@@ -1,7 +1,7 @@
 
 // @ts-ignore
 import { Link } from 'react-router-dom';
-import { Camera, Globe, Package, ArrowRight, Sparkles, Armchair, Clapperboard, Calendar, ArrowDown, Play } from 'lucide-react';
+import { Camera, Globe, Package, ArrowRight, Sparkles, Armchair, Clapperboard, Calendar, ArrowDown, Play, Zap } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 import HomeCarousel from '../components/HomeCarousel';
@@ -346,6 +346,42 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Floating App Download Button - Ultra Smooth */}
+      <motion.a
+        href="#download-app"
+        initial="initial"
+        animate="animate"
+        whileHover="hover"
+        variants={{
+            initial: { opacity: 0, y: 50, width: "80px", backgroundColor: "rgba(59, 130, 246, 0.1)", borderColor: "rgba(59, 130, 246, 0.3)", boxShadow: "0 0 40px rgba(59,130,246,0.2)" },
+            animate: { opacity: 1, y: 0, width: "80px", backgroundColor: "rgba(59, 130, 246, 0.1)", borderColor: "rgba(59, 130, 246, 0.3)", boxShadow: "0 0 40px rgba(59,130,246,0.3)", transition: { delay: 1, duration: 0.8, ease: smoothEase } },
+            hover: { width: "320px", backgroundColor: "rgba(37, 99, 235, 1)", borderColor: "rgba(59, 130, 246, 0.5)", boxShadow: "0 0 60px rgba(59,130,246,0.6)", y: -6, transition: { duration: 0.6, ease: smoothEase } }
+        }}
+        className="fixed bottom-8 right-8 z-[100] flex items-center h-[80px] rounded-[40px] backdrop-blur-md cursor-pointer overflow-hidden border border-transparent"
+        onClick={(e) => {
+            e.preventDefault();
+            document.getElementById('download-app')?.scrollIntoView({ behavior: 'smooth' });
+        }}
+      >
+          <div className="absolute left-[16px] top-[16px] w-[48px] h-[48px] flex items-center justify-center">
+              <div className="absolute inset-0 bg-blue-300 rounded-full animate-ping opacity-40 mix-blend-screen pointer-events-none"></div>
+              <div className="relative bg-blue-500 w-full h-full flex items-center justify-center rounded-full z-10 shadow-[0_0_20px_rgba(59,130,246,0.5)] pointer-events-none">
+                  <Zap size={26} className="fill-white stroke-white" />
+              </div>
+          </div>
+          
+          <motion.span 
+              className="absolute left-[80px] text-white font-black text-xl whitespace-nowrap pointer-events-none tracking-tight"
+              variants={{
+                  initial: { opacity: 0, x: -5 },
+                  animate: { opacity: 0, x: -5 },
+                  hover: { opacity: 1, x: 0, transition: { duration: 0.5, delay: 0.1, ease: smoothEase } }
+              }}
+          >
+              Download Focsera App
+          </motion.span>
+      </motion.a>
     </div >
   );
 }

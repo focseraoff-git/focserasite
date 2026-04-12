@@ -519,6 +519,51 @@ function QuoteGenerator() {
     );
 }
 
+const InteriorPackagesSection = () => {
+    const [packages, setPackages] = useState<any[]>([]);
+    
+    useEffect(() => {
+        const fetchPackages = async () => {
+            const { data } = await supabase.from('unified_packages').select('*').in('domain', ['Interiors', 'interior', 'Interior']);
+            if (data) setPackages(data.filter(p => p.is_active));
+        };
+        fetchPackages();
+    }, []);
+
+    const handleQuoteClick = () => {
+        document.getElementById('quote-generator')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    if (packages.length === 0) return null;
+    
+    return (
+       <section className="py-20 md:py-32 bg-[#030303] relative border-t border-white/5" id="interior-packages">
+           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent"></div>
+           <div className="max-w-7xl mx-auto px-6">
+               <div className="text-center mb-16">
+                   <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">Signature Packages</h2>
+                   <p className="text-gray-400 text-lg">Curated solutions for your dream space</p>
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                   {packages.map(pkg => (
+                       <div key={pkg.id} className="p-8 rounded-[2rem] border border-white/10 bg-black/40 backdrop-blur-xl text-left hover:border-orange-500/50 transition-colors flex flex-col group relative shadow-2xl overflow-hidden">
+                           <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                           <div className="relative z-10">
+                               {pkg.thumbnail && <img src={pkg.thumbnail} alt={pkg.name} className="w-full h-48 object-cover rounded-xl mb-6 shadow-md" />}
+                               <h3 className="text-2xl font-bold text-white mb-3">{pkg.name}</h3>
+                               <p className="text-gray-400 text-sm mb-6 leading-relaxed flex-grow">{pkg.description}</p>
+                           </div>
+                           <div className="mt-auto border-t border-white/10 pt-6 relative z-10">
+                               <button onClick={handleQuoteClick} className="w-full py-4 bg-gradient-to-r from-orange-400 to-orange-600 rounded-xl text-black font-bold hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-900/30 transition-transform">Get a Quote</button>
+                           </div>
+                       </div>
+                   ))}
+               </div>
+           </div>
+       </section>
+    );
+};
+
 // --- NEW COMPONENT: Landing Page ---
 export default function Interiors() {
     const [bookForm, setBookForm] = useState({
@@ -616,7 +661,7 @@ export default function Interiors() {
                     </div>
 
                     {/* Integrated Calculator */}
-                    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="w-full">
+                    <motion.div id="quote-generator" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="w-full">
                         <QuoteGenerator />
                     </motion.div>
 
@@ -627,7 +672,7 @@ export default function Interiors() {
                 </div>
             </section>
 
-            {/* Removed separate Tool Section */}
+            <InteriorPackagesSection />
 
             {/* 3. What We Do - Bento Grid Style */}
             <section className="py-20 md:py-32 bg-[#030303] border-y border-white/5 relative">

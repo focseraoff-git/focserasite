@@ -1496,10 +1496,15 @@ export default function App() {
         setIsLoading(true);
         try {
             // Try to fetch packages and services from Supabase
-            const [{ data: packagesRemote, error: packagesError }, { data: servicesRemote, error: servicesError }] = await Promise.all([
-                supabase.from('media_packages').select('*').order('id', { ascending: true }),
-                supabase.from('media_services').select('*').order('id', { ascending: true })
-            ]);
+            // Try to fetch packages from Supabase
+            const { data: packagesRemote, error: packagesError } = await supabase
+                .from('unified_packages')
+                .select('*')
+                .eq('domain', 'media')
+                .order('id', { ascending: true });
+
+            const servicesRemote = null; // No media_services table in new schema, relying entirely on built-in mocks
+            const servicesError = null;
 
             if (packagesError) {
                 console.warn('Supabase packages load error, falling back to mocks:', packagesError.message || packagesError);

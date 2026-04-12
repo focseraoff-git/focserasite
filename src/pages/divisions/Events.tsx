@@ -302,15 +302,20 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry, onOpenTe
         const combinedDetails = details + contextualNotes;
 
         const payload = {
-            name: name,
-            email: email,
-            phone: quoteData.phone || null,
-            event_date: quoteData.event_date || null,
+            domain: 'events',
+            source_table: 'event_quote',
+            source_id: 'inquiry',
             details: combinedDetails,
+            metadata: {
+                name: name,
+                email: email,
+                phone: quoteData.phone || null,
+                event_date: quoteData.event_date || null,
+            }
         };
 
         try {
-            const { error } = await supabase.from('event_quotes').insert([payload]);
+            const { error } = await supabase.from('unified_quotes').insert([payload]);
             if (error) {
                 console.error('Error inserting quote:', error);
                 alert('There was an error submitting your quote request: ' + (error.message || String(error)));
@@ -664,8 +669,9 @@ export default function Events() {
         setError(null);
         try {
             const { data: servicesData, error: servicesError } = await supabase
-                .from('event_services')
+                .from('unified_packages')
                 .select('*')
+                .in('domain', ['events', 'Event', 'Events'])
                 .order('id');
 
             if (servicesError) throw servicesError;

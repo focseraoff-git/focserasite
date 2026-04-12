@@ -86,7 +86,7 @@ export default function BookingReview() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
-    const [bookingId, setBookingId] = useState<number | null>(null);
+    const [bookingId, setBookingId] = useState<string | null>(null);
 
     // Redirect if no data
     if (!state || !state.formData) {
@@ -109,67 +109,31 @@ export default function BookingReview() {
         setError('');
 
         try {
-            // 1. Lookup package ID
-            const { data: packageData, error: packageError } = await supabase
-                .from('premium_packages')
-                .select('id')
-                .eq('name', packageType)
-                .single();
-
-            if (packageError || !packageData) {
-                console.error('Package lookup error:', packageError);
-                throw new Error('Package not found. Please contact support.');
-            }
-
-            // 2. Lookup tier ID
-            const { data: tierData, error: tierError } = await supabase
-                .from('premium_package_tiers')
-                .select('id')
-                .eq('package_id', packageData.id)
-                .eq('tier_name', tier)
-                .single();
-
-            if (tierError || !tierData) {
-                console.error('Tier lookup error:', tierError);
-                throw new Error('Package tier not found. Please contact support.');
-            }
-
-            // 3. Prepare booking payload
-            const clientDetails = {
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone
-            };
-
-            const packageDetails = {
-                package_type: packageType,
-                tier: tier,
-                space_type: formData.spaceType || null,
-                event_type: formData.eventType || null,
-                location: formData.location,
-                preferred_date: formData.preferredDate || null,
-                notes: formData.notes,
-                base_price: isCustom ? 'To be quoted' : basePrice,
-                selected_custom_services: isCustom ? formData.selectedServices : []
-            };
-
+            // Build booking payload for unified_bookings
             const bookingPayload = {
-                package_id: packageData.id,
-                tier_id: tierData.id,
-                total_price: isCustom ? null : basePrice, // Store null for custom quotes
-                event_date: formData.preferredDate || null,
-                event_venue: formData.location,
-                client_details: clientDetails,
-                package_details: packageDetails,
-                selected_addons: isCustom ? formData.selectedServices : null, // Storing custom services in addons/JSONB if available
-                special_requirements: formData.notes,
-                status: 'new',
-                user_id: null // Implicitly handled if needed, or null for guest
+                domain: 'focsera',
+                source_table: 'package_booking',
+                source_id: `${packageType}-${tier}`,
+                customer_name: formData.name,
+                customer_email: formData.email,
+                customer_phone: formData.phone,
+                location: formData.location,
+                booking_date: formData.preferredDate || null,
+                total_price: isCustom ? null : basePrice,
+                status: 'PENDING',
+                metadata: {
+                    package_type: packageType,
+                    tier,
+                    space_type: formData.spaceType || null,
+                    event_type: formData.eventType || null,
+                    notes: formData.notes,
+                    selected_services: isCustom ? formData.selectedServices : [],
+                    base_price: isCustom ? 'To be quoted' : basePrice,
+                },
             };
 
-            // 4. Insert booking
             const { data: bookingData, error: bookingError } = await supabase
-                .from('premium_bookings')
+                .from('unified_bookings')
                 .insert([bookingPayload])
                 .select('id')
                 .single();
@@ -180,7 +144,7 @@ export default function BookingReview() {
             }
             if (!bookingData) throw new Error('Booking creation failed');
 
-            setBookingId(Number(bookingData.id));
+            setBookingId(bookingData.id);
             setSuccess(true);
 
         } catch (err: any) {

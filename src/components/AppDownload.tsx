@@ -31,6 +31,7 @@ export default function AppDownload() {
 
     return (
         <section
+            id="download-app"
             className="relative py-24 sm:py-32 bg-slate-950 overflow-hidden"
             onMouseMove={handleMouseMove}
         >

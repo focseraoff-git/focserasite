@@ -81,8 +81,9 @@ export function FebBookingForm({ selectedTheme, onClearTheme }: FebBookingFormPr
 
         try {
             const { data: serviceData, error: serviceError } = await supabase
-                .from('studio_services' as any)
-                .select('id, price_min')
+                .from('unified_packages')
+                .select('id, price')
+                .eq('domain', 'studios')
                 .eq('name', 'Feb in Frames')
                 .single();
 
@@ -91,39 +92,34 @@ export function FebBookingForm({ selectedTheme, onClearTheme }: FebBookingFormPr
                 throw new Error('Campaign service not active. Please contact support.');
             }
 
-            // 2. Prepare Payload for studio_bookings
-            // Mapping form fields to JSONB columns
-            const clientDetails = {
-                name: formData.name,
-                phone: formData.phone,
-                email: formData.email,
-                location: formData.location
-            };
-
-            const packageDetails = {
-                campaign: 'Feb in Frames',
-                theme: selectedTheme || 'Not Selected',
-                time_slot: formData.timeSlot,
-                category: formData.category,
-                deliverables: {
-                    reels: formData.deliverables.reels,
-                    photos: formData.deliverables.photos,
-                    frames_opt_in: formData.frames
-                },
-                notes: formData.notes
-            };
-
+            // 2. Prepare Payload for unified_bookings
             const bookingPayload = {
-                service_id: serviceData.id,
-                total_price: serviceData.price_min + (formData.frames ? 500 : 0), // Simple logic: add 500 if fames selected, purely illustrative
-                event_date: formData.date,
-                event_venue: formData.location,
-                client_details: clientDetails,
-                package_details: packageDetails,
-                status: 'new'
+                user_id: null,
+                domain: 'studios',
+                source_table: 'feb_campaign',
+                source_id: String(serviceData.id),
+                total_price: (serviceData.price || 0) + (formData.frames ? 500 : 0),
+                booking_date: formData.date || null,
+                location: formData.location || null,
+                customer_name: formData.name,
+                customer_email: formData.email,
+                customer_phone: formData.phone,
+                status: 'PENDING',
+                metadata: {
+                    campaign: 'Feb in Frames',
+                    theme: selectedTheme || 'Not Selected',
+                    time_slot: formData.timeSlot,
+                    category: formData.category,
+                    deliverables: {
+                        reels: formData.deliverables.reels,
+                        photos: formData.deliverables.photos,
+                        frames_opt_in: formData.frames
+                    },
+                    notes: formData.notes
+                }
             };
 
-            const { error } = await supabase.from('studio_bookings').insert([bookingPayload]);
+            const { error } = await supabase.from('unified_bookings').insert([bookingPayload]);
 
             if (error) throw error;
 

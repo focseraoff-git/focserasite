@@ -58,6 +58,17 @@ const slides = [
         buttonClass: 'bg-amber-500 hover:bg-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.3)]',
         icon: Armchair,
         link: '/interiors'
+    },
+    {
+        id: 'partners',
+        title: 'Focsera Partners',
+        subtitle: 'Book an Expert.',
+        description: 'Book a verified Focsera Partner directly from the app to finish any specific task—from custom app development to event hosting.',
+        bgGradient: 'from-yellow-900 via-slate-950 to-orange-900',
+        accentColor: 'text-yellow-400',
+        buttonClass: 'bg-yellow-500 hover:bg-yellow-400 shadow-[0_0_30px_rgba(234,179,8,0.3)]',
+        icon: Zap,
+        link: '#download-app'
     }
 ];
 
