@@ -13,6 +13,7 @@ const Events = React.lazy(() => import('./pages/divisions/Events'));
 const Web = React.lazy(() => import('./pages/divisions/Web'));
 const ProductServices = React.lazy(() => import('./pages/divisions/ProductServices'));
 const Interiors = React.lazy(() => import('./pages/divisions/Interiors'));
+const Labs = React.lazy(() => import('./pages/divisions/Labs'));
 
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -94,6 +95,7 @@ function AppInner() {
           <Route path="/payment-success" element={<PaymentSuccess />} />
 
           <Route path="/interiors" element={<Interiors />} />
+          <Route path="/labs" element={<Labs />} />
           <Route path="/booking" element={<PackageBooking />} />
           <Route path="/booking/review" element={<BookingReview />} />
         </Routes>

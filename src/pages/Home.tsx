@@ -24,6 +24,13 @@ export default function Home() {
 
   const divisions = [
     {
+      icon: Zap,
+      name: 'Focsera Labs',
+      path: '/labs',
+      description: 'Future skills program turning school Saturdays into creator academies.',
+      color: 'orange',
+    },
+    {
       icon: Camera,
       name: 'Focsera Studios',
       path: '/studios',
@@ -244,7 +251,7 @@ export default function Home() {
           >
             <span className="text-blue-500 font-extrabold tracking-widest uppercase text-sm mb-4 block">Our Expertise</span>
             <h2 className="text-5xl sm:text-7xl font-black text-white tracking-tighter mb-6">
-              Six Pillars of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Excellence.</span>
+              Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Ecosystem.</span>
             </h2>
           </motion.div>
 
