@@ -1,6 +1,7 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import React, { Suspense } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -112,8 +113,10 @@ function AppInner() {
 
 export default function App() {
   return (
-    <Router>
-      <AppInner />
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <AppInner />
+      </Router>
+    </ThemeProvider>
   );
 }

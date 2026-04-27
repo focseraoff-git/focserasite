@@ -188,13 +188,25 @@ const Navbar = () => {
 
       {/* ACCOUNT BUTTON - Right aligned with flex-1 */}
       <div className="hidden lg:flex flex-1 justify-end z-50">
-        <Link
-          to={user ? "/account" : "/login"}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-600 text-white font-medium text-sm hover:bg-blue-500 transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(37,99,235,0.3)]"
-        >
-          {user ? <User size={16} /> : <Sparkles size={16} />}
-          {user ? "Account" : "Start Here"}
-        </Link>
+        {user ? (
+          <Link
+            to="/account"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-600 text-white font-medium text-sm hover:bg-blue-500 transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(37,99,235,0.3)]"
+          >
+            <User size={16} />
+            Account
+          </Link>
+        ) : (
+          <a
+            href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-600 text-white font-medium text-sm hover:bg-blue-500 transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(37,99,235,0.3)]"
+          >
+            <Sparkles size={16} />
+            Start Here
+          </a>
+        )}
       </div>
 
       {/* MOBILE MENU TOGGLE */}
@@ -268,14 +280,27 @@ const Navbar = () => {
             </div>
 
             <div className={`mt-4 pt-4 border-t border-slate-800`}>
-              <Link
-                to={user ? "/account" : "/login"}
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-white text-slate-900 font-bold text-sm shadow-lg hover:bg-slate-200 active:scale-95 transition-all"
-              >
-                {user ? <User size={18} /> : <LogIn size={18} />}
-                {user ? "My Account" : "Log In / Sign Up"}
-              </Link>
+              {user ? (
+                <Link
+                  to="/account"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-white text-slate-900 font-bold text-sm shadow-lg hover:bg-slate-200 active:scale-95 transition-all"
+                >
+                  <User size={18} />
+                  My Account
+                </Link>
+              ) : (
+                <a
+                  href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-white text-slate-900 font-bold text-sm shadow-lg hover:bg-slate-200 active:scale-95 transition-all"
+                >
+                  <Sparkles size={18} />
+                  Download App
+                </a>
+              )}
             </div>
           </motion.div>
         )}

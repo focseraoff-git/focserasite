@@ -11,10 +11,14 @@
   body {
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
+    background-color: #ffffff;
+    color: #0f172a;
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  .dark body {
     background-color: #020617;
-    /* slate-950 - Premium Dark Base */
     color: #f8fafc;
-    /* slate-50 */
   }
 
   h1,
@@ -100,5 +104,14 @@ html {
   .scrollbar-default {
     -ms-overflow-style: auto;
     scrollbar-width: auto;
+  }
+
+  /* Hide scrollbar for marquee */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
