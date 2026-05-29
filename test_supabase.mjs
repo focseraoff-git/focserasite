@@ -6,7 +6,14 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 (async () => {
-    const { data, error } = await supabase.from('unified_packages').select('*');
-    console.log("Data:", data);
-    console.log("Error:", error);
+    console.log("=== Testing category details tables ===");
+    
+    const tablesToTest = ['package_category_details', 'partner_category_details', 'home_partner_type_details', 'home_partner_types'];
+    for (const tbl of tablesToTest) {
+        const { data, error } = await supabase.from(tbl).select('*').limit(1);
+        console.log(`Table '${tbl}' exists? ${error ? 'NO' : 'YES'} (Error: ${error ? error.message : 'none'}, Data count: ${data ? data.length : 0})`);
+        if (data && data.length > 0) {
+            console.log(`Sample Row from '${tbl}':`, data[0]);
+        }
+    }
 })();
