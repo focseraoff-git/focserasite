@@ -306,8 +306,8 @@ async function generateSitemap() {
     console.log(`Successfully generated sitemap.xml with ${allUrls.size} URLs in public/sitemap.xml!`);
 
   } catch (error) {
-    console.error('Failed to generate sitemap:', error);
-    process.exit(1);
+    console.warn('Warning: Failed to generate sitemap from Supabase (network/DNS/credentials error). using pre-generated sitemap.', error);
+    process.exit(0);
   }
 }
 

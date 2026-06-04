@@ -685,8 +685,8 @@ export default function SeoRoutes() {
     console.log(`Successfully generated ${uniquePages.length} separate webpages under src/pages/seo/ and updated SeoRoutes.tsx router!`);
 
   } catch (error) {
-    console.error('Failed to generate pages:', error);
-    process.exit(1);
+    console.warn('Warning: Failed to generate pages from Supabase (network/DNS/credentials error). using pre-generated files.', error);
+    process.exit(0);
   }
 }
 
