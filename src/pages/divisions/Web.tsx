@@ -260,7 +260,7 @@ const WebPackagesSection = () => {
 
     const handleWhatsAppBooking = (pkgName: string) => {
         const text = `*Inquiry for ${pkgName}*%0A%0AHi Focsera, I am interested in booking this package.`;
-        window.open(`https://wa.me/918610266034?text=${text}`, '_blank');
+        window.open(`https://wa.me/919515803954?text=${text}`, '_blank');
     };
 
     if (packages.length === 0) return null;

@@ -45,7 +45,7 @@ export default function Contact() {
     try {
       if (!supabase) throw new Error('Supabase client not available');
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('custom_contacts') // Ensure your DB has this table or change to the correct table name
         .insert({
           full_name: formData.name,

@@ -100,8 +100,14 @@ const packagesData = [
         category: "Marketing",
         standard_price: 25000,
         premium_price: 50000,
-        included_services: ["Social Media Marketing", "Running Ads (Meta, Google)", "SEO Optimization"],
-        included_services: ['Brand Film / TVC', '12 Reels/Shorts', 'SEO Blog Strategy'],
+        included_services: [
+            "Social Media Marketing", 
+            "Running Ads (Meta, Google)", 
+            "SEO Optimization",
+            "Brand Film / TVC",
+            "12 Reels/Shorts",
+            "SEO Blog Strategy"
+        ],
         delivery_time: '30 Days',
         ideal_for: 'Established Brands'
     },
@@ -600,7 +606,7 @@ const CreatorBoostModal = ({ isOpen, onClose }) => {
 
             // 3. WhatsApp Redirect
             const message = `Hello Focsera! I just booked the *CreatorBoost 10X Pack*.\n\n*Name:* ${details.name}\n*Phone:* ${details.phone}\n*Link:* ${details.sample_link}\n\nPlease confirm my slot!`;
-            const whatsappUrl = `https://wa.me/918610266034?text=${encodeURIComponent(message)}`;
+            const whatsappUrl = `https://wa.me/919515803954?text=${encodeURIComponent(message)}`;
 
             // Show success & redirect
             alert("Booking Saved! Redirecting to WhatsApp to finalize...");

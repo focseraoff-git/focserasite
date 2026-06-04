@@ -57,7 +57,7 @@ export const GameCardBookingForm = () => {
       }
 
       // 3. Call the RPC to handle Insert + Email atomically
-      const { data, error } = await supabase.rpc('submit_game_card_booking', {
+      const { data, error } = await (supabase as any).rpc('submit_game_card_booking', {
         p_full_name: formData.full_name,
         p_email: formData.email,
         p_phone: formData.phone,

@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import FancyModal from '../../components/FancyModal';
-import PremiumOfferSection from '../../components/PremiumOfferSection';
 import Snapshot74 from '../../assets/Snapshot_74.png';
 
 
@@ -683,19 +682,6 @@ const LandingPage = ({ onBookNow, services, addOns, loadError, onRetry }) => {
                 </div>
             </section>
 
-            {/* --- Premium Instant Memories Pricing Section --- */}
-            <PremiumOfferSection
-                services={services}
-                imageUrl={Snapshot74}
-                onBook={(syntheticService) => {
-                    if (syntheticService) {
-                        onBookNow(syntheticService, syntheticService.default_add_ons || {});
-                    }
-                }}
-                onWhatsApp={() => {
-                    window.open("https://wa.me/919515803954", "_blank");
-                }}
-            />
 
 
             <section className="py-16 bg-[#050505] border-b border-white/5 relative overflow-hidden">

@@ -62,7 +62,7 @@ export const GameRegistrationForm = () => {
 
     try {
       // Use the new RPC that handles both DB insert and Email sending atomically
-      const { data, error } = await supabase.rpc('submit_game_registration', {
+      const { data, error } = await (supabase as any).rpc('submit_game_registration', {
         p_full_name: formData.full_name,
         p_email: formData.email,
         p_phone: formData.phone,

@@ -19,6 +19,9 @@ import {
   Zap
 } from 'lucide-react';
 import { supabase } from '../integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
+import { getOptimizedSlug } from '../lib/seoHelper';
+
 
 // Local Interfaces for Database Schemas
 interface PartnerProfile {
@@ -84,6 +87,7 @@ interface PackageDetails {
 }
 
 export default function PartnersPackages() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'partners' | 'packages'>('partners');
   
   // Data lists
@@ -164,54 +168,14 @@ export default function PartnersPackages() {
   }, []);
 
   // Fetch deeper details on card click
-  const handlePartnerClick = async (partner: PartnerProfile) => {
-    setSelectedPartner(partner);
-    setDetailsActiveTab('overview');
-    setFaqOpenIndices({});
-    setLoadingDetails(true);
-    setFetchedDetails(null);
-
-    try {
-      const { data, error } = await supabase
-        .from('partner_category_details')
-        .select('*')
-        .eq('partner_id', partner.id)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (data) {
-        setFetchedDetails(data as PartnerDetails);
-      }
-    } catch (err) {
-      console.error("Error fetching partner details:", err);
-    } finally {
-      setLoadingDetails(false);
-    }
+  const handlePartnerClick = (partner: PartnerProfile) => {
+    const slug = getOptimizedSlug(partner.sub_category || partner.name || '', 'partner', partner.id);
+    navigate(`/${slug}`);
   };
 
-  const handlePackageClick = async (pkg: UnifiedPackage) => {
-    setSelectedPackage(pkg);
-    setDetailsActiveTab('overview');
-    setFaqOpenIndices({});
-    setLoadingDetails(true);
-    setFetchedDetails(null);
-
-    try {
-      const { data, error } = await supabase
-        .from('package_category_details')
-        .select('*')
-        .eq('package_id', pkg.id)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (data) {
-        setFetchedDetails(data as PackageDetails);
-      }
-    } catch (err) {
-      console.error("Error fetching package details:", err);
-    } finally {
-      setLoadingDetails(false);
-    }
+  const handlePackageClick = (pkg: UnifiedPackage) => {
+    const slug = getOptimizedSlug(pkg.name, 'package', pkg.id);
+    navigate(`/${slug}`);
   };
 
   const toggleFaq = (index: number) => {
@@ -228,7 +192,7 @@ export default function PartnersPackages() {
   };
 
   // Micro-transition settings
-  const hoverCardScale = { hover: { y: -6, transition: { duration: 0.3, ease: 'easeOut' } } };
+  const hoverCardScale: any = { hover: { y: -6, transition: { duration: 0.3, ease: 'easeOut' } } };
 
   return (
     <section className="py-20 sm:py-28 bg-slate-50 dark:bg-slate-900/40 border-y border-slate-100 dark:border-white/5 transition-colors duration-500 overflow-hidden relative">

@@ -15,6 +15,8 @@ const Web = React.lazy(() => import('./pages/divisions/Web'));
 const ProductServices = React.lazy(() => import('./pages/divisions/ProductServices'));
 const Interiors = React.lazy(() => import('./pages/divisions/Interiors'));
 const Labs = React.lazy(() => import('./pages/divisions/Labs'));
+const SeoRoutes = React.lazy(() => import('./pages/seo/SeoRoutes'));
+
 
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -99,6 +101,7 @@ function AppInner() {
           <Route path="/labs" element={<Labs />} />
           <Route path="/booking" element={<PackageBooking />} />
           <Route path="/booking/review" element={<BookingReview />} />
+          <Route path="/*" element={<SeoRoutes />} />
         </Routes>
       </Suspense>
 
