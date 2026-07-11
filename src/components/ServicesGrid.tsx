@@ -42,18 +42,18 @@ const services = [
 
 export default function ServicesGrid() {
     return (
-        <section className="py-20 sm:py-24 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500">
-            <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <section className="py-14 sm:py-20 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500">
+            <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="mb-14"
+                    className="mb-8 sm:mb-14"
                 >
                     <p className="text-[11px] sm:text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-[0.25em] mb-4">Our Services</p>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-tight">
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-tight">
                         Book trusted creative help.
                     </h2>
                     <p className="mt-4 text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-xl font-medium leading-relaxed">
@@ -62,7 +62,7 @@ export default function ServicesGrid() {
                 </motion.div>
 
                 {/* Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                     {services.map((svc, i) => (
                         <motion.div
                             key={i}
@@ -73,7 +73,7 @@ export default function ServicesGrid() {
                         >
                             <Link
                                 to={svc.path}
-                                className="group flex flex-col bg-slate-50 dark:bg-white/[0.03] rounded-[1.25rem] border border-slate-100 dark:border-white/[0.06] hover:border-slate-200 dark:hover:border-white/10 hover:shadow-xl hover:shadow-slate-100/60 dark:hover:shadow-none overflow-hidden transition-all duration-400"
+                                className="group flex flex-col bg-slate-50 dark:bg-white/[0.03] rounded-[1rem] sm:rounded-[1.25rem] border border-slate-100 dark:border-white/[0.06] hover:border-slate-200 dark:hover:border-white/10 hover:shadow-xl hover:shadow-slate-100/60 dark:hover:shadow-none overflow-hidden transition-all duration-400"
                             >
                                 {/* Image */}
                                 <div className="relative aspect-[4/5] overflow-hidden bg-slate-100 dark:bg-slate-800">
@@ -90,8 +90,8 @@ export default function ServicesGrid() {
                                 </div>
 
                                 {/* Title */}
-                                <div className="px-5 py-4">
-                                    <span className="text-[13px] sm:text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight">
+                                <div className="px-3 py-2.5 sm:px-5 sm:py-4">
+                                    <span className="text-[12px] sm:text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight leading-tight">
                                         {svc.title}
                                     </span>
                                 </div>

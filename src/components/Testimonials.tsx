@@ -42,18 +42,18 @@ export default function Testimonials() {
     }
 
     return (
-        <section className="py-20 sm:py-24 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500">
-            <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <section className="py-14 sm:py-20 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500">
+            <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="mb-16"
+                    className="mb-8 sm:mb-16"
                 >
                     <p className="text-[11px] sm:text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-[0.25em] mb-4">Reviews</p>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-tight">
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-tight">
                         Loved by Focsera users.
                     </h2>
                     <p className="mt-4 text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-xl font-medium leading-relaxed">

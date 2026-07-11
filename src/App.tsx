@@ -111,7 +111,7 @@ function AppInner() {
           href="https://wa.me/919515803954"
           target="_blank"
           rel="noopener noreferrer"
-          className={`fixed ${location.pathname === '/' ? 'bottom-24' : 'bottom-6'} right-6 z-[110] flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:shadow-[0_4px_28px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-110 active:scale-95 group`}
+          className={`fixed ${location.pathname === '/' ? 'bottom-6 sm:bottom-24' : 'bottom-6'} right-6 z-[110] flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:shadow-[0_4px_28px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-110 active:scale-95 group`}
           aria-label="Chat on WhatsApp"
         >
           {/* Pulsing ring */}

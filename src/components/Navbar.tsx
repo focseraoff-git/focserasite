@@ -103,7 +103,7 @@ const Navbar = () => {
       initial={{ y: -100, x: "-50%", opacity: 0 }}
       animate={{ y: 0, x: "-50%", opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl flex items-center justify-between px-6 py-3 rounded-full z-50 transition-all duration-300 ${scrolled || mobileMenuOpen
+      className={`fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 rounded-full z-50 transition-all duration-300 ${scrolled || mobileMenuOpen
         ? "bg-slate-950/80 border border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.1)] backdrop-blur-xl" // Dark Glass Scrolled
         : "bg-transparent border border-transparent backdrop-blur-none" // Transparent Top
         }`}
