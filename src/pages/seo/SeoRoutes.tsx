@@ -19,14 +19,6 @@ const PhotographyServicesJubileeHills = React.lazy(() => import('./PhotographySe
 const PhotographyServicesMadhapur = React.lazy(() => import('./PhotographyServicesMadhapur'));
 const PhotographyServicesBanjaraHills = React.lazy(() => import('./PhotographyServicesBanjaraHills'));
 const PhotographyServicesKukatpally = React.lazy(() => import('./PhotographyServicesKukatpally'));
-const KidsBirthdayPartyPlannersHyderabad = React.lazy(() => import('./KidsBirthdayPartyPlannersHyderabad'));
-const KidsBirthdayPartyPlannersGachibowli = React.lazy(() => import('./KidsBirthdayPartyPlannersGachibowli'));
-const KidsBirthdayPartyPlannersSecunderabad = React.lazy(() => import('./KidsBirthdayPartyPlannersSecunderabad'));
-const KidsBirthdayPartyPlannersKondapur = React.lazy(() => import('./KidsBirthdayPartyPlannersKondapur'));
-const KidsBirthdayPartyPlannersJubileeHills = React.lazy(() => import('./KidsBirthdayPartyPlannersJubileeHills'));
-const KidsBirthdayPartyPlannersMadhapur = React.lazy(() => import('./KidsBirthdayPartyPlannersMadhapur'));
-const KidsBirthdayPartyPlannersBanjaraHills = React.lazy(() => import('./KidsBirthdayPartyPlannersBanjaraHills'));
-const KidsBirthdayPartyPlannersKukatpally = React.lazy(() => import('./KidsBirthdayPartyPlannersKukatpally'));
 const CorporateEventPlannersHyderabad = React.lazy(() => import('./CorporateEventPlannersHyderabad'));
 const CorporateEventPlannersGachibowli = React.lazy(() => import('./CorporateEventPlannersGachibowli'));
 const CorporateEventPlannersSecunderabad = React.lazy(() => import('./CorporateEventPlannersSecunderabad'));
@@ -307,14 +299,6 @@ const RestaurantFoodPromotionalVideosJubileeHills = React.lazy(() => import('./R
 const RestaurantFoodPromotionalVideosMadhapur = React.lazy(() => import('./RestaurantFoodPromotionalVideosMadhapur'));
 const RestaurantFoodPromotionalVideosBanjaraHills = React.lazy(() => import('./RestaurantFoodPromotionalVideosBanjaraHills'));
 const RestaurantFoodPromotionalVideosKukatpally = React.lazy(() => import('./RestaurantFoodPromotionalVideosKukatpally'));
-const EcommerceShopifyStoreSetup = React.lazy(() => import('./EcommerceShopifyStoreSetup'));
-const EcommerceShopifyStoreSetupGachibowli = React.lazy(() => import('./EcommerceShopifyStoreSetupGachibowli'));
-const EcommerceShopifyStoreSetupSecunderabad = React.lazy(() => import('./EcommerceShopifyStoreSetupSecunderabad'));
-const EcommerceShopifyStoreSetupKondapur = React.lazy(() => import('./EcommerceShopifyStoreSetupKondapur'));
-const EcommerceShopifyStoreSetupJubileeHills = React.lazy(() => import('./EcommerceShopifyStoreSetupJubileeHills'));
-const EcommerceShopifyStoreSetupMadhapur = React.lazy(() => import('./EcommerceShopifyStoreSetupMadhapur'));
-const EcommerceShopifyStoreSetupBanjaraHills = React.lazy(() => import('./EcommerceShopifyStoreSetupBanjaraHills'));
-const EcommerceShopifyStoreSetupKukatpally = React.lazy(() => import('./EcommerceShopifyStoreSetupKukatpally'));
 const MusicVideoSongReelProduction = React.lazy(() => import('./MusicVideoSongReelProduction'));
 const MusicVideoSongReelProductionGachibowli = React.lazy(() => import('./MusicVideoSongReelProductionGachibowli'));
 const MusicVideoSongReelProductionSecunderabad = React.lazy(() => import('./MusicVideoSongReelProductionSecunderabad'));
@@ -339,38 +323,6 @@ const CorporatePromoVideoProductionJubileeHills = React.lazy(() => import('./Cor
 const CorporatePromoVideoProductionMadhapur = React.lazy(() => import('./CorporatePromoVideoProductionMadhapur'));
 const CorporatePromoVideoProductionBanjaraHills = React.lazy(() => import('./CorporatePromoVideoProductionBanjaraHills'));
 const CorporatePromoVideoProductionKukatpally = React.lazy(() => import('./CorporatePromoVideoProductionKukatpally'));
-const DatabaseSetupAndOptimizationServices = React.lazy(() => import('./DatabaseSetupAndOptimizationServices'));
-const DatabaseSetupAndOptimizationServicesGachibowli = React.lazy(() => import('./DatabaseSetupAndOptimizationServicesGachibowli'));
-const DatabaseSetupAndOptimizationServicesSecunderabad = React.lazy(() => import('./DatabaseSetupAndOptimizationServicesSecunderabad'));
-const DatabaseSetupAndOptimizationServicesKondapur = React.lazy(() => import('./DatabaseSetupAndOptimizationServicesKondapur'));
-const DatabaseSetupAndOptimizationServicesJubileeHills = React.lazy(() => import('./DatabaseSetupAndOptimizationServicesJubileeHills'));
-const DatabaseSetupAndOptimizationServicesMadhapur = React.lazy(() => import('./DatabaseSetupAndOptimizationServicesMadhapur'));
-const DatabaseSetupAndOptimizationServicesBanjaraHills = React.lazy(() => import('./DatabaseSetupAndOptimizationServicesBanjaraHills'));
-const DatabaseSetupAndOptimizationServicesKukatpally = React.lazy(() => import('./DatabaseSetupAndOptimizationServicesKukatpally'));
-const LandingPagePortfolioWebsiteDesign = React.lazy(() => import('./LandingPagePortfolioWebsiteDesign'));
-const LandingPagePortfolioWebsiteDesignGachibowli = React.lazy(() => import('./LandingPagePortfolioWebsiteDesignGachibowli'));
-const LandingPagePortfolioWebsiteDesignSecunderabad = React.lazy(() => import('./LandingPagePortfolioWebsiteDesignSecunderabad'));
-const LandingPagePortfolioWebsiteDesignKondapur = React.lazy(() => import('./LandingPagePortfolioWebsiteDesignKondapur'));
-const LandingPagePortfolioWebsiteDesignJubileeHills = React.lazy(() => import('./LandingPagePortfolioWebsiteDesignJubileeHills'));
-const LandingPagePortfolioWebsiteDesignMadhapur = React.lazy(() => import('./LandingPagePortfolioWebsiteDesignMadhapur'));
-const LandingPagePortfolioWebsiteDesignBanjaraHills = React.lazy(() => import('./LandingPagePortfolioWebsiteDesignBanjaraHills'));
-const LandingPagePortfolioWebsiteDesignKukatpally = React.lazy(() => import('./LandingPagePortfolioWebsiteDesignKukatpally'));
-const UiUxDesignPrototypingServices = React.lazy(() => import('./UiUxDesignPrototypingServices'));
-const UiUxDesignPrototypingServicesGachibowli = React.lazy(() => import('./UiUxDesignPrototypingServicesGachibowli'));
-const UiUxDesignPrototypingServicesSecunderabad = React.lazy(() => import('./UiUxDesignPrototypingServicesSecunderabad'));
-const UiUxDesignPrototypingServicesKondapur = React.lazy(() => import('./UiUxDesignPrototypingServicesKondapur'));
-const UiUxDesignPrototypingServicesJubileeHills = React.lazy(() => import('./UiUxDesignPrototypingServicesJubileeHills'));
-const UiUxDesignPrototypingServicesMadhapur = React.lazy(() => import('./UiUxDesignPrototypingServicesMadhapur'));
-const UiUxDesignPrototypingServicesBanjaraHills = React.lazy(() => import('./UiUxDesignPrototypingServicesBanjaraHills'));
-const UiUxDesignPrototypingServicesKukatpally = React.lazy(() => import('./UiUxDesignPrototypingServicesKukatpally'));
-const CustomWebsiteDevelopmentServices = React.lazy(() => import('./CustomWebsiteDevelopmentServices'));
-const CustomWebsiteDevelopmentServicesGachibowli = React.lazy(() => import('./CustomWebsiteDevelopmentServicesGachibowli'));
-const CustomWebsiteDevelopmentServicesSecunderabad = React.lazy(() => import('./CustomWebsiteDevelopmentServicesSecunderabad'));
-const CustomWebsiteDevelopmentServicesKondapur = React.lazy(() => import('./CustomWebsiteDevelopmentServicesKondapur'));
-const CustomWebsiteDevelopmentServicesJubileeHills = React.lazy(() => import('./CustomWebsiteDevelopmentServicesJubileeHills'));
-const CustomWebsiteDevelopmentServicesMadhapur = React.lazy(() => import('./CustomWebsiteDevelopmentServicesMadhapur'));
-const CustomWebsiteDevelopmentServicesBanjaraHills = React.lazy(() => import('./CustomWebsiteDevelopmentServicesBanjaraHills'));
-const CustomWebsiteDevelopmentServicesKukatpally = React.lazy(() => import('./CustomWebsiteDevelopmentServicesKukatpally'));
 const YoutubeShortsVideoEditors = React.lazy(() => import('./YoutubeShortsVideoEditors'));
 const YoutubeShortsVideoEditorsGachibowli = React.lazy(() => import('./YoutubeShortsVideoEditorsGachibowli'));
 const YoutubeShortsVideoEditorsSecunderabad = React.lazy(() => import('./YoutubeShortsVideoEditorsSecunderabad'));
@@ -459,14 +411,6 @@ const SurprisePartyPlanningServicesJubileeHills = React.lazy(() => import('./Sur
 const SurprisePartyPlanningServicesMadhapur = React.lazy(() => import('./SurprisePartyPlanningServicesMadhapur'));
 const SurprisePartyPlanningServicesBanjaraHills = React.lazy(() => import('./SurprisePartyPlanningServicesBanjaraHills'));
 const SurprisePartyPlanningServicesKukatpally = React.lazy(() => import('./SurprisePartyPlanningServicesKukatpally'));
-const AiChatbotIntegrationServices = React.lazy(() => import('./AiChatbotIntegrationServices'));
-const AiChatbotIntegrationServicesGachibowli = React.lazy(() => import('./AiChatbotIntegrationServicesGachibowli'));
-const AiChatbotIntegrationServicesSecunderabad = React.lazy(() => import('./AiChatbotIntegrationServicesSecunderabad'));
-const AiChatbotIntegrationServicesKondapur = React.lazy(() => import('./AiChatbotIntegrationServicesKondapur'));
-const AiChatbotIntegrationServicesJubileeHills = React.lazy(() => import('./AiChatbotIntegrationServicesJubileeHills'));
-const AiChatbotIntegrationServicesMadhapur = React.lazy(() => import('./AiChatbotIntegrationServicesMadhapur'));
-const AiChatbotIntegrationServicesBanjaraHills = React.lazy(() => import('./AiChatbotIntegrationServicesBanjaraHills'));
-const AiChatbotIntegrationServicesKukatpally = React.lazy(() => import('./AiChatbotIntegrationServicesKukatpally'));
 const HousePartyEventPlanningServices = React.lazy(() => import('./HousePartyEventPlanningServices'));
 const HousePartyEventPlanningServicesGachibowli = React.lazy(() => import('./HousePartyEventPlanningServicesGachibowli'));
 const HousePartyEventPlanningServicesSecunderabad = React.lazy(() => import('./HousePartyEventPlanningServicesSecunderabad'));
@@ -603,14 +547,6 @@ const ResidentialCommercialLightingDesignJubileeHills = React.lazy(() => import(
 const ResidentialCommercialLightingDesignMadhapur = React.lazy(() => import('./ResidentialCommercialLightingDesignMadhapur'));
 const ResidentialCommercialLightingDesignBanjaraHills = React.lazy(() => import('./ResidentialCommercialLightingDesignBanjaraHills'));
 const ResidentialCommercialLightingDesignKukatpally = React.lazy(() => import('./ResidentialCommercialLightingDesignKukatpally'));
-const MobileAppUiUxRevamp = React.lazy(() => import('./MobileAppUiUxRevamp'));
-const MobileAppUiUxRevampGachibowli = React.lazy(() => import('./MobileAppUiUxRevampGachibowli'));
-const MobileAppUiUxRevampSecunderabad = React.lazy(() => import('./MobileAppUiUxRevampSecunderabad'));
-const MobileAppUiUxRevampKondapur = React.lazy(() => import('./MobileAppUiUxRevampKondapur'));
-const MobileAppUiUxRevampJubileeHills = React.lazy(() => import('./MobileAppUiUxRevampJubileeHills'));
-const MobileAppUiUxRevampMadhapur = React.lazy(() => import('./MobileAppUiUxRevampMadhapur'));
-const MobileAppUiUxRevampBanjaraHills = React.lazy(() => import('./MobileAppUiUxRevampBanjaraHills'));
-const MobileAppUiUxRevampKukatpally = React.lazy(() => import('./MobileAppUiUxRevampKukatpally'));
 const WeddingSangeetMcAnchors = React.lazy(() => import('./WeddingSangeetMcAnchors'));
 const WeddingSangeetMcAnchorsGachibowli = React.lazy(() => import('./WeddingSangeetMcAnchorsGachibowli'));
 const WeddingSangeetMcAnchorsSecunderabad = React.lazy(() => import('./WeddingSangeetMcAnchorsSecunderabad'));
@@ -647,14 +583,6 @@ export default function SeoRoutes() {
         <Route path="/photography-services-madhapur" element={<PhotographyServicesMadhapur />} />
         <Route path="/photography-services-banjara-hills" element={<PhotographyServicesBanjaraHills />} />
         <Route path="/photography-services-kukatpally" element={<PhotographyServicesKukatpally />} />
-        <Route path="/kids-birthday-party-planners-hyderabad" element={<KidsBirthdayPartyPlannersHyderabad />} />
-        <Route path="/kids-birthday-party-planners-gachibowli" element={<KidsBirthdayPartyPlannersGachibowli />} />
-        <Route path="/kids-birthday-party-planners-secunderabad" element={<KidsBirthdayPartyPlannersSecunderabad />} />
-        <Route path="/kids-birthday-party-planners-kondapur" element={<KidsBirthdayPartyPlannersKondapur />} />
-        <Route path="/kids-birthday-party-planners-jubilee-hills" element={<KidsBirthdayPartyPlannersJubileeHills />} />
-        <Route path="/kids-birthday-party-planners-madhapur" element={<KidsBirthdayPartyPlannersMadhapur />} />
-        <Route path="/kids-birthday-party-planners-banjara-hills" element={<KidsBirthdayPartyPlannersBanjaraHills />} />
-        <Route path="/kids-birthday-party-planners-kukatpally" element={<KidsBirthdayPartyPlannersKukatpally />} />
         <Route path="/corporate-event-planners-hyderabad" element={<CorporateEventPlannersHyderabad />} />
         <Route path="/corporate-event-planners-gachibowli" element={<CorporateEventPlannersGachibowli />} />
         <Route path="/corporate-event-planners-secunderabad" element={<CorporateEventPlannersSecunderabad />} />
@@ -935,14 +863,6 @@ export default function SeoRoutes() {
         <Route path="/restaurant-food-promotional-videos-madhapur" element={<RestaurantFoodPromotionalVideosMadhapur />} />
         <Route path="/restaurant-food-promotional-videos-banjara-hills" element={<RestaurantFoodPromotionalVideosBanjaraHills />} />
         <Route path="/restaurant-food-promotional-videos-kukatpally" element={<RestaurantFoodPromotionalVideosKukatpally />} />
-        <Route path="/ecommerce-shopify-store-setup" element={<EcommerceShopifyStoreSetup />} />
-        <Route path="/ecommerce-shopify-store-setup-gachibowli" element={<EcommerceShopifyStoreSetupGachibowli />} />
-        <Route path="/ecommerce-shopify-store-setup-secunderabad" element={<EcommerceShopifyStoreSetupSecunderabad />} />
-        <Route path="/ecommerce-shopify-store-setup-kondapur" element={<EcommerceShopifyStoreSetupKondapur />} />
-        <Route path="/ecommerce-shopify-store-setup-jubilee-hills" element={<EcommerceShopifyStoreSetupJubileeHills />} />
-        <Route path="/ecommerce-shopify-store-setup-madhapur" element={<EcommerceShopifyStoreSetupMadhapur />} />
-        <Route path="/ecommerce-shopify-store-setup-banjara-hills" element={<EcommerceShopifyStoreSetupBanjaraHills />} />
-        <Route path="/ecommerce-shopify-store-setup-kukatpally" element={<EcommerceShopifyStoreSetupKukatpally />} />
         <Route path="/music-video-song-reel-production" element={<MusicVideoSongReelProduction />} />
         <Route path="/music-video-song-reel-production-gachibowli" element={<MusicVideoSongReelProductionGachibowli />} />
         <Route path="/music-video-song-reel-production-secunderabad" element={<MusicVideoSongReelProductionSecunderabad />} />
@@ -967,38 +887,6 @@ export default function SeoRoutes() {
         <Route path="/corporate-promo-video-production-madhapur" element={<CorporatePromoVideoProductionMadhapur />} />
         <Route path="/corporate-promo-video-production-banjara-hills" element={<CorporatePromoVideoProductionBanjaraHills />} />
         <Route path="/corporate-promo-video-production-kukatpally" element={<CorporatePromoVideoProductionKukatpally />} />
-        <Route path="/database-setup-and-optimization-services" element={<DatabaseSetupAndOptimizationServices />} />
-        <Route path="/database-setup-and-optimization-services-gachibowli" element={<DatabaseSetupAndOptimizationServicesGachibowli />} />
-        <Route path="/database-setup-and-optimization-services-secunderabad" element={<DatabaseSetupAndOptimizationServicesSecunderabad />} />
-        <Route path="/database-setup-and-optimization-services-kondapur" element={<DatabaseSetupAndOptimizationServicesKondapur />} />
-        <Route path="/database-setup-and-optimization-services-jubilee-hills" element={<DatabaseSetupAndOptimizationServicesJubileeHills />} />
-        <Route path="/database-setup-and-optimization-services-madhapur" element={<DatabaseSetupAndOptimizationServicesMadhapur />} />
-        <Route path="/database-setup-and-optimization-services-banjara-hills" element={<DatabaseSetupAndOptimizationServicesBanjaraHills />} />
-        <Route path="/database-setup-and-optimization-services-kukatpally" element={<DatabaseSetupAndOptimizationServicesKukatpally />} />
-        <Route path="/landing-page-portfolio-website-design" element={<LandingPagePortfolioWebsiteDesign />} />
-        <Route path="/landing-page-portfolio-website-design-gachibowli" element={<LandingPagePortfolioWebsiteDesignGachibowli />} />
-        <Route path="/landing-page-portfolio-website-design-secunderabad" element={<LandingPagePortfolioWebsiteDesignSecunderabad />} />
-        <Route path="/landing-page-portfolio-website-design-kondapur" element={<LandingPagePortfolioWebsiteDesignKondapur />} />
-        <Route path="/landing-page-portfolio-website-design-jubilee-hills" element={<LandingPagePortfolioWebsiteDesignJubileeHills />} />
-        <Route path="/landing-page-portfolio-website-design-madhapur" element={<LandingPagePortfolioWebsiteDesignMadhapur />} />
-        <Route path="/landing-page-portfolio-website-design-banjara-hills" element={<LandingPagePortfolioWebsiteDesignBanjaraHills />} />
-        <Route path="/landing-page-portfolio-website-design-kukatpally" element={<LandingPagePortfolioWebsiteDesignKukatpally />} />
-        <Route path="/ui-ux-design-prototyping-services" element={<UiUxDesignPrototypingServices />} />
-        <Route path="/ui-ux-design-prototyping-services-gachibowli" element={<UiUxDesignPrototypingServicesGachibowli />} />
-        <Route path="/ui-ux-design-prototyping-services-secunderabad" element={<UiUxDesignPrototypingServicesSecunderabad />} />
-        <Route path="/ui-ux-design-prototyping-services-kondapur" element={<UiUxDesignPrototypingServicesKondapur />} />
-        <Route path="/ui-ux-design-prototyping-services-jubilee-hills" element={<UiUxDesignPrototypingServicesJubileeHills />} />
-        <Route path="/ui-ux-design-prototyping-services-madhapur" element={<UiUxDesignPrototypingServicesMadhapur />} />
-        <Route path="/ui-ux-design-prototyping-services-banjara-hills" element={<UiUxDesignPrototypingServicesBanjaraHills />} />
-        <Route path="/ui-ux-design-prototyping-services-kukatpally" element={<UiUxDesignPrototypingServicesKukatpally />} />
-        <Route path="/custom-website-development-services" element={<CustomWebsiteDevelopmentServices />} />
-        <Route path="/custom-website-development-services-gachibowli" element={<CustomWebsiteDevelopmentServicesGachibowli />} />
-        <Route path="/custom-website-development-services-secunderabad" element={<CustomWebsiteDevelopmentServicesSecunderabad />} />
-        <Route path="/custom-website-development-services-kondapur" element={<CustomWebsiteDevelopmentServicesKondapur />} />
-        <Route path="/custom-website-development-services-jubilee-hills" element={<CustomWebsiteDevelopmentServicesJubileeHills />} />
-        <Route path="/custom-website-development-services-madhapur" element={<CustomWebsiteDevelopmentServicesMadhapur />} />
-        <Route path="/custom-website-development-services-banjara-hills" element={<CustomWebsiteDevelopmentServicesBanjaraHills />} />
-        <Route path="/custom-website-development-services-kukatpally" element={<CustomWebsiteDevelopmentServicesKukatpally />} />
         <Route path="/youtube-shorts-video-editors" element={<YoutubeShortsVideoEditors />} />
         <Route path="/youtube-shorts-video-editors-gachibowli" element={<YoutubeShortsVideoEditorsGachibowli />} />
         <Route path="/youtube-shorts-video-editors-secunderabad" element={<YoutubeShortsVideoEditorsSecunderabad />} />
@@ -1087,14 +975,6 @@ export default function SeoRoutes() {
         <Route path="/surprise-party-planning-services-madhapur" element={<SurprisePartyPlanningServicesMadhapur />} />
         <Route path="/surprise-party-planning-services-banjara-hills" element={<SurprisePartyPlanningServicesBanjaraHills />} />
         <Route path="/surprise-party-planning-services-kukatpally" element={<SurprisePartyPlanningServicesKukatpally />} />
-        <Route path="/ai-chatbot-integration-services" element={<AiChatbotIntegrationServices />} />
-        <Route path="/ai-chatbot-integration-services-gachibowli" element={<AiChatbotIntegrationServicesGachibowli />} />
-        <Route path="/ai-chatbot-integration-services-secunderabad" element={<AiChatbotIntegrationServicesSecunderabad />} />
-        <Route path="/ai-chatbot-integration-services-kondapur" element={<AiChatbotIntegrationServicesKondapur />} />
-        <Route path="/ai-chatbot-integration-services-jubilee-hills" element={<AiChatbotIntegrationServicesJubileeHills />} />
-        <Route path="/ai-chatbot-integration-services-madhapur" element={<AiChatbotIntegrationServicesMadhapur />} />
-        <Route path="/ai-chatbot-integration-services-banjara-hills" element={<AiChatbotIntegrationServicesBanjaraHills />} />
-        <Route path="/ai-chatbot-integration-services-kukatpally" element={<AiChatbotIntegrationServicesKukatpally />} />
         <Route path="/house-party-event-planning-services" element={<HousePartyEventPlanningServices />} />
         <Route path="/house-party-event-planning-services-gachibowli" element={<HousePartyEventPlanningServicesGachibowli />} />
         <Route path="/house-party-event-planning-services-secunderabad" element={<HousePartyEventPlanningServicesSecunderabad />} />
@@ -1231,14 +1111,6 @@ export default function SeoRoutes() {
         <Route path="/residential-commercial-lighting-design-madhapur" element={<ResidentialCommercialLightingDesignMadhapur />} />
         <Route path="/residential-commercial-lighting-design-banjara-hills" element={<ResidentialCommercialLightingDesignBanjaraHills />} />
         <Route path="/residential-commercial-lighting-design-kukatpally" element={<ResidentialCommercialLightingDesignKukatpally />} />
-        <Route path="/mobile-app-ui-ux-revamp" element={<MobileAppUiUxRevamp />} />
-        <Route path="/mobile-app-ui-ux-revamp-gachibowli" element={<MobileAppUiUxRevampGachibowli />} />
-        <Route path="/mobile-app-ui-ux-revamp-secunderabad" element={<MobileAppUiUxRevampSecunderabad />} />
-        <Route path="/mobile-app-ui-ux-revamp-kondapur" element={<MobileAppUiUxRevampKondapur />} />
-        <Route path="/mobile-app-ui-ux-revamp-jubilee-hills" element={<MobileAppUiUxRevampJubileeHills />} />
-        <Route path="/mobile-app-ui-ux-revamp-madhapur" element={<MobileAppUiUxRevampMadhapur />} />
-        <Route path="/mobile-app-ui-ux-revamp-banjara-hills" element={<MobileAppUiUxRevampBanjaraHills />} />
-        <Route path="/mobile-app-ui-ux-revamp-kukatpally" element={<MobileAppUiUxRevampKukatpally />} />
         <Route path="/wedding-sangeet-mc-anchors" element={<WeddingSangeetMcAnchors />} />
         <Route path="/wedding-sangeet-mc-anchors-gachibowli" element={<WeddingSangeetMcAnchorsGachibowli />} />
         <Route path="/wedding-sangeet-mc-anchors-secunderabad" element={<WeddingSangeetMcAnchorsSecunderabad />} />

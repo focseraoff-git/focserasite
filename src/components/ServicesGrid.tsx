@@ -42,7 +42,7 @@ const services = [
 
 export default function ServicesGrid() {
     return (
-        <section className="py-24 sm:py-32 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500">
+        <section className="py-20 sm:py-24 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500">
             <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
                 {/* Header */}
                 <motion.div
@@ -52,11 +52,11 @@ export default function ServicesGrid() {
                     transition={{ duration: 0.6 }}
                     className="mb-14"
                 >
-                    <p className="text-[11px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-5">Our Services</p>
-                    <h2 className="text-[2rem] sm:text-[2.5rem] md:text-[3rem] font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-[1.1]">
-                        Book trusted creative<br className="hidden sm:block" /> help.
+                    <p className="text-[11px] sm:text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-[0.25em] mb-4">Our Services</p>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-tight">
+                        Book trusted creative help.
                     </h2>
-                    <p className="mt-4 text-slate-500 dark:text-slate-400 text-base sm:text-lg max-w-lg font-normal leading-relaxed">
+                    <p className="mt-4 text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-xl font-medium leading-relaxed">
                         Professional services across every creative division — photography, events, design and more.
                     </p>
                 </motion.div>

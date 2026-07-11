@@ -57,56 +57,54 @@ export default function StatsBar() {
     return (
         <section
             ref={ref}
-            className="relative py-24 sm:py-32 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500"
+            className="relative py-20 sm:py-24 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500"
         >
             <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-center">
-                    {/* Left heading */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.7 }}
-                        className="lg:col-span-2"
-                    >
-                        <p className="text-[11px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-5">Why Focsera</p>
-                        <h2 className="text-[1.75rem] sm:text-[2.25rem] md:text-[2.75rem] font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-[1.1]">
-                            No more planning{' '}
-                            <br className="hidden sm:block" />
-                            around your{' '}
-                            <br className="hidden sm:block" />
-                            creative help.
-                        </h2>
-                        <p className="mt-5 text-slate-500 dark:text-slate-400 text-base sm:text-lg max-w-sm font-normal leading-relaxed">
-                            On-demand professional creative help delivered with speed, quality and trust.
-                        </p>
-                    </motion.div>
+                {/* Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.7 }}
+                    className="mb-12"
+                >
+                    <p className="text-[11px] sm:text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-[0.25em] mb-4">Why Focsera</p>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-tight">
+                        No more planning around your creative help.
+                    </h2>
+                    <p className="mt-4 text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl font-medium leading-relaxed">
+                        On-demand professional creative help delivered with speed, quality and trust.
+                    </p>
+                </motion.div>
 
-                    {/* Right stat cards */}
-                    <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-5">
-                        {stats.map((stat, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 28 }}
-                                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                                transition={{ duration: 0.6, delay: 0.15 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                                className="relative bg-slate-50 dark:bg-white/[0.03] rounded-[1.5rem] p-7 border border-slate-100 dark:border-white/[0.06] hover:border-slate-200 dark:hover:border-white/10 hover:shadow-lg hover:shadow-slate-100/60 dark:hover:shadow-none transition-all duration-400 group"
-                            >
-                                {/* Icon */}
-                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-6 ${stat.accent} transition-colors duration-300`}>
-                                    <stat.icon size={20} />
-                                </div>
+                {/* Stat cards in single row */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    {stats.map((stat, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 28 }}
+                            animate={isInView ? { opacity: 1, y: 0 } : {}}
+                            transition={{ duration: 0.6, delay: 0.15 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                            className="relative flex items-center gap-4 bg-slate-50/70 dark:bg-white/[0.02] rounded-[1.25rem] p-5 sm:p-6 border border-slate-100 dark:border-white/[0.05] hover:border-blue-100 dark:hover:border-blue-500/10 shadow-sm hover:shadow-md hover:shadow-blue-500/5 dark:hover:shadow-none transition-all duration-400 group"
+                        >
+                            {/* Icon container */}
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${stat.accent} transition-colors duration-300`}>
+                                <stat.icon size={22} />
+                            </div>
 
-                                {/* Number */}
-                                <div className="text-4xl sm:text-5xl font-extrabold tracking-[-0.03em] mb-2 text-slate-900 dark:text-white">
+                            {/* Number & Info */}
+                            <div className="flex flex-col">
+                                <span className="text-2xl sm:text-3xl font-extrabold tracking-[-0.02em] text-slate-900 dark:text-white leading-tight">
                                     <CountUp end={stat.end} suffix={stat.suffix} delay={stat.delay} />
-                                </div>
-
-                                {/* Label */}
-                                <div className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1 tracking-tight">{stat.label}</div>
-                                <div className="text-xs text-slate-400 dark:text-slate-500">{stat.sub}</div>
-                            </motion.div>
-                        ))}
-                    </div>
+                                </span>
+                                <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 tracking-tight mt-0.5">
+                                    {stat.label}
+                                </span>
+                                <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                                    {stat.sub}
+                                </span>
+                            </div>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
         </section>

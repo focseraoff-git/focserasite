@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 const faqs = [
     {
@@ -33,7 +33,7 @@ export default function HomeFAQ() {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     return (
-        <section className="py-28 sm:py-36 bg-slate-50 dark:bg-slate-900/50 overflow-hidden transition-colors duration-500">
+        <section className="py-20 sm:py-24 bg-slate-50 dark:bg-slate-900/50 overflow-hidden transition-colors duration-500">
             <div className="max-w-3xl mx-auto px-6 sm:px-8">
                 {/* Header */}
                 <motion.div
@@ -43,16 +43,17 @@ export default function HomeFAQ() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-[2rem] sm:text-[2.5rem] md:text-[3rem] font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-[1.1]">
-                        Frequently Asked<br className="hidden sm:block" /> Questions
+                    <p className="text-[11px] sm:text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-[0.25em] mb-4">FAQ's</p>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-tight">
+                        Frequently Asked Questions
                     </h2>
-                    <p className="mt-4 text-slate-500 dark:text-slate-400 text-base sm:text-lg max-w-md mx-auto font-normal leading-relaxed">
+                    <p className="mt-4 text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-md mx-auto font-medium leading-relaxed">
                         Everything you need to know about Focsera services.
                     </p>
                 </motion.div>
 
-                {/* Accordion */}
-                <div className="space-y-0 divide-y divide-slate-200 dark:divide-white/[0.06] bg-white dark:bg-white/[0.02] rounded-[1.5rem] border border-slate-100 dark:border-white/[0.06] overflow-hidden">
+                {/* Accordion List */}
+                <div className="space-y-4">
                     {faqs.map((faq, i) => (
                         <motion.div
                             key={i}
@@ -60,24 +61,25 @@ export default function HomeFAQ() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-20px' }}
                             transition={{ duration: 0.4, delay: i * 0.05 }}
+                            className="bg-white dark:bg-[#0e1424]/40 rounded-[1.25rem] border border-slate-100 dark:border-white/[0.05] hover:border-blue-100 dark:hover:border-blue-500/10 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
                         >
                             <button
                                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                                className="w-full flex items-center justify-between px-7 sm:px-8 py-6 text-left hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-colors duration-200 group"
+                                className="w-full flex items-center justify-between px-6 sm:px-7 py-5 sm:py-6 text-left transition-colors duration-200 group"
                                 aria-expanded={openIndex === i}
                                 id={`faq-btn-${i}`}
                             >
-                                <span className="font-semibold text-[15px] sm:text-base text-slate-800 dark:text-slate-200 pr-6 tracking-tight group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                                <span className="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-200 pr-6 tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                     {faq.question}
                                 </span>
                                 <div
-                                    className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                    className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                                         openIndex === i
-                                            ? 'bg-blue-500 text-white rotate-0 shadow-md shadow-blue-500/20'
-                                            : 'bg-slate-100 dark:bg-white/[0.06] text-slate-400 dark:text-slate-500'
+                                            ? 'bg-blue-500 text-white rotate-180 shadow-md shadow-blue-500/20'
+                                            : 'bg-slate-50 dark:bg-white/[0.04] text-slate-450 dark:text-slate-550 group-hover:bg-slate-100 dark:group-hover:bg-white/[0.08]'
                                     }`}
                                 >
-                                    {openIndex === i ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                                    <ChevronDown className="w-4 h-4" />
                                 </div>
                             </button>
 
@@ -91,7 +93,7 @@ export default function HomeFAQ() {
                                         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                                         className="overflow-hidden"
                                     >
-                                        <div className="px-7 sm:px-8 pb-7 text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
+                                        <div className="px-6 sm:px-7 pb-6 text-slate-500 dark:text-slate-400 text-sm leading-relaxed border-t border-slate-50 dark:border-white/[0.02] pt-4 font-medium">
                                             {faq.answer}
                                         </div>
                                     </motion.div>

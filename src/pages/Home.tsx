@@ -35,8 +35,9 @@ export default function Home() {
       ══════════════════════════════════════════════════ */}
       <section className="relative min-h-[92vh] flex items-end overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-500">
 
-        {/* Subtle background glow */}
+        {/* Subtle background glow & dots */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 bg-dot-pattern opacity-40 dark:opacity-60" />
           <div className="absolute bottom-0 right-0 w-[60vw] h-[70vh] bg-blue-100/60 dark:bg-blue-900/20 rounded-tl-[40%] transition-colors duration-500" />
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80vw] h-[300px] bg-blue-400/10 dark:bg-blue-500/8 blur-[120px] rounded-full" />
         </div>
@@ -45,17 +46,17 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end min-h-[85vh]">
 
             {/* ── LEFT: Text content ── */}
-            <div className="flex flex-col justify-center py-20 lg:py-32">
+            <div className="flex flex-col justify-center py-20 lg:py-28">
               {/* Badge */}
               <motion.div
                 onClick={() => document.getElementById('download-app')?.scrollIntoView({ behavior: 'smooth' })}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...standardTransition, delay: 0.1 }}
-                className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 text-[11px] sm:text-xs font-semibold tracking-wider uppercase mb-8 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-500/15 transition-colors w-fit"
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/25 text-[11px] sm:text-xs font-semibold tracking-wide mb-8 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-950/60 transition-colors w-fit"
               >
-                <Zap size={13} className="text-blue-500 dark:text-blue-400" />
-                <span>Now on Google Play</span>
+                <span className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-500 text-white text-[9px] font-bold">✓</span>
+                <span>7 divisions live</span>
               </motion.div>
 
               {/* Headline */}
@@ -65,8 +66,7 @@ export default function Home() {
                 transition={{ ...standardTransition, delay: 0.2 }}
                 className="text-[2.5rem] sm:text-[3.25rem] md:text-[3.75rem] lg:text-[4.25rem] font-extrabold tracking-[-0.03em] leading-[1.05] text-slate-900 dark:text-white mb-6"
               >
-                Trusted creative help{' '}
-                <br className="hidden sm:block" />
+                Trusted creative help <br className="hidden sm:block" />
                 in minutes!
               </motion.h1>
 
@@ -74,7 +74,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...standardTransition, delay: 0.3 }}
-                className="text-base sm:text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-md mb-10 leading-relaxed font-normal"
+                className="text-base sm:text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-md mb-8 leading-relaxed font-normal"
               >
                 Book professional photography, events, interiors and more — all from one app.
               </motion.p>
@@ -84,7 +84,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...standardTransition, delay: 0.4 }}
-                className="flex flex-col sm:flex-row items-start gap-3.5"
+                className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5"
               >
                 <a
                   href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
@@ -112,19 +112,41 @@ export default function Home() {
                   </div>
                 </div>
               </motion.div>
+
+
+              {/* Live Areas Strip */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...standardTransition, delay: 0.5 }}
+                className="mt-8 pt-6 border-t border-slate-100 dark:border-white/5"
+              >
+                <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Live In</div>
+                <div className="flex flex-wrap gap-2 text-[11px] font-bold text-slate-600 dark:text-slate-350">
+                  {['Hyderabad', 'Secunderabad', 'Madhapur', 'Gachibowli', 'Jubilee Hills', 'Banjara Hills', '+ more areas'].map((area, idx) => (
+                    <span key={idx} className="px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-full border border-slate-100 dark:border-white/5">
+                      {area}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
             </div>
 
-            {/* ── RIGHT: Person cutout ── */}
+            {/* ── RIGHT: Person cutout with dot grid backdrop ── */}
             <motion.div
               initial={{ opacity: 0, x: 60 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ ...standardTransition, delay: 0.5 }}
-              className="hidden lg:flex justify-end items-end relative"
+              className="hidden lg:flex justify-end items-end relative w-full h-full"
             >
+              {/* Backing decorative glow grid */}
+              <div className="absolute right-10 bottom-24 w-[360px] h-[360px] rounded-full bg-blue-500/10 dark:bg-blue-500/5 blur-3xl -z-10" />
+              <div className="absolute right-4 bottom-16 w-[360px] h-[360px] rounded-full bg-dot-pattern opacity-60 dark:opacity-40 -z-10 [mask-image:radial-gradient(circle_at_center,white,transparent_75%)]" />
+
               <img
                 src="/images/2.png"
                 alt="Focsera Team"
-                className="w-auto h-[70vh] max-h-[680px] object-contain object-bottom opacity-0 transition-opacity duration-700 drop-shadow-2xl"
+                className="w-auto h-[70vh] max-h-[640px] object-contain object-bottom opacity-0 transition-opacity duration-700 drop-shadow-2xl z-10"
                 onLoad={(e) => e.currentTarget.classList.remove('opacity-0')}
               />
             </motion.div>
@@ -137,31 +159,10 @@ export default function Home() {
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-slate-300 dark:text-slate-600 cursor-pointer z-50"
-          onClick={() => document.getElementById('trust-strip')?.scrollIntoView({ behavior: 'smooth' })}
+          onClick={() => document.getElementById('stats')?.scrollIntoView({ behavior: 'smooth' })}
         >
           <ArrowDown size={16} />
         </motion.div>
-      </section>
-
-      {/* ══ TRUST LOGOS STRIP ══ */}
-      <section id="trust-strip" className="py-10 sm:py-14 bg-white dark:bg-slate-950 border-y border-slate-100 dark:border-white/5 transition-colors duration-500">
-        <div className="relative max-w-7xl mx-auto overflow-hidden">
-          {/* Fade edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-white dark:from-slate-950 to-transparent z-10 pointer-events-none transition-colors duration-500" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-white dark:from-slate-950 to-transparent z-10 pointer-events-none transition-colors duration-500" />
-
-          <div className="flex animate-marquee w-max">
-            {[...trustLogos, ...trustLogos, ...trustLogos, ...trustLogos].map((logo, i) => (
-              <div key={i} className="flex items-center justify-center mx-8 sm:mx-12 shrink-0">
-                <img
-                  src={logo.src}
-                  alt={logo.name}
-                  className="h-8 sm:h-10 w-auto object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500 dark:brightness-200 dark:contrast-0 dark:hover:brightness-100 dark:hover:contrast-100"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* ══ STATS ══ */}

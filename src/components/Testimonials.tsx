@@ -42,7 +42,7 @@ export default function Testimonials() {
     }
 
     return (
-        <section className="py-28 sm:py-36 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500">
+        <section className="py-20 sm:py-24 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500">
             <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
                 {/* Header */}
                 <motion.div
@@ -52,11 +52,11 @@ export default function Testimonials() {
                     transition={{ duration: 0.6 }}
                     className="mb-16"
                 >
-                    <p className="text-[11px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-5">Reviews</p>
-                    <h2 className="text-[2rem] sm:text-[2.5rem] md:text-[3rem] font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-[1.1]">
-                        Loved by Focsera<br className="hidden sm:block" /> users.
+                    <p className="text-[11px] sm:text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-[0.25em] mb-4">Reviews</p>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-[-0.03em] leading-tight">
+                        Loved by Focsera users.
                     </h2>
-                    <p className="mt-4 text-slate-500 dark:text-slate-400 text-base sm:text-lg max-w-lg font-normal leading-relaxed">
+                    <p className="mt-4 text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-xl font-medium leading-relaxed">
                         Real experiences from real people who trusted Focsera.
                     </p>
                 </motion.div>
@@ -70,36 +70,39 @@ export default function Testimonials() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-40px' }}
                             transition={{ duration: 0.5, delay: i * 0.08 }}
-                            className="relative bg-slate-50 dark:bg-white/[0.03] rounded-[1.5rem] p-8 border border-slate-100 dark:border-white/[0.06] hover:border-slate-200 dark:hover:border-white/10 hover:shadow-xl hover:shadow-slate-100/60 dark:hover:shadow-none transition-all duration-400 group"
+                            className="relative bg-slate-50/40 dark:bg-white/[0.01] rounded-[1.5rem] p-7 sm:p-8 border border-slate-100 dark:border-white/[0.05] hover:border-blue-100 dark:hover:border-blue-500/10 hover:shadow-lg hover:shadow-blue-500/5 dark:hover:shadow-none hover:bg-white dark:hover:bg-slate-900/40 transition-all duration-400 group overflow-hidden"
                         >
+                            {/* Dot Grid overlay */}
+                            <div className="absolute inset-0 bg-dot-pattern opacity-40 dark:opacity-20 pointer-events-none" />
+
                             {/* Quote mark */}
-                            <div className="absolute top-6 right-6 opacity-[0.06] dark:opacity-[0.04]">
-                                <Quote size={48} className="text-slate-900 dark:text-white" />
+                            <div className="absolute top-6 right-6 opacity-[0.06] dark:opacity-[0.04] pointer-events-none">
+                                <Quote size={40} className="text-slate-900 dark:text-white" />
                             </div>
 
                             {/* Stars */}
-                            <div className="flex gap-0.5 mb-6">
+                            <div className="flex gap-0.5 mb-6 relative z-10 text-amber-400">
                                 {Array.from({ length: review.rating || 5 }).map((_, si) => (
-                                    <Star key={si} className="w-4 h-4 text-amber-400 fill-amber-400" />
+                                    <Star key={si} className="w-4 h-4 fill-current" />
                                 ))}
                             </div>
 
                             {/* Text */}
-                            <p className="text-slate-600 dark:text-slate-300 text-[15px] leading-relaxed mb-8 min-h-[60px] relative z-10">
+                            <p className="text-slate-600 dark:text-slate-300 text-[14px] sm:text-[15px] leading-relaxed mb-6 min-h-[60px] relative z-10 font-medium italic">
                                 "{review.review_text}"
                             </p>
 
                             {/* Author */}
-                            <div className="flex items-center gap-3.5 pt-6 border-t border-slate-100 dark:border-white/[0.06]">
+                            <div className="flex items-center gap-3.5 pt-5 border-t border-slate-100 dark:border-white/[0.05] relative z-10">
                                 <div 
-                                    className="w-11 h-11 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-md"
+                                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-extrabold shrink-0 shadow-sm"
                                     style={{ background: review.accent_hex || '#3b82f6' }}
                                 >
                                     {getInitials(review.author)}
                                 </div>
                                 <div>
-                                    <div className="text-sm font-semibold text-slate-900 dark:text-white">{review.author}</div>
-                                    <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{review.role || 'Verified Customer'}</div>
+                                    <div className="text-sm font-bold text-slate-900 dark:text-white">{review.author}</div>
+                                    <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-semibold">{review.role || 'Verified Customer'}</div>
                                 </div>
                             </div>
                         </motion.div>
