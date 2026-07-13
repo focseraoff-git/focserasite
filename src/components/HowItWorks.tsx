@@ -1,187 +1,264 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { MessageSquareText, Users, FileText, CheckCircle2 } from 'lucide-react';
+import videoBg from '../assets/ai vid.mp4';
 
 const steps = [
-    {
-        number: '01',
-        title: 'Browse services',
-        description: 'Explore all Focsera divisions — Studios, Events, Interiors, Media — from one unified app.',
-        image: '/images/Screenshot_20260517_151602.jpg.jpeg',
-        accent: '#3b82f6',
-    },
-    {
-        number: '02',
-        title: 'Book instantly',
-        description: 'Select your preferred service, date and time. Confirm in seconds — no calls, no waiting.',
-        image: '/images/Screenshot_20260518_134332.jpg.jpeg',
-        accent: '#6366f1',
-    },
-    {
-        number: '03',
-        title: 'Get expert help',
-        description: 'Sit back while our vetted Focsera professionals handle everything and deliver results.',
-        image: '/images/Screenshot_20260511_210806.jpg.jpeg',
-        accent: '#8b5cf6',
-    },
+  {
+    number: '01',
+    icon: MessageSquareText,
+    title: 'Tell us about your project',
+    description: 'Share your requirements — what you need, when you need it, and your budget range in our app.',
+    image: '/images/Screenshot_20260517_151602.jpg.jpeg',
+    color: '#0B5FFF',
+    bg: '#EAF2FF',
+  },
+  {
+    number: '02',
+    icon: Users,
+    title: 'Meet verified professionals',
+    description: 'We match you with pre-vetted experts who specialize in exactly what you need.',
+    image: '/images/Screenshot_20260518_134332.jpg.jpeg',
+    color: '#7c3aed',
+    bg: '#f3e8ff',
+  },
+  {
+    number: '03',
+    icon: FileText,
+    title: 'Receive a personalized quotation',
+    description: 'Get transparent pricing with a detailed breakdown — no hidden costs, no surprises.',
+    image: '/images/Screenshot_20260511_210806.jpg.jpeg',
+    color: '#d97706',
+    bg: '#fef3c7',
+  },
+  {
+    number: '04',
+    icon: CheckCircle2,
+    title: 'Relax while Focsera manages execution',
+    description: 'We coordinate everything from scheduling to quality checks. You focus on what matters.',
+    image: '/images/app-screenshot-1.png',
+    color: '#059669',
+    bg: '#d1fae5',
+  },
 ];
 
 export default function HowItWorks() {
-    const [active, setActive] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeStep, setActiveStep] = useState(0);
+  const lastScrollTime = useRef(0);
+  const touchStartY = useRef(0);
 
-    return (
-        <section className="py-14 sm:py-20 bg-[#0a0d16] text-white overflow-hidden relative">
-            {/* Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/[0.03] rounded-full blur-[150px] pointer-events-none" />
+  // Scroll wheel event interceptor for local in-place steps transitions
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (!containerRef.current) return;
 
-            <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 relative z-10">
-                {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mb-10 sm:mb-16"
-                >
-                    <p className="text-[11px] font-bold text-blue-500 uppercase tracking-[0.25em] mb-3">How It Works</p>
-                    <h2 className="text-[1.75rem] sm:text-4xl md:text-5xl font-extrabold text-white tracking-[-0.03em] leading-tight">
-                        Simple steps to smarter bookings.
-                    </h2>
-                    <p className="mt-3 text-slate-400 text-sm sm:text-base max-w-lg mx-auto font-medium leading-relaxed">
-                        From browsing to booking — the entire Focsera experience lives in your pocket.
-                    </p>
-                </motion.div>
+      const rect = containerRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      
+      // Determine if the section is occupying the main screen space
+      const isVisible = rect.top < viewportHeight * 0.4 && rect.bottom > viewportHeight * 0.4;
+      if (!isVisible) return;
 
-                {/* MOBILE: Carousel (single step) */}
-                <div className="md:hidden">
-                    <div className="flex flex-col items-center">
-                        {/* Phone mockup */}
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={active}
-                                initial={{ opacity: 0, x: 40 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -40 }}
-                                transition={{ duration: 0.35 }}
-                                className="w-[200px] mb-6"
-                            >
-                                <div
-                                    className="rounded-[2.2rem] p-[5px] shadow-2xl shadow-black/80"
-                                    style={{ background: 'linear-gradient(145deg, #334155, #0f172a)' }}
-                                >
-                                    <div className="relative rounded-[1.9rem] overflow-hidden bg-black aspect-[9/19.5]">
-                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-b-2xl z-10" />
-                                        <img
-                                            src={steps[active].image}
-                                            alt={`Step ${steps[active].number}`}
-                                            className="w-full h-full object-cover object-top"
-                                        />
-                                    </div>
-                                </div>
-                            </motion.div>
-                        </AnimatePresence>
+      const now = Date.now();
+      const delta = e.deltaY;
 
-                        {/* Text */}
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={`text-${active}`}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.3 }}
-                                className="text-center px-4 mb-6"
-                            >
-                                <span
-                                    className="text-[10px] font-extrabold uppercase tracking-[0.25em] mb-1.5 block"
-                                    style={{ color: steps[active].accent }}
-                                >
-                                    Step {steps[active].number}
-                                </span>
-                                <h3 className="text-xl font-bold text-white mb-2">{steps[active].title}</h3>
-                                <p className="text-sm text-slate-400 leading-relaxed max-w-[280px] mx-auto">
-                                    {steps[active].description}
-                                </p>
-                            </motion.div>
-                        </AnimatePresence>
+      // Check transition cooldown (900ms) to ensure smooth slide switching
+      if (now - lastScrollTime.current < 900) {
+        // Prevent background scrolling while transition is running
+        e.preventDefault();
+        return;
+      }
 
-                        {/* Nav controls */}
-                        <div className="flex items-center gap-5">
-                            <button
-                                onClick={() => setActive(Math.max(0, active - 1))}
-                                disabled={active === 0}
-                                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
-                            >
-                                <ChevronLeft size={18} />
-                            </button>
+      if (delta > 0) {
+        // Scrolling Down: transition to next step in place
+        if (activeStep < steps.length - 1) {
+          e.preventDefault();
+          setActiveStep(prev => prev + 1);
+          lastScrollTime.current = now;
+        }
+      } else if (delta < 0) {
+        // Scrolling Up: transition to previous step in place
+        if (activeStep > 0) {
+          e.preventDefault();
+          setActiveStep(prev => prev - 1);
+          lastScrollTime.current = now;
+        }
+      }
+    };
 
-                            {/* Dots */}
-                            <div className="flex gap-2">
-                                {steps.map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => setActive(i)}
-                                        className={`rounded-full transition-all duration-300 ${i === active ? 'w-6 h-2 bg-blue-500' : 'w-2 h-2 bg-white/20'}`}
-                                    />
-                                ))}
-                            </div>
+    // Mobile touch swiping local transition logic
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY;
+    };
 
-                            <button
-                                onClick={() => setActive(Math.min(steps.length - 1, active + 1))}
-                                disabled={active === steps.length - 1}
-                                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
-                            >
-                                <ChevronRight size={18} />
-                            </button>
-                        </div>
-                    </div>
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!containerRef.current) return;
+
+      const rect = containerRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const isVisible = rect.top < viewportHeight * 0.4 && rect.bottom > viewportHeight * 0.4;
+      if (!isVisible) return;
+
+      const touchEndY = e.touches[0].clientY;
+      const diffY = touchStartY.current - touchEndY;
+      const now = Date.now();
+
+      if (now - lastScrollTime.current < 900) {
+        if (Math.abs(diffY) > 10) e.preventDefault();
+        return;
+      }
+
+      if (Math.abs(diffY) > 40) { // swipe threshold
+        if (diffY > 0) {
+          if (activeStep < steps.length - 1) {
+            e.preventDefault();
+            setActiveStep(prev => prev + 1);
+            lastScrollTime.current = now;
+          }
+        } else {
+          if (activeStep > 0) {
+            e.preventDefault();
+            setActiveStep(prev => prev - 1);
+            lastScrollTime.current = now;
+          }
+        }
+      }
+    };
+
+    const element = containerRef.current;
+    if (element) {
+      element.addEventListener('wheel', handleWheel, { passive: false });
+      element.addEventListener('touchstart', handleTouchStart, { passive: true });
+      element.addEventListener('touchmove', handleTouchMove, { passive: false });
+    }
+
+    return () => {
+      if (element) {
+        element.removeEventListener('wheel', handleWheel);
+        element.removeEventListener('touchstart', handleTouchStart);
+        element.removeEventListener('touchmove', handleTouchMove);
+      }
+    };
+  }, [activeStep]);
+
+  const handleDotClick = (index: number) => {
+    setActiveStep(index);
+    lastScrollTime.current = Date.now();
+  };
+
+  return (
+    <div ref={containerRef} className="relative w-full bg-focsera-bg border-b border-gray-150/60 min-h-[600px] lg:h-[80vh] flex items-center justify-center py-16 sm:py-24 overflow-hidden">
+      <div className="max-w-5xl mx-auto px-5 sm:px-8 lg:px-12 w-full">
+        
+        {/* Split Layout: Mockup (Left), Vertical Stepper Line (Middle), Text Card (Right) */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 lg:gap-16 items-center w-full relative">
+          
+          {/* LEFT: Phone Mockup Container */}
+          <div className="col-span-1 md:col-span-5 flex justify-center py-4">
+            <div className="relative w-[180px] sm:w-[200px] md:w-full max-w-[280px]">
+              {/* Phone Frame */}
+              <div className="rounded-[2.2rem] sm:rounded-[2.6rem] p-2 bg-gradient-to-b from-slate-200 to-slate-400 border border-gray-300 shadow-2xl shadow-gray-400/40">
+                <div className="relative rounded-[1.8rem] sm:rounded-[2.2rem] overflow-hidden bg-black aspect-[9/19.5]">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 sm:w-28 h-4 sm:h-5 bg-black rounded-b-2xl z-20" />
+
+                  {/* Dynamic Screenshot or Video */}
+                  <AnimatePresence mode="wait">
+                    {activeStep === 3 ? (
+                      <motion.video
+                        key="step-4-video"
+                        src={videoBg}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        initial={{ opacity: 0, scale: 0.97 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.03 }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        className="w-full h-full object-cover object-top"
+                      />
+                    ) : (
+                      <motion.img
+                        key={activeStep}
+                        src={steps[activeStep].image}
+                        alt={`Step ${steps[activeStep].number}`}
+                        initial={{ opacity: 0, scale: 0.97 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.03 }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        className="w-full h-full object-cover object-top"
+                      />
+                    )}
+                  </AnimatePresence>
                 </div>
+              </div>
 
-                {/* DESKTOP: 3-column grid */}
-                <div className="hidden md:grid md:grid-cols-3 gap-10 lg:gap-14">
-                    {steps.map((step, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-60px' }}
-                            transition={{ duration: 0.7, delay: i * 0.15 }}
-                            className="flex flex-col items-center group"
-                        >
-                            <div className="relative mb-6 w-full max-w-[220px] mx-auto">
-                                <div
-                                    className="absolute -inset-4 rounded-[3rem] blur-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-600"
-                                    style={{ backgroundColor: step.accent }}
-                                />
-                                <div
-                                    className="relative rounded-[2.2rem] p-[5px] shadow-2xl shadow-black/80"
-                                    style={{ background: 'linear-gradient(145deg, #334155, #0f172a)' }}
-                                >
-                                    <div className="relative rounded-[1.9rem] overflow-hidden bg-black aspect-[9/19.5]">
-                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-b-2xl z-10" />
-                                        <img
-                                            src={step.image}
-                                            alt={`Step ${step.number}`}
-                                            className="w-full h-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-500"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="text-center mt-4">
-                                <span
-                                    className="text-[10px] font-extrabold uppercase tracking-[0.25em] mb-2 block"
-                                    style={{ color: step.accent }}
-                                >
-                                    Step {step.number}
-                                </span>
-                                <h3 className="text-xl font-bold text-white mb-2.5 tracking-tight">{step.title}</h3>
-                                <p className="text-sm text-slate-400 leading-relaxed max-w-[260px] mx-auto">
-                                    {step.description}
-                                </p>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+              {/* Side volume buttons */}
+              <div className="absolute -left-1.5 top-20 sm:top-24 w-0.5 sm:w-1 h-6 sm:h-10 bg-gray-400 rounded-l" />
+              <div className="absolute -left-1.5 top-28 sm:top-36 w-0.5 sm:w-1 h-6 sm:h-10 bg-gray-400 rounded-l" />
             </div>
-        </section>
-    );
+          </div>
+
+          {/* MIDDLE: Vertical scroll indicator dots (CropWings style pagination) */}
+          <div className="hidden md:flex col-span-1 flex-col gap-6 justify-center items-center py-4 shrink-0 relative h-[180px]">
+            {/* Stepper Vertical Connector Line */}
+            <div className="absolute left-1/2 top-4 bottom-4 w-[2px] bg-gray-250/70 -translate-x-1/2 z-0" />
+            
+            {steps.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => handleDotClick(i)}
+                className="w-3.5 h-3.5 rounded-full relative group flex items-center justify-center z-10 bg-focsera-bg focus:outline-none"
+                aria-label={`Go to step ${i + 1}`}
+              >
+                <span className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  activeStep === i
+                    ? 'bg-blue-600 scale-[1.5] shadow-[0_0_12px_rgba(11,95,255,0.8)] border-2 border-blue-600'
+                    : activeStep > i
+                      ? 'bg-blue-600 border-2 border-blue-600'
+                      : 'bg-gray-300 border-2 border-gray-300'
+                }`} />
+                <span className={`absolute right-6 text-[10px] font-black uppercase tracking-widest transition-all duration-300 opacity-0 pointer-events-none group-hover:opacity-100 ${
+                  activeStep === i ? 'opacity-100 text-blue-600' : 'text-gray-400'
+                }`}>
+                  0{i + 1}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* RIGHT: Static Text Info Card (transitions dynamically in place) */}
+          <div className="col-span-1 md:col-span-6 flex flex-col justify-center min-h-[220px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeStep}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="space-y-4"
+              >
+                {/* Step Pill */}
+                <span className="inline-flex items-center text-[10px] font-black uppercase tracking-[0.15em] px-2.5 py-1 rounded-md bg-blue-50 text-blue-600">
+                  Step {steps[activeStep].number}
+                </span>
+
+                {/* Step Title */}
+                <h3 className="text-2xl sm:text-4xl font-extrabold text-focsera-text tracking-tight">
+                  {steps[activeStep].title}
+                </h3>
+
+                {/* Step Description */}
+                <p className="text-sm sm:text-base text-focsera-muted leading-relaxed font-light">
+                  {steps[activeStep].description}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
 }

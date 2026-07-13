@@ -1,22 +1,26 @@
 import { FC } from 'react';
-import { Link } from 'react-router-dom';
-import { Linkedin, Instagram, Facebook } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Linkedin, Instagram, Facebook, ArrowUpRight } from 'lucide-react';
 
-// Data for the footer links, making them easy to manage
-const divisions = [
-  { name: 'Studios', path: '/studios' },
-  { name: 'Media', path: '/media' },
-  { name: 'Events', path: '/events' },
-  { name: 'Web', path: '/web' },
-  { name: 'Product Services', path: '/product-services' },
-  { name: 'Interiors', path: '/interiors' },
+const solutionLinks = [
+  { name: 'Celebrate', path: '/events' },
+  { name: 'Grow', path: '/web' },
+  { name: 'Build', path: '/interiors' },
+  { name: 'Create', path: '/studios' },
+  { name: 'Learn', path: '/labs' },
 ];
 
 const companyLinks = [
   { name: 'About', path: '/about' },
-  { name: 'Mission', path: '/mission' },
-  { name: 'Careers', path: '/contact' },
   { name: 'Contact', path: '/contact' },
+  { name: 'Partners', path: '/contact' },
+  { name: 'For Schools', path: '/labs' },
+];
+
+const legalLinks = [
+  { name: 'Privacy Policy', path: '/privacy' },
+  { name: 'Terms of Service', path: '/terms' },
+  { name: 'Refund Policy', path: '/refund-policy' },
 ];
 
 const socialLinks = [
@@ -25,95 +29,124 @@ const socialLinks = [
   { name: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61582302131809', icon: Facebook },
 ];
 
-// A reusable component for footer links to reduce repetition
 interface FooterLinkProps {
   to: string;
+  isDarkPage: boolean;
   children: React.ReactNode;
 }
-const FooterLink: FC<FooterLinkProps> = ({ to, children }) => (
+const FooterLink: FC<FooterLinkProps> = ({ to, isDarkPage, children }) => (
   <li>
     <Link
       to={to}
-      className="text-gray-400 hover:text-[#0052CC] transition-all duration-300 font-light hover:-translate-y-px block"
+      className={`transition-colors duration-300 text-[13px] font-medium ${isDarkPage
+          ? "text-slate-400 hover:text-white"
+          : "text-gray-500 hover:text-focsera-primary"
+        }`}
     >
       {children}
     </Link>
   </li>
 );
 
-// Main Footer Component
 const Footer: FC = () => {
+  const location = useLocation();
+  const isDarkPage = ["/events", "/web", "/studios", "/labs", "/marketing"].includes(location.pathname);
+
   return (
-    <footer className="relative bg-gray-900 text-white py-20 overflow-hidden">
-      {/* Aurora background effect */}
-      <div className="absolute inset-0 z-0 opacity-20">
-        <div className="absolute top-1/4 left-0 w-96 h-96 bg-gradient-to-r from-[#0052CC] to-transparent rounded-full filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-gradient-to-l from-[#0066FF] to-transparent rounded-full filter blur-3xl animate-pulse delay-700"></div>
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-12">
-          {/* Focsera Info */}
-          <div className="sm:col-span-2 md:col-span-1">
-            <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#0052CC] to-[#0066FF] mb-4">
-              FOCSERA
-            </h3>
-            <p className="text-gray-400 text-sm font-light leading-relaxed">
-              Focus. Create. Celebrate.
+    <footer className={`relative py-16 sm:py-20 border-t transition-colors duration-500 ${isDarkPage
+        ? "bg-[#02040a] border-slate-900/80"
+        : "bg-white border-gray-100"
+      }`}>
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-10 sm:gap-8 mb-12">
+          {/* Brand */}
+          <div className="col-span-2 sm:col-span-2 md:col-span-2">
+            <Link to="/" className="flex items-center gap-2 mb-4">
+              <img
+                src="/images/logos/logog.png"
+                alt="Focsera"
+                className={`h-7 w-auto object-contain transition-all duration-300 ${isDarkPage ? 'brightness-0 invert' : ''}`}
+              />
+              <span className={`text-lg font-bold tracking-tight transition-colors duration-300 ${isDarkPage ? 'text-white' : 'text-focsera-text'}`}>
+                FOCSERA
+              </span>
+            </Link>
+            <p className={`text-[13px] leading-relaxed mb-5 max-w-xs transition-colors duration-300 ${isDarkPage ? 'text-slate-450' : 'text-focsera-muted'}`}>
+              From Vision to Execution.
               <br />
-              Your global creative partner.
+              India's platform for getting important projects completed through trusted professionals.
             </p>
-          </div>
-
-          {/* Divisions Links */}
-          <div>
-            <h4 className="font-semibold text-lg mb-4 text-white">Divisions</h4>
-            <ul className="space-y-3 text-sm">
-              {divisions.map((link) => (
-                <FooterLink key={link.name} to={link.path}>{link.name}</FooterLink>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Links */}
-          <div>
-            <h4 className="font-semibold text-lg mb-4 text-white">Company</h4>
-            <ul className="space-y-3 text-sm">
-              {companyLinks.map((link) => (
-                <FooterLink key={link.name} to={link.path}>{link.name}</FooterLink>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social Links */}
-          <div>
-            <h4 className="font-semibold text-lg mb-4 text-white">Connect</h4>
-            <ul className="space-y-3 text-sm">
+            {/* Social */}
+            <div className="flex gap-2.5">
               {socialLinks.map((social) => (
-                <li key={social.name}>
-                  <a
-                    href={social.href}
-                    className="flex items-center gap-2 text-gray-400 hover:text-[#0052CC] transition-all duration-300 font-light hover:-translate-y-px"
-                  >
-                    <social.icon size={16} />
-                    {social.name}
-                  </a>
-                </li>
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 ${isDarkPage
+                      ? "bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white"
+                      : "bg-gray-50 hover:bg-focsera-accent text-gray-400 hover:text-focsera-primary"
+                    }`}
+                  aria-label={social.name}
+                >
+                  <social.icon size={16} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Solutions */}
+          <div>
+            <h4 className={`text-[12px] font-bold uppercase tracking-[0.1em] mb-4 ${isDarkPage ? 'text-slate-200' : 'text-focsera-text'}`}>
+              Solutions
+            </h4>
+            <ul className="space-y-2.5">
+              {solutionLinks.map((link) => (
+                <FooterLink key={link.name} to={link.path} isDarkPage={isDarkPage}>{link.name}</FooterLink>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h4 className={`text-[12px] font-bold uppercase tracking-[0.1em] mb-4 ${isDarkPage ? 'text-slate-200' : 'text-focsera-text'}`}>
+              Company
+            </h4>
+            <ul className="space-y-2.5">
+              {companyLinks.map((link) => (
+                <FooterLink key={link.name} to={link.path} isDarkPage={isDarkPage}>{link.name}</FooterLink>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className={`text-[12px] font-bold uppercase tracking-[0.1em] mb-4 ${isDarkPage ? 'text-slate-200' : 'text-focsera-text'}`}>
+              Legal
+            </h4>
+            <ul className="space-y-2.5">
+              {legalLinks.map((link) => (
+                <FooterLink key={link.name} to={link.path} isDarkPage={isDarkPage}>{link.name}</FooterLink>
               ))}
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-700/50 pt-8 mt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-400 font-light">
-              &copy; {new Date().getFullYear()} Focsera. All rights reserved.
-            </p>
-            <div className="flex gap-6 text-sm">
-              <Link to="/privacy" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Privacy Policy</Link>
-              <Link to="/terms" className="text-gray-400 hover:text-[#0052CC] transition-colors font-light">Terms of Service</Link>
-            </div>
-          </div>
+        {/* Bottom bar */}
+        <div className={`border-t pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 ${isDarkPage ? 'border-slate-900/80' : 'border-gray-100'}`}>
+          <p className="text-[12px] text-gray-400">
+            &copy; {new Date().getFullYear()} Focsera. All rights reserved.
+          </p>
+          <a
+            href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-[12px] font-medium text-focsera-primary hover:text-blue-700 transition-colors"
+          >
+            Download the App
+            <ArrowUpRight size={12} />
+          </a>
         </div>
       </div>
     </footer>

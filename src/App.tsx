@@ -4,6 +4,8 @@ import React, { Suspense } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import CustomCursor from './components/CustomCursor';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import About from './pages/About';
 import Mission from './pages/Mission';
@@ -15,6 +17,7 @@ const Web = React.lazy(() => import('./pages/divisions/Web'));
 const ProductServices = React.lazy(() => import('./pages/divisions/ProductServices'));
 const Interiors = React.lazy(() => import('./pages/divisions/Interiors'));
 const Labs = React.lazy(() => import('./pages/divisions/Labs'));
+const Marketing = React.lazy(() => import('./pages/divisions/Marketing'));
 const SeoRoutes = React.lazy(() => import('./pages/seo/SeoRoutes'));
 
 
@@ -49,16 +52,10 @@ function AppInner() {
     location.pathname.startsWith(path)
   );
 
-  const isArenaX = location.pathname.startsWith("/arenax");
-
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        backgroundColor: isArenaX ? '#1a1510' : '#ffffff',
-        color: isArenaX ? '#f3f3f3' : 'inherit'
-      }}
-    >
+    <div className="min-h-screen">
+      <CustomCursor />
+      <ScrollToTop />
       {/* Hide global navbar on ArenaX + Skill */}
       {!shouldHideLayout && <Navbar />}
 
@@ -99,6 +96,7 @@ function AppInner() {
 
           <Route path="/interiors" element={<Interiors />} />
           <Route path="/labs" element={<Labs />} />
+          <Route path="/marketing" element={<Marketing />} />
           <Route path="/booking" element={<PackageBooking />} />
           <Route path="/booking/review" element={<BookingReview />} />
           <Route path="/*" element={<SeoRoutes />} />
@@ -111,7 +109,7 @@ function AppInner() {
           href="https://wa.me/919515803954"
           target="_blank"
           rel="noopener noreferrer"
-          className={`fixed ${location.pathname === '/' ? 'bottom-6 sm:bottom-24' : 'bottom-6'} right-6 z-[110] flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:shadow-[0_4px_28px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-110 active:scale-95 group`}
+          className="fixed bottom-6 right-6 z-[110] flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:shadow-[0_4px_28px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-110 active:scale-95 group"
           aria-label="Chat on WhatsApp"
         >
           {/* Pulsing ring */}

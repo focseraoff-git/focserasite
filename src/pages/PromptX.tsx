@@ -2,6 +2,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { load } from "@cashfreepayments/cashfree-js";
+import { motion, useScroll, useTransform } from 'framer-motion';
+import videoBg from '../components/PROMPTXfinale.mp4';
 
 // --- SVG Icon Components ---
 const IconCheckCircle = ({ className = "w-6 h-6" }) => (
@@ -132,6 +134,20 @@ export default function PromptXLight() {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const formRef = useRef(null);
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const { scrollY } = useScroll();
+  const scale = useTransform(scrollY, [0, 450], [1, isMobile ? 0.96 : 0.94]);
+  const borderRadius = useTransform(scrollY, [0, 450], ["0px", isMobile ? "24px" : "48px"]);
+  const margin = useTransform(scrollY, [0, 450], ["0px", isMobile ? "12px" : "24px"]);
 
   // Scroll Animation Effect
   useEffect(() => {
@@ -321,28 +337,75 @@ export default function PromptXLight() {
         <div className="aurora-blob top-[-20%] left-[-20%] w-[800px] h-[800px] bg-blue-400 rounded-full" />
         <div className="aurora-blob bottom-[-30%] right-[-30%] w-[1000px] h-[1000px] bg-indigo-400 rounded-full" style={{ animationDelay: '8s' }} />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 relative z-10">
+        {/* --- Hero / Header Section --- */}
+        <div className="relative w-full min-h-[100svh] lg:min-h-screen flex items-center justify-center overflow-hidden mb-24 bg-transparent">
+          <motion.div
+            style={{
+              scale,
+              borderRadius,
+              left: margin,
+              right: margin,
+              top: 0,
+              bottom: margin,
+            }}
+            className="absolute inset-0 overflow-hidden z-0 pointer-events-none origin-top bg-gradient-to-br from-[#0B1D40] via-[#0a1628] to-[#061024]"
+          >
+            <video
+              src={videoBg}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover opacity-[0.4]"
+            />
+            {/* Ambient Dark/Glow Overlay for readability */}
+            <div className="absolute inset-0 bg-[#02040a]/40 backdrop-blur-[0.5px]" />
+          </motion.div>
 
-          {/* --- Header --- */}
-          <header className="text-center mb-24 animate-on-scroll">
-            <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight">
-              <span className="text-blue-600">PromptX</span> – AI Workshop
+          <div className="relative z-10 max-w-4xl mx-auto px-6 py-24 text-center mt-16 sm:mt-20">
+            {/* Micro Pill Tag */}
+            <div className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-300 backdrop-blur-md mb-8 shadow-[0_8px_16px_rgba(0,0,0,0.5)]">
+              <span className="flex h-1.5 w-1.5 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
+              </span>
+              <span className="text-[10px] font-black uppercase tracking-[0.25em]">
+                Focsera Learn
+              </span>
+            </div>
+
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-[-0.04em] leading-[0.98] mb-8 text-white">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400">PromptX</span> – AI Workshop
             </h1>
-            <div className="inline-block px-6 py-2 bg-blue-50 text-blue-700 rounded-full font-bold text-lg mb-8 border border-blue-100 shadow-sm">
+
+            <div className="inline-block px-6 py-2 bg-white/10 text-white rounded-full font-bold text-lg mb-8 border border-white/20 shadow-sm backdrop-blur-md">
               📅 Jan 3rd, 2026
             </div>
-            <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto mb-10">
+
+            <p className="text-base sm:text-xl text-slate-300 font-light leading-relaxed max-w-3xl mx-auto mb-12">
               A hands-on workshop for students in Classes 6–10 to boost academic creativity & productivity using AI.
             </p>
+
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a href="#registration" className="w-full sm:w-auto px-8 py-4 rounded-full bg-blue-600 text-white font-semibold text-lg shadow-lg hover:bg-blue-700 transition-all transform hover:-translate-y-0.5">
+              <a
+                href="#registration"
+                className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-0.5"
+              >
                 Register Now
               </a>
-              <a href="/images/logos/PromptX.jpg" download className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-blue-600 font-semibold text-lg border border-blue-600 shadow-sm hover:bg-blue-50 hover:border-blue-700 transition-all transform hover:-translate-y-0.5">
+              <a
+                href="/images/logos/PromptX.jpg"
+                download
+                className="w-full sm:w-auto px-8 py-3.5 bg-white/10 backdrop-blur-md text-white font-semibold text-sm rounded-xl border border-white/20 hover:bg-white/25 transition-all duration-300 transform hover:-translate-y-0.5"
+              >
                 Download Poster
               </a>
             </div>
-          </header>
+          </div>
+        </div>
+
+        {/* --- Main Content Container --- */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 relative z-10">
 
           {/* --- About Section --- */}
           <section className="mb-24 p-8 md:p-12 rounded-2xl neon-card-border animate-on-scroll">
