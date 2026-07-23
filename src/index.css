@@ -30,7 +30,8 @@
 @layer base {
   body {
     font-family: 'Inter', sans-serif;
-    overflow-x: clip;
+    overflow-x: hidden;
+    max-width: 100vw;
     background-color: var(--focsera-bg);
     color: var(--focsera-text);
     -webkit-font-smoothing: antialiased;
@@ -58,6 +59,15 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Dynamically scale down rem units on laptop viewports to prevent "zoomed in" layouts */
+@media (min-width: 1024px) and (max-width: 1440px) {
+  html {
+    font-size: 14.5px;
+  }
 }
 
 /* ══════════════════════════════════════════

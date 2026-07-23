@@ -63,7 +63,7 @@ export default function HeroSection() {
       </motion.div>
 
       <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 lg:px-16 pt-24 pb-12 sm:pt-28 sm:pb-16 lg:py-0">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-120px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-16 items-center min-h-[calc(100vh-120px)]">
 
           {/* LEFT — Text */}
           <div className="flex flex-col items-start">
@@ -83,7 +83,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease }}
-              className="text-[2.5rem] leading-[1.15] sm:text-[3.5rem] md:text-[4rem] lg:text-[4.5rem] font-serif font-semibold tracking-[-0.01em] text-white mb-6"
+              className="text-[2.2rem] leading-[1.2] sm:text-[3.2rem] md:text-[3.6rem] lg:text-[3.8rem] xl:text-[4.5rem] font-serif font-semibold tracking-[-0.01em] text-white mb-6"
             >
               One Platform to{' '}
               <span className="bg-gradient-to-r from-[#D4B87A] via-[#C9A96E] to-amber-300 bg-clip-text text-transparent">

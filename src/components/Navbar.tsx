@@ -134,7 +134,7 @@ const Navbar = () => {
         </Link>
 
         {/* DESKTOP MENU */}
-        <div className="hidden lg:flex items-center gap-0.5">
+        <div className="hidden xl:flex items-center gap-0.5">
           {mainMenu.map((item) =>
             item.type === "dropdown" ? (
               <div
@@ -213,7 +213,7 @@ const Navbar = () => {
         </div>
 
         {/* RIGHT — CTA */}
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden xl:flex items-center gap-3">
           {user ? (
             <Link
               to="/account"
@@ -238,7 +238,7 @@ const Navbar = () => {
         {/* MOBILE TOGGLE */}
         <button
           aria-label="Toggle Menu"
-          className="lg:hidden p-2 rounded-full transition-colors text-white hover:bg-white/10"
+          className="xl:hidden p-2 rounded-full transition-colors text-white hover:bg-white/10"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           ref={menuButtonRef}
         >
@@ -255,7 +255,7 @@ const Navbar = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className={`lg:hidden border-t overflow-hidden ${isDarkPage ? "bg-slate-950 border-slate-900" : "bg-white border-gray-100"
+            className={`xl:hidden border-t overflow-hidden ${isDarkPage ? "bg-slate-950 border-slate-900" : "bg-white border-gray-100"
               }`}
           >
             <div className="max-w-7xl mx-auto px-5 py-4 space-y-1">
