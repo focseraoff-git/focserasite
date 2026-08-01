@@ -62,8 +62,8 @@ export default function HeroSection() {
         </div>
       </motion.div>
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 lg:px-16 pt-24 pb-12 sm:pt-28 sm:pb-16 lg:py-0">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-16 items-center min-h-[calc(100vh-120px)]">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 lg:px-16 pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-16 items-center min-h-[calc(100vh-160px)]">
 
           {/* LEFT — Text */}
           <div className="flex flex-col items-start">
