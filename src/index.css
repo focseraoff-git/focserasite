@@ -1,5 +1,47 @@
-/* Google Font — Playfair Display already loaded, Inter for body */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Dancing+Script:wght@400;700&display=swap');
+/* Google Font Web CDN fallback */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+
+/* ══════════════════════════════════════════
+   GLOBAL TYPOGRAPHY — "Our Lexend", sans-serif
+   ══════════════════════════════════════════ */
+
+/* Local woff2 font-face for "Our Lexend" */
+@font-face {
+  font-family: 'Our Lexend';
+  src: url('/fonts/lexend-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Our Lexend';
+  src: url('/fonts/lexend-latin-ext.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Fallback definition for "Lexend" */
+@font-face {
+  font-family: 'Lexend';
+  src: url('/fonts/lexend-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lexend';
+  src: url('/fonts/lexend-latin-ext.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
 
 /* Tailwind Layers */
 @tailwind base;
@@ -10,6 +52,15 @@
    DESIGN TOKENS — Focsera Heritage Palette
    ══════════════════════════════════════════ */
 :root {
+  font-family: "Our Lexend", sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-variant-caps: normal;
+  font-variant-east-asian: normal;
+  font-variant-ligatures: normal;
+  font-variant-numeric: normal;
+  font-weight: 400;
+
   --focsera-primary: #0B5FFF;
   --focsera-secondary: #4F8CFF;
   --focsera-bg: #FAF9F6;
@@ -26,10 +77,38 @@
   --heritage-charcoal: #2C2C2C;
 }
 
+/* Enforce "Our Lexend", sans-serif on EVERY corner of the site */
+*,
+*::before,
+*::after {
+  font-family: "Our Lexend", sans-serif !important;
+}
+
 /* Base Styles */
 @layer base {
+  html {
+    font-family: "Our Lexend", sans-serif !important;
+    font-size: 16px;
+    font-style: normal;
+    font-variant-caps: normal;
+    font-variant-east-asian: normal;
+    font-variant-ligatures: normal;
+    font-variant-numeric: normal;
+    font-weight: 400;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: "Our Lexend", sans-serif !important;
+    font-size: 16px;
+    font-style: normal;
+    font-variant-caps: normal;
+    font-variant-east-asian: normal;
+    font-variant-ligatures: normal;
+    font-variant-numeric: normal;
+    font-weight: 400;
     overflow-x: hidden;
     max-width: 100vw;
     background-color: var(--focsera-bg);
@@ -44,29 +123,23 @@
   h4,
   h5,
   h6 {
-    font-family: 'Playfair Display', serif;
-    letter-spacing: 0.01em;
-    line-height: 1.3;
-    font-weight: 600;
+    font-family: "Our Lexend", sans-serif !important;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+
+  p, span, div, a, button, input, optgroup, select, textarea, label, li, td, th {
+    font-family: "Our Lexend", sans-serif !important;
+  }
+
+  code, kbd, samp, pre, .monaco-editor, .monaco-editor * {
+    font-family: monospace !important;
   }
 
   /* Refined selection color */
   ::selection {
     background-color: rgba(201, 169, 110, 0.2);
     color: var(--heritage-charcoal);
-  }
-}
-
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-  max-width: 100vw;
-}
-
-/* Dynamically scale down rem units on laptop viewports to prevent "zoomed in" layouts */
-@media (min-width: 1024px) and (max-width: 1440px) {
-  html {
-    font-size: 14.5px;
   }
 }
 
@@ -194,5 +267,195 @@ html {
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+}
+
+/* ══════════════════════════════════════════
+   MARKETPLACE DESIGN SYSTEM — SEO Pages
+   ══════════════════════════════════════════ */
+
+:root {
+  /* Marketplace shadows */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-card-hover: 0 8px 25px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 12px 40px rgba(0,0,0,0.08);
+  --shadow-cta: 0 4px 14px rgba(11, 95, 255, 0.25);
+
+  /* Service category accent colors */
+  --cat-photography: #2563eb;
+  --cat-events: #ea580c;
+  --cat-interiors: #d97706;
+  --cat-media: #7c3aed;
+  --cat-web: #0d9488;
+  --cat-design: #4f46e5;
+}
+
+@layer components {
+  /* Premium marketplace card */
+  .marketplace-card {
+    background: var(--focsera-white);
+    border: 1px solid var(--focsera-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  }
+  .marketplace-card:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+    border-color: rgba(11, 95, 255, 0.15);
+  }
+
+  /* Section eyebrow label */
+  .section-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--focsera-primary);
+  }
+
+  /* Trust badge */
+  .trust-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--focsera-muted);
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: var(--focsera-accent);
+    border: 1px solid rgba(11, 95, 255, 0.08);
+  }
+
+  /* Primary CTA button */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--focsera-primary);
+    border-radius: 10px;
+    box-shadow: var(--shadow-cta);
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-primary:hover {
+    background: #0a4fd4;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(11, 95, 255, 0.35);
+  }
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  /* Secondary CTA button */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--focsera-text);
+    background: var(--focsera-white);
+    border: 1px solid var(--focsera-border);
+    border-radius: 10px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-secondary:hover {
+    background: var(--focsera-accent);
+    border-color: rgba(11, 95, 255, 0.2);
+  }
+
+  /* FAQ accordion item */
+  .faq-item {
+    border: 1px solid var(--focsera-border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--focsera-white);
+    transition: box-shadow 0.2s ease;
+  }
+  .faq-item:hover {
+    box-shadow: var(--shadow-card);
+  }
+  .faq-item summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 18px 20px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--focsera-text);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after {
+    content: '+';
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--focsera-muted);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .faq-item[open] summary::after {
+    content: '−';
+  }
+  .faq-item .faq-answer {
+    padding: 0 20px 18px 20px;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--focsera-muted);
+  }
+}
+
+/* Scroll-reveal animation */
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger delays */
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-blob,
+  .animate-marquee,
+  .animate-fade-in-up,
+  .animate-float,
+  .animate-pulse-soft,
+  .animate-shimmer {
+    animation: none !important;
+  }
+  .marketplace-card:hover {
+    transform: none;
   }
 }

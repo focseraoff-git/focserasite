@@ -97,18 +97,19 @@ const Navbar = () => {
   };
 
   const hasDarkHero = ["/", "/events", "/web", "/studios", "/promptx", "/ai-workshop", "/labs"].includes(location.pathname);
-  const isDarkPage = true;
-  const scrolledTheme = false;
+  // Navbar is dark (white text over transparent background) ONLY when on a dark-hero page AND not scrolled
+  const isDarkNavbar = hasDarkHero && !scrolled;
 
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-in-out ${scrolled || mobileMenuOpen
-        ? "bg-slate-950/40 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
-        : "bg-transparent"
-        }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
+        isDarkNavbar
+          ? "bg-transparent text-white"
+          : "bg-white/95 backdrop-blur-xl border-b border-focsera-border/80 shadow-card-sm text-focsera-text"
+      }`}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 flex items-center justify-between h-16 sm:h-[72px]">
 
@@ -118,17 +119,15 @@ const Navbar = () => {
             <img
               src="/images/logos/logog.png"
               alt="Focsera Logo"
-              className={`absolute inset-0 h-full w-auto object-contain transition-opacity duration-500 ease-in-out ${scrolledTheme ? 'opacity-100' : 'opacity-0'}`}
-              loading="eager"
-            />
-            <img
-              src="/images/logos/logog.png"
-              alt="Focsera Logo"
-              className={`absolute inset-0 h-full w-auto object-contain brightness-0 invert transition-opacity duration-500 ease-in-out ${scrolledTheme ? 'opacity-0' : 'opacity-100'}`}
+              className={`h-full w-auto object-contain transition-all duration-300 ${
+                isDarkNavbar ? "brightness-0 invert" : ""
+              }`}
               loading="eager"
             />
           </div>
-          <span className="text-lg font-serif font-bold text-white">
+          <span className={`text-lg font-bold transition-colors duration-300 ${
+            isDarkNavbar ? "text-white" : "text-focsera-text"
+          }`}>
             focsera
           </span>
         </Link>
@@ -145,10 +144,11 @@ const Navbar = () => {
                 ref={solutionsRef}
               >
                 <button
-                  className={`flex items-center gap-1 font-medium text-[13px] px-4 py-2 rounded-full transition-all duration-500 ease-in-out ${solutionsOpen
-                    ? "bg-white/10 text-white"
-                    : "text-white/80 hover:text-white hover:bg-white/5"
-                    }`}
+                  className={`flex items-center gap-1 font-medium text-[13px] px-4 py-2 rounded-full transition-all duration-300 ease-in-out ${
+                    isDarkNavbar
+                      ? (solutionsOpen ? "bg-white/10 text-white" : "text-white/80 hover:text-white hover:bg-white/5")
+                      : (solutionsOpen ? "bg-focsera-accent text-focsera-primary" : "text-gray-700 hover:text-focsera-primary hover:bg-focsera-accent/60")
+                  }`}
                   aria-expanded={solutionsOpen}
                 >
                   {item.label}
@@ -161,25 +161,33 @@ const Navbar = () => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.98 }}
                       transition={{ duration: 0.2 }}
-                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[320px] rounded-2xl p-2 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.3)] border ${isDarkPage ? "bg-slate-950 border-slate-900" : "bg-white border-gray-100"
-                        }`}
+                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[320px] rounded-2xl p-2 shadow-elevated border ${
+                        isDarkNavbar
+                          ? "bg-slate-950 border-slate-900 text-white"
+                          : "bg-white border-focsera-border text-focsera-text"
+                      }`}
                     >
-                      <div className={`text-[10px] font-bold uppercase tracking-[0.15em] px-3 py-2 ${isDarkPage ? "text-slate-500" : "text-gray-400"
-                        }`}>
+                      <div className={`text-[10px] font-bold uppercase tracking-[0.15em] px-3 py-2 ${
+                        isDarkNavbar ? "text-slate-500" : "text-focsera-muted"
+                      }`}>
                         What do you want to achieve?
                       </div>
                       {solutions.map((s) => (
                         <Link
                           key={s.path}
                           to={s.path}
-                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors group/item ${isDarkPage ? "hover:bg-slate-900" : "hover:bg-focsera-accent"
-                            }`}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors group/item ${
+                            isDarkNavbar ? "hover:bg-slate-900" : "hover:bg-focsera-accent"
+                          }`}
                         >
                           <span className="text-lg">{s.emoji}</span>
                           <div>
-                            <div className={`text-sm font-semibold transition-colors ${isDarkPage ? "text-white group-hover/item:text-blue-400" : "text-gray-900 group-hover/item:text-focsera-primary"
-                              }`}>{s.name}</div>
-                            <div className={`text-xs ${isDarkPage ? "text-slate-400" : "text-gray-500"}`}>{s.desc}</div>
+                            <div className={`text-sm font-semibold transition-colors ${
+                              isDarkNavbar
+                                ? "text-white group-hover/item:text-blue-400"
+                                : "text-gray-900 group-hover/item:text-focsera-primary"
+                            }`}>{s.name}</div>
+                            <div className={`text-xs ${isDarkNavbar ? "text-slate-400" : "text-gray-500"}`}>{s.desc}</div>
                           </div>
                         </Link>
                       ))}
@@ -192,7 +200,11 @@ const Navbar = () => {
                 <button
                   key={item.label}
                   onClick={() => handleNavClick(item.path!)}
-                  className="text-[13px] font-medium px-4 py-2 rounded-full text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-in-out"
+                  className={`text-[13px] font-medium px-4 py-2 rounded-full transition-all duration-300 ease-in-out ${
+                    isDarkNavbar
+                      ? "text-white/80 hover:text-white hover:bg-white/5"
+                      : "text-gray-700 hover:text-focsera-primary hover:bg-focsera-accent/60"
+                  }`}
                 >
                   {item.label}
                 </button>
@@ -200,10 +212,11 @@ const Navbar = () => {
                 <Link
                   key={item.label}
                   to={item.path!}
-                  className={`text-[13px] font-medium px-4 py-2 rounded-full transition-all duration-500 ease-in-out ${isActive(item.path!)
-                    ? "bg-white/10 text-white"
-                    : "text-white/80 hover:text-white hover:bg-white/5"
-                    }`}
+                  className={`text-[13px] font-medium px-4 py-2 rounded-full transition-all duration-300 ease-in-out ${
+                    isActive(item.path!)
+                      ? (isDarkNavbar ? "bg-white/10 text-white" : "bg-focsera-accent text-focsera-primary font-semibold")
+                      : (isDarkNavbar ? "text-white/80 hover:text-white hover:bg-white/5" : "text-gray-700 hover:text-focsera-primary hover:bg-focsera-accent/60")
+                  }`}
                 >
                   {item.label}
                 </Link>
@@ -217,19 +230,19 @@ const Navbar = () => {
           {user ? (
             <Link
               to="/account"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-focsera-primary text-white font-semibold text-[13px] hover:bg-blue-600 transition-all hover:scale-[1.02] active:scale-[0.97] shadow-lg shadow-blue-500/20"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-focsera-primary text-white font-semibold text-[13px] hover:bg-blue-600 transition-all hover:scale-[1.02] active:scale-[0.97] shadow-cta"
             >
               <User size={15} />
               Account
             </Link>
           ) : (
             <a
-              href="https://wa.me/919515803954?text=Hi%20Focsera%2C%20I%27d%20like%20a%20free%20quote%20for%20my%20project."
+              href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-focsera-primary text-white font-semibold text-[13px] hover:bg-blue-600 transition-all hover:scale-[1.02] active:scale-[0.97] shadow-lg shadow-blue-500/20"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-focsera-primary text-white font-semibold text-[13px] hover:bg-blue-600 transition-all hover:scale-[1.02] active:scale-[0.97] shadow-cta"
             >
-              Get Free Quote
+              Download App
               <ArrowRight size={14} />
             </a>
           )}
@@ -238,7 +251,9 @@ const Navbar = () => {
         {/* MOBILE TOGGLE */}
         <button
           aria-label="Toggle Menu"
-          className="xl:hidden p-2 rounded-full transition-colors text-white hover:bg-white/10"
+          className={`xl:hidden p-2 rounded-full transition-colors ${
+            isDarkNavbar ? "text-white hover:bg-white/10" : "text-focsera-text hover:bg-gray-100"
+          }`}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           ref={menuButtonRef}
         >
@@ -255,16 +270,20 @@ const Navbar = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className={`xl:hidden border-t overflow-hidden ${isDarkPage ? "bg-slate-950 border-slate-900" : "bg-white border-gray-100"
-              }`}
+            className={`xl:hidden border-t overflow-hidden ${
+              isDarkNavbar
+                ? "bg-slate-950 border-slate-900 text-white"
+                : "bg-white border-focsera-border text-focsera-text shadow-elevated"
+            }`}
           >
             <div className="max-w-7xl mx-auto px-5 py-4 space-y-1">
               {/* Solutions accordion */}
               <div className="rounded-xl overflow-hidden">
                 <button
                   onClick={() => setSolutionsOpen(!solutionsOpen)}
-                  className={`flex justify-between items-center w-full py-3 px-4 font-semibold rounded-xl transition-colors ${isDarkPage ? "text-white hover:bg-slate-900" : "text-gray-900 hover:bg-gray-50"
-                    }`}
+                  className={`flex justify-between items-center w-full py-3 px-4 font-semibold rounded-xl transition-colors ${
+                    isDarkNavbar ? "text-white hover:bg-slate-900" : "text-gray-900 hover:bg-gray-50"
+                  }`}
                 >
                   Solutions
                   <ChevronDown size={16} className={`transition-transform duration-300 text-gray-400 ${solutionsOpen ? "rotate-180" : ""}`} />
@@ -281,16 +300,17 @@ const Navbar = () => {
                         <Link
                           key={s.path}
                           to={s.path}
-                          className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors ${isDarkPage
-                            ? "text-slate-300 hover:bg-slate-900 hover:text-white"
-                            : "text-gray-600 hover:bg-focsera-accent hover:text-focsera-primary"
-                            }`}
+                          className={`flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors ${
+                            isDarkNavbar
+                              ? "text-slate-300 hover:bg-slate-900 hover:text-white"
+                              : "text-gray-600 hover:bg-focsera-accent hover:text-focsera-primary"
+                          }`}
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           <span>{s.emoji}</span>
                           <div>
-                            <div className={`text-sm font-medium ${isDarkPage ? "text-white" : "text-gray-900"}`}>{s.name}</div>
-                            <div className={`text-xs ${isDarkPage ? "text-slate-500" : "text-gray-400"}`}>{s.desc}</div>
+                            <div className={`text-sm font-medium ${isDarkNavbar ? "text-white" : "text-gray-900"}`}>{s.name}</div>
+                            <div className={`text-xs ${isDarkNavbar ? "text-slate-500" : "text-gray-400"}`}>{s.desc}</div>
                           </div>
                         </Link>
                       ))}
@@ -305,8 +325,9 @@ const Navbar = () => {
                   <button
                     key={item.label}
                     onClick={() => { handleNavClick(item.path!); setMobileMenuOpen(false); }}
-                    className={`block w-full text-left py-3 px-4 rounded-xl font-semibold transition-colors ${isDarkPage ? "text-slate-300 hover:bg-slate-900" : "text-gray-750 hover:bg-gray-50"
-                      }`}
+                    className={`block w-full text-left py-3 px-4 rounded-xl font-semibold transition-colors ${
+                      isDarkNavbar ? "text-slate-300 hover:bg-slate-900" : "text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
                     {item.label}
                   </button>
@@ -314,10 +335,11 @@ const Navbar = () => {
                   <Link
                     key={item.label}
                     to={item.path!}
-                    className={`block py-3 px-4 rounded-xl font-semibold transition-colors ${isActive(item.path!)
-                      ? (isDarkPage ? "bg-slate-900 text-white" : "bg-focsera-accent text-focsera-primary")
-                      : (isDarkPage ? "text-slate-300 hover:bg-slate-900" : "text-gray-700 hover:bg-gray-50")
-                      }`}
+                    className={`block py-3 px-4 rounded-xl font-semibold transition-colors ${
+                      isActive(item.path!)
+                        ? (isDarkNavbar ? "bg-slate-900 text-white" : "bg-focsera-accent text-focsera-primary")
+                        : (isDarkNavbar ? "text-slate-300 hover:bg-slate-900" : "text-gray-700 hover:bg-gray-50")
+                    }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label}
@@ -326,23 +348,23 @@ const Navbar = () => {
               ))}
 
               {/* CTA */}
-              <div className={`pt-3 border-t mt-3 ${isDarkPage ? "border-slate-900" : "border-gray-100"}`}>
+              <div className={`pt-3 border-t mt-3 ${isDarkNavbar ? "border-slate-900" : "border-gray-100"}`}>
                 {user ? (
                   <Link
                     to="/account"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-focsera-primary text-white font-bold text-sm hover:bg-blue-600 active:scale-[0.97] transition-all"
+                    className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-focsera-primary text-white font-bold text-sm hover:bg-blue-600 active:scale-[0.97] transition-all shadow-cta"
                   >
                     <User size={16} />
                     My Account
                   </Link>
                 ) : (
                   <a
-                    href="https://wa.me/919515803954?text=Hi%20Focsera%2C%20I%27d%20like%20a%20free%20quote%20for%20my%20project."
+                    href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-focsera-primary text-white font-bold text-sm hover:bg-blue-600 active:scale-[0.97] transition-all"
+                    className="flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-focsera-primary text-white font-bold text-sm hover:bg-blue-600 active:scale-[0.97] transition-all shadow-cta"
                   >
                     Get Free Quote
                     <ArrowRight size={14} />

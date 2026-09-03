@@ -23,6 +23,7 @@ import {
     UtensilsCrossed,
     Bath,
     MessageCircle,
+    Smartphone,
     ChevronUp,
     ChevronDown,
     Palette,
@@ -1013,17 +1014,17 @@ export default function Interiors() {
             {/* 8. WhatsApp & FAQ */}
             <section className="py-24 bg-[#0a0a0a] border-t border-white/5">
                 <div className="max-w-4xl mx-auto px-6 space-y-32">
-                    {/* WhatsApp CTA - Ultra Premium */}
+                    {/* App CTA */}
                     <div className="text-center relative">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-green-500/20 blur-[120px] rounded-full pointer-events-none"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-blue-500/20 blur-[120px] rounded-full pointer-events-none"></div>
                         <h3 className="text-4xl md:text-5xl font-black text-white mb-8 tracking-tighter relative z-10">
-                            Ready to see <span className="text-green-500 italic">your</span> home?
+                            Ready to see <span className="text-blue-500 italic">your</span> home?
                         </h3>
-                        <a href="https://wa.me/919515803954" className="inline-flex items-center gap-4 px-10 py-5 bg-[#25D366] text-white rounded-full font-bold text-xl shadow-[0_0_40px_rgba(37,211,102,0.3)] hover:scale-105 transition-all duration-300 relative z-10">
-                            <MessageCircle size={28} />
-                            <span>Chat on WhatsApp</span>
+                        <a href="https://play.google.com/store/apps/details?id=com.focsera.focsera" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-4 px-10 py-5 bg-focsera-primary hover:bg-blue-600 text-white rounded-full font-bold text-xl shadow-[0_0_40px_rgba(11,95,255,0.3)] hover:scale-105 transition-all duration-300 relative z-10">
+                            <Smartphone size={28} />
+                            <span>Book on Focsera App</span>
                         </a>
-                        <p className="text-gray-500 mt-6 text-sm uppercase tracking-widest">Instant Response • No Commitments</p>
+                        <p className="text-gray-500 mt-6 text-sm uppercase tracking-widest">Verified Partners • 3D Designs • Dedicated Supervision</p>
                     </div>
 
                     {/* FAQs - Clean Accordion Look */}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, MessageSquare, Check, HelpCircle, Sparkles, Star, Shield, Zap, Layers } from 'lucide-react';
+import { ArrowRight, CheckCircle2, MessageSquare, Check, HelpCircle, Sparkles, Star, Shield, Zap, Layers, MessageCircle } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 export interface ServiceItem {
@@ -169,15 +169,28 @@ export default function ServicePage({ data }: ServicePageProps) {
 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-4 items-center">
-                  <a
-                    href={`https://wa.me/919515803954?text=${encodeURIComponent(data.whatsappMessage)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white font-bold text-sm rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(56,189,248,0.35)] hover:shadow-[0_0_35px_rgba(56,189,248,0.6)] transform hover:-translate-y-0.5"
-                  >
-                    <span>Request Custom Quote</span>
-                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </a>
+                  {data.heroTag === 'Focsera Learn' ? (
+                    <a
+                      href={`https://wa.me/919515803954?text=${encodeURIComponent(data.whatsappMessage || "Hi Focsera! We're interested in your school programs.")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-3 px-8 py-3.5 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(37,211,102,0.35)] hover:shadow-[0_0_35px_rgba(37,211,102,0.6)] transform hover:-translate-y-0.5"
+                    >
+                      <MessageCircle className="w-5 h-5" />
+                      <span>Chat on WhatsApp</span>
+                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </a>
+                  ) : (
+                    <a
+                      href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white font-bold text-sm rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(56,189,248,0.35)] hover:shadow-[0_0_35px_rgba(56,189,248,0.6)] transform hover:-translate-y-0.5"
+                    >
+                      <span>Book on Focsera App</span>
+                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </a>
+                  )}
                   <Link
                     to="/contact"
                     className="inline-flex items-center gap-2.5 px-8 py-3.5 font-semibold text-sm rounded-xl border transition-all duration-300 transform hover:-translate-y-0.5 bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10 text-slate-200"
@@ -453,7 +466,7 @@ export default function ServicePage({ data }: ServicePageProps) {
                     {/* Button */}
                     <div className="mt-auto">
                       <a
-                        href={`https://wa.me/919515803954?text=${encodeURIComponent(`Hi Focsera! I would like to inquire about the "${pkg.name}" package under ${data.heroTag}.`)}`}
+                        href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`w-full inline-flex items-center justify-center px-6 py-3.5 rounded-xl font-black text-xs tracking-[0.15em] uppercase transition-all duration-300 ${pkg.isPopular
@@ -461,7 +474,7 @@ export default function ServicePage({ data }: ServicePageProps) {
                           : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/10'
                           }`}
                       >
-                        Get Custom Quote
+                        Book on Focsera App
                       </a>
                     </div>
 
@@ -620,15 +633,27 @@ export default function ServicePage({ data }: ServicePageProps) {
               </p>
 
               <div className="flex justify-center">
-                <a
-                  href={`https://wa.me/919515803954?text=${encodeURIComponent(data.whatsappMessage)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 px-10 py-4 bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold text-sm rounded-xl hover:from-blue-500 hover:to-sky-400 transition-all duration-300 shadow-[0_0_20px_rgba(56,189,248,0.35)] hover:shadow-[0_0_35px_rgba(56,189,248,0.6)] transform hover:-translate-y-0.5"
-                >
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span>Start My Project</span>
-                </a>
+                {data.heroTag === 'Focsera Learn' ? (
+                  <a
+                    href={`https://wa.me/919515803954?text=${encodeURIComponent(data.whatsappMessage || "Hi Focsera! We're interested in your school programs.")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 px-10 py-4 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(37,211,102,0.35)] hover:shadow-[0_0_35px_rgba(37,211,102,0.6)] transform hover:-translate-y-0.5"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    <span>Chat with Schools Team</span>
+                  </a>
+                ) : (
+                  <a
+                    href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 px-10 py-4 bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold text-sm rounded-xl hover:from-blue-500 hover:to-sky-400 transition-all duration-300 shadow-[0_0_20px_rgba(56,189,248,0.35)] hover:shadow-[0_0_35px_rgba(56,189,248,0.6)] transform hover:-translate-y-0.5"
+                  >
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span>Book on Focsera App</span>
+                  </a>
+                )}
               </div>
             </div>
           </motion.div>

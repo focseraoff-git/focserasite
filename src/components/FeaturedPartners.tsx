@@ -176,12 +176,12 @@ export default function FeaturedPartners() {
 
               {/* CTA */}
               <a
-                href={`https://wa.me/919515803954?text=Hi%2C%20I'm%20interested%20in%20booking%20a%20consultation%20for%20${encodeURIComponent(partner.sub_category || partner.category || 'Expert')}%20(${encodeURIComponent(partner.category)}).`}
+                href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-focsera-accent text-focsera-primary text-[13px] font-semibold hover:bg-focsera-primary hover:text-white transition-all duration-300"
               >
-                Book Consultation
+                Book on Focsera App
                 <ArrowRight size={13} />
               </a>
             </motion.div>

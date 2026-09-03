@@ -221,10 +221,7 @@ export default function SeoLandingPage() {
   };
 
   const handleWhatsAppBooking = () => {
-    if (!itemData) return;
-    const name = itemType === 'package' ? itemData.name : (itemData.sub_category || itemData.name);
-    const text = `*Booking Inquiry for ${name}*%0A%0AHi Focsera, I want to book this service. Please share details.`;
-    window.open(`https://wa.me/919515803954?text=${text}`, '_blank');
+    window.open('https://play.google.com/store/apps/details?id=com.focsera.focsera', '_blank');
   };
 
   // Determine Dynamic Theme Colors Based on Domain

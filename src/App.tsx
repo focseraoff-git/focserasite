@@ -103,26 +103,38 @@ function AppInner() {
         </Routes>
       </Suspense>
 
-      {/* Floating WhatsApp Button */}
+      {/* Floating Action Button: WhatsApp ONLY for Schools (/labs), App Download for all other pages */}
       {!shouldHideLayout && (
-        <a
-          href="https://wa.me/919515803954"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="fixed bottom-6 right-6 z-[110] flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:shadow-[0_4px_28px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-110 active:scale-95 group"
-          aria-label="Chat on WhatsApp"
-        >
-          {/* Pulsing ring */}
-          <span className="absolute inset-0 rounded-full bg-[#25D366]/30 animate-ping pointer-events-none" />
-          
-          <svg
-            className="w-7 h-7 fill-current"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+        location.pathname === '/labs' || location.pathname.startsWith('/labs') ? (
+          <a
+            href="https://wa.me/919515803954?text=Hi%20Focsera!%20I%20am%20from%20a%20school%20and%20interested%20in%20your%20education%20programs."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed bottom-16 sm:bottom-6 right-4 sm:right-6 z-[110] flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:shadow-[0_4px_28px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-110 active:scale-95 group"
+            aria-label="Chat on WhatsApp for Schools"
           >
-            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.45L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.451 5.403.002 9.792-4.382 9.795-9.786.002-2.599-1.01-5.042-2.85-6.885-1.841-1.843-4.29-2.858-6.885-2.86-5.404 0-9.79 4.385-9.793 9.79-.001 1.76.499 3.248 1.446 4.832L2.1 21.944l5.547-1.455zm11.09-5.413c-.273-.137-1.62-.8-1.87-.892-.25-.09-.43-.137-.61.137-.18.273-.693.892-.85 1.07-.157.18-.314.202-.586.066-.273-.137-1.15-.423-2.19-1.353-.81-.72-1.357-1.61-1.516-1.884-.159-.273-.017-.42.12-.556.123-.122.273-.32.41-.48.136-.16.18-.272.27-.455.09-.183.046-.34-.022-.48-.069-.136-.61-1.477-.837-2.022-.22-.53-.443-.458-.61-.466-.157-.008-.337-.01-.518-.01-.18 0-.472.067-.72.337-.246.27-.94.92-.94 2.24 0 1.32.96 2.59 1.09 2.77.135.18 1.89 2.887 4.58 4.05.64.277 1.14.442 1.53.566.64.204 1.23.175 1.69.107.513-.077 1.62-.662 1.85-1.3.23-.637.23-1.186.16-1.3-.07-.11-.27-.2-.54-.337z" />
-          </svg>
-        </a>
+            <span className="absolute inset-0 rounded-full bg-[#25D366]/30 animate-ping pointer-events-none" />
+            <svg
+              className="w-6 h-6 sm:w-7 sm:h-7 fill-current"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.45L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.451 5.403.002 9.792-4.382 9.795-9.786.002-2.599-1.01-5.042-2.85-6.885-1.841-1.843-4.29-2.858-6.885-2.86-5.404 0-9.79 4.385-9.793 9.79-.001 1.76.499 3.248 1.446 4.832L2.1 21.944l5.547-1.455zm11.09-5.413c-.273-.137-1.62-.8-1.87-.892-.25-.09-.43-.137-.61.137-.18.273-.693.892-.85 1.07-.157.18-.314.202-.586.066-.273-.137-1.15-.423-2.19-1.353-.81-.72-1.357-1.61-1.516-1.884-.159-.273-.017-.42.12-.556.123-.122.273-.32.41-.48.136-.16.18-.272.27-.455.09-.183.046-.34-.022-.48-.069-.136-.61-1.477-.837-2.022-.22-.53-.443-.458-.61-.466-.157-.008-.337-.01-.518-.01-.18 0-.472.067-.72.337-.246.27-.94.92-.94 2.24 0 1.32.96 2.59 1.09 2.77.135.18 1.89 2.887 4.58 4.05.64.277 1.14.442 1.53.566.64.204 1.23.175 1.69.107.513-.077 1.62-.662 1.85-1.3.23-.637.23-1.186.16-1.3-.07-.11-.27-.2-.54-.337z" />
+            </svg>
+          </a>
+        ) : (
+          <a
+            href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed bottom-16 sm:bottom-6 right-4 sm:right-6 z-[110] flex items-center gap-2.5 px-3.5 sm:px-4 py-2.5 sm:py-3 bg-focsera-primary hover:bg-blue-600 text-white rounded-full shadow-[0_4px_25px_rgba(11,95,255,0.4)] hover:shadow-[0_4px_35px_rgba(11,95,255,0.6)] transition-all duration-300 hover:scale-105 active:scale-95 group font-sans font-semibold text-xs sm:text-sm"
+            aria-label="Download Focsera App"
+          >
+            <span className="absolute inset-0 rounded-full bg-focsera-primary/30 animate-ping pointer-events-none" />
+            <img src="/images/logos/logog.png" alt="Focsera" className="w-4 h-4 sm:w-5 sm:h-5 brightness-0 invert object-contain" />
+            <span className="hidden xs:inline font-bold">Get App</span>
+          </a>
+        )
       )}
 
       {/* 🔥 FIX: Hide global footer on ArenaX + Skill */}

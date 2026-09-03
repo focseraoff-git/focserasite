@@ -48,24 +48,23 @@ export default function FinalCTA() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
               <a
-                href="https://wa.me/919515803954?text=Hi%20Focsera%2C%20I%27d%20like%20to%20start%20a%20project."
+                href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
                 target="_blank"
                 rel="noopener noreferrer"
                 id="final-cta-primary"
                 className="flex items-center justify-center gap-2.5 bg-focsera-primary hover:bg-blue-600 text-white font-semibold text-[15px] px-8 py-4 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] shadow-xl shadow-blue-500/25"
               >
-                Start My Project
+                Get the Focsera App
                 <ArrowRight size={16} />
               </a>
-              <a
-                href="https://wa.me/919515803954?text=Hi%2C%20I%27d%20like%20to%20talk%20to%20an%20expert%20at%20Focsera."
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className="flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] text-white/90 font-medium text-[15px] px-8 py-4 rounded-xl transition-all duration-300 backdrop-blur-sm"
               >
-                <MessageCircle size={16} />
-                Talk to Expert
-              </a>
+                Explore on Web
+              </button>
             </div>
           </div>
         </motion.div>

@@ -142,10 +142,10 @@ const Footer: FC = () => {
             href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-[12px] font-medium text-focsera-primary hover:text-blue-700 transition-colors"
+            className="flex items-center gap-2 text-xs font-semibold px-4 py-2 bg-focsera-primary text-white rounded-lg hover:bg-blue-600 transition-all shadow-cta"
           >
-            Download the App
-            <ArrowUpRight size={12} />
+            Download Focsera App
+            <ArrowUpRight size={13} />
           </a>
         </div>
       </div>

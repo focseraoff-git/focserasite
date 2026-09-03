@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, ChevronDown, Send, UserCheck, FileText, CheckCircle } from 'lucide-react';
+import { ArrowRight, ChevronDown, Send, UserCheck, FileText, CheckCircle, Smartphone } from 'lucide-react';
 import videoBg from '../assets/ai vid.mp4';
 
 const workflowSteps = [
@@ -110,13 +110,14 @@ export default function HeroSection() {
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto"
             >
               <a
-                href="https://wa.me/919515803954?text=Hi%20Focsera%2C%20I%27d%20like%20a%20free%20quote%20for%20my%20project."
+                href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
                 target="_blank"
                 rel="noopener noreferrer"
                 id="hero-cta-primary"
                 className="flex items-center justify-center gap-2.5 bg-focsera-primary hover:bg-blue-600 text-white font-semibold text-[15px] px-7 py-4 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40"
               >
-                Get Free Quote
+                <Smartphone size={17} />
+                Get the Focsera App
                 <ArrowRight size={16} />
               </a>
               <button
