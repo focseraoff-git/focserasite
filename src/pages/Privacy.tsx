@@ -19,7 +19,7 @@ export default function PrivacyPolicyPage() {
             <div>
               <p className="text-sm tracking-wide text-neutral-400">Legal Policy</p>
               <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">Focsera – Privacy Policy</h1>
-              <p className="mt-3 text-sm text-neutral-400">Last Updated: <time dateTime="2025-11-16">16 November 2025</time></p>
+              <p className="mt-3 text-sm text-neutral-400">Last Updated: <time dateTime="2025-11-16">14 September 2026</time></p>
             </div>
           </div>
         </div>
@@ -78,6 +78,11 @@ export default function PrivacyPolicyPage() {
             <li>Legal authorities when required by law</li>
           </ul>
           <p>We never share data for advertising or marketing without consent.</p>
+
+          <h2 className="text-xl font-semibold mb-3">Location Information</h2>
+          <p>
+            Focsera may access and collect your device’s location information when you use features that require location access, such as finding or coordinating services available in your area, scheduling doorstep services, or enabling service-related tracking. Location data may be used to determine service availability, improve service coordination, facilitate accurate navigation or tracking between customers and service partners, and enhance the functionality of the Focsera app. Location access is requested only when required for these purposes, and you may manage or disable location permissions through your device settings.
+          </p>
 
           <h2>5. Cookies</h2>
           <p>We use cookies for:</p>

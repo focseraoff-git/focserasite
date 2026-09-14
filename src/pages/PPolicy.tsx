@@ -14,7 +14,7 @@ const PrivacyPolicyPage: React.FC = () => {
         </h1>
 
         <p className="text-sm text-neutral-400 mb-10">
-          Last Updated: 16 November 2025
+          Last Updated: 14 September 2026
         </p>
 
         <div className="space-y-8 text-neutral-300 leading-relaxed">
@@ -115,6 +115,12 @@ const PrivacyPolicyPage: React.FC = () => {
               However, internet transmissions are not completely secure. Users
               are responsible for safeguarding their login credentials.
             </p>
+
+            <h2 className="text-xl font-semibold mb-3">Location Information</h2>
+            <p>
+              Focsera may access and collect your device’s location information when you use features that require location access, such as finding or coordinating services available in your area, scheduling doorstep services, or enabling service-related tracking. Location data may be used to determine service availability, improve service coordination, facilitate accurate navigation or tracking between customers and service partners, and enhance the functionality of the Focsera app. Location access is requested only when required for these purposes, and you may manage or disable location permissions through your device settings.
+            </p>
+
           </section>
 
           {/* Data Retention */}
