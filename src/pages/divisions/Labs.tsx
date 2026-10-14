@@ -141,6 +141,9 @@ const labsData: ServicePageData = {
   whatsappMessage: 'Hi Focsera! I\'m from a school/institution and interested in your AI workshops and lab programs. Can you share more details?',
 };
 
+import BeyondLabsPage from '../Labs/Labs';
+
 export default function Labs() {
-  return <ServicePage data={labsData} />;
+  return <BeyondLabsPage />;
 }
+

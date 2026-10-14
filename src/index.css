@@ -459,3 +459,78 @@
     transform: none;
   }
 }
+
+/* ══════════════════════════════════════════
+   BEYOND BY FOCSERA — Editorial System
+   ══════════════════════════════════════════ */
+.beyond-font-serif,
+.beyond-font-serif * {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+  font-style: italic !important;
+}
+
+.beyond-font-heading,
+.beyond-font-heading * {
+  font-family: 'Lexend', 'Our Lexend', system-ui, -apple-system, sans-serif !important;
+}
+
+.beyond-font-sans,
+.beyond-font-sans * {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Beyond Brand Colors */
+:root {
+  --beyond-plum: #35102F;
+  --beyond-lime: #C7EB49;
+  --beyond-cream: #FFF9EF;
+  --beyond-lavender: #EDE2FA;
+  --beyond-blush: #F7DCE7;
+}
+
+.bg-beyond-cream { background-color: #FFF9EF; }
+.bg-beyond-plum { background-color: #35102F; }
+.bg-beyond-lime { background-color: #C7EB49; }
+.bg-beyond-lavender { background-color: #EDE2FA; }
+.bg-beyond-blush { background-color: #F7DCE7; }
+
+.text-beyond-cream { color: #FFF9EF; }
+.text-beyond-plum { color: #35102F; }
+.text-beyond-lime { color: #C7EB49; }
+.text-beyond-lavender { color: #EDE2FA; }
+.text-beyond-blush { color: #F7DCE7; }
+
+.border-beyond-plum { border-color: #35102F; }
+.border-beyond-lime { border-color: #C7EB49; }
+
+/* Subtle stickers, stamps, and editorial micro-interactions */
+.beyond-sticker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  box-shadow: 2px 3px 0px #35102F;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.beyond-sticker:hover {
+  transform: translateY(-2px) rotate(-1deg);
+  box-shadow: 3px 5px 0px #35102F;
+}
+
+.beyond-card-shadow {
+  box-shadow: 4px 6px 0px #35102F;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.beyond-card-shadow:hover {
+  transform: translate(-2px, -3px);
+  box-shadow: 8px 12px 0px #35102F;
+}
+
+.beyond-card-soft {
+  box-shadow: 0 10px 30px -10px rgba(53, 16, 47, 0.08), 0 2px 6px -1px rgba(53, 16, 47, 0.04);
+}
