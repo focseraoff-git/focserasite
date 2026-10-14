@@ -1,5 +1,5 @@
 // src/App.tsx
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import React, { Suspense } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
@@ -16,6 +16,7 @@ const Events = React.lazy(() => import('./pages/divisions/Events'));
 const Web = React.lazy(() => import('./pages/divisions/Web'));
 const ProductServices = React.lazy(() => import('./pages/divisions/ProductServices'));
 const Interiors = React.lazy(() => import('./pages/divisions/Interiors'));
+const Beyond = React.lazy(() => import('./pages/Labs/Labs'));
 const Labs = React.lazy(() => import('./pages/divisions/Labs'));
 const Marketing = React.lazy(() => import('./pages/divisions/Marketing'));
 const SeoRoutes = React.lazy(() => import('./pages/seo/SeoRoutes'));
@@ -45,6 +46,8 @@ function AppInner() {
   const hideLayoutOn = [
     "/arenax",
     "/arenax/",
+    "/beyond",
+    "/beyond/",
     "/labs",
     "/labs/",
   ];
@@ -97,7 +100,8 @@ function AppInner() {
           <Route path="/payment-success" element={<PaymentSuccess />} />
 
           <Route path="/interiors" element={<Interiors />} />
-          <Route path="/labs" element={<Labs />} />
+          <Route path="/beyond" element={<Beyond />} />
+          <Route path="/labs" element={<Navigate to="/beyond" replace />} />
           <Route path="/marketing" element={<Marketing />} />
           <Route path="/booking" element={<PackageBooking />} />
           <Route path="/booking/review" element={<BookingReview />} />
@@ -105,8 +109,8 @@ function AppInner() {
         </Routes>
       </Suspense>
 
-      {/* Floating Action Button: WhatsApp for Beyond (/labs), App Download for all other pages */}
-      {location.pathname === '/labs' || location.pathname.startsWith('/labs') ? (
+      {/* Floating Action Button: WhatsApp for Beyond (/beyond & /labs), App Download for all other pages */}
+      {location.pathname === '/beyond' || location.pathname.startsWith('/beyond') || location.pathname === '/labs' || location.pathname.startsWith('/labs') ? (
         <a
           href="https://wa.me/919515803954?text=Hi%20Focsera!%20I'm%20interested%20in%20Beyond%20by%20Focsera%20education%20programs,%20workshops,%20and%20school%20partnerships."
           target="_blank"

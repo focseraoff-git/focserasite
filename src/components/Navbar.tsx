@@ -22,7 +22,7 @@ const Navbar = () => {
     { name: "Build", desc: "Interiors, Fabrication, Renovation", path: "/interiors", emoji: "🏗️" },
     { name: "Create", desc: "Photography, Video, Design", path: "/studios", emoji: "🎬" },
     { name: "Market", desc: "Ads, Social Media, SEO", path: "/marketing", emoji: "📣" },
-    { name: "Learn", desc: "AI Workshops, Labs, Programs", path: "/labs", emoji: "🧠" },
+    { name: "Beyond", desc: "AI Workshops, Summits, Labs", path: "/beyond", emoji: "🧠" },
   ];
 
   const mainMenu = [
@@ -30,7 +30,7 @@ const Navbar = () => {
     { label: "Industries", path: "/#industries" },
     { label: "Packages", path: "/#packages" },
     { label: "Partners", path: "/#partners" },
-    { label: "For Schools", path: "/labs" },
+    { label: "For Schools", path: "/beyond" },
     { label: "About", path: "/about" },
     { label: "Contact", path: "/contact" },
   ];

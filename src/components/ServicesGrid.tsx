@@ -34,9 +34,9 @@ const services = [
         path: '/media',
     },
     {
-        title: 'Development',
+        title: 'Beyond & AI Labs',
         image: '/images/partner_developer.png',
-        path: '/labs',
+        path: '/beyond',
     },
 ];
 

@@ -7,14 +7,14 @@ const solutionLinks = [
   { name: 'Grow', path: '/web' },
   { name: 'Build', path: '/interiors' },
   { name: 'Create', path: '/studios' },
-  { name: 'Learn', path: '/labs' },
+  { name: 'Beyond', path: '/beyond' },
 ];
 
 const companyLinks = [
   { name: 'About', path: '/about' },
   { name: 'Contact', path: '/contact' },
   { name: 'Partners', path: '/contact' },
-  { name: 'For Schools', path: '/labs' },
+  { name: 'For Schools', path: '/beyond' },
 ];
 
 const legalLinks = [
