@@ -31,7 +31,7 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({
       `• Program of Interest: ${program}\n\n` +
       `Please get in touch with curriculum & pricing details.`
     );
-    window.open(`https://wa.me/919515803954?text=${encodedText}`, '_blank');
+    window.open(`https://wa.me/919515802954?text=${encodedText}`, '_blank');
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
@@ -43,7 +43,7 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({
     const text = encodeURIComponent(
       "Hi Focsera! I'm interested in Beyond by Focsera education programs, workshops, and school partnerships. Can you share more details?"
     );
-    window.open(`https://wa.me/919515803954?text=${text}`, '_blank');
+    window.open(`https://wa.me/919515802954?text=${text}`, '_blank');
   };
 
   if (!isOpen) return null;

@@ -4,14 +4,12 @@ import {
   Camera, Film, Image, Clapperboard, Aperture, MonitorPlay,
   ShieldCheck, Star, Clock, Users, Sparkles, Headphones
 } from 'lucide-react';
-import videoBg from '../../components/IMG_3286.MOV';
 
 const studiosData: ServicePageData = {
   heroTag: 'Focsera Create',
   heroTitle: 'Visual stories that captivate.',
   heroSubtitle: 'Professional photography, cinematic videography, content creation, and studio services. From product shoots to brand campaigns.',
   heroIcon: Camera,
-  heroVideoPath: videoBg,
 
   services: [
     {

@@ -37,7 +37,7 @@ export default function SkillVerse() {
             toast.success("Application submitted successfully!");
 
             const text = `*Skill Verse Educator Application*%0A%0A*Name:* ${skillVerseFormData.name}%0A*Phone:* ${skillVerseFormData.phone}%0A*Email:* ${skillVerseFormData.email}%0A*Institute:* ${skillVerseFormData.instituteName}%0A*Role:* ${skillVerseFormData.role}%0A*Message:* ${skillVerseFormData.message}`;
-            window.open(`https://wa.me/919515803954?text=${text}`, '_blank');
+            window.open(`https://wa.me/919515802954?text=${text}`, '_blank');
 
         }, 1500);
     };

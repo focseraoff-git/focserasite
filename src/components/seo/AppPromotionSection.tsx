@@ -1,21 +1,30 @@
 // src/components/seo/AppPromotionSection.tsx
-import { Smartphone, Zap, Heart, Bell, MessageCircle, Star, Gift, Search } from 'lucide-react';
-import { trackAppCtaClick } from '../../lib/seoAnalytics';
+import {
+  Smartphone,
+  Zap,
+  Heart,
+  Bell,
+  MessageCircle,
+  Star,
+  Gift,
+  Search,
+} from "lucide-react";
+import { trackAppCtaClick } from "../../lib/seoAnalytics";
 
 const appFeatures = [
-  { icon: Zap, label: 'Faster booking' },
-  { icon: Heart, label: 'Personalized recommendations' },
-  { icon: Gift, label: 'Exclusive offers' },
-  { icon: Search, label: 'Discover more professionals' },
-  { icon: Bell, label: 'Booking notifications' },
-  { icon: MessageCircle, label: 'Easy communication' },
-  { icon: Star, label: 'Rate & review services' },
-  { icon: Smartphone, label: 'Manage all bookings' },
+  { icon: Zap, label: "Faster booking" },
+  { icon: Heart, label: "Personalized recommendations" },
+  { icon: Gift, label: "Exclusive offers" },
+  { icon: Search, label: "Discover more professionals" },
+  { icon: Bell, label: "Booking notifications" },
+  { icon: MessageCircle, label: "Easy communication" },
+  { icon: Star, label: "Rate & review services" },
+  { icon: Smartphone, label: "Manage all bookings" },
 ];
 
 export default function AppPromotionSection() {
   return (
-    <section className="py-16 sm:py-20 bg-focsera-bg border-t border-focsera-border">
+    <section className="seo-app-promotion py-16 sm:py-20 bg-focsera-bg border-t border-focsera-border">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left — Content */}
@@ -25,7 +34,8 @@ export default function AppPromotionSection() {
               Unlock the full Focsera experience
             </h2>
             <p className="text-base text-focsera-muted leading-relaxed mb-8 max-w-md">
-              Discover professionals, manage bookings, get offers and experience Focsera wherever you go.
+              Discover professionals, manage bookings, get offers and experience
+              Focsera wherever you go.
             </p>
 
             {/* Feature grid */}
@@ -35,7 +45,9 @@ export default function AppPromotionSection() {
                   <div className="w-8 h-8 rounded-lg bg-focsera-accent flex items-center justify-center shrink-0">
                     <feature.icon size={16} className="text-focsera-primary" />
                   </div>
-                  <span className="text-sm font-medium text-focsera-text">{feature.label}</span>
+                  <span className="text-sm font-medium text-focsera-text">
+                    {feature.label}
+                  </span>
                 </div>
               ))}
             </div>
@@ -47,7 +59,7 @@ export default function AppPromotionSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary"
-                onClick={() => trackAppCtaClick('app_section', 'play_store')}
+                onClick={() => trackAppCtaClick("app_section", "play_store")}
                 id="app-section-cta"
               >
                 Book on Focsera App
@@ -67,7 +79,7 @@ export default function AppPromotionSection() {
                   {/* Notch */}
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-b-2xl z-10" />
                   <img
-                    src="/images/Screenshot_20260518_134332.jpg.jpeg"
+                    src="/images/focsera-connected-phone.png"
                     alt="Focsera app interface showing service booking"
                     className="w-full h-full object-cover"
                     loading="lazy"

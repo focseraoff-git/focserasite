@@ -4,6 +4,8 @@ import React, { Suspense } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import './design/premium.css';
+import './design/grand.css';
 import CustomCursor from './components/CustomCursor';
 import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
@@ -14,7 +16,7 @@ const Studios = React.lazy(() => import('./pages/divisions/Studios'));
 const Media = React.lazy(() => import('./pages/divisions/Media'));
 const Events = React.lazy(() => import('./pages/divisions/Events'));
 const Web = React.lazy(() => import('./pages/divisions/Web'));
-const ProductServices = React.lazy(() => import('./pages/divisions/ProductServices'));
+const Pilo = React.lazy(() => import('./pages/Pilo'));
 const Interiors = React.lazy(() => import('./pages/divisions/Interiors'));
 const Beyond = React.lazy(() => import('./pages/Labs/Labs'));
 const Labs = React.lazy(() => import('./pages/divisions/Labs'));
@@ -57,13 +59,17 @@ function AppInner() {
     location.pathname.startsWith(path)
   );
 
+  const isBeyond = /^\/(beyond|labs)(\/|$)/.test(location.pathname);
+  const customPages = ['/', '/about', '/mission', '/studios', '/events', '/web', '/marketing', '/pilo'];
   return (
-    <div className="min-h-screen">
-      <CustomCursor />
+    <div id="top" className={isBeyond ? 'min-h-screen' : `premium-site min-h-screen p-route-${location.pathname.split('/')[1] || 'home'}`}>
+      {!isBeyond && <a href="#page-content" className="p-skip-link">Skip to content</a>}
+      {isBeyond && <CustomCursor />}
       <ScrollToTop />
       {/* Hide global navbar on ArenaX + Beyond by Focsera */}
       {!shouldHideLayout && <Navbar />}
 
+      <div id="page-content" tabIndex={-1} className={!isBeyond && !customPages.includes(location.pathname) ? `premium-legacy ${/^\/(terms|privacy|refund|terms-of-use)/.test(location.pathname) ? 'p-legal' : ''} ${['/interiors','/media','/product-services','/journey','/promptx','/ai-workshop'].includes(location.pathname) ? 'p-light-experience' : ''}` : undefined}>
       <Suspense
         fallback={
           <div className="min-h-screen flex items-center justify-center text-xl font-semibold text-gray-500">
@@ -80,7 +86,8 @@ function AppInner() {
           <Route path="/media" element={<Media />} />
           <Route path="/events" element={<Events />} />
           <Route path="/web" element={<Web />} />
-          <Route path="/product-services" element={<ProductServices />} />
+          <Route path="/product-services" element={<Navigate to="/pilo" replace />} />
+          <Route path="/pilo" element={<Pilo />} />
 
           <Route path="/journey" element={<Journey />} />
           <Route path="/promptx" element={<PromptX />} />
@@ -108,6 +115,7 @@ function AppInner() {
           <Route path="/*" element={<SeoRoutes />} />
         </Routes>
       </Suspense>
+      </div>
 
       {/* Floating Action Button: WhatsApp for Beyond (/beyond & /labs), App Download for all other pages */}
       {location.pathname === '/beyond' || location.pathname.startsWith('/beyond') || location.pathname === '/labs' || location.pathname.startsWith('/labs') ? (

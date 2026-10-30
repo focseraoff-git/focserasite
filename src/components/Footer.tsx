@@ -1,156 +1,135 @@
-import { FC } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Linkedin, Instagram, Facebook, ArrowUpRight } from 'lucide-react';
-
-const solutionLinks = [
-  { name: 'Celebrate', path: '/events' },
-  { name: 'Grow', path: '/web' },
-  { name: 'Build', path: '/interiors' },
-  { name: 'Create', path: '/studios' },
-  { name: 'Beyond', path: '/beyond' },
+import { Link } from "react-router-dom";
+import {
+  ArrowUpRight,
+  Instagram,
+  Linkedin,
+  Mail,
+  Smartphone,
+} from "lucide-react";
+const primary = [
+  ["Events & celebrations", "/events"],
+  ["Studios & photography", "/studios"],
+  ["Marketing & growth", "/marketing"],
+  ["Business & digital", "/web"],
 ];
-
-const companyLinks = [
-  { name: 'About', path: '/about' },
-  { name: 'Contact', path: '/contact' },
-  { name: 'Partners', path: '/contact' },
-  { name: 'For Schools', path: '/beyond' },
-];
-
-const legalLinks = [
-  { name: 'Privacy Policy', path: '/privacy' },
-  { name: 'Terms of Service', path: '/terms' },
-  { name: 'Refund Policy', path: '/refund-policy' },
-];
-
-const socialLinks = [
-  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/focsera/?originalSubdomain=in', icon: Linkedin },
-  { name: 'Instagram', href: 'https://www.instagram.com/focsera.in/', icon: Instagram },
-  { name: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61582302131809', icon: Facebook },
-];
-
-interface FooterLinkProps {
-  to: string;
-  isDarkPage: boolean;
-  children: React.ReactNode;
-}
-const FooterLink: FC<FooterLinkProps> = ({ to, isDarkPage, children }) => (
-  <li>
-    <Link
-      to={to}
-      className={`transition-colors duration-300 text-[13px] font-medium ${isDarkPage
-          ? "text-slate-400 hover:text-white"
-          : "text-gray-500 hover:text-focsera-primary"
-        }`}
-    >
-      {children}
-    </Link>
-  </li>
-);
-
-const Footer: FC = () => {
-  const location = useLocation();
-  const isDarkPage = ["/events", "/web", "/studios", "/labs", "/marketing"].includes(location.pathname);
-
+export default function Footer() {
   return (
-    <footer className={`relative py-16 sm:py-20 border-t transition-colors duration-500 ${isDarkPage
-        ? "bg-[#02040a] border-slate-900/80"
-        : "bg-white border-gray-100"
-      }`}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-10 sm:gap-8 mb-12">
-          {/* Brand */}
-          <div className="col-span-2 sm:col-span-2 md:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <img
-                src="/images/logos/logog.png"
-                alt="Focsera"
-                className={`h-7 w-auto object-contain transition-all duration-300 ${isDarkPage ? 'brightness-0 invert' : ''}`}
-              />
-              <span className={`text-lg font-bold tracking-tight transition-colors duration-300 ${isDarkPage ? 'text-white' : 'text-focsera-text'}`}>
-                FOCSERA
-              </span>
-            </Link>
-            <p className={`text-[13px] leading-relaxed mb-5 max-w-xs transition-colors duration-300 ${isDarkPage ? 'text-slate-450' : 'text-focsera-muted'}`}>
-              From Vision to Execution.
+    <footer className="p-footer g-footer">
+      <div className="p-container">
+        <div className="g-footer-invite">
+          <div>
+            <span className="p-eyebrow">YOUR NEXT CHAPTER, WITH FOCSERA</span>
+            <h2>
+              Good things.
               <br />
-              India's platform for getting important projects completed through trusted professionals.
-            </p>
-            {/* Social */}
-            <div className="flex gap-2.5">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 ${isDarkPage
-                      ? "bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white"
-                      : "bg-gray-50 hover:bg-focsera-accent text-gray-400 hover:text-focsera-primary"
-                    }`}
-                  aria-label={social.name}
-                >
-                  <social.icon size={16} />
-                </a>
-              ))}
-            </div>
+              Right at your doorstep.
+            </h2>
           </div>
-
-          {/* Solutions */}
-          <div>
-            <h4 className={`text-[12px] font-bold uppercase tracking-[0.1em] mb-4 ${isDarkPage ? 'text-slate-200' : 'text-focsera-text'}`}>
-              Solutions
-            </h4>
-            <ul className="space-y-2.5">
-              {solutionLinks.map((link) => (
-                <FooterLink key={link.name} to={link.path} isDarkPage={isDarkPage}>{link.name}</FooterLink>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h4 className={`text-[12px] font-bold uppercase tracking-[0.1em] mb-4 ${isDarkPage ? 'text-slate-200' : 'text-focsera-text'}`}>
-              Company
-            </h4>
-            <ul className="space-y-2.5">
-              {companyLinks.map((link) => (
-                <FooterLink key={link.name} to={link.path} isDarkPage={isDarkPage}>{link.name}</FooterLink>
-              ))}
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h4 className={`text-[12px] font-bold uppercase tracking-[0.1em] mb-4 ${isDarkPage ? 'text-slate-200' : 'text-focsera-text'}`}>
-              Legal
-            </h4>
-            <ul className="space-y-2.5">
-              {legalLinks.map((link) => (
-                <FooterLink key={link.name} to={link.path} isDarkPage={isDarkPage}>{link.name}</FooterLink>
-              ))}
-            </ul>
+          <div className="g-footer-download">
+            <a
+              className="p-button"
+              href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Smartphone size={20} />
+              <span>
+                <small>GET IT ON</small>Google Play
+              </span>
+              <ArrowUpRight size={20} />
+            </a>
+            <a href="https://wa.me/919515802954" target="_blank" rel="noopener noreferrer">
+              Have something in mind? Let's talk <ArrowUpRight size={16} />
+            </a>
           </div>
         </div>
-
-        {/* Bottom bar */}
-        <div className={`border-t pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 ${isDarkPage ? 'border-slate-900/80' : 'border-gray-100'}`}>
-          <p className="text-[12px] text-gray-400">
-            &copy; {new Date().getFullYear()} Focsera. All rights reserved.
-          </p>
-          <a
-            href="https://play.google.com/store/apps/details?id=com.focsera.focsera"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-xs font-semibold px-4 py-2 bg-focsera-primary text-white rounded-lg hover:bg-blue-600 transition-all shadow-cta"
-          >
-            Download Focsera App
-            <ArrowUpRight size={13} />
-          </a>
+        <div className="g-footer-grid">
+          <div className="g-footer-about">
+            <Link className="p-brand" to="/" aria-label="Focsera home">
+              <img
+                src="/images/logos/focsera-wordmark.png"
+                alt="Focsera — at your doorstep"
+              />
+            </Link>
+            <p>
+              For your big days, your bold ideas,
+              <br />
+              and everything you want to build.
+            </p>
+            <div className="g-footer-social">
+              <a
+                href="https://www.instagram.com/focsera.in/"
+                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Instagram size={19} />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/focsera/"
+                aria-label="LinkedIn"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Linkedin size={19} />
+              </a>
+              <a href="mailto:info@focsera.com" aria-label="Email Focsera">
+                <Mail size={19} />
+              </a>
+            </div>
+          </div>
+          <nav aria-label="Footer services">
+            <h3>Our expertise</h3>
+            {primary.map(([n, p]) => (
+              <Link key={p} to={p}>
+                {n}
+              </Link>
+            ))}
+            <Link to="/media">Media & branding</Link>
+            <Link to="/pilo">
+              Pilo by Focsera <ArrowUpRight size={12} />
+            </Link>
+            <Link to="/interiors">Interiors & spaces</Link>
+          </nav>
+          <nav aria-label="Footer company">
+            <h3>The Focsera world</h3>
+            <Link to="/about">About us</Link>
+            <Link to="/mission">Our purpose</Link>
+            <Link to="/beyond">
+              Beyond by Focsera <ArrowUpRight size={12} />
+            </Link>
+            <Link to="/arenax">
+              ArenaX <ArrowUpRight size={12} />
+            </Link>
+            <a href="https://wa.me/919515802954" target="_blank" rel="noopener noreferrer">Partner with us</a>
+          </nav>
+          <nav aria-label="Footer support">
+            <h3>Here for you</h3>
+            <Link to="/#faq">FAQs</Link>
+            <Link to="/account">Your account</Link>
+            <a href="https://wa.me/919515802954" target="_blank" rel="noopener noreferrer">Get in touch</a>
+            <a href="mailto:info@focsera.com">info@focsera.com</a>
+            <a href="tel:+919515803954">+91 95158 03954</a>
+            <Link to="/#packages">
+              Explore packages <ArrowUpRight size={12} />
+            </Link>
+          </nav>
+        </div>
+        <div className="g-footer-wordmark" aria-hidden="true">
+          <img src="/images/logos/focsera-wordmark.png" alt="" />
+        </div>
+        <div className="g-footer-legal">
+          <span>
+            © {new Date().getFullYear()} Focsera. All rights reserved.
+          </span>
+          <nav aria-label="Legal links">
+            <Link to="/privacy">Privacy policy</Link>
+            <Link to="/terms">Terms of service</Link>
+            <Link to="/refund-policy">Refund policy</Link>
+          </nav>
+          <a href="#top">Back to top ↑</a>
         </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

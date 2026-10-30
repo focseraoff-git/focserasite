@@ -26,7 +26,7 @@ export const Footer = () => {
             <Link to="/arenax/schedule" className="hover:text-gold transition-colors">Schedule</Link>
             <Link to="/arenax/register" className="hover:text-gold transition-colors">Register</Link>
             <Link to="/arenax/volunteers" className="hover:text-gold transition-colors">Volunteers</Link>
-            <Link to="/arenax/contact" className="hover:text-gold transition-colors">Contact</Link>
+            <a href="https://wa.me/919515802954" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">Contact</a>
           </div>
 
           {/* Credits */}

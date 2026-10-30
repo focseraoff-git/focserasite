@@ -123,7 +123,7 @@ export const BeyondFooter: React.FC = () => {
                 <span>Hyderabad, Telangana, India</span>
               </div>
               <a
-                href="https://wa.me/919515803954?text=Hi%20Focsera!%20I'm%20interested%20in%20Beyond%20by%20Focsera."
+                href="https://wa.me/919515802954?text=Hi%20Focsera!%20I'm%20interested%20in%20Beyond%20by%20Focsera."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-[#C7EB49] hover:text-[#35102F] text-xs font-bold text-white transition-colors mt-2"

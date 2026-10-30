@@ -4,14 +4,12 @@ import {
   PartyPopper, Camera, Music, Mic2, UtensilsCrossed, Palette,
   ShieldCheck, Users, Clock, HeartHandshake, Star, Headphones
 } from 'lucide-react';
-import videoBg from '../../assets/yoshnareel.mp4';
 
 const eventsData: ServicePageData = {
   heroTag: 'Focsera Celebrate',
   heroTitle: 'Make every milestone unforgettable.',
   heroSubtitle: 'From intimate birthdays to grand weddings and corporate galas — we plan, manage, and execute every detail so you can enjoy the moment.',
   heroIcon: PartyPopper,
-  heroVideoPath: videoBg,
 
   services: [
     {

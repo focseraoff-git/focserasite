@@ -1,3 +1,4 @@
+import '../../design/beyond-clean.css';
 import React, { useState, useEffect } from 'react';
 import BeyondNavbar from './components/BeyondNavbar';
 import BeyondHero from './components/BeyondHero';
@@ -31,10 +32,8 @@ export const BeyondLabsPage: React.FC = () => {
   }, []);
 
   const handleOpenPartnerModal = (program?: string) => {
-    if (program) {
-      setSelectedProgram(program);
-    }
-    setIsModalOpen(true);
+    const message = program ? `Hi Focsera, I would like to discuss ${program} with Beyond.` : 'Hi Focsera, I would like to discuss a Beyond partnership.';
+    window.open(`https://wa.me/919515802954?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
   };
 
   const scrollToSection = (id: string) => {
@@ -45,7 +44,7 @@ export const BeyondLabsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF9EF] text-[#35102F] font-sans selection:bg-[#C7EB49] selection:text-[#35102F] overflow-x-hidden relative">
+    <div className="beyond-clean min-h-screen bg-[#FFF9EF] text-[#35102F] font-sans selection:bg-[#C7EB49] selection:text-[#35102F] overflow-x-hidden relative">
 
       {/* Top Sticky Navigation */}
       <BeyondNavbar onOpenPartnerModal={() => handleOpenPartnerModal()} />
@@ -55,7 +54,7 @@ export const BeyondLabsPage: React.FC = () => {
         {/* Section 1: Hero */}
         <BeyondHero
           onExploreClick={() => scrollToSection('experiences')}
-          onPartnerClick={() => scrollToSection('schools')}
+          onPartnerClick={() => handleOpenPartnerModal()}
         />
 
         {/* Section 2: Introduction */}

@@ -1,0 +1,664 @@
+/* Beyond retains every program and enquiry flow, with a quieter editorial system. */
+.beyond-clean {
+  --bc-plum: #35102f;
+  --bc-cream: #fffaf3;
+  --bc-lime: #c7eb49;
+  --bc-muted: #82717d;
+  --bc-line: #e9dfe5;
+  background: #fffaf3 !important;
+  color: #35102f;
+  padding-top: 88px;
+  font-family: "Our Lexend", sans-serif;
+}
+.beyond-clean * {
+  box-sizing: border-box;
+}
+.beyond-clean :is(button, a, input, textarea, select):focus-visible {
+  outline: 3px solid #8fa43b;
+  outline-offset: 4px;
+}
+.beyond-clean :is(section, [id]) {
+  scroll-margin-top: 110px;
+}
+.beyond-clean .beyond-clean-container,
+.beyond-clean main > section > .max-w-7xl,
+.beyond-clean footer > .max-w-7xl {
+  width: min(1280px, calc(100% - 96px));
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 0;
+}
+.beyond-clean :is(h1, h2, h3, h4) {
+  font-weight: 500 !important;
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+}
+.beyond-clean :is(h1, h2, h3, h4) :is(span, em) {
+  font-weight: inherit !important;
+}
+.beyond-clean h2 {
+  font-size: clamp(32px, 3.7vw, 52px) !important;
+  letter-spacing: -0.05em !important;
+  line-height: 1.12 !important;
+}
+.beyond-clean h3 {
+  font-size: clamp(23px, 2.5vw, 34px);
+  line-height: 1.2 !important;
+}
+.beyond-clean p {
+  font-weight: 400 !important;
+  line-height: 1.9 !important;
+}
+.beyond-clean
+  :is(
+    .beyond-font-serif,
+    .beyond-font-serif *,
+    .beyond-font-heading,
+    .beyond-font-heading *,
+    .beyond-font-sans,
+    .beyond-font-sans *
+  ) {
+  font-family: "Our Lexend", sans-serif !important;
+  font-style: normal !important;
+}
+.beyond-clean main > section:not(#hero) {
+  padding-block: 90px !important;
+  border-top-width: 1px !important;
+}
+.beyond-clean main > section > div.absolute {
+  display: none;
+}
+.beyond-clean [class*="shadow"] {
+  box-shadow: none !important;
+}
+.beyond-clean [class*="border-2"] {
+  border-width: 1px;
+}
+.beyond-clean [class*="rounded-3xl"] {
+  border-radius: 16px;
+}
+.beyond-clean [class*="rounded-2xl"] {
+  border-radius: 11px;
+}
+.beyond-clean [class*="rotate-"] {
+  transform: none !important;
+}
+.beyond-clean .beyond-card-shadow,
+.beyond-clean .beyond-sticker {
+  box-shadow: none !important;
+  transform: none !important;
+}
+.beyond-clean button {
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none;
+  border-radius: 8px;
+  box-shadow: none !important;
+}
+.beyond-clean button:hover {
+  transform: none !important;
+}
+.beyond-clean :is([class*="animate-float"], [class*="animate-pulse"]) {
+  animation: none;
+}
+.beyond-clean .beyond-clean-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #dce6bb;
+  background: #f4f8e7;
+  border-radius: 50px;
+  padding: 7px 12px;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  font-weight: 500;
+  color: #65732d;
+  margin-bottom: 25px;
+}
+.beyond-clean .beyond-clean-eyebrow > span {
+  width: 5px;
+  height: 5px;
+  background: #899f32;
+  border-radius: 50%;
+}
+/* Use the supplied official wordmark, including its sunrise mark and attribution. */
+.beyond-clean .beyond-official-logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: start;
+  flex-shrink: 0;
+}
+.beyond-clean .beyond-logo-frame {
+  display: block;
+  width: 210px;
+  height: 96px;
+  overflow: hidden;
+}
+.beyond-clean .beyond-logo-frame img {
+  width: 210px;
+  height: 210px;
+  max-width: none;
+  transform: translateY(-48px);
+  mix-blend-mode: multiply;
+}
+.beyond-clean .beyond-official-sm .beyond-logo-frame {
+  width: 174px;
+  height: 78px;
+}
+.beyond-clean .beyond-official-sm .beyond-logo-frame img {
+  width: 174px;
+  height: 174px;
+  transform: translateY(-40px);
+}
+.beyond-clean .beyond-official-lg .beyond-logo-frame {
+  width: 285px;
+  height: 130px;
+}
+.beyond-clean .beyond-official-lg .beyond-logo-frame img {
+  width: 285px;
+  height: 285px;
+  transform: translateY(-65px);
+}
+.beyond-clean .beyond-official-light .beyond-logo-frame {
+  background: #fff9ef;
+  border-radius: 8px;
+}
+.beyond-clean .beyond-logo-tagline {
+  font-size: 10px;
+  line-height: 1.8;
+  margin-top: 12px;
+  color: inherit;
+  font-style: normal;
+}
+/* Navigation */
+.beyond-clean .beyond-clean-navbar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  background: #fffaf3f5;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid #e8dee4;
+}
+.beyond-clean .beyond-clean-nav-row {
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.beyond-clean .beyond-clean-desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.beyond-clean .beyond-clean-desktop-nav button {
+  background: transparent;
+  border: 0;
+  padding: 10px 0;
+  color: #796774;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.beyond-clean .beyond-clean-desktop-nav button:hover {
+  color: #35102f;
+}
+.beyond-clean .beyond-clean-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
+.beyond-clean .beyond-parent-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  color: #8b7887;
+  white-space: nowrap;
+}
+.beyond-clean .beyond-clean-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 15px 22px;
+  background: #c7eb49;
+  border: 1px solid #bad644;
+  color: #35102f;
+  font-size: 11px;
+  line-height: 1.5;
+  min-height: 49px;
+  border-radius: 8px;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.beyond-clean .beyond-clean-button:hover {
+  background: #badf3c;
+}
+.beyond-clean .beyond-clean-outline {
+  background: transparent;
+  border-color: #d8cdd5;
+}
+.beyond-clean .beyond-clean-outline:hover {
+  background: #f1eaf0;
+}
+.beyond-clean .beyond-clean-nav-actions > .beyond-clean-button {
+  padding: 11px 16px;
+  min-height: 40px;
+  font-size: 9px;
+  gap: 10px;
+}
+.beyond-clean .beyond-clean-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #e4dbe1;
+  width: 35px;
+  height: 35px;
+  color: #35102f;
+}
+.beyond-clean .beyond-clean-mobile-nav {
+  display: none;
+}
+/* The existing hero copy, paired with the supplied brochure instead of floating stickers. */
+.beyond-clean .beyond-clean-hero {
+  padding-block: 65px 0;
+  background:
+    radial-gradient(ellipse at 90% 10%, #f3e9f5, transparent 45%), #fffaf3;
+}
+.beyond-clean .beyond-clean-hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.85fr;
+  gap: 85px;
+  align-items: center;
+}
+.beyond-clean .beyond-clean-hero h1 {
+  font-size: clamp(44px, 4.8vw, 70px) !important;
+  line-height: 1.04 !important;
+  letter-spacing: -0.055em !important;
+  margin: 0;
+  color: #35102f;
+}
+.beyond-clean .beyond-clean-hero h1 em {
+  font-style: normal;
+  display: inline-block;
+  color: #72506d;
+}
+.beyond-clean .beyond-clean-hero-copy > p {
+  max-width: 555px;
+  font-size: 14px;
+  line-height: 1.95 !important;
+  color: #8d7587;
+  margin-top: 27px;
+}
+.beyond-clean .beyond-clean-hero-copy > p strong {
+  font-weight: 500;
+  color: #35102f;
+}
+.beyond-clean .beyond-clean-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 13px;
+  margin-top: 30px;
+}
+.beyond-clean .beyond-clean-kids {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  color: #91808d;
+  margin-top: 26px;
+}
+.beyond-clean .beyond-clean-kids svg {
+  color: #7d8f31;
+}
+.beyond-clean .beyond-clean-kids > span:last-child {
+  border-left: 1px solid #dbced8;
+  margin-left: 8px;
+  padding-left: 15px;
+}
+.beyond-clean .beyond-brochure-stage {
+  position: relative;
+  width: 100%;
+  max-width: 370px;
+  margin: 0 auto;
+  isolation: isolate;
+}
+.beyond-clean .beyond-brochure-stage > a {
+  display: block;
+  border: 1px solid #e4d4df;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 15px 50px #35102f0d;
+}
+.beyond-clean .beyond-brochure-stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.beyond-clean .beyond-brochure-layer {
+  position: absolute;
+  inset: 12px -17px -6px 12px;
+  border-radius: 15px;
+  transform: rotate(3deg);
+  background: #ede4f1;
+  border: 1px solid #e1d2e7;
+  z-index: -1;
+}
+.beyond-clean .beyond-brochure-stage figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 20px;
+  font-size: 8px;
+  color: #947e8d;
+}
+.beyond-clean .beyond-brochure-stage figcaption a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #65445e;
+  font-size: 9px;
+}
+.beyond-clean .beyond-clean-feature-strip {
+  margin-top: 55px;
+  border-top: 1px solid #e7dde2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-block: 26px;
+  font-size: 10px;
+  color: #76616f;
+}
+.beyond-clean .beyond-clean-feature-strip > span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.beyond-clean .beyond-clean-feature-strip > span:last-child {
+  font-weight: 500;
+  color: #66752e;
+}
+.beyond-clean .beyond-clean-feature-strip svg {
+  color: #87737f;
+}
+/* Less visual noise on the existing content components; all text and interactions remain. */
+.beyond-clean #experiences [class*="min-h-"] {
+  min-height: 0;
+}
+.beyond-clean #experiences h3 {
+  font-size: 28px !important;
+}
+.beyond-clean #experiences p {
+  font-size: 12px !important;
+}
+.beyond-clean #experiences [class*="h-36"] {
+  border-color: #35102f1f;
+}
+.beyond-clean :is(#programs, #schools, #plans, #process, #gallery) p {
+  font-size: 13px;
+}
+.beyond-clean #plans h3 {
+  font-size: 30px !important;
+}
+.beyond-clean #plans li {
+  font-size: 12px;
+  line-height: 1.8;
+}
+.beyond-clean #plans button {
+  font-size: 11px;
+}
+.beyond-clean #why h3 {
+  font-size: 23px !important;
+}
+.beyond-clean #why p {
+  font-size: 13px;
+}
+.beyond-clean #process h3 {
+  font-size: 22px !important;
+}
+.beyond-clean footer {
+  padding-top: 65px;
+  border-top-width: 1px;
+}
+.beyond-clean footer h4 {
+  font-weight: 500 !important;
+}
+.beyond-clean footer p {
+  font-size: 12px !important;
+}
+.beyond-clean footer [class*="text-xs"] {
+  font-size: 10px;
+}
+.beyond-clean footer .beyond-logo-frame {
+  margin-top: 0;
+}
+@media (max-width: 1279px) {
+  .beyond-clean .beyond-clean-desktop-nav {
+    display: none;
+  }
+  .beyond-clean .beyond-clean-menu-toggle {
+    display: flex;
+  }
+  .beyond-clean .beyond-clean-mobile-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 25px;
+    border-top: 1px solid #e8dee4;
+    padding: 14px 35px 24px;
+    background: #fffaf3;
+    max-height: calc(100dvh - 88px);
+    overflow: auto;
+  }
+  .beyond-clean .beyond-clean-mobile-nav :is(button, a) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 0;
+    border: 0;
+    border-bottom: 1px solid #e9dfe6;
+    background: none;
+    color: #6e5366;
+    font-size: 11px;
+  }
+  .beyond-clean .beyond-clean-hero-grid {
+    gap: 50px;
+  }
+  .beyond-clean .beyond-clean-hero h1 {
+    font-size: 56px !important;
+  }
+  .beyond-clean .beyond-brochure-stage {
+    max-width: 330px;
+  }
+}
+@media (max-width: 850px) {
+  .beyond-clean {
+    padding-top: 78px;
+  }
+  .beyond-clean .beyond-clean-nav-row {
+    height: 78px;
+  }
+  .beyond-clean .beyond-clean-container,
+  .beyond-clean main > section > .max-w-7xl,
+  .beyond-clean footer > .max-w-7xl {
+    width: calc(100% - 56px);
+  }
+  .beyond-clean .beyond-clean-hero-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+  }
+  .beyond-clean .beyond-clean-hero h1 {
+    font-size: 45px !important;
+  }
+  .beyond-clean .beyond-clean-hero-copy > p {
+    font-size: 12px;
+  }
+  .beyond-clean .beyond-clean-button {
+    font-size: 10px;
+    padding: 13px 17px;
+    min-height: 45px;
+    gap: 10px;
+  }
+  .beyond-clean .beyond-clean-kids {
+    font-size: 8px;
+  }
+  .beyond-clean .beyond-brochure-stage {
+    max-width: 290px;
+  }
+  .beyond-clean main > section:not(#hero) {
+    padding-block: 70px !important;
+  }
+  .beyond-clean .beyond-clean-feature-strip {
+    font-size: 9px;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .beyond-clean .beyond-clean-feature-strip svg {
+    width: 15px;
+  }
+}
+@media (max-width: 640px) {
+  .beyond-clean {
+    padding-top: 72px;
+  }
+  .beyond-clean .beyond-clean-nav-row {
+    height: 72px;
+    gap: 10px;
+  }
+  .beyond-clean .beyond-clean-container,
+  .beyond-clean main > section > .max-w-7xl,
+  .beyond-clean footer > .max-w-7xl {
+    width: calc(100% - 40px);
+  }
+  .beyond-clean .beyond-official-sm .beyond-logo-frame {
+    width: 145px;
+    height: 65px;
+  }
+  .beyond-clean .beyond-official-sm .beyond-logo-frame img {
+    width: 145px;
+    height: 145px;
+    transform: translateY(-33px);
+  }
+  .beyond-clean .beyond-parent-link {
+    display: none;
+  }
+  .beyond-clean .beyond-clean-nav-actions {
+    gap: 9px;
+  }
+  .beyond-clean .beyond-clean-nav-actions > .beyond-clean-button {
+    font-size: 8px;
+    padding: 10px 12px;
+    min-height: 36px;
+    gap: 7px;
+  }
+  .beyond-clean .beyond-clean-nav-actions > .beyond-clean-button svg {
+    width: 12px;
+  }
+  .beyond-clean .beyond-clean-menu-toggle {
+    width: 32px;
+    height: 32px;
+  }
+  .beyond-clean .beyond-clean-hero {
+    padding-top: 35px;
+  }
+  .beyond-clean .beyond-clean-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 38px;
+  }
+  .beyond-clean .beyond-clean-hero h1 {
+    font-size: 45px !important;
+  }
+  .beyond-clean .beyond-clean-hero-copy > p {
+    font-size: 12px;
+    margin-top: 23px;
+  }
+  .beyond-clean .beyond-clean-eyebrow {
+    font-size: 7px;
+    margin-bottom: 23px;
+  }
+  .beyond-clean .beyond-clean-actions {
+    gap: 10px;
+    margin-top: 26px;
+  }
+  .beyond-clean .beyond-clean-button {
+    font-size: 9px;
+    padding: 13px 16px;
+    gap: 8px;
+    min-height: 44px;
+  }
+  .beyond-clean .beyond-clean-kids {
+    margin-top: 22px;
+  }
+  .beyond-clean .beyond-brochure-stage {
+    max-width: 285px;
+  }
+  .beyond-clean .beyond-clean-feature-strip {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 15px;
+    font-size: 8px;
+    padding-block: 24px;
+  }
+  .beyond-clean main > section:not(#hero) {
+    padding-block: 55px !important;
+  }
+  .beyond-clean h2 {
+    font-size: 32px !important;
+  }
+  .beyond-clean h3 {
+    font-size: 24px !important;
+  }
+  .beyond-clean :is(#programs, #schools, #plans, #process, #gallery) p {
+    font-size: 12px;
+  }
+  .beyond-clean #experiences h3 {
+    font-size: 27px !important;
+  }
+  .beyond-clean #plans h3 {
+    font-size: 28px !important;
+  }
+  .beyond-clean .beyond-clean-mobile-nav {
+    padding: 10px 20px 20px;
+    gap: 0 18px;
+    max-height: calc(100dvh - 72px);
+  }
+  .beyond-clean .beyond-clean-mobile-nav :is(button, a) {
+    font-size: 10px;
+  }
+  .beyond-clean footer {
+    padding-top: 45px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .beyond-clean * {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+/* Transparent official PNG: keep the entire mark visible without cropping. */
+.beyond-clean .beyond-logo-frame {
+  width: 210px;
+  height: 96px;
+}
+.beyond-clean .beyond-logo-frame img,
+.beyond-clean .beyond-official-sm .beyond-logo-frame img,
+.beyond-clean .beyond-official-lg .beyond-logo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: none;
+  mix-blend-mode: normal;
+}
+.beyond-clean .beyond-official-light .beyond-logo-frame {
+  background: transparent;
+}
+.beyond-clean .beyond-official-light .beyond-logo-frame img {
+  filter: drop-shadow(0 0 1px #fff);
+}

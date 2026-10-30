@@ -7,7 +7,7 @@ interface BeyondCTAProps {
 }
 
 export const BeyondCTA: React.FC<BeyondCTAProps> = ({ onConnectClick }) => {
-  const whatsappUrl = `https://wa.me/919515803954?text=${encodeURIComponent(
+  const whatsappUrl = `https://wa.me/919515802954?text=${encodeURIComponent(
     "Hi Focsera! I'm interested in Beyond by Focsera education programs, workshops, and school partnerships. Can you share more details?"
   )}`;
 

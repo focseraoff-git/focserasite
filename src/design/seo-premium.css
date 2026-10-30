@@ -1,0 +1,384 @@
+/* Shared conversion layout for every generated service and location page. */
+.premium-site .seo-premium {
+  background: #fff;
+  color: #17243e;
+  font-family: "Our Lexend", sans-serif;
+}
+.premium-site .seo-premium h1,
+.premium-site .seo-premium h2,
+.premium-site .seo-premium h3 {
+  font-family: inherit;
+  letter-spacing: -0.045em;
+}
+.premium-site .seo-premium h2 {
+  font-size: clamp(30px, 3.3vw, 48px);
+  line-height: 1.13;
+  font-weight: 600;
+}
+.premium-site .seo-premium h3 {
+  font-weight: 600;
+}
+.premium-site .seo-premium > section {
+  padding-block: 85px;
+}
+.premium-site .seo-premium .max-w-7xl,
+.premium-site .seo-inner {
+  width: min(1280px, calc(100% - 96px));
+  max-width: 1280px;
+  padding-inline: 0;
+  margin-inline: auto;
+}
+.premium-site .seo-premium .section-label {
+  color: #5675c9;
+  font-size: 9px;
+  letter-spacing: 0.17em;
+  font-weight: 600;
+}
+.premium-site .seo-premium .btn-primary,
+.premium-site .seo-premium .btn-secondary,
+.premium-site .seo-enquire {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 40px;
+  padding: 15px 22px;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 500;
+  min-height: 48px;
+  transition: background 0.2s;
+}
+.premium-site .seo-premium .btn-primary {
+  background: #2862f4;
+  color: white;
+  box-shadow: none;
+  border: 1px solid #2862f4;
+}
+.premium-site .seo-premium .btn-primary:hover {
+  background: #184ad2;
+}
+.premium-site .seo-premium .btn-secondary {
+  background: transparent;
+  border: 1px solid #dce3f1;
+  color: #2e456c;
+}
+.premium-site .seo-enquire {
+  background: white;
+  color: #17243e;
+}
+.premium-site .seo-premium .marketplace-card {
+  border: 1px solid #e2e8f1;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px #17243e05;
+  overflow: hidden;
+  background: #fff;
+}
+.premium-site .seo-premium p {
+  line-height: 1.85;
+}
+.premium-site .seo-premium #service-overview {
+  scroll-margin-top: 140px;
+}
+.premium-site .seo-premium #seo-questions {
+  scroll-margin-top: 140px;
+}
+/* Editorial hero with an immediate booking path. */
+.premium-site .seo-premium > .seo-service-hero {
+  padding: 0;
+  background:
+    radial-gradient(ellipse at 90% 10%, #1b3b77, transparent 55%), #0c172d;
+  color: white;
+}
+.premium-site .seo-service-hero > div.absolute {
+  display: none;
+}
+.premium-site .seo-service-hero > div.relative {
+  padding-top: 32px;
+  padding-bottom: 65px;
+}
+.premium-site .seo-service-hero nav {
+  margin-bottom: 38px;
+}
+.premium-site .seo-service-hero nav ol {
+  font-size: 10px;
+  color: #93a6cb;
+  gap: 9px;
+}
+.premium-site .seo-service-hero nav .text-focsera-text {
+  color: #c2cee3;
+}
+.premium-site .seo-service-hero h1 {
+  font-size: clamp(36px, 4.4vw, 64px) !important;
+  line-height: 1.06 !important;
+  color: white;
+  font-weight: 600;
+  margin-bottom: 25px;
+  overflow-wrap: anywhere;
+}
+.premium-site .seo-service-hero .seo-hero-copy > p {
+  color: #a5b4d0;
+  font-size: 15px;
+  max-width: 600px;
+}
+.premium-site .seo-service-hero .trust-badge {
+  background: #ffffff08;
+  border: 1px solid #ffffff18;
+  color: #a9b8d6;
+  font-size: 9px;
+  padding: 9px 11px;
+  border-radius: 30px;
+}
+.premium-site .seo-service-hero .trust-badge svg {
+  color: #7ea2ff;
+}
+.premium-site .seo-service-hero .seo-hero-copy > .flex.mb-10 {
+  gap: 12px;
+}
+.premium-site .seo-service-hero #hero-explore {
+  color: #aabbdc;
+  border-color: #ffffff25;
+}
+.premium-site .seo-service-hero .seo-hero-visual > div:first-child {
+  border-radius: 20px;
+  box-shadow: none;
+  margin-bottom: 16px;
+}
+.premium-site .seo-service-hero .seo-hero-visual img {
+  aspect-ratio: 16/10;
+}
+.premium-site .seo-service-hero .marketplace-card {
+  padding: 25px;
+  border-radius: 20px;
+  background: #fff;
+  color: #17243e;
+}
+.premium-site .seo-service-hero .marketplace-card h3 {
+  font-size: 21px;
+  letter-spacing: -0.03em;
+}
+.premium-site .seo-service-hero .marketplace-card p {
+  font-size: 12px;
+  color: #7c889c;
+}
+.premium-site .seo-service-hero .marketplace-card .space-y-3.mb-6 {
+  display: none;
+}
+.premium-site .seo-service-hero .marketplace-card .btn-primary {
+  width: 100%;
+}
+.premium-site .seo-section-nav {
+  position: sticky;
+  top: 78px;
+  z-index: 20;
+  background: #ffffffed;
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid #e5eaf3;
+}
+.premium-site .seo-section-nav > div {
+  width: min(1280px, calc(100% - 96px));
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 35px;
+  min-height: 67px;
+}
+.premium-site .seo-section-nav a {
+  font-size: 11px;
+  color: #7b889f;
+  white-space: nowrap;
+}
+.premium-site .seo-section-nav a:last-child {
+  margin-left: auto;
+  color: #2862f4;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.premium-site .seo-process {
+  background: #f4f7fd;
+  border: 0;
+  scroll-margin-top: 145px;
+}
+.premium-site .seo-process header {
+  text-align: center;
+  margin-bottom: 38px;
+}
+.premium-site .seo-process header h2 {
+  margin-top: 15px;
+}
+.premium-site .seo-process-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.premium-site .seo-process-grid article {
+  padding: 30px;
+  background: #fff;
+  border: 1px solid #e4eaf4;
+  border-radius: 20px;
+}
+.premium-site .seo-process-grid article > span {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: #7d9be4;
+}
+.premium-site .seo-process-grid h3 {
+  font-size: 22px;
+  margin: 24px 0 12px;
+}
+.premium-site .seo-process-grid p {
+  font-size: 12px;
+  color: #8390a6;
+}
+.premium-site .seo-enquiry-card {
+  padding: 30px;
+  border-radius: 22px;
+  background: #edf2ff;
+  border: 1px solid #dce5fb;
+  margin-bottom: 24px;
+}
+.premium-site .seo-enquiry-card h3 {
+  font-size: 29px;
+  line-height: 1.14;
+  margin: 20px 0;
+}
+.premium-site .seo-enquiry-card p {
+  font-size: 12px;
+  color: #7987a0;
+  margin-bottom: 24px;
+}
+.premium-site .seo-enquiry-card small {
+  display: block;
+  margin-top: 16px;
+  font-size: 9px;
+  color: #7f8ca5;
+}
+.premium-site .seo-premium .seo-app-promotion {
+  background: #f4f7fd;
+}
+.premium-site .seo-premium .seo-final-cta {
+  background: #0d1931;
+  color: #fff;
+}
+.premium-site .seo-final-cta h2 {
+  color: #fff;
+}
+.premium-site .seo-final-cta p {
+  color: #a4b3d0;
+}
+.premium-site .seo-final-cta .btn-secondary {
+  color: #fff;
+  border-color: #ffffff30;
+}
+.premium-site .seo-premium .seo-app-promotion img {
+  object-fit: contain;
+}
+@media (min-width: 1600px) {
+  .premium-site .seo-service-hero > div.relative {
+    padding-block: 40px 80px;
+  }
+  .premium-site .seo-service-hero h1 {
+    font-size: 65px !important;
+  }
+}
+@media (max-width: 900px) {
+  .premium-site .seo-premium .max-w-7xl,
+  .premium-site .seo-inner,
+  .premium-site .seo-section-nav > div {
+    width: calc(100% - 56px);
+  }
+  .premium-site .seo-process-grid {
+    gap: 15px;
+  }
+  .premium-site .seo-process-grid article {
+    padding: 24px;
+  }
+  .premium-site .seo-section-nav > div {
+    gap: 22px;
+  }
+}
+@media (max-width: 640px) {
+  .premium-site .seo-premium {
+    padding-bottom: 70px;
+  }
+  .premium-site .seo-premium > section {
+    padding-block: 55px;
+  }
+  .premium-site .seo-premium .max-w-7xl,
+  .premium-site .seo-inner,
+  .premium-site .seo-section-nav > div {
+    width: calc(100% - 40px);
+  }
+  .premium-site .seo-service-hero > div.relative {
+    padding-top: 24px;
+    padding-bottom: 40px;
+  }
+  .premium-site .seo-service-hero nav {
+    margin-bottom: 28px;
+  }
+  .premium-site .seo-service-hero h1 {
+    font-size: 37px !important;
+  }
+  .premium-site .seo-service-hero .seo-hero-copy > p {
+    font-size: 13px;
+  }
+  .premium-site .seo-premium .btn-primary,
+  .premium-site .seo-premium .btn-secondary,
+  .premium-site .seo-enquire {
+    padding: 13px 18px;
+    font-size: 11px;
+  }
+  .premium-site .seo-section-nav {
+    top: 72px;
+  }
+  .premium-site .seo-section-nav > div {
+    overflow: auto;
+    gap: 24px;
+    min-height: 54px;
+  }
+  .premium-site .seo-section-nav a {
+    font-size: 10px;
+  }
+  .premium-site .seo-section-nav a:last-child {
+    display: none;
+  }
+  .premium-site .seo-process-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .premium-site .seo-process-grid article {
+    padding: 24px;
+  }
+  .premium-site .seo-process-grid h3 {
+    margin-top: 15px;
+  }
+  .premium-site .seo-enquiry-card {
+    padding: 26px;
+  }
+  .premium-site .seo-service-hero .trust-badge {
+    font-size: 8px;
+  }
+  .premium-site .seo-premium .fixed.bottom-0 {
+    padding-bottom: env(safe-area-inset-bottom);
+    background: white;
+  }
+}
+.premium-site .premium-legacy:has(> .seo-premium) > .seo-premium {
+  padding-top: 0;
+}
+.premium-site .seo-section-nav > div {
+  overflow: visible;
+  flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+  .premium-site .seo-section-nav > div {
+    gap: 12px 20px;
+    padding-block: 15px;
+    overflow: visible;
+  }
+  .premium-site .seo-section-nav a {
+    white-space: normal;
+  }
+}

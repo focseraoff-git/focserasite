@@ -1,4 +1,5 @@
 // @ts-nocheck
+import DivisionIntro from '../../components/DivisionIntro';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import FancyModal from '../../components/FancyModal';
@@ -606,7 +607,7 @@ const CreatorBoostModal = ({ isOpen, onClose }) => {
 
             // 3. WhatsApp Redirect
             const message = `Hello Focsera! I just booked the *CreatorBoost 10X Pack*.\n\n*Name:* ${details.name}\n*Phone:* ${details.phone}\n*Link:* ${details.sample_link}\n\nPlease confirm my slot!`;
-            const whatsappUrl = `https://wa.me/919515803954?text=${encodeURIComponent(message)}`;
+            const whatsappUrl = `https://wa.me/919515802954?text=${encodeURIComponent(message)}`;
 
             // Show success & redirect
             alert("Booking Saved! Redirecting to WhatsApp to finalize...");
@@ -814,24 +815,8 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
 
     return (
         <>
-            <section className="relative py-32 bg-gradient-to-br from-[#020617] via-[#0B1121] to-[#0f172a] overflow-hidden border-b border-white/5">
-                <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat mix-blend-overlay"></div>
-                <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-500/10 rounded-full animate-[float_8s_ease-in-out_infinite] blur-xl"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-purple-500/10 rounded-2xl animate-[float_12s_ease-in-out_infinite] blur-2xl"></div>
+            <DivisionIntro path="/media" title="A presence people remember." description="Content, branding, and media expertise to give your business a clearer voice. From your first creative brief to your next campaign." anchor="#media-packages"/>
 
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ animation: 'fadeInUp 1s ease-out' }}>
-                    <div className="w-32 h-32 bg-black/40 backdrop-blur-xl rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl overflow-hidden border border-white/10">
-                        <img src="/images/logos/FocseraMedia.jpg" alt="Focsera Media" className="w-full h-full object-contain opacity-90 hover:opacity-100 transition-opacity" />
-                    </div>
-                    <h1 className="text-5xl sm:text-7xl font-bold text-white mb-6 tracking-tight drop-shadow-lg">Focsera Media</h1>
-                    <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-4 font-light">
-                        Professional Content, Marketing & Growth Services
-                    </p>
-                    <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                        We build your brand's voice and amplify your reach. From content strategy to ad campaigns, we provide end-to-end media solutions.
-                    </p>
-                </div>
-            </section>
 
             {/* UPGRADED: CreatorBoost Offer Section (Moved to Top) */}
             <CreatorBoostSection onBook={() => setShowBoostModal(true)} />
@@ -842,7 +827,7 @@ const LandingPage = ({ onBookNow, packages, individualServices, loadError, onRet
             {/* Booking Modal */}
             <CreatorBoostModal isOpen={showBoostModal} onClose={() => setShowBoostModal(false)} />
 
-            <section className="py-16 bg-[#050505] border-b border-white/5 relative">
+            <section id="media-packages" className="py-16 bg-[#050505] border-b border-white/5 relative">
                 <div className="absolute inset-0 opacity-[0.02] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] invert"></div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">

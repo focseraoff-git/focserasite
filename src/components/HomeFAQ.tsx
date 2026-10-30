@@ -37,7 +37,7 @@ export default function HomeFAQ() {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     return (
-        <section className="py-16 sm:py-24 bg-focsera-bg overflow-hidden">
+        <section id="faq" className="py-16 sm:py-24 bg-focsera-bg overflow-hidden">
             <div className="max-w-3xl mx-auto px-5 sm:px-8">
                 {/* Header */}
                 <motion.div

@@ -1,3 +1,4 @@
+import DivisionIntro from '../../components/DivisionIntro';
 import { Link } from 'react-router-dom';
 import { Package, Palette, TrendingUp, ArrowRight, QrCode, X, Sparkles, Clock, MapPin, Utensils, Monitor, GraduationCap, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -83,29 +84,10 @@ export default function ProductServices() {
   return (
     <div className="min-h-screen bg-[#050505] font-sans selection:bg-blue-500/30 text-gray-200">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-24 bg-[#050505] overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#050505] to-[#050505]"></div>
-          <div className="absolute top-0 left-0 w-full h-full opacity-20" style={{
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '30px 30px'
-          }}></div>
-        </div>
+      <DivisionIntro path="/product-services" title="Possibility. Meet product." description="From early concepts to market-ready solutions. Explore product design, modelling, and technology built around real business needs." anchor="#product-expertise"/>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fadeInUp">
-          <div className="w-32 h-32 bg-[#111]/80 sm:bg-white/5 backdrop-blur-none sm:backdrop-blur-xl border border-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg sm:shadow-2xl p-4 ring-1 ring-white/10">
-            <img src="/images/logos/FocseraProduct.jpg" alt="Focsera Product Services" className="w-full h-full object-contain rounded-xl" />
-          </div>
-          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-gray-400">
-            Focsera Product Services
-          </h1>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            From concept to market. End-to-end product solutions that drive innovation and business success.
-          </p>
-        </div>
-      </section>
 
-      <section className="py-24 bg-[#050505] relative">
+      <section id="product-expertise" className="py-24 bg-[#050505] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">

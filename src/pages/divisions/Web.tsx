@@ -4,14 +4,12 @@ import {
   Globe, Smartphone, Search, Palette, Code2, Server,
   ShieldCheck, Zap, HeartHandshake, Users, Layers, Headphones
 } from 'lucide-react';
-import videoBg from '../../components/WhatsApp Video 2026-06-05 at 8.01.38 PM.mp4';
 
 const webData: ServicePageData = {
   heroTag: 'Focsera Grow',
   heroTitle: 'Build your digital presence.',
   heroSubtitle: 'Custom websites, mobile apps, SEO optimization, and complete digital solutions to help your business grow and scale online.',
   heroIcon: Globe,
-  heroVideoPath: videoBg,
 
   services: [
     {

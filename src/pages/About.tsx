@@ -1,112 +1,140 @@
-import { Lightbulb, Users, Target, Sparkles } from 'lucide-react';
-
+import { Link } from "react-router-dom";
+import { ArrowUpRight, Layers, HeartHandshake, Lightbulb } from "lucide-react";
+import { serviceVisuals } from "../design/services";
+const values = [
+  {
+    icon: Layers,
+    title: "Connected expertise",
+    description:
+      "Creative thinking, technical skill, and hands-on execution, brought into one conversation.",
+  },
+  {
+    icon: HeartHandshake,
+    title: "People at the centre",
+    description:
+      "We begin with your priorities and keep the work grounded in what you want to achieve.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Ideas with purpose",
+    description:
+      "We care about details that make a difference, from the first brief to the final delivery.",
+  },
+];
 export default function About() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-[#ECECEC] pt-20">
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-10 right-10 animate-float">
-            <Sparkles className="text-[#0052CC]" size={24} />
-          </div>
-          <div className="absolute bottom-20 left-20 animate-float" style={{ animationDelay: '2s' }}>
-            <Sparkles className="text-[#0066FF]" size={20} />
+    <div>
+      <section className="p-container p-story-hero">
+        <div>
+          <span className="p-eyebrow">Meet Focsera</span>
+          <h1>
+            Many talents.
+            <br />
+            One shared
+            <br />
+            <span>point of view.</span>
+          </h1>
+          <p>
+            We bring creative, digital, and lifestyle expertise together to help
+            people and businesses turn good ideas into meaningful experiences.
+          </p>
+          <div className="p-actions">
+            <a href="https://wa.me/919515802954" target="_blank" rel="noopener noreferrer" className="p-button">
+              Get to know us <ArrowUpRight size={17} />
+            </a>
+            <Link to="/journey" className="p-text-link">
+              Explore our journey <ArrowUpRight size={17} />
+            </Link>
           </div>
         </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20 animate-fade-in">
-            <div className="inline-block mb-4">
-              <span className="px-4 py-2 bg-gradient-to-r from-[#0052CC]/10 to-[#0066FF]/10 rounded-full text-[#0052CC] text-sm font-semibold">
-                About Us
-              </span>
-            </div>
-            <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 mb-6">
-              About <span className="text-gradient">Focsera</span>
-            </h1>
-            <div className="w-32 h-1.5 bg-gradient-to-r from-[#0052CC] to-[#0066FF] mx-auto rounded-full mb-8"></div>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light">
-              We focus on creating impactful experiences, connecting brands and individuals with their audience,
-              and celebrating creativity in all forms—through visuals, digital innovation, events, skills, and product excellence.
+        <img
+          src="/images/campaign/focsera-business.png"
+          alt="Focsera creative specialist at work"
+        />
+      </section>
+      <section className="p-section p-soft">
+        <div className="p-container p-story-text">
+          <div>
+            <span className="p-eyebrow">From vision to execution</span>
+            <h2>
+              A world of expertise.
+              <br />
+              Working together.
+            </h2>
+          </div>
+          <div>
+            <p>
+              Focsera connects individuals and businesses with specialists
+              across photography, films, events, web development, media,
+              marketing, product solutions, and interiors.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 animate-slide-up">
-            <div className="group glossy-card rounded-3xl p-10 text-center hover-lift border border-gray-100">
-              <div className="text-6xl font-bold text-gradient mb-4 group-hover:scale-110 transition-transform">6</div>
-              <div className="text-xl font-semibold text-gray-900 mb-3">Specialized Divisions</div>
-              <div className="text-gray-600 font-light">Comprehensive creative and digital solutions</div>
-            </div>
-            <div className="group glossy-card rounded-3xl p-10 text-center hover-lift border border-gray-100" style={{ animationDelay: '100ms' }}>
-              <div className="text-6xl font-bold text-gradient mb-4 group-hover:scale-110 transition-transform">∞</div>
-              <div className="text-xl font-semibold text-gray-900 mb-3">Endless Possibilities</div>
-              <div className="text-gray-600 font-light">Unlimited creative potential</div>
-            </div>
-            <div className="group glossy-card rounded-3xl p-10 text-center hover-lift border border-gray-100" style={{ animationDelay: '200ms' }}>
-              <div className="text-6xl font-bold text-gradient mb-4 group-hover:scale-110 transition-transform">1</div>
-              <div className="text-xl font-semibold text-gray-900 mb-3">Unified Vision</div>
-              <div className="text-gray-600 font-light">Global excellence in creativity</div>
-            </div>
-          </div>
-
-          <div className="mt-32 grid grid-cols-1 lg:grid-cols-2 gap-16">
-            <div className="glossy-card rounded-3xl p-10 hover-lift border border-gray-100 group">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#0052CC] to-[#0066FF] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
-                <Users className="text-white" size={32} />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Who We Are</h2>
-              <p className="text-gray-600 leading-relaxed mb-4 font-light">
-                Focsera is a global creative, media, and digital solutions group dedicated to empowering businesses
-                and individuals through innovative solutions. Our diverse portfolio of divisions ensures that we can
-                meet any creative or digital challenge.
-              </p>
-              <p className="text-gray-600 leading-relaxed font-light">
-                From capturing stunning visuals to building powerful digital platforms, from organizing memorable
-                events to training the next generation of creative professionals, Focsera is your partner in success.
-              </p>
-            </div>
-
-            <div className="glossy-card rounded-3xl p-10 hover-lift border border-gray-100 group">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#0066FF] to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
-                <Target className="text-white" size={32} />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">What We Do</h2>
-              <p className="text-gray-600 leading-relaxed mb-4 font-light">
-                We offer end-to-end solutions across six specialized divisions: Studios, Media, Events, Web,
-                Product Services, and Interiors. Each division brings unique expertise while working seamlessly
-                together to deliver integrated solutions.
-              </p>
-              <p className="text-gray-600 leading-relaxed font-light">
-                Whether you need professional photography, social media strategy, event management, web development,
-                product design, or training services, Focsera has the expertise and passion to bring your vision to life.
-              </p>
-            </div>
+            <p>
+              Each discipline brings its own perspective. Together, they make it
+              easier to move from an idea to a coordinated plan, and from that
+              plan to a finished experience.
+            </p>
+            <p>
+              Whether you are celebrating a milestone, building a brand, or
+              reimagining a space, we work with you to understand what matters
+              and bring the right expertise to the table.
+            </p>
           </div>
         </div>
       </section>
-
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0052CC] via-[#0066FF] to-[#0052CC]">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-full h-full" style={{
-              backgroundImage: 'radial-gradient(circle, white 2px, transparent 2px)',
-              backgroundSize: '60px 60px'
-            }}></div>
+      <section className="p-section p-container">
+        <div className="p-section-heading">
+          <div>
+            <span className="p-eyebrow">What brings us together</span>
+            <h2>
+              Thoughtful by nature.
+              <br />
+              Collaborative by design.
+            </h2>
           </div>
         </div>
-
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="glass-effect rounded-3xl p-12 border border-white/20">
-            <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 animate-scale-in">
-              <Lightbulb className="text-[#0052CC]" size={40} />
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">Our Philosophy</h2>
-            <p className="text-lg text-white/90 leading-relaxed font-light">
-              At Focsera, we believe that creativity is the ultimate currency in today's world. We combine cutting-edge
-              technology with human creativity to deliver solutions that don't just meet expectations—they exceed them.
-              Every project is an opportunity to push boundaries and create something extraordinary.
-            </p>
+        <div className="p-grid-3">
+          {values.map(({ icon: Icon, title, description }) => (
+            <article className="p-story-values" key={title}>
+              <Icon size={28} />
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="p-section p-navy">
+        <div className="p-container">
+          <span className="p-eyebrow">The Focsera world</span>
+          <h2>Explore what we can do together.</h2>
+          <div className="p-process">
+            {serviceVisuals.map((s) => (
+              <article key={s.path}>
+                <h3>{s.title}</h3>
+                <p>{s.description}</p>
+                <Link
+                  className="p-button p-button-light"
+                  to={s.path}
+                  style={{ marginTop: 20 }}
+                >
+                  Explore <ArrowUpRight size={16} />
+                </Link>
+              </article>
+            ))}
           </div>
         </div>
+      </section>
+      <section className="p-container p-bottom-cta">
+        <div>
+          <span className="p-eyebrow">A good place to start</span>
+          <h2>
+            Your next idea.
+            <br />
+            Our next conversation.
+          </h2>
+        </div>
+        <a href="https://wa.me/919515802954" target="_blank" rel="noopener noreferrer" className="p-button">
+          Let's talk <ArrowUpRight size={17} />
+        </a>
       </section>
     </div>
   );

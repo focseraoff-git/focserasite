@@ -1,141 +1,125 @@
-import { Sparkles, Zap, Heart, Shield } from 'lucide-react';
-
+import { Link } from "react-router-dom";
+import {
+  ArrowUpRight,
+  Lightbulb,
+  HeartHandshake,
+  ShieldCheck,
+} from "lucide-react";
+const values = [
+  {
+    icon: Lightbulb,
+    title: "Curiosity that creates",
+    description:
+      "We ask questions, explore possibilities, and look for a thoughtful approach to each challenge.",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Collaboration that connects",
+    description:
+      "We bring people and perspectives together, keeping your goals at the centre of the work.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Care that carries through",
+    description:
+      "We value clear communication, considered details, and responsibility from start to finish.",
+  },
+];
 export default function Mission() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-[#ECECEC] pt-20">
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0052CC] to-[#0066FF]">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-full h-full" style={{
-              backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
-              backgroundSize: '50px 50px'
-            }}></div>
+    <div>
+      <section className="p-container p-story-hero">
+        <div>
+          <span className="p-eyebrow">Our purpose</span>
+          <h1>
+            Possibility,
+            <br />
+            with a sense
+            <br />
+            <span>of purpose.</span>
+          </h1>
+          <p>
+            To empower individuals and businesses through creativity,
+            technology, and experiences that turn ideas into reality.
+          </p>
+          <div className="p-actions">
+            <a className="p-button" href="https://wa.me/919515802954" target="_blank" rel="noopener noreferrer">
+              Build something with us <ArrowUpRight size={17} />
+            </a>
           </div>
         </div>
-
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="glass-effect rounded-3xl p-12 border border-white/20 animate-fade-in">
-            <div className="inline-block mb-6">
-              <span className="px-4 py-2 bg-white/20 rounded-full text-white text-sm font-semibold">
-                Our Purpose
-              </span>
-            </div>
-            <h1 className="text-4xl sm:text-6xl font-bold text-white mb-8">Mission & Vision</h1>
-            <div className="w-32 h-1.5 bg-white/80 mx-auto rounded-full mb-12"></div>
-            <p className="text-xl sm:text-2xl text-white/95 leading-relaxed mb-8 font-light">
-              At Focsera, we envision a world where creativity knows no bounds and innovation drives success.
-              Our mission is to empower businesses and individuals with cutting-edge solutions that transform ideas into reality.
+        <img
+          src="/images/campaign/focsera-collective.png"
+          alt="A Focsera specialist bringing digital ideas to life"
+        />
+      </section>
+      <section className="p-navy p-purpose-quote">
+        <div className="p-container">
+          <span className="p-eyebrow">Our vision</span>
+          <blockquote>
+            A world where creativity opens doors, and good ideas have room to
+            grow.
+          </blockquote>
+          <p>Inspired by people. Made possible together.</p>
+        </div>
+      </section>
+      <section className="p-section p-container">
+        <div className="p-section-heading">
+          <div>
+            <span className="p-eyebrow">The principles behind our work</span>
+            <h2>What we put into everything.</h2>
+          </div>
+        </div>
+        <div className="p-grid-3">
+          {values.map(({ icon: Icon, title, description }) => (
+            <article className="p-story-values" key={title}>
+              <Icon size={28} />
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="p-section p-soft">
+        <div className="p-container p-story-text">
+          <div>
+            <span className="p-eyebrow">Looking ahead</span>
+            <h2>
+              Better work.
+              <br />
+              Broader possibilities.
+            </h2>
+          </div>
+          <div>
+            <p>
+              Our ambition is to create meaningful work across creative
+              services, digital platforms, events, and learning. We believe that
+              new possibilities emerge when people with different skills work
+              toward a shared goal.
             </p>
-            <p className="text-lg text-white/90 leading-relaxed font-light">
-              We believe in the power of collaboration, the beauty of design, and the impact of technology
-              to create experiences that inspire, engage, and celebrate human creativity.
+            <p>
+              Through Beyond by Focsera, we also explore learning experiences,
+              workshops, and school partnerships that help the next generation
+              engage with creativity and technology.
             </p>
+            <Link to="/beyond" className="p-text-link">
+              Discover Beyond <ArrowUpRight size={17} />
+            </Link>
           </div>
         </div>
       </section>
-
-      <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-20 right-10 animate-float">
-            <Sparkles className="text-[#0052CC]" size={24} />
-          </div>
-          <div className="absolute bottom-20 left-20 animate-float" style={{ animationDelay: '2s' }}>
-            <Sparkles className="text-[#0066FF]" size={20} />
-          </div>
+      <section className="p-container p-bottom-cta">
+        <div>
+          <span className="p-eyebrow">Make your next move</span>
+          <h2>
+            Let's create something
+            <br />
+            that moves you forward.
+          </h2>
         </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              The <span className="text-gradient">Focsera</span> Way
-            </h2>
-            <div className="w-32 h-1.5 bg-gradient-to-r from-[#0052CC] to-[#0066FF] mx-auto rounded-full"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="glossy-card rounded-3xl p-10 text-center hover-lift border border-gray-100 group">
-              <div className="w-24 h-24 bg-gradient-to-br from-[#0052CC] to-[#0066FF] rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
-                <span className="text-4xl font-bold text-white">F</span>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Focus</h3>
-              <p className="text-gray-600 leading-relaxed font-light">
-                We focus on understanding your unique needs and delivering solutions that are tailored,
-                strategic, and purposeful. Every project receives our undivided attention.
-              </p>
-            </div>
-
-            <div className="glossy-card rounded-3xl p-10 text-center hover-lift border border-gray-100 group" style={{ animationDelay: '100ms' }}>
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
-                <span className="text-4xl font-bold text-white">C</span>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Create</h3>
-              <p className="text-gray-600 leading-relaxed font-light">
-                We create innovative, beautiful, and functional solutions that stand out in the marketplace
-                and deliver measurable results for your business.
-              </p>
-            </div>
-
-            <div className="glossy-card rounded-3xl p-10 text-center hover-lift border border-gray-100 group" style={{ animationDelay: '200ms' }}>
-              <div className="w-24 h-24 bg-gradient-to-br from-cyan-500 to-[#0052CC] rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
-                <span className="text-4xl font-bold text-white">C</span>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Celebrate</h3>
-              <p className="text-gray-600 leading-relaxed font-light">
-                We celebrate every success, big or small, and believe that creativity deserves recognition.
-                Your achievements are our achievements.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-32">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              Our Core <span className="text-gradient">Values</span>
-            </h2>
-            <div className="w-32 h-1.5 bg-gradient-to-r from-[#0052CC] to-[#0066FF] mx-auto rounded-full"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="glossy-card p-8 rounded-3xl hover-lift border border-gray-100 group">
-              <div className="w-14 h-14 bg-gradient-to-br from-[#0052CC] to-[#0066FF] rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                <Zap className="text-white" size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Innovation</h3>
-              <p className="text-gray-600 font-light leading-relaxed">
-                We constantly push boundaries and explore new technologies to deliver cutting-edge solutions.
-              </p>
-            </div>
-            <div className="glossy-card p-8 rounded-3xl hover-lift border border-gray-100 group">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                <Sparkles className="text-white" size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Excellence</h3>
-              <p className="text-gray-600 font-light leading-relaxed">
-                We maintain the highest standards in everything we do, from concept to execution.
-              </p>
-            </div>
-            <div className="glossy-card p-8 rounded-3xl hover-lift border border-gray-100 group">
-              <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-[#0052CC] rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                <Heart className="text-white" size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Collaboration</h3>
-              <p className="text-gray-600 font-light leading-relaxed">
-                We believe in working together with our clients and partners to achieve shared goals.
-              </p>
-            </div>
-            <div className="glossy-card p-8 rounded-3xl hover-lift border border-gray-100 group">
-              <div className="w-14 h-14 bg-gradient-to-br from-[#0066FF] to-blue-500 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                <Shield className="text-white" size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Integrity</h3>
-              <p className="text-gray-600 font-light leading-relaxed">
-                We operate with transparency, honesty, and respect in all our business relationships.
-              </p>
-            </div>
-          </div>
-        </div>
+        <a href="https://wa.me/919515802954" target="_blank" rel="noopener noreferrer" className="p-button">
+          Start a conversation <ArrowUpRight size={17} />
+        </a>
       </section>
     </div>
   );

@@ -1,3 +1,4 @@
+import DivisionIntro from '../../components/DivisionIntro';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
@@ -632,35 +633,14 @@ export default function Interiors() {
             <div className="fixed top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#FB923C]/5 to-transparent pointer-events-none z-0"></div>
 
             {/* 1. Hero Section + Calculator */}
-            <section className="relative min-h-[auto] flex items-center justify-center bg-[#020202] overflow-hidden pt-32 pb-24 md:pt-48 md:pb-32">
+            <section className="relative min-h-[auto] flex items-center justify-center bg-[#020202] overflow-hidden pt-0 pb-16">
                 {/* Dark Ambient Background - GoldShift */}
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute top-[-20%] left-[20%] w-[800px] h-[800px] bg-[#FB923C]/5 rounded-full blur-[150px] animate-pulse duration-[8000ms]"></div>
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-                    <div className="text-center mb-20 relative z-20">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8 }}
-                            className="inline-flex items-center gap-2 py-2 px-6 rounded-full bg-white/[0.03] border border-white/10 text-[#FB923C] text-xs font-medium tracking-[0.3em] uppercase backdrop-blur-md mb-8"
-                        >
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#FB923C]"></span>
-                            Architectural Visualisation
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#FB923C]"></span>
-                        </motion.div>
-
-                        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
-                            Vision <span className="text-white/20 italic">Before</span> <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#FED7AA] via-[#FB923C] to-[#F97316]">Creation</span>
-                        </h1>
-
-                        <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed tracking-wide">
-                            See your dream space come to life before you build. Hyper-realistic visuals delivered in 24 hours.
-                        </p>
-                    </div>
-
+                    <DivisionIntro path="/interiors" title="Your space. Reimagined." description="Thoughtfully designed interiors and architectural visualisation. Explore the possibilities, plan the details, and bring your vision into focus." anchor="#quote-generator" label="Plan your space"/>
                     {/* Integrated Calculator */}
                     <motion.div id="quote-generator" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="w-full">
                         <QuoteGenerator />

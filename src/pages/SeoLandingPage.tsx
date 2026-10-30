@@ -274,7 +274,7 @@ export default function SeoLandingPage() {
             <button onClick={() => navigate('/')} className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-transform active:scale-[0.98]">
               Go to Homepage
             </button>
-            <button onClick={() => navigate('/contact')} className="w-full py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-xl transition-all">
+            <button onClick={() => window.open('https://wa.me/919515802954', '_blank', 'noopener,noreferrer')} className="w-full py-3.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-xl transition-all">
               Contact Support
             </button>
           </div>
