@@ -63,7 +63,7 @@ export default function Home() {
             <em>At your doorstep.</em>
           </h1>
           <p>
-            Big celebrations. Beautiful stories. Bolder businesses.
+            Big celebrations. Beautiful stories. Bolder businesses.{" "}
             <br />
             The expertise to bring your world to life, all in one place.
           </p>

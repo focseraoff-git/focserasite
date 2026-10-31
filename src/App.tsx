@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import './design/premium.css';
 import './design/grand.css';
+import './design/mobile.css';
 import CustomCursor from './components/CustomCursor';
 import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
@@ -120,7 +121,7 @@ function AppInner() {
       {/* Floating Action Button: WhatsApp for Beyond (/beyond & /labs), App Download for all other pages */}
       {location.pathname === '/beyond' || location.pathname.startsWith('/beyond') || location.pathname === '/labs' || location.pathname.startsWith('/labs') ? (
         <a
-          href="https://wa.me/919515803954?text=Hi%20Focsera!%20I'm%20interested%20in%20Beyond%20by%20Focsera%20education%20programs,%20workshops,%20and%20school%20partnerships."
+          href="https://wa.me/919515802954?text=Hi%20Focsera!%20I'm%20interested%20in%20Beyond%20by%20Focsera%20education%20programs,%20workshops,%20and%20school%20partnerships."
           target="_blank"
           rel="noopener noreferrer"
           className="fixed bottom-6 right-6 z-[110] flex items-center justify-center w-14 h-14 bg-[#C7EB49] hover:bg-[#bfe638] text-[#35102F] rounded-full shadow-[0_4px_20px_rgba(53,16,47,0.35)] border-2 border-[#35102F] transition-all duration-300 hover:scale-110 active:scale-95 group"
